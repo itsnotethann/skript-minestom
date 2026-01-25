@@ -23,6 +23,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
 
+// known bug: if you do `send true if me contains slot 0 of me`, it doesn't work. if you replace the first me with `me's inventory`, it works
+
 @Name("Contains")
 @Description("Checks whether an inventory contains an item, a text contains another piece of text, " +
 	"or a list (e.g. {list variable::*} or 'drops') contains another object.")

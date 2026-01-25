@@ -14,9 +14,6 @@ import java.util.List;
 public class NBTUtils {
 
 	public static CompoundBinaryTag mergeItemNBT(CompoundBinaryTag originalItem, CompoundBinaryTag incomingNBT) {
-		System.out.println("=== mergeItemNBT ===");
-		try { System.out.println("ORIGINAL ITEM: " + TagStringIO.tagStringIO().asString(originalItem)); } catch (Exception ignored) {}
-		try { System.out.println("INCOMING NBT: " + TagStringIO.tagStringIO().asString(incomingNBT)); } catch (Exception ignored) {}
 		CompoundBinaryTag.Builder itemBuilder = CompoundBinaryTag.builder();
 		itemBuilder.put(originalItem);
 		CompoundBinaryTag.Builder customDataBuilder = CompoundBinaryTag.builder();
