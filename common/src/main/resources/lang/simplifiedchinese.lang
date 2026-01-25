@@ -52,13 +52,13 @@ skript command:
 	invalid folder: 无法在scripts文件夹中找到文件夹<grey>“<gold>%s<grey>”<red>！
 	reload:
 		warning line info: <gold><bold>第%s行：<gray>（%s）<reset>\n
-		error line info: <light red><bold>第%s行：<gray>（%s）<reset>\n
+		error line info: <light_red><bold>第%s行：<gray>（%s）<reset>\n
 		reloading: 正在重新加载<gold>%s<reset>…
 		reloaded: <lime>已成功重新加载<gold>%s<lime>。<gray>（<gold>%2$sms<gray>）
-		error: <light red>在重新加载<gold>%1$s<light red>时遇到了<gold>%2$s<light red>个错误！<gray>（<gold>%3$sms<gray>）
+		error: <light_red>在重新加载<gold>%1$s<light_red>时遇到了<gold>%2$s<light_red>个错误！<gray>（<gold>%3$sms<gray>）
 		script disabled: <gold>%s<reset>已禁用。使用<gray>/<gold>skript <cyan>enable <red>%s<reset>来启用它。
 		warning details: <yellow>    %s<reset>\n
-		error details: <light red>    %s<reset>\n
+		error details: <light_red>    %s<reset>\n
 		other details: <white>    %s<reset>\n
 		line details: <gold>    行：<gray>%s<reset>\n <reset>
 
@@ -74,32 +74,32 @@ skript command:
 		all:
 			enabling: 正在启用所有已禁用的脚本…
 			enabled: 已成功启用并解析了所有先前禁用的脚本。
-			error: <light red>在解析禁用的脚本时遇到了<gold>%s<light red>个错误！
-			io error: <light red>无法加载一个或多个脚本 - 一些脚本可能已被重命名，并在服务器重新启动时启用：<gold>%s
+			error: <light_red>在解析禁用的脚本时遇到了<gold>%s<light_red>个错误！
+			io error: <light_red>无法加载一个或多个脚本 - 一些脚本可能已被重命名，并在服务器重新启动时启用：<gold>%s
 		single:
 			already enabled: <gold>%s<reset>已经启用了！如果它已被更改，使用<gray>/<gold>skript <cyan>reload <red>%s<reset>来重新加载。
 			enabling: 正在启用<gold>%s<reset>…
 			enabled: 已成功启用并解析<gold>%s<reset>。
-			error: <light red>在解析<gold>%1$s<light red>时遇到了<gold>%2$s<light red>个错误！
-			io error: <light red>无法启用<gold>%s<light red>：<gold>%s
+			error: <light_red>在解析<gold>%1$s<light_red>时遇到了<gold>%2$s<light_red>个错误！
+			io error: <light_red>无法启用<gold>%s<light_red>：<gold>%s
 		folder:
 			empty: <gold>%s<reset>不包含任何已禁用的脚本。
 			enabling: 正在启用<gold>%1$s<reset>中的<gold>%2$s<reset>个脚本…
 			enabled: 已成功启用并解析<gold>%1$s<reset>中的<gold>%2$s<reset>个先前禁用的脚本。
-			error: <light red>在解析<gold>%1$s<light red>时遇到了<gold>%2$s<light red>个错误！
-			io error: <light red>在启用<gold>%s<light red>中的一个或多个脚本时出错（有些脚本可能会在服务器重新启动时启用）：<gold>%s
+			error: <light_red>在解析<gold>%1$s<light_red>时遇到了<gold>%2$s<light_red>个错误！
+			io error: <light_red>在启用<gold>%s<light_red>中的一个或多个脚本时出错（有些脚本可能会在服务器重新启动时启用）：<gold>%s
 	disable:
 		all:
 			disabled: 已成功禁用所有脚本。
-			io error: <light red>无法重命名一个或多个脚本 - 一些脚本可能已被重命名，并在服务器重新启动时禁用：<gold>%s
+			io error: <light_red>无法重命名一个或多个脚本 - 一些脚本可能已被重命名，并在服务器重新启动时禁用：<gold>%s
 		single:
 			already disabled: <gold>%s<reset>已经被禁用了！
 			disabled: 已成功禁用<gold>%s<reset>。
-			io error: <light red>无法重命名<gold>%s<light red>当你重新启动服务器时，它会再次启用：<gold>%s
+			io error: <light_red>无法重命名<gold>%s<light_red>当你重新启动服务器时，它会再次启用：<gold>%s
 		folder:
 			empty: <gold>%s<reset>不包含任何已启用的脚本。
 			disabled: 已成功禁用了<gold>%1$s<reset>中的<gold>%2$s<reset>的脚本。
-			io error: <light red>在禁用<gold>%s<light red>中的一个或多个脚本时出错（有些脚本可能会在服务器重新启动时禁用）：<gold>%s
+			io error: <light_red>在禁用<gold>%s<light_red>中的一个或多个脚本时出错（有些脚本可能会在服务器重新启动时禁用）：<gold>%s
 	update:
 		# check/download: see Updater
 		changes:
@@ -124,13 +124,13 @@ updater:
 	checking: 正在检查最新版的Skript…
 	check in progress: 新版本的检查已经在进行中了。
 	updater disabled: 更新程序已禁用，未能检查Skript的最新版本。
-	check error: <red>检查最新版的Skript时出现了错误：<light red>%s
+	check error: <red>检查最新版的Skript时出现了错误：<light_red>%s
 	running latest version: 你目前正在运行最新的Skript稳定版本。
 	running latest version (beta): 你目前运行的是Skript的<i>测试<r>版本，没有新的<i>稳定<r>版可用。请注意，你必须手动更新到较新的测试版！
 	update available: 新版本的Skript可用：<gold>%s<reset>（你目前正在运行<gold>%s<reset>）。
 	downloading: 正在下载Skript<gold>%s<reset>…
 	download in progress: 最新版的下载已经在进行中了。
-	download error: <red>下载最新版的Skript时出现了错误：<light red>%s
+	download error: <red>下载最新版的Skript时出现了错误：<light_red>%s
 	downloaded: 最新版本的Skript已下载完成! 重新启动服务器或使用/reload来应用更改。
 	internal error: 在检查Skript的最新版本时发生了一个内部错误。请查看服务器日志以了解详情。
 	custom version: 你目前正在运行一个自定义的Skript版本。不会自动安装更新。

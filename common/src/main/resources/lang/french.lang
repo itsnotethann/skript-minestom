@@ -9,7 +9,7 @@ none: <none>
 # -- Skript --
 skript:
 	copyright: ~ créé par & © Peter Güttinger alias Njol ~
-	prefix: <gray>[<gold>Skript<gray>] <reset>
+	prefix: <base_grey>[<gold>Skript<base_grey>] <reset>
 	quotes error: Utilisation incorrecte des guillemets ("). Si vous voulez utiliser des guillemets dans du texte "entre guillemets", doublez-les : "".
 	brackets error: Quantité ou emplacement des accolades incorrect. Assurez-vous que chaque accolade ouvrante '{' corresponde à une accolade fermante '}'.
 	invalid reload: Skript ne peut être rechargé qu'avec la commande '/reload' de Bukkit ou la commande '/skript reload' de Skript.
@@ -48,19 +48,19 @@ skript command:
 		gen-docs: Génère la documentation en utilisant docs/templates dans le dossier du plugin
 		test: Utilisé pour exécuter les tests Skript
 
-	invalid script: Impossible de trouver le script <grey>'<gold>%s<grey>'<red> dans le dossier des scripts !
-	invalid folder: Impossible de trouver le dossier <grey>'<gold>%s<grey>'<red> dans le dossier des scripts !
+	invalid script: Impossible de trouver le script <base_grey>'<gold>%s<base_grey>'<dark_red> dans le dossier des scripts !
+	invalid folder: Impossible de trouver le dossier <base_grey>'<gold>%s<base_grey>'<dark_red> dans le dossier des scripts !
 	reload:
-		warning line info: <gold><bold>Ligne %s :<gray> (%s)<reset>\n
-		error line info: <light red><bold>Ligne %s :<gray> (%s)<reset>\n
+		warning line info: <gold><bold>Ligne %s :<base_grey> (%s)<reset>\n
+		error line info: <error_color><bold>Ligne %s :<base_grey> (%s)<reset>\n
 		reloading: Rechargement de <gold>%s<reset>...
-		reloaded: <gold>%s<lime> rechargé(s) avec succès. <gray>(<gold>%2$sms<gray>)
-		error: <gold>%2$s <light red>¦erreur rencontrée¦erreurs rencontrées¦ lors du rechargement de <gold>%1$s<light red>! <gray>(<gold>%3$sms<gray>)
-		script disabled: <gold>%s<reset> est actuellement désactivé. Utilisez <gray>/<gold>skript <cyan>enable <red>%s<reset> pour l'activer.
+		reloaded: <gold>%s<lime> rechargé(s) avec succès. <base_grey>(<gold>%2$sms<base_grey>)
+		error: <gold>%2$s <error_color>¦erreur rencontrée¦erreurs rencontrées¦ lors du rechargement de <gold>%1$s<error_color>! <base_grey>(<gold>%3$sms<base_grey>)
+		script disabled: <gold>%s<reset> est actuellement désactivé. Utilisez <base_grey>/<gold>skript <cyan>enable <dark_red>%s<reset> pour l'activer.
 		warning details: <yellow>    %s<reset>\n
-		error details: <light red>    %s<reset>\n
+		error details: <error_color>    %s<reset>\n
 		other details: <white>    %s<reset>\n
-		line details: <gold>    Ligne : <gray>%s<reset>\n <reset>
+		line details: <gold>    Ligne : <base_grey>%s<reset>\n <reset>
 
 		config, aliases and scripts: la configuration, les alias et tous les scripts
 		scripts: tous les scripts
@@ -74,41 +74,41 @@ skript command:
 		all:
 			enabling: Activation de tous les scripts désactivés...
 			enabled: Activation et analyse réussies de tous les scripts précédemment désactivés.
-			error: <gold>%s <light red>¦erreur rencontrée¦erreurs rencontrées¦ lors de l'analyse des scripts désactivés !
-			io error: <light red>Impossible de charger les scripts (certains scripts ont peut-être déjà été renommés et seront activés au redémarrage du serveur) : <gold>%s
+			error: <gold>%s <error_color>¦erreur rencontrée¦erreurs rencontrées¦ lors de l'analyse des scripts désactivés !
+			io error: <error_color>Impossible de charger les scripts (certains scripts ont peut-être déjà été renommés et seront activés au redémarrage du serveur) : <gold>%s
 		single:
-			already enabled: <gold>%s<reset> est déjà activé ! Utilisez <gray>/<gold>skript <cyan>reload <red>%s<reset> pour le recharger s'il a été modifié.
+			already enabled: <gold>%s<reset> est déjà activé ! Utilisez <base_grey>/<gold>skript <cyan>reload <dark_red>%s<reset> pour le recharger s'il a été modifié.
 			enabling: Activation de <gold>%s<reset>...
 			enabled: <gold>%s<reset> activé et analysé avec succès.
-			error: <gold>%2$s <light red>¦erreur rencontrée¦erreurs rencontrées¦ lors de l'analyse de <gold>%1$s<light red>!
-			io error: <light red>Impossible d'activer <gold>%s<light red>: <gold>%s
+			error: <gold>%2$s <error_color>¦erreur rencontrée¦erreurs rencontrées¦ lors de l'analyse de <gold>%1$s<error_color>!
+			io error: <error_color>Impossible d'activer <gold>%s<error_color>: <gold>%s
 		folder:
 			empty: <gold>%s<reset> ne contient aucun script désactivé.
 			enabling: Activation de <gold>%2$s <reset>script¦¦s¦ dans <gold>%1$s<reset>...
 			enabled: Activation et analyse réussies de <gold>%2$s<reset> script(s) précédemment désactivé(s) dans <gold>%1$s<reset>.
-			error: <gold>%2$s <light red>¦erreur rencontrée¦erreurs rencontrées¦ lors de l'analyse des scripts dans <gold>%1$s<light red>!
-			io error: <light red>Erreur lors de l'activation des scripts dans <gold>%s <light red>(certains scripts pourraient être activés lors du redémarrage du serveur) : <gold>%s
+			error: <gold>%2$s <error_color>¦erreur rencontrée¦erreurs rencontrées¦ lors de l'analyse des scripts dans <gold>%1$s<error_color>!
+			io error: <error_color>Erreur lors de l'activation des scripts dans <gold>%s <error_color>(certains scripts pourraient être activés lors du redémarrage du serveur) : <gold>%s
 	disable:
 		all:
 			disabled: Désactivation de tous les scripts réussie.
-			io error: <light red>Impossible de renommer tous les scripts - certains scripts seront réactivés lorsque vous redémarrerez le serveur : <gold>%s
+			io error: <error_color>Impossible de renommer tous les scripts - certains scripts seront réactivés lorsque vous redémarrerez le serveur : <gold>%s
 		single:
 			already disabled: <gold>%s<reset> est déjà désactivé !
 			disabled: <gold>%s<reset> désactivé avec succès.
-			io error: <light red>Impossible de renommer <gold>%s<light red>, il sera à nouveau activé lorsque vous redémarrerez le serveur : <gold>%s
+			io error: <error_color>Impossible de renommer <gold>%s<error_color>, il sera à nouveau activé lorsque vous redémarrerez le serveur : <gold>%s
 		folder:
 			empty: <gold>%s<reset> ne contient aucun script activé.
 			disabled: Désactivation réussie de <gold>%2$s<reset> script(s) dans <gold>%1$s<reset>.
-			io error: <light red>Impossible de désactiver les scripts <gold>%s <light red>(certains scripts pourraient être désactivés lors du redémarrage du serveur): <gold>%s
+			io error: <error_color>Impossible de désactiver les scripts <gold>%s <error_color>(certains scripts pourraient être désactivés lors du redémarrage du serveur): <gold>%s
 	update:
 		# check/download: see Updater
 		changes:
 			# multiple versions:
 			# 	title: <gold>%s<r> update¦ has¦s have¦ been released since this version (<gold>%s<r>) of Skript:
 			# 	footer: To show the changelog of a version type <gold>/skript update changes <version><reset>
-			# invalid version: No changelog for the version <gold>%s<red> available
+			# invalid version: No changelog for the version <gold>%s<dark_red> available
 			title: <bold><cyan>%s<reset> (%s)
-			next page: <grey>page %s sur %s. Utilisez <gold>/skript update changes %s<gray> pour la page suivante (astuce : utilisez la touche flèche du haut)
+			next page: <base_grey>page %s sur %s. Utilisez <gold>/skript update changes %s<base_grey> pour la page suivante (astuce : utilisez la touche flèche du haut)
 	info:
 		aliases: Les alias de Skript se trouvent ici : <aqua>https://github.com/SkriptLang/skript-aliases<reset> (en anglais)
 		documentation: La documentation de Skript se trouve ici : <aqua>https://docs.skriptlang.org/<reset> (en anglais)
@@ -124,13 +124,13 @@ updater:
 	checking: Vérification de la dernière version de Skript...
 	check in progress: La vérification d'une nouvelle version est actuellement en cours.
 	updater disabled: Le système de mise à jour étant désactivé, la vérification de la dernière version de Skript n'a pas été effectuée.
-	check error: <red>Une erreur s'est produite lors de la vérification de la dernière version de Skript :<light red> %s
+	check error: <dark_red>Une erreur s'est produite lors de la vérification de la dernière version de Skript :<error_color> %s
 	running latest version: Vous utilisez actuellement la dernière version stable de Skript.
 	running latest version (beta): Vous utilisez actuellement une version <i>bêta<r> de Skript et aucune nouvelle version <i>stable<r> n'est disponible. Notez que vous devez mettre à jour les nouvelles versions bêta manuellement !
 	update available: Une nouvelle version de Skript est disponible : <gold>%s<reset> (vous utilisez actuellement <gold>%s<reset>)
 	downloading: Téléchargement de Skript <gold>%s<reset>...
 	download in progress: La dernière version de Skript est en cours de téléchargement.
-	download error: <red>Une erreur s'est produite lors du téléchargement de la dernière version de Skript :<light red> %s
+	download error: <dark_red>Une erreur s'est produite lors du téléchargement de la dernière version de Skript :<error_color> %s
 	downloaded: La dernière version de Skript a été téléchargée ! Redémarrez le serveur ou utilisez /reload pour appliquer les changements.
 	internal error: Une erreur interne s'est produite lors de la vérification de la dernière version de Skript. Veuillez consulter le journal du serveur pour plus de détails.
 	custom version: Vous utilisez actuellement une version personnalisée de Skript. Aucune mise à jour ne sera installée automatiquement.
@@ -143,7 +143,7 @@ commands:
 	executable by players: Cette commande ne peut être utilisée que par des joueurs
 	executable by console: Cette commande ne peut être utilisée que par la console
 	correct usage: Utilisation correcte :
-	invalid argument: Argument invalide <gray>'%s<gray>'<reset>. Sont autorisés :
+	invalid argument: Argument invalide <base_grey>'%s<base_grey>'<reset>. Sont autorisés :
 	too many arguments: Cette commande ne peut accepter qu'un seul %2$s.
 	internal error: Une erreur interne s'est produite lors de la tentative d'exécution de cette commande.
 	no player starts with: Il n'y a aucun joueur en ligne dont le nom commence par '%s'

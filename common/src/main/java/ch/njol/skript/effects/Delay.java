@@ -1,21 +1,3 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
@@ -33,7 +15,7 @@ import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Set;
@@ -63,7 +45,8 @@ public class Delay extends Effect {
 
 		duration = (Expression<Timespan>) exprs[0];
 		if (duration instanceof Literal) { // If we can, do sanity check for delays
-			long millis = ((Literal<Timespan>) duration).getSingle().getMilliSeconds();
+			Timespan timespan = ((Literal<Timespan>) duration).getSingle();
+			long millis = timespan.getAs(Timespan.TimePeriod.MILLISECOND);
 			if (millis < 50) {
 				Skript.warning("Delays less than one tick are not possible, defaulting to one tick.");
 			}
@@ -97,7 +80,8 @@ public class Delay extends Effect {
 
 				TriggerItem.walk(next, event);
 				Variables.removeLocals(event); // Clean up local vars, we may be exiting now
-			}, Math.max(duration.getTicks(), 1)); // Minimum delay is one tick, less than it is useless!
+
+			}, Math.max(duration.getAs(Timespan.TimePeriod.TICK), 1)); // Minimum delay is one tick, less than it is useless!
 		}
 		return null;
 	}

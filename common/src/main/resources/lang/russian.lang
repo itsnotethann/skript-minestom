@@ -9,7 +9,7 @@ none: <none>
 # -- Skript --
 skript:
 	copyright: ~ created by & © Peter Güttinger aka Njol ~
-	prefix: <gray>[<gold>Skript<gray>] <reset>
+	prefix: <base_grey>[<gold>Skript<base_grey>] <reset>
 	quotes error: Неверное использование кавычек ("). Если вам необходимо использовать кавычки внутри строки, просто продублируйте их: "".
 	brackets error: Неверная расстановка скобок. Убедитесь, что каждой открывающей скобке соответствует закрывающая.
 	invalid reload: Skript может быть перезагружен только командой '/reload' из Bukkit или командой '/skript reload' из Skript.
@@ -48,19 +48,19 @@ skript command:
 		gen-docs: Генерирует документацию, используя документации/шаблоны в папке плагина
 		test: Используется для внутреннего тестирования Skript
 
-	invalid script: Не смогли найти скрипт <grey>'<gold>%s<grey>'<red> в папке со скриптами!
-	invalid folder: Не смогли найти папку <grey>'<gold>%s<grey>'<red> в папке со скриптами!
+	invalid script: Не смогли найти скрипт <base_grey>'<gold>%s<base_grey>'<dark_red> в папке со скриптами!
+	invalid folder: Не смогли найти папку <base_grey>'<gold>%s<base_grey>'<dark_red> в папке со скриптами!
 	reload:
-		warning line info: <gold><bold>Строка %s:<gray> (%s)<reset>\n
-		error line info: <light red><bold>Строка %s:<gray> (%s)<reset>\n
+		warning line info: <gold><bold>Строка %s:<base_grey> (%s)<reset>\n
+		error line info: <error_color><bold>Строка %s:<base_grey> (%s)<reset>\n
 		reloading: Перезагружаем <gold>%s<reset>...
-		reloaded: <lime>Успешно перезагрузили <gold>%s<lime>. <gray>(<gold>%2$sms<gray>)
-		error: <light red>Обнаружено <gold>%2$s <light red>ошибок после перезагрузки <gold>%1$s<light red>! <gray>(<gold>%3$sms<gray>)
-		script disabled: <gold>%s<reset> сейчас выключен. Напишите <gray>/<gold>skript <cyan>enable <red>%s<reset> для включения этого скрипта.
+		reloaded: <lime>Успешно перезагрузили <gold>%s<lime>. <base_grey>(<gold>%2$sms<base_grey>)
+		error: <error_color>Обнаружено <gold>%2$s <error_color>ошибок после перезагрузки <gold>%1$s<error_color>! <base_grey>(<gold>%3$sms<base_grey>)
+		script disabled: <gold>%s<reset> сейчас выключен. Напишите <base_grey>/<gold>skript <cyan>enable <dark_red>%s<reset> для включения этого скрипта.
 		warning details: <yellow>    %s<reset>\n
-		error details: <light red>    %s<reset>\n
+		error details: <error_color>    %s<reset>\n
 		other details: <white>    %s<reset>\n
-		line details: <gold>    Line: <gray>%s<reset>\n <reset>
+		line details: <gold>    Line: <base_grey>%s<reset>\n <reset>
 
 		config, aliases and scripts: конфиг, алиасы и все скрипты
 		scripts: все скрипты
@@ -77,17 +77,17 @@ skript command:
 			error: Найдено %s ошибок во время парсинга выключенных скриптов!
 			io error: Не удалось включить некоторые скрипты - они могут быть уже переименованы. В таком случае они включатся после перезагрузки: %s
 		single:
-			already enabled: <gold>%s<reset> уже включён! Используйте <gray>/<gold>skript <cyan>reload <red>%s<reset> для перезагрузки скрипта, если он был изменён.
+			already enabled: <gold>%s<reset> уже включён! Используйте <base_grey>/<gold>skript <cyan>reload <dark_red>%s<reset> для перезагрузки скрипта, если он был изменён.
 			enabling: Включаем <gold>%s<reset>...
 			enabled: Успешно включили и пропарсили <gold>%s<reset>.
-			error: Найдено %2$s ошибок во время парсинга <gold>%1$s<red>!
-			io error: Не удалось включить <gold>%s<red>: %s
+			error: Найдено %2$s ошибок во время парсинга <gold>%1$s<dark_red>!
+			io error: Не удалось включить <gold>%s<dark_red>: %s
 		folder:
 			empty: <gold>%s<reset> не содержит выключенных скриптов.
 			enabling: Включаем <gold>%2$s <reset>скриптов в <gold>%1$s<reset>...
 			enabled: Успешно включили и пропарсили <gold>%2$s<reset> ранее выключенных скриптов в <gold>%1$s<reset>.
-			error: Найдено %2$s ошибок во время парсинга скриптов в <gold>%1$s<red>!
-			io error: Не удалось загрузить некоторые скрипты в <gold>%s<red> (некоторые скрипты могут включиться после перезагрузки): %s
+			error: Найдено %2$s ошибок во время парсинга скриптов в <gold>%1$s<dark_red>!
+			io error: Не удалось загрузить некоторые скрипты в <gold>%s<dark_red> (некоторые скрипты могут включиться после перезагрузки): %s
 	disable:
 		all:
 			disabled: Успешно выключили все скрипты.
@@ -95,20 +95,20 @@ skript command:
 		single:
 			already disabled: <gold>%s<reset> уже выключен!
 			disabled: Успешно выключили <gold>%s<reset>.
-			io error: Не удалось включить <gold>%s<red>: %s
+			io error: Не удалось включить <gold>%s<dark_red>: %s
 		folder:
 			empty: <gold>%s<reset> не содержит включённых скриптов.
 			disabled: Успешно выключили <gold>%2$s<reset> скриптов в <gold>%1$s<reset>.
-			io error: Не удалось выключить некоторые скрипты в <gold>%s<red> (некоторые скрипты могут выключиться после перезагрузки): %s
+			io error: Не удалось выключить некоторые скрипты в <gold>%s<dark_red> (некоторые скрипты могут выключиться после перезагрузки): %s
 	update:
 		# check/download: see Updater
 		changes:
 			# multiple versions:
 			# 	title: <gold>%s<r> update¦ has¦s have¦ been released since this version (<gold>%s<r>) of Skript:
 			# 	footer: To show the changelog of a version type <gold>/skript update changes <version><reset>
-			# invalid version: No changelog for the version <gold>%s<red> available
+			# invalid version: No changelog for the version <gold>%s<dark_red> available
 			title: <bold><cyan>%s<reset> (%s)
-			next page: <grey>страница %s из %s. Введите <gold>/skript update changes %s<gray> для перехода на следующую страницу (совет: используйте стрелку вверх)
+			next page: <base_grey>страница %s из %s. Введите <gold>/skript update changes %s<base_grey> для перехода на следующую страницу (совет: используйте стрелку вверх)
 	info:
 		aliases: Алиасы Skript находятся тут: <aqua>https://github.com/SkriptLang/skript-aliases
 		documentation: Документация Skript находится тут: <aqua>https://docs.skriptlang.org/
@@ -124,13 +124,13 @@ updater:
 	checking: Проверяем наличие обновлений...
 	check in progress: Мы всё ещё проверяем наличие обновлений.
 	updater disabled: Проверка на наличие обновлений выключена.
-	check error: <red>Пока мы проверяли наличие обновлений Skript, возникла ошибка:<light red> %s
+	check error: <dark_red>Пока мы проверяли наличие обновлений Skript, возникла ошибка:<error_color> %s
 	running latest version: Сейчас Вы пользуетесь последней стабильной версией Skript.
 	running latest version (beta): Сейчас Вы пользуетесь <i>бета<r> версией Skript, новая <i>стабильная<r> версия ещё не вышла. Учтите, что Вам придётся обновляться до более новой бета версии самостоятельно.
 	update available: Новая версия Skript вышла: <gold>%s<reset> (сейчас Вы пользуетесь <gold>%s<reset>)
 	downloading: Скачиваем Skript <gold>%s<reset>...
 	download in progress: Скачивание новой версии Skript в процессе.
-	download error: <red>Пока мы скачивали новую версию Skript, возникла ошибка:<light red> %s
+	download error: <dark_red>Пока мы скачивали новую версию Skript, возникла ошибка:<error_color> %s
 	downloaded: Последняя версия Skript была успешно скачана! Перезагрузите сервер, чтобы начать пользоваться новой версией.
 	internal error: Возникла ошибка, пока мы проверяли наличие обновлений Skript. Загляните в логи сервера для дополнительной информации.
 	custom version: Сейчас вы используйте кастомную сборку Skript. Обновления не будут установлены автоматически.
@@ -143,7 +143,7 @@ commands:
 	executable by players: Эту команду могут использовать только игроки
 	executable by console: Эту команду можно использовать только из консоли
 	correct usage: Верное использование:
-	invalid argument: Неверный аргумент <gray>'%s<gray>'<reset>. Список верных:
+	invalid argument: Неверный аргумент <base_grey>'%s<base_grey>'<reset>. Список верных:
 	too many arguments: Эта команда может принять только один единственный %2$s.
 	internal error: Во время исполнения этой команды произошла ошибка.
 	no player starts with: Мы не нашли игрока, чьё имя начинается с '%s'

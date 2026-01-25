@@ -18,12 +18,14 @@
  */
 package ch.njol.skript.lang;
 
+import ch.njol.skript.effects.EffExit;
+import ch.njol.skript.effects.EffReturn;
 import org.bukkit.event.Event;
 
 /**
  * A {@link Section} implementing this interface can execute a task when
- * it is exited by an {@link ch.njol.skript.effects.EffExit 'exit'} or
- * {@link ch.njol.skript.effects.EffReturn 'return'} effect.
+ * it is exited by an {@link EffExit 'exit'} or
+ * {@link EffReturn 'return'} effect.
  */
 public interface SectionExitHandler {
 

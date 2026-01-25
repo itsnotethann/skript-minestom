@@ -18,6 +18,8 @@
  */
 package ch.njol.skript.lang;
 
+import ch.njol.skript.expressions.ExprParse;
+
 /**
  * Used to provide context as to where an element is being parsed from.
  */
@@ -41,7 +43,7 @@ public enum ParseContext {
 	COMMAND,
 
 	/**
-	 * Used for parsing text in {@link ch.njol.skript.expressions.ExprParse}
+	 * Used for parsing text in {@link ExprParse}
 	 */
 	PARSE,
 	/**

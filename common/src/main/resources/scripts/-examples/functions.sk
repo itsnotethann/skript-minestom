@@ -52,4 +52,4 @@ command /oreexample:
             set {_found::*} to destroyOre(player's target block)
             send "Destroyed %size of {_found::*}% connected ores!"
         else:
-            send "<red>You must be looking at an ore block!"
+            send "<dark_red>You must be looking at an ore block!"

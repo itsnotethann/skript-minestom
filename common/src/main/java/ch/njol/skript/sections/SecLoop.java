@@ -38,10 +38,7 @@ import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 
 @Name("Loop")
 @Description({
@@ -89,8 +86,8 @@ public class SecLoop extends LoopSection {
 	@SuppressWarnings("NotNullFieldNotInitialized")
 	private Expression<?> expr;
 
-	private final transient Map<Event, Object> current = new WeakHashMap<>();
-	private final transient Map<Event, Iterator<?>> currentIter = new WeakHashMap<>();
+	private final transient Map<Event, Object> current = Collections.synchronizedMap(new WeakHashMap<>());
+	private final transient Map<Event, Iterator<?>> currentIter = Collections.synchronizedMap(new WeakHashMap<>());
 
 	@Nullable
 	private TriggerItem actualNext;
@@ -146,7 +143,9 @@ public class SecLoop extends LoopSection {
 			return actualNext;
 		} else {
 			current.put(event, iter.next());
-			currentLoopCounter.put(event, (currentLoopCounter.getOrDefault(event, 0L)) + 1);
+			Long count = currentLoopCounter.get(event);
+			if (count == null) count = 0L;
+			currentLoopCounter.put(event, count + 1);
 			return walk(event, true);
 		}
 	}

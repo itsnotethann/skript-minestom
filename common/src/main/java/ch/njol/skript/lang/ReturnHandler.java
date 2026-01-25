@@ -21,6 +21,7 @@ package ch.njol.skript.lang;
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.SkriptAPIException;
 import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.effects.EffReturn;
 import ch.njol.skript.lang.parser.ParserInstance;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.ApiStatus.NonExtendable;
@@ -130,7 +131,7 @@ public interface ReturnHandler<T> {
 	}
 
 	/**
-	 * Called when {@link ch.njol.skript.effects.EffReturn} is executed
+	 * Called when {@link EffReturn} is executed
 	 * @param event the event providing context
 	 * @param value an expression representing the value(s) to return
 	 */

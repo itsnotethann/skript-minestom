@@ -314,7 +314,9 @@ public final class SkriptEventHandler {
 			if (handlerList == null)
 				continue;
 			Skript skript = Skript.getInstance();
-			for (RegisteredListener registeredListener : handlerList.getRegisteredListeners()) {
+			// avoid concurrentmodification
+			List<RegisteredListener> listenersCopy = List.copyOf(handlerList.getRegisteredListeners());
+			for (RegisteredListener registeredListener : listenersCopy) {
 				Listener listener = registeredListener.getListener();
 				if (
 					registeredListener.getPlugin() == skript

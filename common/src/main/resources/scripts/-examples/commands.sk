@@ -25,7 +25,7 @@ command /home <text> [<text>]:
         if arg-1 is "set":
             if arg-2 is set:
                 set {homes::%uuid of player%::%arg-2%} to player's location
-                send "Set your home <green>%arg-2%<reset> to <grey>%location of player%<reset>" to player
+                send "Set your home <green>%arg-2%<reset> to <base_grey>%location of player%<reset>" to player
             else:
                 send "You must specify a name for this home." to player
         else if arg-1 is "remove":
@@ -68,4 +68,4 @@ command /item <items>:
                 if loop-item is not blacklisted:
                     give loop-item to player
                 else:
-                    send "<red>%loop-item%<reset> is blacklisted and cannot be spawned." to player
+                    send "<dark_red>%loop-item%<reset> is blacklisted and cannot be spawned." to player

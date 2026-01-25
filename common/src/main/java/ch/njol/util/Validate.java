@@ -19,6 +19,7 @@
 package ch.njol.util;
 
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -26,6 +27,8 @@ import org.eclipse.jdt.annotation.Nullable;
  * @author Peter Güttinger
  */
 public abstract class Validate {
+
+	private static final Pattern UUID_REGEX = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
 	
 	public static void notNull(final Object... objects) {
 		for (int i = 0; i < objects.length; i++) {
@@ -77,6 +80,10 @@ public abstract class Validate {
 	public static void notEmpty(final int[] nums, final String name) {
 		if (nums.length == 0)
 			throw new IllegalArgumentException(name + " must not be empty");
+	}
+
+	public static boolean isUUID(String uuid) {
+		return UUID_REGEX.matcher(uuid).matches();
 	}
 	
 }

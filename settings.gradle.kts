@@ -8,6 +8,6 @@ plugins {
  * For more detailed information on multi-project builds, please refer to https://docs.gradle.org/8.8/userguide/multi_project_builds.html in the Gradle documentation.
  */
 
-rootProject.name = "Skript"
+rootProject.name = "skript-minestom"
 include("common")
 include("minestom")

@@ -51,6 +51,38 @@ public abstract class FileUtils {
 	private FileUtils() {}
 	
 	private final static SimpleDateFormat backupFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+
+	/**
+	 * Ensures that the provided file and its directories are created.
+	 *
+	 * @param file the file to defend
+	 * @return the file being defended (ignorable)
+	 */
+	public static File defendFile(File file) {
+		return defendFile(file, false);
+	}
+
+	/**
+	 * Ensures that the provided file and its directories are created.
+	 *
+	 * @param file the file to defend
+	 * @param directory is the file provided intended to be a directory?
+	 * @return the file being defended (ignorable)
+	 */
+	@SuppressWarnings("ResultOfMethodCallIgnored")
+	public static File defendFile(File file, boolean directory) {
+		try {
+			File parent = file.getParentFile();
+			if (!parent.exists()) {
+				parent.mkdirs();
+			}
+			if (directory) file.mkdir();
+			else file.createNewFile();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return file;
+	}
 	
 	/**
 	 * @return The current date and time

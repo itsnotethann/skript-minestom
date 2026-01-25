@@ -98,7 +98,7 @@ public abstract class TriggerItem implements Debuggable {
 						scriptName = scriptFile.getName();
 				}
 			}
-			Skript.error("<red>The script '<gold>" + scriptName + "<red>' infinitely (or excessively) repeated itself!");
+			Skript.error("<dark_red>The script '<gold>" + scriptName + "<dark_red>' infinitely (or excessively) repeated itself!");
 			if (Skript.debug())
 				err.printStackTrace();
 		} catch (Exception ex) {

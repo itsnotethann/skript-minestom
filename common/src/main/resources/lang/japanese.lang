@@ -52,13 +52,13 @@ skript command:
 	invalid folder: 指定されたフォルダ <grey>'<gold>%s<grey>'<red> はscriptsフォルダ内では見つかりませんでした！
 	reload:
 		warning line info: <gold><bold>%s行目:<gray> (%s)<reset>\n
-		error line info: <light red><bold>%s行目:<gray> (%s)<reset>\n
+		error line info: <light_red><bold>%s行目:<gray> (%s)<reset>\n
 		reloading: <gold>%s<reset>を読み込み中...
 		reloaded: <gold>%s<lime>の読み込みに成功しました。<gray>(<gold>%2$sms<gray>)
-		error: <gold>%2$s <light red>個のエラーが<gold>%1$s<light red>の読み込み中に発見されました！ <gray>(<gold>%3$sms<gray>)
+		error: <gold>%2$s <light_red>個のエラーが<gold>%1$s<light_red>の読み込み中に発見されました！ <gray>(<gold>%3$sms<gray>)
 		script disabled: <gold>%s<reset>は現在無効化されています。<gray>/<gold>skript <cyan>enable <red>%s<reset>を使用して有効化できます。
 		warning details: <yellow>    %s<reset>\n
-		error details: <light red>    %s<reset>\n
+		error details: <light_red>    %s<reset>\n
 		other details: <white>    %s<reset>\n
 		line details: <gold>    該当部分: <gray>%s<reset>\n <reset>
 
@@ -74,32 +74,32 @@ skript command:
 		all:
 			enabling: 無効化された全てのスクリプトを有効化しています...
 			enabled: 全ての無効化されていたスクリプトの解析・有効化に成功しました。
-			error: <light red>解析中に%s個のエラーが見つかりました！
-			io error: <light red>一つもしくは複数のスクリプトがロードできませんでした。 一部のスクリプトはファイル名が変更された可能性があります。 またサーバー再起動時に有効化されます: <gold>%s
+			error: <light_red>解析中に%s個のエラーが見つかりました！
+			io error: <light_red>一つもしくは複数のスクリプトがロードできませんでした。 一部のスクリプトはファイル名が変更された可能性があります。 またサーバー再起動時に有効化されます: <gold>%s
 		single:
 			already enabled: <gold>%s<reset>はすでに有効化されています! もし変更を反映したい場合は<gray>/<gold>skript <cyan>reload <red>%s<reset>を使用して再読み込みします。
 			enabling: <gold>%s<reset>を有効化しています...
 			enabled: <gold>%s<reset>の解析・有効化に成功しました。
-			error: <gold>%1$s<light red>を解析中に<gold>%2$s<light red>個のエラーが見つかりました！
-			io error: <gold>%s<light red>は有効化できませんでした。: <gold>%s
+			error: <gold>%1$s<light_red>を解析中に<gold>%2$s<light_red>個のエラーが見つかりました！
+			io error: <gold>%s<light_red>は有効化できませんでした。: <gold>%s
 		folder:
 			empty: <gold>%s<reset>フォルダ内に無効化されたスクリプトが見つかりませんでした。
 			enabling: <gold>%1$s<reset>フォルダ内の<gold>%2$s<reset>個のスクリプトを有効化しています...
 			enabled: <gold>%1$s<reset>フォルダ内にある無効化されていた<gold>%2$s<reset>の解析・有効化に成功しました。
-			error: <gold>%1$s<light red>フォルダ内のスクリプトを解析中に<gold>%2$s<light red>個のエラーが見つかりました！
-			io error: <gold>%s<light red>フォルダ内の一つもしくは複数のスクリプトのロード時にエラーが発生しました。 (一部のスクリプトはサーバー再起動時に有効になる場合があります): <gold>%s
+			error: <gold>%1$s<light_red>フォルダ内のスクリプトを解析中に<gold>%2$s<light_red>個のエラーが見つかりました！
+			io error: <gold>%s<light_red>フォルダ内の一つもしくは複数のスクリプトのロード時にエラーが発生しました。 (一部のスクリプトはサーバー再起動時に有効になる場合があります): <gold>%s
 	disable:
 		all:
 			disabled: 全てのスクリプトの無効化に成功しました。
-			io error: <light red>一つもしくは複数のスクリプトのファイル名を変更できませんでした。 一部のスクリプトはファイル名が変更された可能性があります。 またサーバー再起動時に無効化されます: <gold>%s
+			io error: <light_red>一つもしくは複数のスクリプトのファイル名を変更できませんでした。 一部のスクリプトはファイル名が変更された可能性があります。 またサーバー再起動時に無効化されます: <gold>%s
 		single:
 			already disabled: <gold>%s<reset>はすでに無効化されています！
 			disabled: <gold>%s<reset>の無効化に成功しました。
-			io error: <gold>%s<light red>のファイル名の変更ができませんでした。 サーバー再起動時に再度有効化されます: <gold>%s
+			io error: <gold>%s<light_red>のファイル名の変更ができませんでした。 サーバー再起動時に再度有効化されます: <gold>%s
 		folder:
 			empty: <gold>%s<reset>フォルダ内に有効化されたスクリプトが見つかりませんでした。
 			disabled: <gold>%1$s<reset>フォルダ内の<gold>%2$s<reset>個のスクリプトが無効化されました。
-			io error: <gold>%s<light red>フォルダ内の一つもしくは複数のスクリプトのファイル名を変更できませんでした。 (一部のスクリプトはサーバー再起動時に無効化される場合があります): <gold>%s
+			io error: <gold>%s<light_red>フォルダ内の一つもしくは複数のスクリプトのファイル名を変更できませんでした。 (一部のスクリプトはサーバー再起動時に無効化される場合があります): <gold>%s
 	update:
 		# check/download: Upadater をご確認ください
 		changes:
@@ -124,13 +124,13 @@ updater:
 	checking: Skriptの最新バージョンを確認中...
 	check in progress: 最新バージョンは現在確認中です。
 	updater disabled: 更新が無効化されているため、Skriptの最新バージョンの確認は行われませんでした。
-	check error: <red>Skriptの最新バージョンの確認中にエラーが発生しました:<light red> %s
+	check error: <red>Skriptの最新バージョンの確認中にエラーが発生しました:<light_red> %s
 	running latest version: 最新安定版のSkriptが動作しています。
 	running latest version (beta): <i>ベータ版<r>のSkriptが動作しています。 また新しい<i>安定版<r>のSkriptはありません。 新しいベータ版へのアップデートは手動で行う必要があるためご注意ください！
 	update available: 新しいバージョンのSkriptが存在します: <gold>%s<reset> (現在は<gold>%s<reset>が動作しています。)
 	downloading: Skript <gold>%s<reset>をダウンロード中...
 	download in progress: Skriptの最新バージョンは現在ダウンロード中です。
-	download error: <red>Skriptの最新バージョンをダウンロード中にエラーが発生しました:<light red> %s
+	download error: <red>Skriptの最新バージョンをダウンロード中にエラーが発生しました:<light_red> %s
 	downloaded: Skriptの最新バージョンがダウンロードされました！ サーバーを再起動、または/reloadを使用し更新を適用してください。
 	internal error: 内部エラーが発生したためSkriptの最新バージョンの確認に失敗しました。 詳細はサーバーログをご確認ください。
 	custom version: カスタマイズされたSkriptが動作しています。 アップデートは自動的にインストールされません。

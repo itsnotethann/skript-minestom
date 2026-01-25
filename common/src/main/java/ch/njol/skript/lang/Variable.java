@@ -330,7 +330,6 @@ public class Variable<T> implements Expression<T> {
 		if (rawValue == null)
 			return Array.newInstance(types[0], 0);
 		List<Object> convertedValues = new ArrayList<>();
-		String name = StringUtils.substring(this.name.toString(event), 0, -1);
 		for (Entry<String, ?> variable : ((Map<String, ?>) rawValue).entrySet()) {
 			if (variable.getKey() != null && variable.getValue() != null) {
 				Object value;
@@ -339,7 +338,7 @@ public class Variable<T> implements Expression<T> {
 				else
 					value = variable.getValue();
 				if (value != null)
-					convertedValues.add(name + variable.getKey());
+					convertedValues.add(variable.getValue());
 			}
 		}
 		return convertedValues.toArray();
@@ -369,7 +368,7 @@ public class Variable<T> implements Expression<T> {
 				while (keys.hasNext()) {
 					key = keys.next();
 					if (key != null) {
-						next = name + key;
+						next = Variables.getVariable(name + key, event, local);
 						if (next != null && !(next instanceof TreeMap))
 							return true;
 					}
@@ -424,7 +423,6 @@ public class Variable<T> implements Expression<T> {
 					key = keys.next();
 					if (key != null) {
 						next = Converters.convert(Variables.getVariable(name + key, event, local), types);
-						next = (T) (name + key);
 						if (next != null && !(next instanceof TreeMap))
 							return true;
 					}

@@ -54,7 +54,13 @@ public enum ServerPlatform {
 	/**
 	 * Doesn't work at all currently.
 	 */
-	SPONGE("Sponge", false, false);
+	SPONGE("Sponge", false, false),
+
+	/**
+	 * Minestom custom Minecraft server software which doesn't support
+	 * the Spigot API.
+	 */
+	MINESTOM("Minestom", true, true);
 	
 	public String name;
 	public boolean works;

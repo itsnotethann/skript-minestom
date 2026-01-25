@@ -7,7 +7,7 @@ none: <tanımsız>
 # -- Skript --
 skript:
 	copyright: ~ © Peter Güttinger yani Njol tarafından yapıldı ~
-	prefix: <gray>[<gold>Skript<gray>] <reset>
+	prefix: <base_grey>[<gold>Skript<base_grey>] <reset>
 	quotes error: Tırnak işaretlerinin (") geçersiz kullanımı. "Tırnak işareti içindeki metinde" tırnak işaretleri kullanmak istiyorsanız 2 tane kullanın: "".
 	brackets error: Geçersiz miktar veya parantez yerleşimi. Lütfen her açılan paranteze karşılık gelen bir kapatma parantezine sahip olduğundan emin olun.
 	invalid reload: Skript sadece Bukkit'in '/reload' veya Skript'in '/skript reload' komuduyla tekrar yüklenebilir.
@@ -46,19 +46,19 @@ skript command:
 		gen-docs: Eklenti klasöründeki şablonları kullanarak bir dokümantasyon oluşturur.
 		test: Skript'in dahili testleri için kullanılır.
 
-	invalid script: <grey>'<gold>%s<grey>'<red> adlı script scripts klasöründe bulunamadı!
-  invalid folder: <grey>'<gold>%s<grey>'<red> adlı klasör scripts klasöründe bulunamadı!
+	invalid script: <base_grey>'<gold>%s<base_grey>'<dark_red> adlı script scripts klasöründe bulunamadı!
+  invalid folder: <base_grey>'<gold>%s<base_grey>'<dark_red> adlı klasör scripts klasöründe bulunamadı!
 	reload:
-		warning line info: <gold><bold>Satır %s:<gray> (%s)<reset>\n
-		error line info: <light red><bold>Satır %s:<gray> (%s)<reset>\n
+		warning line info: <gold><bold>Satır %s:<base_grey> (%s)<reset>\n
+		error line info: <error_color><bold>Satır %s:<base_grey> (%s)<reset>\n
 		reloading: <gold>%s<reset> yeniden yükleniyor...
-		reloaded: <gold>%s<lime> başarıyla yeniden yüklendi. <gray>(<gold>%2$sms<gray>)
-		error: <gold>%1$s <light red>adlı script yüklenirken <gold>%2$s <light red>adet hatayla karşılaşıldı! <gray>(<gold>%3$sms<gray>)
-		script disabled: <gold>%s<reset> şu anda devre dışı. Aktif etmek için <gray>/<gold>skript <cyan>enable <red>%s<reset> komutunu kullanın.
+		reloaded: <gold>%s<lime> başarıyla yeniden yüklendi. <base_grey>(<gold>%2$sms<base_grey>)
+		error: <gold>%1$s <error_color>adlı script yüklenirken <gold>%2$s <error_color>adet hatayla karşılaşıldı! <base_grey>(<gold>%3$sms<base_grey>)
+		script disabled: <gold>%s<reset> şu anda devre dışı. Aktif etmek için <base_grey>/<gold>skript <cyan>enable <dark_red>%s<reset> komutunu kullanın.
 		warning details: <yellow>    %s<reset>\n
-		error details: <light red>    %s<reset>\n
+		error details: <error_color>    %s<reset>\n
 		other details: <white>    %s<reset>\n
-		line details: <gold>    Satır: <gray>%s<reset>\n <reset>
+		line details: <gold>    Satır: <base_grey>%s<reset>\n <reset>
 
 		config, aliases and scripts: config, alias'lar ve tüm script'ler
 		scripts: tüm scriptler
@@ -72,41 +72,41 @@ skript command:
 		all:
 			enabling: Tüm script'ler aktif ediliyor...
 			enabled: Önceden devre dışı olan tüm script'ler başarıyla aktif edildi ve yüklendi.
-			error: <light red>Devre dışı script'ler yüklenirken <gold>%s <light red>adet hata ile karşılaşıldı!
-			io error: <light red>Bir veya daha fazla script yüklenemedi - bazı scriptler zaten yeniden adlandırılmış olabilir ve sunucu tekrar başlatılınca aktif edilecektir: <gold>%s
+			error: <error_color>Devre dışı script'ler yüklenirken <gold>%s <error_color>adet hata ile karşılaşıldı!
+			io error: <error_color>Bir veya daha fazla script yüklenemedi - bazı scriptler zaten yeniden adlandırılmış olabilir ve sunucu tekrar başlatılınca aktif edilecektir: <gold>%s
 		single:
-			already enabled: <gold>%s<reset> zaten aktif! Değişiklikleri uygulamak için <gray>/<gold>skript <cyan>reload <red>%s<reset> komutunu kullanın.
+			already enabled: <gold>%s<reset> zaten aktif! Değişiklikleri uygulamak için <base_grey>/<gold>skript <cyan>reload <dark_red>%s<reset> komutunu kullanın.
 			enabling: <gold>%s<reset> aktif ediliyor...
 			enabled: <gold>%s<reset> başarıyla aktif edildi ve yüklendi.
-			error: <gold>%1$s<light red> yüklenirken <gold>%2$s <light red>adet hata ile karşılaşıldı!
-			io error: <gold>%s <light red>aktif edilemedi: <gold>%s
+			error: <gold>%1$s<error_color> yüklenirken <gold>%2$s <error_color>adet hata ile karşılaşıldı!
+			io error: <gold>%s <error_color>aktif edilemedi: <gold>%s
 		folder:
 			empty: <gold>%s<reset> devre dışı script içermiyor.
 			enabling: <gold>%1$s<reset> klasöründeki <gold>%2$s <reset>script aktif ediliyor...
 			enabled: <gold>%1$s<reset> klasöründeki önceden devre dışı olan <gold>%2$s<reset> başarıyla yüklendi ve aktifleştirildi.
-			error: <gold>%1$s<light red> klasöründeki script'ler yüklenirken <gold>%2$s <light red>tane hatayla karşılaşıldı!
-			io error: <gold>%s <light red>klasöründeki bir veya daha fazla script aktif edilirken hatayla karşılaşıldı. (bazı script'ler sunucu tekrar başlatılınca aktifleşebilir): <gold>%s
+			error: <gold>%1$s<error_color> klasöründeki script'ler yüklenirken <gold>%2$s <error_color>tane hatayla karşılaşıldı!
+			io error: <gold>%s <error_color>klasöründeki bir veya daha fazla script aktif edilirken hatayla karşılaşıldı. (bazı script'ler sunucu tekrar başlatılınca aktifleşebilir): <gold>%s
 	disable:
 		all:
 			disabled: Tüm script'ler devre dışı bırakıldı.
-			io error: <light red>Bir veya daha fazla script yeniden adlandırılamadı - bazı scriptler zaten yeniden adlandırılmış olabilir ve sunucu tekrar başlatılınca devre dışı bırakılacaktır: <gold>%s
+			io error: <error_color>Bir veya daha fazla script yeniden adlandırılamadı - bazı scriptler zaten yeniden adlandırılmış olabilir ve sunucu tekrar başlatılınca devre dışı bırakılacaktır: <gold>%s
 		single:
 			already disabled: <gold>%s<reset> zaten devre dışı!
 			disabled: <gold>%s<reset> başarıyla devre dışı bırakıldı.
-			io error: <gold>%s <light red>yeniden adlandırılamadı, sunucuyu tekrar başlattığında tekrar aktifleşecek: <gold>%s
+			io error: <gold>%s <error_color>yeniden adlandırılamadı, sunucuyu tekrar başlattığında tekrar aktifleşecek: <gold>%s
 		folder:
 			empty: <gold>%s<reset> aktif script içermiyor.
 			disabled: <gold>%1$s<reset> klasöründeki <gold>%2$s<reset> script başarıyla devre dışı bırakıldı.
-			io error: <gold>%s <light red>klasöründeki bir veya daha fazla script devre dışı bırakılamadı. (bazı script'ler sunucu tekrar başladığında devre dışı olabilir): <gold>%s
+			io error: <gold>%s <error_color>klasöründeki bir veya daha fazla script devre dışı bırakılamadı. (bazı script'ler sunucu tekrar başladığında devre dışı olabilir): <gold>%s
 	update:
 		# check/download: see Updater
 		changes:
 			# multiple versions:
 			# 	title: <gold>%s<r> update¦ has¦s have¦ been released since this version (<gold>%s<r>) of Skript:
 			# 	footer: To show the changelog of a version type <gold>/skript update changes <version><reset>
-			# invalid version: No changelog for the version <gold>%s<red> available
+			# invalid version: No changelog for the version <gold>%s<dark_red> available
 			title: <bold><cyan>%s<reset> (%s)
-			next page: <grey>sayfa %s / %s. Bir sonraki sayfa için <gold>/skript update changes %s<gray> kullan. (ipucu: yukarı ok tuşunu kullan)
+			next page: <base_grey>sayfa %s / %s. Bir sonraki sayfa için <gold>/skript update changes %s<base_grey> kullan. (ipucu: yukarı ok tuşunu kullan)
 	info:
 		aliases: Skript alias'ları: <aqua>https://github.com/SkriptLang/skript-aliases
 		documentation: Skript dökümantasyonları: <aqua>https://docs.skriptlang.org/
@@ -122,13 +122,13 @@ updater:
 	checking: Skript'in en son sürümünü kontrol ediliyor...
 	check in progress: Yeni sürüm kontrolü devam ediyor.
 	updater disabled: Güncelleyici devre dışı olduğundan Skript'in en son sürümü kontrol edilmedi.
-	check error: <red>Skript'in en son sürümü kontrol edilirken bir hata oluştu:<light red> %s
+	check error: <dark_red>Skript'in en son sürümü kontrol edilirken bir hata oluştu:<error_color> %s
 	running latest version: Şu anda Skript'in stabil olan en son sürümünü kullanıyorsunuz.
 	running latest version (beta): Şu anda Skript'in <i>beta<r> sürümünü kullanıyorsunuz ve yeni bir <i>stabil<r> sürümü mevcut değil. Daha yeni beta sürümlerine manuel olarak güncelleme yapmanız gerektiğini lütfen unutmayın!
 	update available: Skript'in yeni bir sürümü mevcut: <gold>%s<reset> (şu anda <gold>%s<reset> sürümündesiniz)
 	downloading: Skript <gold>%s<reset> indiriliyor...
 	download in progress: Skript'in en son sürümü şu anda indiriliyor.
-	download error: <red>Skript'in en son sürümünü indirirken bir hata oluştu:<light red> %s
+	download error: <dark_red>Skript'in en son sürümünü indirirken bir hata oluştu:<error_color> %s
 	downloaded: Skript'in son sürümü indirildi! Değişiklikleri uygulamak için sunucuyu yeniden başlatın veya /reload komutunu kullanın.
 	internal error: Skript'in en son sürümünü kontrol ederken dahili bir hata oluştu. Ayrıntılar için lütfen sunucu konsoluna bakın.
 	custom version: Şu anda özel bir Skript sürümünü kullanıyorsunuz. Hiçbir güncelleme otomatik olarak yüklenmeyecektir.
@@ -141,7 +141,7 @@ commands:
 	executable by players: Bu komut yalnızca oyuncular tarafından kullanılabilir.
 	executable by console: Bu komut yalnızca konsol tarafından kullanılabilir.
 	correct usage: Doğru kullanım:
-	invalid argument: Yanlış argüman <gray>'%s<gray>'<reset>. İzin verilenler:
+	invalid argument: Yanlış argüman <base_grey>'%s<base_grey>'<reset>. İzin verilenler:
 	too many arguments: Bu komut yanlızca bir tane %2$s kabul eder.
 	internal error: Bu komut gerçekleştirilmeye çalışılırken dahili bir hata oluştu.
 	no player starts with: Adı '%s' ile başlayan oyuncu bulunamadı.

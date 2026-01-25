@@ -1,7 +1,7 @@
 #
 # This example is for colours and formatting in Skript.
 # Skript allows the old-style Minecraft codes using `&`, like &0 for black and &l for bold.
-# You can also use <> for colours and formats, like `<red>` for red and `<bold>` for bold
+# You can also use <> for colours and formats, like `<dark_red>` for red and `<bold>` for bold
 #
 # In Minecraft 1.16, support was added for 6-digit hexadecimal colors to specify custom colors other than the 16 default color codes.
 # The tag for these colors looks like this: <#hex code> e.g. `<#123456>`
@@ -11,7 +11,7 @@ command /color:
     permission: skript.example.color
     trigger:
         send "&6This message is golden."
-        send "<light red><bold>This message is light red and bold."
+        send "<error_color><bold>This message is light red and bold."
         send "<#FF0000>This message is red."
 
 #

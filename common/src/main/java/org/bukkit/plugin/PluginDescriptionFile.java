@@ -2,6 +2,7 @@ package org.bukkit.plugin;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PluginDescriptionFile {
@@ -17,8 +18,8 @@ public class PluginDescriptionFile {
 		this.version = version;
 		this.main = main;
 		this.website = website;
-		this.depend = depend;
-		this.softDepend = softDepend;
+		this.depend = depend == null ? new ArrayList<>() : depend;
+		this.softDepend = softDepend == null ? new ArrayList<>() : softDepend;
 	}
 
 	public String getName() {

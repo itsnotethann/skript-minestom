@@ -123,7 +123,7 @@ public class SkriptConfig {
 	// everything handled by Variables
 	public static final OptionSection databases = new OptionSection("databases");
 	
-	public static final Option<Boolean> usePlayerUUIDsInVariableNames = new Option<>("use player UUIDs in variable names", false); // TODO change to true later (as well as in the default config)
+	public static final Option<Boolean> usePlayerUUIDsInVariableNames = new Option<>("use player UUIDs in variable names", true);
 	public static final Option<Boolean> enablePlayerVariableFix = new Option<>("player variable fix", true);
 	
 	@SuppressWarnings("null")
@@ -234,7 +234,7 @@ public class SkriptConfig {
 	}
 	
 	// also used for reloading
-	static boolean load() {
+	public static boolean load() {
 		try {
 			final File oldConfigFile = new File(Skript.getInstance().getDataFolder(), "config.cfg");
 			final File configFile = new File(Skript.getInstance().getDataFolder(), "config.sk");

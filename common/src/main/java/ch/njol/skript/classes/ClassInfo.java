@@ -107,7 +107,8 @@ public class ClassInfo<T> implements Debuggable {
 		if (!isValidCodeName(codeName))
 			throw new IllegalArgumentException("Code names for classes must be lowercase and only consist of latin letters and arabic numbers");
 		this.codeName = codeName;
-		name = new Noun("types." + codeName);
+		name = new Noun(codeName);
+		//name = new Noun("types." + codeName);
 	}
 	
 	/**

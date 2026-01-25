@@ -189,8 +189,14 @@ public class ScriptLoader {
 		if (!file.isFile())
 			throw new IllegalArgumentException("Something other than a file was provided.");
 		for (Script script : loadedScripts) {
-			if (file.equals(script.getConfig().getFile()))
-				return script;
+			try {
+				File scriptFile = script.getConfig().getFile();
+				if (scriptFile == null) continue;
+				if (file.getCanonicalFile().equals(script.getConfig().getFile().getCanonicalFile()))
+					return script;
+			} catch (IOException e) {
+				System.err.println("There was an error fetching script at '" + file + "': " + e.getMessage());
+			}
 		}
 		return null;
 	}
@@ -1296,6 +1302,54 @@ public class ScriptLoader {
 	@Deprecated
 	public static Config loadStructure(Config config) {
 		return config;
+	}
+
+	/**
+	 * Gets a script's file from its name, if one exists.
+	 *
+	 * @param script The script name/path
+	 * @return The script file, if one is found
+	 */
+	@Nullable
+	public static File getScriptFromName(String script) {
+		return getScriptFromName(script, Skript.getInstance().getScriptsFolder());
+	}
+
+	/**
+	 * Gets a script's file from its name and directory, if one exists.
+	 *
+	 * @param script The script name/path
+	 * @param directory The scripts (or testing scripts) directory
+	 * @return The script file, if one is found
+	 */
+	@Nullable
+	public static File getScriptFromName(String script, File directory) {
+		if (script.endsWith("/") || script.endsWith("\\")) { // Always allow '/' and '\' regardless of OS
+			script = script.replace('/', File.separatorChar).replace('\\', File.separatorChar);
+		} else if (!StringUtils.endsWithIgnoreCase(script, ".sk")) {
+			int dot = script.lastIndexOf('.');
+			if (dot > 0 && !script.substring(dot + 1).isEmpty())
+				return null;
+			script = script + ".sk";
+		}
+
+		if (script.startsWith(ScriptLoader.DISABLED_SCRIPT_PREFIX))
+			script = script.substring(ScriptLoader.DISABLED_SCRIPT_PREFIX_LENGTH);
+
+		File scriptFile = new File(directory, script);
+		if (!scriptFile.exists()) {
+			scriptFile = new File(scriptFile.getParentFile(), ScriptLoader.DISABLED_SCRIPT_PREFIX + scriptFile.getName());
+			if (!scriptFile.exists()) {
+				return null;
+			}
+		}
+		try {
+			if (scriptFile.getCanonicalPath().startsWith(directory.getCanonicalPath() + File.separator))
+				return scriptFile.getCanonicalFile();
+			return null;
+		} catch (IOException e) {
+			throw Skript.exception(e, "An exception occurred while trying to get the script file from the string '" + script + "'");
+		}
 	}
 
 }

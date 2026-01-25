@@ -191,7 +191,7 @@ public final class Skript extends JavaPlugin implements Listener {
 	private static Runnable registration;
 
 	private static Version minecraftVersion = new Version(666), UNKNOWN_VERSION = new Version(666);
-	private static ServerPlatform serverPlatform = ServerPlatform.BUKKIT_UNKNOWN; // Start with unknown... onLoad changes this
+	private static ServerPlatform serverPlatform = getServerPlatform(); // Start with unknown... onLoad changes this
 
 	@Nullable
 	private static Version version = null;
@@ -213,7 +213,9 @@ public final class Skript extends JavaPlugin implements Listener {
 	private static final PluralizingArgsMessage m_scripts_loaded = new PluralizingArgsMessage("skript.scripts loaded");
 
 	public static ServerPlatform getServerPlatform() {
-		if (classExists("net.glowstone.GlowServer")) {
+		if (classExists("net.minestom.server.MinecraftServer")) {
+			return ServerPlatform.MINESTOM;
+		} else if (classExists("net.glowstone.GlowServer")) {
 			return ServerPlatform.BUKKIT_GLOWSTONE; // Glowstone has timings too, so must check for it first
 		} else if (classExists("co.aikar.timings.Timings")) {
 			return ServerPlatform.BUKKIT_PAPER; // Could be Sponge, but it doesn't work at all at the moment
@@ -405,8 +407,8 @@ public final class Skript extends JavaPlugin implements Listener {
 		new DefaultOperations();
 
 		try {
-			getAddonInstance().loadClasses("ch.njol.skript",
-				"conditions", "effects", "events", "expressions", "entity", "sections", "structures");
+			getAddonInstance().loadClasses("ch.njol.skript", "elements", "conditions",
+				"effects", "events", "expressions", "entity", "literals", "sections", "structures");
 
 			registration.run();
 		} catch (final Exception e) {
@@ -1334,7 +1336,7 @@ public final class Skript extends JavaPlugin implements Listener {
 	private static final Message SKRIPT_PREFIX_MESSAGE = new Message("skript.prefix");
 
 	public static String getSkriptPrefix() {
-		return SKRIPT_PREFIX_MESSAGE.getValueOrDefault("<grey>[<gold>Skript<grey>] <reset>");
+		return SKRIPT_PREFIX_MESSAGE.getValueOrDefault("<base_grey>[<gold>Skript<base_grey>] <reset>");
 	}
 
 	/**

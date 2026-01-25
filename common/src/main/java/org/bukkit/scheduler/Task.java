@@ -4,7 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-public class Task {
+public class Task implements BukkitTask {
 	private static int counter = 0;
 	public boolean async;
 	public Runnable runnable;

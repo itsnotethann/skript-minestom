@@ -64,6 +64,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
@@ -131,6 +132,21 @@ public class Variables {
 				return null;
 			}
 		});
+	}
+
+	private static final Map<Class<?>, Function<Object, Object>> intermediaryMap = new HashMap<>();
+
+	public static boolean searchAndRunFirstVariableSetIntermediary(Object value, Object[] array, int index) {
+		for (Class<?> clazz : intermediaryMap.keySet()) {
+			if (!clazz.isAssignableFrom(value.getClass())) continue;
+			array[index] = intermediaryMap.get(clazz).apply(value);
+			return true;
+		}
+		return false;
+	}
+
+	public static <F> void registerVariableSetIntermediary(Class<F> clazz, Function<? super F, ?> intermediary) {
+		intermediaryMap.put(clazz, v -> intermediary.apply(clazz.cast(v)));
 	}
 
 	/**
@@ -414,6 +430,18 @@ public class Variables {
 			return null;
 
 		return from.copy();
+	}
+
+	/**
+	 * Copies local variables from provider to user, runs action, then copies variables back to provider.
+	 * Removes local variables from user after action is finished.
+	 * @param user The event to copy the variables to and back from.
+	 * @param action The code to run while the variables are copied.
+	 */
+	public static void withLocalVariables(@Nullable Object variables, Event user, Runnable action) {
+		Variables.setLocalVariables(user, variables);
+		action.run();
+		Variables.removeLocals(user);
 	}
 
 	/**

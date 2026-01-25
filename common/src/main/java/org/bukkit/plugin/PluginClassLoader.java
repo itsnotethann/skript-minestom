@@ -1,6 +1,7 @@
 package org.bukkit.plugin;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
@@ -80,9 +81,8 @@ public class PluginClassLoader extends URLClassLoader {
 		if (description != null)
 			return description;
 
-		InputStream stream = getResourceAsStream("plugin.yml");
-
-		if (stream == null) {
+		URL resource = findResource("plugin.yml"); // Only searches this loader’s URLs
+		if (resource == null) {
 			Bukkit.getLogger().warning(String.format(
 				"Found JAR '%s' in the plugins folder without a plugin.yml file.",
 				file.getName()
@@ -90,19 +90,21 @@ public class PluginClassLoader extends URLClassLoader {
 			return null;
 		}
 
-		try {
+		try (InputStream stream = resource.openStream()) {
 			YamlConfiguration configuration = new YamlConfiguration();
 			configuration.loadFromString(new String(stream.readAllBytes(), StandardCharsets.UTF_8));
 
-			return new PluginDescriptionFile(
+			description = new PluginDescriptionFile(
 				(String) configuration.get("name"),
-				(String) configuration.get("version"),
+				String.valueOf(configuration.get("version")),
 				(String) configuration.get("main"),
 				Objects.toString(configuration.get("website"), null),
 				(List<String>) configuration.get("depend"),
 				(List<String>) configuration.get("softdepend")
 			);
-		} catch (IOException | ClassCastException exception) {
+
+			return description;
+		} catch (IOException | ClassCastException | InvalidConfigurationException exception) {
 			exception.printStackTrace();
 			return null;
 		}

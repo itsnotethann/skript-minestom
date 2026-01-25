@@ -26,6 +26,7 @@ import ch.njol.skript.lang.util.ConvertedExpression;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.log.ErrorQuality;
 import ch.njol.skript.registrations.Classes;
+import ch.njol.skript.variables.Variables;
 import ch.njol.util.Checker;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.NonNull;
@@ -37,6 +38,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Spliterators;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -365,7 +367,7 @@ public interface Expression<T> extends SyntaxElement, Debuggable {
 			newDelta = new Object[delta.length];
 			for (int i = 0; i < delta.length; i++) {
 				Object value = delta[i];
-				newDelta[i] = Classes.clone(delta[i]);
+				if (!Variables.searchAndRunFirstVariableSetIntermediary(value, newDelta, i)) newDelta[i] = Classes.clone(delta[i]);
 			}
 		}
 		// Everything else (inventories, actions, etc.) does not need special handling
