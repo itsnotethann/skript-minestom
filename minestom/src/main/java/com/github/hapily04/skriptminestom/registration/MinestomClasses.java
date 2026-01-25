@@ -34,6 +34,7 @@ import net.minestom.server.inventory.AbstractInventory;
 import net.minestom.server.inventory.Inventory;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.minestom.server.scoreboard.Sidebar;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.skriptlang.skript.lang.converter.Converters;
@@ -888,7 +889,7 @@ public class MinestomClasses {
 		Classes.registerClass(new ClassInfo<>(EquipmentSlot.class, "equipmentslot")
 			.user("equipment ?slots?")
 			.name("Equipment Slot")
-			.description("")
+			.description("") // todo
 			.defaultExpression(new EventValueExpression<>(EquipmentSlot.class))
 			.parser(new Parser<>() {
 				@Nullable
@@ -916,6 +917,27 @@ public class MinestomClasses {
 				}
 			})
 			.serializer(new EnumSerializer<>(EquipmentSlot.class)));
+		Classes.registerClass(new ClassInfo<>(Sidebar.class, "scoreboard")
+			.user("score ?boards?")
+			.name("Scoreboard")
+			.description("The scoreboard on the side of a player's screen")
+			.defaultExpression(new EventValueExpression<>(Sidebar.class))
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull Sidebar o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull Sidebar o) {
+					return "scoreboard titled \"" + PlainTextComponentSerializer.plainText().serialize(o.getTitle()) + "\"";
+				}
+			}));
 
 		/*
 		 * Converters
