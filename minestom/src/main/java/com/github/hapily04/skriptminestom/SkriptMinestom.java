@@ -57,7 +57,7 @@ public class SkriptMinestom {
 	private static LuckPerms luckPerms;
 	private static SparkMinestom spark;
 
-	static void main(String[] args) {
+	static void main() {
 		properties = PropertyUtils.loadServerProperties();
 		initMinestomProperties();
 		MinecraftServer server = MinecraftServer.init(PropertyUtils.getAuth(properties));

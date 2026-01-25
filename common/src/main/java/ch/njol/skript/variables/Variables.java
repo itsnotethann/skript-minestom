@@ -134,7 +134,7 @@ public class Variables {
 		});
 	}
 
-	private static final Map<Class<?>, Function<Object, Object>> intermediaryMap = new HashMap<>();
+	private static final Map<Class<?>, Function<Object, Object>> intermediaryMap = new ConcurrentHashMap<>();
 
 	public static boolean searchAndRunFirstVariableSetIntermediary(Object value, Object[] array, int index) {
 		for (Class<?> clazz : intermediaryMap.keySet()) {
@@ -147,6 +147,23 @@ public class Variables {
 
 	public static <F> void registerVariableSetIntermediary(Class<F> clazz, Function<? super F, ?> intermediary) {
 		intermediaryMap.put(clazz, v -> intermediary.apply(clazz.cast(v)));
+	}
+
+	private static final Map<Class<?>, Function<Object, Object>> variableConverterMap = new ConcurrentHashMap<>();
+
+	public static @org.jetbrains.annotations.Nullable Object findAndRunConverter(String key, Event event, @Nullable Object object, boolean local) {
+		if (object == null) return null;
+		for (Class<?> clazz : variableConverterMap.keySet()) {
+			if (!clazz.isAssignableFrom(object.getClass())) continue;
+			Object converted = variableConverterMap.get(clazz).apply(object);
+			Variables.setVariable(key, converted, event, local);
+			return converted;
+		}
+		return object;
+	}
+
+	public static <F> void registerVariableConverter(Class<F> clazz, Function<? super F, ?> intermediary) {
+		variableConverterMap.put(clazz, v -> intermediary.apply(clazz.cast(v)));
 	}
 
 	/**

@@ -774,7 +774,8 @@ public class MinestomClasses {
 				@Override
 				public @NotNull String toVariableNameString(@NotNull Item o) {
 					ItemStack item = o.getItem();
-					return item.amount() + " " + item.material().name().toLowerCase(Locale.ENGLISH).replace('_', ' ');
+					return item.amount() + " " + item.material().name().toLowerCase(Locale.ENGLISH).replace("minecraft:", "")
+													 .replace('_', ' ');
 				}
 			})
 			.serializer(new Serializer<>() {
@@ -968,9 +969,17 @@ public class MinestomClasses {
 		Converters.registerConverter(Slot.class, Item.class, from -> new Item(from.getItem()));
 
 		/*
-			Variable Intermediaries
+		 *	Variable Intermediaries
 		 */
 		Variables.registerVariableSetIntermediary(Slot.class, Item::copy);
+		/*
+		 *	Variable Converters
+		 */
+		Variables.registerVariableConverter(Player.class, player -> {
+			if (SkriptConfig.enablePlayerVariableFix.value() && player.isRemoved() && player.isOnline())
+				return MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(player.getUuid());
+			return player;
+		});
 	}
 
 	private static void inventoryChange(Object[] delta, Changer.ChangeMode mode, AbstractInventory inventory) {

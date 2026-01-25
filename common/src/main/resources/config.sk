@@ -332,7 +332,7 @@ databases:
 
 		type: CSV
 
-		pattern: .*
+		pattern: (?!-).*
 
 		file: ./run/Skript/variables.csv
 
