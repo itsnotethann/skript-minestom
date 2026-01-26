@@ -10,12 +10,15 @@ import ch.njol.skript.util.Slot;
 import ch.njol.util.Kleenean;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EquipmentSlot;
+import net.minestom.server.entity.Player;
 import net.minestom.server.inventory.EquipmentHandler;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static net.minestom.server.utils.inventory.PlayerInventoryUtils.OFFHAND_SLOT;
 
 public class ExprEquipmentSlot extends PropertyExpression<EquipmentHandler, Slot> {
 
@@ -48,6 +51,7 @@ public class ExprEquipmentSlot extends PropertyExpression<EquipmentHandler, Slot
 		EquipmentSlot[] equipmentSlots = slot.getArray(event);
 		for (EquipmentHandler handler : source) {
 			for (EquipmentSlot slot : equipmentSlots) {
+				if (handler instanceof Player player && getSlotId(slot, player.getHeldSlot()) < 0) continue;
 				slots.add(new Slot(handler.getEquipment(slot), handler, slot));
 			}
 		}
@@ -62,6 +66,15 @@ public class ExprEquipmentSlot extends PropertyExpression<EquipmentHandler, Slot
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
 		return slot.toString(event, debug) + " slot of " + getExpr().toString(event, debug);
+	}
+
+	// From PlayerInventory class
+	private int getSlotId(EquipmentSlot slot, byte heldSlot) {
+		return switch (slot) {
+			case MAIN_HAND -> heldSlot;
+			case OFF_HAND -> OFFHAND_SLOT;
+			default -> slot.armorSlot();
+		};
 	}
 
 }
