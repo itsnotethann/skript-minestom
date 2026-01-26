@@ -88,8 +88,8 @@ public class EffSecCreateInstance extends EffectSection {
 
 			String loader = container.getOptional("loader", String.class, false);
 			if (loader != null) {
-				if (this.worldFile == null || !this.worldFile.exists()) {
-					Skript.error("If a loader provided, a valid storage location must also be provided (file is missing or provided one doesn't exist).");
+				if (this.worldFile == null) {
+					Skript.error("If a loader is provided, a valid storage location must also be provided (file is missing).");
 					return false;
 				}
 				if (!VALID_LOADER_ENTRIES.contains(loader)) {
