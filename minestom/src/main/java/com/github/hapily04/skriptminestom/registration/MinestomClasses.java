@@ -473,44 +473,12 @@ public class MinestomClasses {
 			.user("instance ?containers?")
 			.name("Instance Container")
 			.description("A world consisting of blocks and entities.")
-			.defaultExpression(new EventValueExpression<>(InstanceContainer.class))
-			.parser(new Parser<>() {
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return false;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull InstanceContainer o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull InstanceContainer o) {
-					return "instance container uuid: " + o.getUuid();
-				}
-			}));
+			.defaultExpression(new EventValueExpression<>(InstanceContainer.class)));
 		Classes.registerClass(new ClassInfo<>(SharedInstance.class, "sharedinstance")
 			.user("shared ?instances?")
 			.name("Shared Instance")
 			.description("A world sharing the blocks from its underlying Instance Container. Entities are not shared.")
-			.defaultExpression(new EventValueExpression<>(SharedInstance.class))
-			.parser(new Parser<>() {
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return false;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull SharedInstance o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull SharedInstance o) {
-					return "shared instance uuid: " + o.getUuid();
-				}
-			}));
+			.defaultExpression(new EventValueExpression<>(SharedInstance.class)));
 		Classes.registerClass(new ClassInfo<>(Block.class, "block")
 			.user("blocks?")
 			.name("Block")
