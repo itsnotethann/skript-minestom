@@ -33,6 +33,7 @@ public class ExprItemWithEnchant extends SimpleExpression<Item> {
 	protected @Nullable Item[] get(Event event) {
 		Item item = this.item.getSingle(event);
 		if (item == null) return new Item[0];
+		item = item.copy();
 		Enchantment[] enchants = this.enchants.getArray(event);
 		Enchantment.add(item, false, enchants);
 		return new Item[]{item};

@@ -32,6 +32,7 @@ public class ExprItemNamed extends SimpleExpression<Item> {
 	protected @Nullable Item[] get(Event event) {
 		Item item = this.item.getSingle(event);
 		if (item == null) return new Item[0];
+		item = item.copy();
 		Component name = this.name.getSingle(event);
 		if (name != null) item.modify(i -> i.withCustomName(name));
 		return new Item[]{item};

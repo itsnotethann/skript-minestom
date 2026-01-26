@@ -32,6 +32,7 @@ public class ExprItemWithLore extends SimpleExpression<Item> {
 	protected @Nullable Item[] get(Event event) {
 		Item item = itemExpr.getSingle(event);
 		if (item == null) return new Item[0];
+		item = item.copy();
 		Component[] lore = loreExpr.getArray(event);
 		item.modify(i -> i.withLore(lore));
 		return new Item[]{item};

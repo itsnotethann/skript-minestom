@@ -39,6 +39,7 @@ public class ExprItemWithNBT extends SimpleExpression<Item> {
 		String nbt = this.nbt.getSingle(event);
 		Item item = this.item.getSingle(event);
 		if (nbt == null || item == null) return new Item[0];
+		item = item.copy();
 		try {
 			CompoundBinaryTag incomingCompound = TagStringIO.tagStringIO().asCompound(nbt);
 			CompoundBinaryTag itemCompound = item.getItem().toItemNBT();
