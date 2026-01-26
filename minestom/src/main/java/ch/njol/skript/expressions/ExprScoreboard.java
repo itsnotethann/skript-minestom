@@ -15,21 +15,22 @@ import org.jspecify.annotations.Nullable;
 public class ExprScoreboard extends SimpleExpression<Sidebar> {
 
 	static {
-		Skript.registerExpression(ExprScoreboard.class, Sidebar.class, ExpressionType.COMBINED, "[new] (score[ ]board|side[ ]bar) [(with [the] title|titled) %-string/component%]");
+		Skript.registerExpression(ExprScoreboard.class, Sidebar.class, ExpressionType.COMBINED, "[new] (score[ ]board|side[ ]bar) [(with [the] title|titled) %-component%]");
 	}
 
-	private Expression<Object> title;
+	private Expression<Component> title;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-		title = (Expression<Object>) expressions[0];
+		title = (Expression<Component>) expressions[0];
 		return true;
 	}
 
 	@Override
 	protected @Nullable Sidebar[] get(Event event) {
-		Component title = this.title != null ? ComponentUtils.getComponent(this.title.getSingle(event)) : Component.empty();
+		Component title = this.title != null ? this.title.getSingle(event) : Component.empty();
+		assert title != null;
 		return new Sidebar[]{new Sidebar(title)};
 	}
 

@@ -71,6 +71,7 @@ public class NBTUtils {
 		return TagStringIO.tagStringIO().asString(compound);
 	}
 
+	// todo this doesn't just check item components, it checks all data components
 	private static boolean isItemComponentKey(String key) {
 		return DataComponent.fromKey(key.startsWith("minecraft:") ? key : ("minecraft:" + key)) != null;
 	}

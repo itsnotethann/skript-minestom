@@ -5,18 +5,19 @@ import ch.njol.skript.classes.*;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.registrations.Classes;
+import ch.njol.skript.util.Enchantment;
 import ch.njol.skript.util.Item;
 import ch.njol.skript.util.Slot;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.coll.CollectionUtils;
 import ch.njol.yggdrasil.Fields;
 import com.github.hapily04.skriptminestom.util.NumberUtils;
-import kotlin._Assertions;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.nbt.TagStringIO;
 import net.kyori.adventure.resource.ResourcePackStatus;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandSender;
@@ -31,38 +32,55 @@ import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.SharedInstance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.inventory.AbstractInventory;
+import net.minestom.server.inventory.EquipmentHandler;
 import net.minestom.server.inventory.Inventory;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.minestom.server.registry.RegistryKey;
 import net.minestom.server.scoreboard.Sidebar;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.skriptlang.skript.lang.comparator.Comparators;
 import org.skriptlang.skript.lang.converter.Converters;
 
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.StreamCorruptedException;
+import java.util.Arrays;
 import java.util.Locale;
 
 public class MinestomClasses {
 
 	// TODO Use lang files and enumclassinfo
 
-	private static final Changer<Item> slotChanger = new Changer<>() {
+	public static final Changer<Item> ITEM_CHANGER = new Changer<>() {
 		@Override
 		public @Nullable Class<?>[] acceptChange(ChangeMode mode) {
-			if (mode == Changer.ChangeMode.DELETE || mode == Changer.ChangeMode.SET) return CollectionUtils.array(Item.class);
-			return null;
+			return switch (mode) {
+				case DELETE, SET -> CollectionUtils.array(Item.class);
+				case REMOVE, ADD -> CollectionUtils.array(Enchantment[].class);
+				default -> null;
+			};
 		}
 
 		@Override
 		public void change(Item[] what, @org.jetbrains.annotations.Nullable @Nullable Object[] delta, ChangeMode mode) {
 			for (Item item : what) {
-				if (mode == ChangeMode.DELETE) item.modify(_ -> ItemStack.AIR, true);
-				else {
-					Item changeItem = (Item) delta[0];
-					if (changeItem == null) continue;
-					item.modify(_ -> changeItem.getItem(), true);
+				switch (mode) {
+					case DELETE -> item.modify(_ -> ItemStack.AIR, true);
+					case SET -> {
+						Item changeItem = (Item) delta[0];
+						if (changeItem == null) continue;
+						item.modify(_ -> changeItem.getItem(), true);
+					}
+					case ADD -> {
+						Enchantment[] enchantments = Arrays.copyOf(delta, delta.length, Enchantment[].class);
+						Enchantment.add(item, true, enchantments);
+					}
+					case REMOVE -> {
+						Enchantment[] enchantments = Arrays.copyOf(delta, delta.length, Enchantment[].class);
+						Enchantment.remove(item, enchantments);
+					}
 				}
 			}
 		}
@@ -220,6 +238,27 @@ public class MinestomClasses {
 				@Override
 				public @NotNull String toVariableNameString(@NotNull EntityCreature o) {
 					return o.getEntityType().name().toLowerCase(Locale.ENGLISH);
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(EquipmentHandler.class, "equipmenthandler")
+			.user("equipment ?handlers?")
+			.name("Equipment Handler")
+			.description("An entity that is capable of bearing armor and off/main hand tools.")
+			.defaultExpression(new EventValueExpression<>(EquipmentHandler.class))
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull EquipmentHandler o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull EquipmentHandler o) {
+					return "equipment handler"; // don't think we can make this better
 				}
 			}));
 		Classes.registerClass(new ClassInfo<>(Pos.class, "position")
@@ -775,8 +814,7 @@ public class MinestomClasses {
 				@Override
 				public @NotNull String toVariableNameString(@NotNull Item o) {
 					ItemStack item = o.getItem();
-					return item.amount() + " " + item.material().name().toLowerCase(Locale.ENGLISH).replace("minecraft:", "")
-													 .replace('_', ' ');
+					return item.amount() + " " + keyToString(item.material().key());
 				}
 			})
 			.serializer(new Serializer<>() {
@@ -817,14 +855,14 @@ public class MinestomClasses {
 					return false;
 				}
 			})
-			.changer(slotChanger));
+			.changer(ITEM_CHANGER));
 		Classes.registerClass(new ClassInfo<>(Slot.class, "slot")
 			.user("slots?")
 			.name("Slot")
 			.description("Represents an item in a slot in an inventory.")
 			.defaultExpression(new EventValueExpression<>(Slot.class))
 			.serializeAs(Item.class)
-			.changer(slotChanger));
+			.changer(ITEM_CHANGER));
 		Classes.registerClass(new ClassInfo<>(EntityType.class, "entitytype")
 			.user("entity ?types?")
 			.name("Entity Type")
@@ -894,7 +932,7 @@ public class MinestomClasses {
 			.parser(new Parser<>() {
 				@Nullable
 				public EquipmentSlot parse(@NotNull String s, @NotNull ParseContext context) {
-					s = s.toUpperCase(Locale.ENGLISH);
+					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
 					for (EquipmentSlot slo : EquipmentSlot.values()) {
 						if (slo.name().equals(s)) return slo;
 					}
@@ -913,7 +951,7 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull EquipmentSlot o) {
-					return o.name().toLowerCase(Locale.ENGLISH);
+					return o.name().toLowerCase(Locale.ENGLISH).replace('_', ' ') + " slot";
 				}
 			})
 			.serializer(new EnumSerializer<>(EquipmentSlot.class)));
@@ -938,10 +976,114 @@ public class MinestomClasses {
 					return "scoreboard titled \"" + PlainTextComponentSerializer.plainText().serialize(o.getTitle()) + "\"";
 				}
 			}));
+		Classes.registerClass(new ClassInfo<>(Material.class, "material")
+			.user("materials?")
+			.name("Material")
+			.description("A material. Only used for ExprName, see type \"Item\"")
+			.defaultExpression(new EventValueExpression<>(Material.class))
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull Material o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull Material o) {
+					return keyToString(o.key());
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(Enchantment.class, "enchantment")
+			.user("enchantments?")
+			.name("Enchantment")
+			.description("An enchantment for an item (sharpness 1, knockback, knockback 1, etc.)")
+			.defaultExpression(new EventValueExpression<>(Enchantment.class))
+			.parser(new Parser<>() {
+				@Nullable
+				public Enchantment parse(@NotNull String s, @NotNull ParseContext context) {
+					s = s.toLowerCase(Locale.ENGLISH);
+					String[] parts = s.split(" ");;
+					int level = -1;
+					int hasLevel = 0;
+					if (parts.length >= 2) {
+						String levelPart = parts[parts.length-1];
+						if (NumberUtils.isOnlyDigits(levelPart)) {
+							if (!NumberUtils.isInteger(levelPart)) return null;
+							level = Integer.parseInt(levelPart);
+							hasLevel = 1;
+						}
+					}
+					String[] choppedParts = new String[parts.length-(hasLevel)];
+					System.arraycopy(parts, 0, choppedParts, 0, choppedParts.length);
+					String nameSpace = String.join("_", choppedParts);
+					if (!nameSpace.contains(":")) nameSpace = "minecraft:" + nameSpace;
+					else if (!nameSpace.startsWith("minecraft:")) return null;
+					if (!Key.parseable(nameSpace)) return null;
+					RegistryKey<net.minestom.server.item.enchant.Enchantment> enchant = MinecraftServer.getEnchantmentRegistry().getKey(Key.key(nameSpace));
+					if (enchant == null) return null;
+					return new Enchantment(enchant, level);
+				}
+
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return true;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull Enchantment o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull Enchantment o) {
+					int level = o.level();
+					return keyToString(o.enchantment().key()) + (level > 0 ? " " + level : "");
+				}
+			})
+			.serializer(new Serializer<>() {
+				@Override
+				public @NotNull Fields serialize(@NotNull Enchantment o) {
+					Fields fields = new Fields();
+					fields.putObject("id", o.enchantment().key().asString());
+					fields.putPrimitive("level", o.level());
+					return fields;
+				}
+
+				@Override
+				public void deserialize(@NotNull Enchantment o, @NotNull Fields f) {
+					assert false;
+				}
+
+				@Override
+				protected @NotNull Enchantment deserialize(@NotNull Fields f) throws StreamCorruptedException {
+					String id = f.getObject("id", String.class);
+					assert id != null;
+					RegistryKey<net.minestom.server.item.enchant.Enchantment> enchantment = MinecraftServer.getEnchantmentRegistry().getKey(Key.key(id));
+					if (enchantment == null) throw new StreamCorruptedException("Enchantment with id '" + id + "' was not found.");
+					int level = f.getPrimitive("level", int.class);
+					return new Enchantment(enchantment, level);
+				}
+
+				@Override
+				public boolean mustSyncDeserialization() {
+					return false;
+				}
+
+				@Override
+				protected boolean canBeInstantiated() {
+					return false;
+				}
+			}));
 
 		/*
 		 * Converters
 		 */
+		Converters.registerConverter(String.class, Component.class, Component::text);
+		Converters.registerConverter(Component.class, String.class, c -> LegacyComponentSerializer.legacyAmpersand().serialize(c));
 		Converters.registerConverter(CommandSender.class, Player.class, from -> {
 			if (from instanceof Player player) return player;
 			return null;
@@ -951,6 +1093,10 @@ public class MinestomClasses {
 			return null;
 		});
 		Converters.registerConverter(Entity.class, LivingEntity.class, from -> {
+			if (from instanceof LivingEntity livingEntity) return livingEntity;
+			return null;
+		});
+		Converters.registerConverter(EquipmentHandler.class, LivingEntity.class, from -> {
 			if (from instanceof LivingEntity livingEntity) return livingEntity;
 			return null;
 		});
@@ -989,6 +1135,16 @@ public class MinestomClasses {
 			return null;
 		});
 		Converters.registerConverter(Slot.class, Item.class, from -> new Item(from.getItem()));
+
+		/*
+		 *	Comparators
+		 */
+		Comparators.registerComparator(Component.class, Component.class, (o1, o2) -> {
+			LegacyComponentSerializer legacy = LegacyComponentSerializer.legacyAmpersand();
+			String s1 = legacy.serialize(o1);
+			String s2 = legacy.serialize(o2);
+			return Comparators.compare(s1, s2);
+		});
 
 		/*
 		 *	Variable Intermediaries
@@ -1038,6 +1194,10 @@ public class MinestomClasses {
 				}
 			}
 		}
+	}
+
+	private static String keyToString(Key key) {
+		return key.asString().toLowerCase(Locale.ENGLISH).replace("minecraft:", "").replace('_', ' ');
 	}
 
 }

@@ -20,7 +20,6 @@ import java.util.List;
 public class ExprScoreboardLine extends SimpleExpression<Component> {
 
 	static {
-		System.out.println("registering");
 		Skript.registerExpression(ExprScoreboardLine.class, Component.class, ExpressionType.PROPERTY,
 			"line[s] %integers% of %scoreboards%", "%scoreboards%'[s] line[s] %integers%");
 	}
@@ -61,7 +60,7 @@ public class ExprScoreboardLine extends SimpleExpression<Component> {
 	public Class<?> @Nullable [] acceptChange(Changer.ChangeMode mode) {
 		return switch (mode) {
 			case /*RESET,*/ DELETE -> CollectionUtils.array(Component.class);
-			case SET -> CollectionUtils.array(Component[].class, String[].class);
+			case SET -> CollectionUtils.array(Component[].class);
 			default -> null;
 		};
 	}

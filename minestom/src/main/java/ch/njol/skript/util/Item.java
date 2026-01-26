@@ -1,6 +1,9 @@
 package ch.njol.skript.util;
 
+import net.minestom.server.MinecraftServer;
+import net.minestom.server.component.DataComponents;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.item.enchant.Enchantment;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;

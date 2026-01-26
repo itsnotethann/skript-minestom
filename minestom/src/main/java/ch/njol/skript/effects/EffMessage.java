@@ -126,31 +126,6 @@ public class EffMessage extends Effect {
 		return object instanceof String ? (String) object : Classes.toString(object);
 	}
 
-	/*static {
-		Skript.registerEffect(EffMessage.class, "(message|send [message[s]]) %strings% [to %commandsenders%]");
-	}
-
-	private Expression<String> messages;
-	private Expression<CommandSender> recipients;
-
-	@Override
-	protected void execute(Event event) {
-		for (String s : messages.getArray(event)) {
-			Component component = Component.text(s);
-			for (CommandSender sender : recipients.getArray(event)) {
-				sender.sendMessage(component);
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
-		messages = (Expression<String>) expressions[0];
-		recipients = (Expression<CommandSender>) expressions[1];
-		return true;
-	}*/
-
 	@Override
 	public String toString(@Nullable Event e, boolean debug) {
 		return "send " + messageExpr.toString(e, debug) + " to " + recipients.toString(e, debug);

@@ -11,29 +11,29 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
-public class ExprItemWithLore extends SimpleExpression<Item> {
+public class ExprItemNamed extends SimpleExpression<Item> {
 
 	static {
-		Skript.registerExpression(ExprItemWithLore.class, Item.class, ExpressionType.COMBINED, "%item% with lore %components%");
+		Skript.registerExpression(ExprItemNamed.class, Item.class, ExpressionType.COMBINED, "%item% (with [the] name|named) %component%");
 	}
 
-	private Expression<Item> itemExpr;
-	private Expression<Component> loreExpr;
+	private Expression<Item> item;
+	private Expression<Component> name;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-		itemExpr = (Expression<Item>) expressions[0];
-		loreExpr = (Expression<Component>) expressions[1];
+		item = (Expression<Item>) expressions[0];
+		name = (Expression<Component>) expressions[1];
 		return true;
 	}
 
 	@Override
 	protected @Nullable Item[] get(Event event) {
-		Item item = itemExpr.getSingle(event);
+		Item item = this.item.getSingle(event);
 		if (item == null) return new Item[0];
-		Component[] lore = loreExpr.getArray(event);
-		item.modify(i -> i.withLore(lore));
+		Component name = this.name.getSingle(event);
+		if (name != null) item.modify(i -> i.withCustomName(name));
 		return new Item[]{item};
 	}
 
@@ -49,7 +49,7 @@ public class ExprItemWithLore extends SimpleExpression<Item> {
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return itemExpr.toString(event, debug) + " with lore " + loreExpr.toString(event, debug);
+		return item.toString(event, debug) + " named " + name.toString(event, debug);
 	}
 
 }

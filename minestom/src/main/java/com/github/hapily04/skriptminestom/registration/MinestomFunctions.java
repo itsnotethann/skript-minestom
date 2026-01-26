@@ -59,9 +59,6 @@ public class MinestomFunctions {
 				return new Vec[]{new Vec(x.doubleValue(), y.doubleValue(), z.doubleValue())};
 			}
 		});
-		// todo make a caching version of mm function where it'll only generate the component if it's not cached from the input
-		// todo make an effect to clear the minimessage cache
-		// todo make an expression to get the amount of cached components from minimessage
 		Functions.registerFunction(new JavaFunction<>("mm", new Parameter[]{
 			new Parameter<>("input", DefaultClasses.STRING, true, null),
 			new Parameter<>("resolvers", Classes.getExactClassInfo(TagResolver.class), false, new SimpleLiteral<>(new TagResolver[0], TagResolver.class, true))

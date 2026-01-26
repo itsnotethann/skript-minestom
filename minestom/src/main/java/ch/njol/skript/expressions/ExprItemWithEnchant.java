@@ -5,35 +5,36 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.util.Enchantment;
 import ch.njol.skript.util.Item;
 import ch.njol.util.Kleenean;
-import net.kyori.adventure.text.Component;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
-public class ExprItemWithLore extends SimpleExpression<Item> {
+public class ExprItemWithEnchant extends SimpleExpression<Item> {
 
 	static {
-		Skript.registerExpression(ExprItemWithLore.class, Item.class, ExpressionType.COMBINED, "%item% with lore %components%");
+		Skript.registerExpression(ExprItemWithEnchant.class, Item.class, ExpressionType.COMBINED,
+			"%item% (of|with) [enchant[(s|ment[s])]] %enchantments%");
 	}
 
-	private Expression<Item> itemExpr;
-	private Expression<Component> loreExpr;
+	private Expression<Item> item;
+	private Expression<Enchantment> enchants;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-		itemExpr = (Expression<Item>) expressions[0];
-		loreExpr = (Expression<Component>) expressions[1];
+		item = (Expression<Item>) expressions[0];
+		enchants = (Expression<Enchantment>) expressions[1];
 		return true;
 	}
 
 	@Override
 	protected @Nullable Item[] get(Event event) {
-		Item item = itemExpr.getSingle(event);
+		Item item = this.item.getSingle(event);
 		if (item == null) return new Item[0];
-		Component[] lore = loreExpr.getArray(event);
-		item.modify(i -> i.withLore(lore));
+		Enchantment[] enchants = this.enchants.getArray(event);
+		Enchantment.add(item, false, enchants);
 		return new Item[]{item};
 	}
 
@@ -49,7 +50,7 @@ public class ExprItemWithLore extends SimpleExpression<Item> {
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return itemExpr.toString(event, debug) + " with lore " + loreExpr.toString(event, debug);
+		return item.toString(event, debug) + " with enchants " + enchants.toString(event, debug);
 	}
 
 }
