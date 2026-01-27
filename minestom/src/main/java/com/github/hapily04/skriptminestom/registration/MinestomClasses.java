@@ -47,7 +47,9 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.StreamCorruptedException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class MinestomClasses {
 
@@ -337,7 +339,7 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull Vec o) {
-					return "vector: x" + o.x() + " y: " + o.y() + " z: " + o.z();
+					return "vector: x: " + o.x() + " y: " + o.y() + " z: " + o.z();
 				}
 			})
 			.serializer(new Serializer<>() {
@@ -489,9 +491,11 @@ public class MinestomClasses {
 				public Block parse(@NotNull String s, @NotNull ParseContext context) {
 					s = s.toLowerCase(Locale.ENGLISH);
 					int endChar;
+					int initialBracketPos = -1;
 					if (s.contains("[")) {
 						if (!s.endsWith("]")) return null;
-						endChar = s.indexOf('[')-1;
+						initialBracketPos = s.indexOf('[');
+						endChar = initialBracketPos-1;
 					}
 					else endChar = s.length()-1;
 					String nameSpace = s.substring(0, endChar+1);
@@ -499,7 +503,36 @@ public class MinestomClasses {
 					if (!nameSpace.contains(":")) nameSpace = "minecraft:" + nameSpace;
 					else if (!nameSpace.startsWith("minecraft:")) return null; // only minecraft: is supported since you can't add mod blocks anyway atm
 					if (!Key.parseable(nameSpace)) return null;
-					return Block.fromState(nameSpace);
+					Block block = Block.fromState(nameSpace);
+					if (block == null) return null;
+					if (initialBracketPos == -1) return block;
+					String blockData = s.substring(initialBracketPos);
+					blockData = blockData.replace("[", "").replace("]", "");
+					if (blockData.isEmpty()) return block; // support stone[] (blank properties)
+					int commaAmount = getCharacterAmount(blockData, ',');
+					String[] properties = blockData.split(",");
+					if (properties.length != commaAmount+1) return null;
+					Map<String, String> propertyMap = new HashMap<>();
+					Map<String, String> defaultPropertyMap = block.properties();
+					for (String property : properties) {
+						if (!parseProperty(property, propertyMap, defaultPropertyMap)) return null; // property did not parse
+					}
+					return block.withProperties(propertyMap);
+				}
+
+				private boolean parseProperty(String property, Map<String, String> into, Map<String, String> defaultProperties) {
+					int equalSignAmount = getCharacterAmount(property, '=');
+					if (equalSignAmount != 1) return false;
+					String[] parts = property.split("=");
+					String key = parts[0];
+					if (!defaultProperties.containsKey(key)) return false; // invalid property for this block
+					if (into.containsKey(key)) return false; // don't allow stone[bob=true,bob=false] (duplicate property keys)
+					into.put(key, parts[1]);
+					return true;
+				}
+
+				private int getCharacterAmount(String blockData, char character) {
+					return Math.toIntExact(blockData.chars().filter(c -> c == character).count());
 				}
 
 				@Override
