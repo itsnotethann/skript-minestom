@@ -41,6 +41,7 @@ public class RedirectingLogHandler extends LogHandler {
 		for (CommandSender recipient : recipients) {
 			if (recipient == ignore)
 				continue;
+			//throw new IllegalArgumentException();
 			recipient.sendMessage(component);
 		}
 		if (entry.level == Level.SEVERE) {

@@ -73,20 +73,22 @@ public class ReloadCommand extends Command {
 				boolean directory = scriptFile.isDirectory();
 				reloadingMessage(sender, directory ? "scripts in " + originalProvidedLocation : originalProvidedLocation);
 				try (TimingLogHandler timingLogHandler = new TimingLogHandler().start()) {
-					if (directory) {
-						ScriptLoader.unloadScripts(ScriptLoader.getScripts(scriptFile));
-						ScriptLoader.loadScripts(scriptFile, OpenCloseable.combine(new RedirectingLogHandler(sender, null), timingLogHandler))
+					try (RedirectingLogHandler redirectingLogHandler = new RedirectingLogHandler(sender, null).start()) {
+						if (directory) {
+							ScriptLoader.unloadScripts(ScriptLoader.getScripts(scriptFile));
+							ScriptLoader.loadScripts(scriptFile, OpenCloseable.combine(redirectingLogHandler, timingLogHandler))
+										.whenComplete((scriptInfo, throwable) -> {
+											reloadedMessage(sender, timingLogHandler, "scripts in " + originalProvidedLocation);
+										});
+							return;
+						}
+						Script script = ScriptLoader.getScript(scriptFile);
+						if (script != null) ScriptLoader.unloadScript(script);
+						ScriptLoader.loadScripts(scriptFile, OpenCloseable.combine(redirectingLogHandler, timingLogHandler))
 									.whenComplete((scriptInfo, throwable) -> {
-										reloadedMessage(sender, timingLogHandler, "scripts in " + originalProvidedLocation);
+										reloadedMessage(sender, timingLogHandler, originalProvidedLocation);
 									});
-						return;
 					}
-					Script script = ScriptLoader.getScript(scriptFile);
-					if (script != null) ScriptLoader.unloadScript(script);
-					ScriptLoader.loadScripts(scriptFile, OpenCloseable.combine(new RedirectingLogHandler(sender, null), timingLogHandler))
-								.whenComplete((scriptInfo, throwable) -> {
-									reloadedMessage(sender, timingLogHandler, originalProvidedLocation);
-								});
 				}
 			}
 		}, folderFileArg);
