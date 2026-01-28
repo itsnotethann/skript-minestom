@@ -4,10 +4,9 @@ import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.classes.*;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
+import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.registrations.Classes;
-import ch.njol.skript.util.Enchantment;
-import ch.njol.skript.util.Item;
-import ch.njol.skript.util.Slot;
+import ch.njol.skript.util.*;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.coll.CollectionUtils;
 import ch.njol.yggdrasil.Fields;
@@ -40,6 +39,8 @@ import net.minestom.server.registry.RegistryKey;
 import net.minestom.server.scoreboard.Sidebar;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.skriptlang.skript.lang.arithmetic.Arithmetics;
+import org.skriptlang.skript.lang.arithmetic.Operator;
 import org.skriptlang.skript.lang.comparator.Comparators;
 import org.skriptlang.skript.lang.converter.Converters;
 
@@ -1079,6 +1080,45 @@ public class MinestomClasses {
 					return false;
 				}
 			}));
+		Classes.registerClass(new ClassInfo<>(Direction.class, "direction")
+			.user("directions?")
+			.name("Direction")
+			.description("A direction, e.g. north, east, behind, 5 south east, 1.3 meters to the right, etc.",
+				"<a href='#location'>Locations</a> and some <a href='#block'>blocks</a> also have a direction, but without a length.",
+				"Please note that directions have changed extensively in the betas and might not work perfectly. They can also not be used as command arguments.")
+			.usage("see <a href='./expressions.html#ExprDirection'>direction (expression)</a>")
+			.examples("set the block below the victim to a chest",
+				"loop blocks from the block infront of the player to the block 10 below the player:",
+				"	set the block behind the loop-block to water")
+			.since("2.0")
+			.defaultExpression(new SimpleLiteral<>(new Direction(new double[] {0, 0, 0}), true))
+			.parser(new Parser<>() {
+				@Override
+				@Nullable
+				public Direction parse(String s, final ParseContext context) {
+					s = s.toUpperCase(Locale.ENGLISH);
+					for (BlockFace blockFace : BlockFace.values()) {
+						if (blockFace.name().equals(s)) return new Direction(blockFace.toDirection());
+					}
+					return null;
+				}
+
+				@Override
+				public boolean canParse(final ParseContext context) {
+					return true;
+				}
+
+				@Override
+				public String toString(final Direction o, final int flags) {
+					return o.toString();
+				}
+
+				@Override
+				public String toVariableNameString(final Direction o) {
+					return o.toString();
+				}
+			})
+			.serializer(new YggdrasilSerializer<>()));
 
 		/*
 		 * Converters
@@ -1136,6 +1176,8 @@ public class MinestomClasses {
 			return null;
 		});
 		Converters.registerConverter(Slot.class, Item.class, from -> new Item(from.getItem()));
+		Converters.registerConverter(Vec.class, Direction.class, Direction::new);
+		Converters.registerConverter(Direction.class, Vec.class, Direction::getDirection);
 
 		/*
 		 *	Comparators
@@ -1146,6 +1188,14 @@ public class MinestomClasses {
 			String s2 = legacy.serialize(o2);
 			return Comparators.compare(s1, s2);
 		});
+
+		/*
+		 *	Arithmetic
+		 */
+		Arithmetics.registerOperation(Operator.ADDITION, Vec.class, Vec.class, Vec::add);
+		Arithmetics.registerOperation(Operator.SUBTRACTION, Vec.class, Vec.class, Vec::sub);
+		Arithmetics.registerOperation(Operator.MULTIPLICATION, Vec.class, Vec.class, Vec::mul);
+		Arithmetics.registerOperation(Operator.DIVISION, Vec.class, Vec.class, Vec::div);
 
 		/*
 		 *	Variable Intermediaries
