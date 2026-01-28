@@ -230,3 +230,4 @@ test_runners/
 run/
 # Ignore Gradle build output directory
 build
+/minestom/src/main/resources/test/*
