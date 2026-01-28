@@ -1,0 +1,74 @@
+package ch.njol.skript.expressions;
+
+import ch.njol.skript.util.VectorMath;
+import net.minestom.server.coordinate.Vec;
+import org.bukkit.event.Event;
+import org.eclipse.jdt.annotation.Nullable;
+
+import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.ExpressionType;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
+import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.util.Kleenean;
+import ch.njol.util.coll.CollectionUtils;
+
+@Name("Vectors - Spherical Shape")
+@Description("Forms a 'spherical shaped' vector using yaw and pitch to manipulate the current point.")
+@Examples({
+	"loop 360 times:",
+	"\tset {_v} to spherical vector radius 1, yaw loop-value, pitch loop-value",
+	"set {_v} to spherical vector radius 1, yaw 45, pitch 90"
+})
+@Since("2.2-dev28")
+public class ExprVectorSpherical extends SimpleExpression<Vec> {
+
+	static {
+		Skript.registerExpression(ExprVectorSpherical.class, Vec.class, ExpressionType.SIMPLE,
+			"[a] [new] spherical vector [(from|with)] [radius] %number%, [yaw] %number%(,[ and]| and) [pitch] %number%");
+	}
+
+	@SuppressWarnings("null")
+	private Expression<Number> radius, yaw, pitch;
+
+	@Override
+	@SuppressWarnings({"unchecked", "null"})
+	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
+		radius = (Expression<Number>) exprs[0];
+		yaw = (Expression<Number>) exprs[1];
+		pitch = (Expression<Number>) exprs[2];
+		return true;
+	}
+
+	@Override
+	@SuppressWarnings("null")
+	protected Vec[] get(Event event) {
+		Number radius = this.radius.getSingle(event);
+		Number yaw = this.yaw.getSingle(event);
+		Number pitch = this.pitch.getSingle(event);
+		if (radius == null || yaw == null || pitch == null)
+			return null;
+		return CollectionUtils.array(VectorMath.fromSphericalCoordinates(radius.doubleValue(), VectorMath.fromSkriptYaw(yaw.floatValue()), pitch.floatValue() + 90));
+	}
+
+	@Override
+	public boolean isSingle() {
+		return true;
+	}
+
+	@Override
+	public Class<? extends Vec> getReturnType() {
+		return Vec.class;
+	}
+
+	@Override
+	public String toString(@Nullable Event event, boolean debug) {
+		return "spherical vector with radius " + radius.toString(event, debug) + ", yaw " + yaw.toString(event, debug) +
+			" and pitch" + pitch.toString(event, debug);
+	}
+
+}

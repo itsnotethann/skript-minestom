@@ -5,10 +5,13 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.util.ConvertedExpression;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.util.Direction;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.coordinate.Point;
+import net.minestom.server.coordinate.Pos;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.batch.AbsoluteBlockBatch;
 import net.minestom.server.instance.block.Block;
@@ -19,17 +22,17 @@ import org.eclipse.jdt.annotation.Nullable;
 public class ExprBlock extends SimpleExpression<Block> {
 
 	static {
-		Skript.registerExpression(ExprBlock.class, Block.class, ExpressionType.SIMPLE, "block[s] [type[s]] at %points% [in [(world|instance)] %instance%]");
+		Skript.registerExpression(ExprBlock.class, Block.class, ExpressionType.SIMPLE, "block[s] [type[s]] %direction% [%point%] [in [(world|instance)] %instance%]");
 	}
 
-	private Expression<Point> pointExpr;
+	private Expression<? extends Point> pointExpr;
 	private Expression<Instance> instanceExpr;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-		pointExpr = (Expression<Point>) expressions[0];
-		instanceExpr = (Expression<Instance>) expressions[1];
+		pointExpr = Direction.combine((Expression<? extends Direction>) expressions[0], (Expression<? extends Pos>) expressions[1]);
+		instanceExpr = (Expression<Instance>) expressions[2];
 		return true;
 	}
 
@@ -61,11 +64,10 @@ public class ExprBlock extends SimpleExpression<Block> {
 		Instance instance = instanceExpr.getSingle(event);
 		if (instance == null) return;
 		Point[] points = pointExpr.getArray(event);
-		AbsoluteBlockBatch batch = new AbsoluteBlockBatch(); // todo maybe only use batches if certain amount of points are hit
 		for (Point p : points) {
-			batch.setBlock(p, block);
+			if (!instance.isChunkLoaded(p)) continue;
+			instance.setBlock(p, block);
 		}
-		batch.apply(instance, null);
 	}
 
 	@Override

@@ -84,6 +84,7 @@ public class SkriptMinestom {
 	}
 
 	private static void initMinestomProperties() {
+		System.setProperty("minestom.send-light-after-block-placement-delay", "-1");
 		System.setProperty("minestom.chunk-view-distance", properties.getProperty(CHUNK_VIEW_DISTANCE));
 		System.setProperty("minestom.entity-view-distance", properties.getProperty(ENTITY_VIEW_DISTANCE));
 		System.setProperty("minestom.dispatcher-threads", properties.getProperty(DISPATCHER_THREADS));

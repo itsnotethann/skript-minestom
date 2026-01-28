@@ -8,7 +8,7 @@ import org.jspecify.annotations.Nullable;
 public class ExprEyes extends SimplePropertyExpression<Entity, Pos> {
 
 	static {
-		register(ExprEyes.class, Pos.class, "(head|eye[s]) [location[s]]", "entities");
+		register(ExprEyes.class, Pos.class, "(head|eye[s]) [position[s]]", "entities");
 	}
 
 	@Override
@@ -18,7 +18,7 @@ public class ExprEyes extends SimplePropertyExpression<Entity, Pos> {
 
 	@Override
 	protected String getPropertyName() {
-		return "eye location";
+		return "eye position";
 	}
 
 	@Override
