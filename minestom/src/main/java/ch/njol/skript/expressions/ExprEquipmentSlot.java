@@ -24,7 +24,7 @@ public class ExprEquipmentSlot extends PropertyExpression<EquipmentHandler, Slot
 
 	static {
 		Skript.registerExpression(ExprEquipmentSlot.class, Slot.class, ExpressionType.PROPERTY,
-			"[the] %equipmentslots% [slot[s]] [of %equipmenthandlers%]",
+			"[the] %equipmentslots% [slot[s]] of %equipmenthandlers%",
 			"%equipmenthandlers%'[s] %equipmentslots% [slot[s]]"
 		);
 	}
