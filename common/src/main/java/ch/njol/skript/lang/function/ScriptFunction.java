@@ -35,8 +35,8 @@ public class ScriptFunction<T> extends Function<T> implements ReturnHandler<T> {
 
 	private final Trigger trigger;
 
-	private boolean returnValueSet;
-	private T @Nullable [] returnValues;
+	private final ThreadLocal<Boolean> returnValueSet = ThreadLocal.withInitial(() -> false);
+	private ThreadLocal<T @Nullable []> returnValues = new ThreadLocal<>();
 
 	/**
 	 * @deprecated use {@link ScriptFunction#ScriptFunction(Signature, SectionNode)}
@@ -77,7 +77,7 @@ public class ScriptFunction<T> extends Function<T> implements ReturnHandler<T> {
 		
 		trigger.execute(e);
 		ClassInfo<T> returnType = getReturnType();
-		return returnType != null ? returnValues : null;
+		return returnType != null ? returnValues.get() : null;
 	}
 
 	/**
@@ -86,23 +86,23 @@ public class ScriptFunction<T> extends Function<T> implements ReturnHandler<T> {
 	@Deprecated
 	@ApiStatus.Internal
 	public final void setReturnValue(@Nullable T[] values) {
-		assert !returnValueSet;
-		returnValueSet = true;
-		this.returnValues = values;
+		assert !returnValueSet.get();
+		returnValueSet.set(true);
+		this.returnValues.set(values);
 	}
 
 	@Override
 	public boolean resetReturnValue() {
-		returnValueSet = false;
-		returnValues = null;
+		returnValueSet.remove();
+		returnValues.remove();
 		return true;
 	}
 
 	@Override
 	public final void returnValues(Event event, Expression<? extends T> value) {
-		assert !returnValueSet;
-		returnValueSet = true;
-		this.returnValues = value.getArray(event);
+		assert !returnValueSet.get();
+		returnValueSet.set(true);
+		this.returnValues.set(value.getArray(event));
 	}
 
 	@Override
