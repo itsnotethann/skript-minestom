@@ -104,6 +104,11 @@ public abstract class SectionExpression<Value> extends SimpleExpression<Value> {
 		return section;
 	}
 
+	@SafeVarargs
+	protected final Trigger loadCode(SectionNode node, String name, Class<? extends Event>... events) {
+		return loadCode(node, name, null, null, events);
+	}
+
 	/**
 	 * @deprecated Use {@link #loadCode(SectionNode, String, Runnable, Runnable, Class[])}
 	 */
@@ -136,7 +141,7 @@ public abstract class SectionExpression<Value> extends SimpleExpression<Value> {
 	@SafeVarargs
 	protected final Trigger loadCode(SectionNode sectionNode, String name,
 									 @Nullable Runnable beforeLoading, @Nullable Runnable afterLoading, Class<? extends Event>... events) {
-		return section.loadCodeTask(sectionNode, name, beforeLoading, afterLoading, events);
+		return section.loadCodeTask(sectionNode, name, null, afterLoading, events);
 	}
 
 	/**

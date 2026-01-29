@@ -28,6 +28,8 @@ import java.util.logging.Level;
 import org.eclipse.jdt.annotation.Nullable;
 
 import ch.njol.skript.Skript;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 
 /**
  * @author Peter Güttinger
@@ -38,7 +40,31 @@ public class RetainingLogHandler extends LogHandler {
 	private int numErrors = 0;
 	
 	boolean printedErrorOrLog = false;
-	
+
+	/**
+	 * Internal method for creating a backup of this log.
+	 * @return A new RetainingLogHandler containing the contents of this RetainingLogHandler.
+	 */
+	@ApiStatus.Internal
+	@Contract("-> new")
+	public RetainingLogHandler backup() {
+		RetainingLogHandler copy = new RetainingLogHandler();
+		copy.numErrors = this.numErrors;
+		copy.printedErrorOrLog = this.printedErrorOrLog;
+		copy.log.addAll(this.log);
+		return copy;
+	}
+
+	/**
+	 * Internal method for restoring a backup of this log.
+	 */
+	@ApiStatus.Internal
+	public void restore(RetainingLogHandler copy) {
+		this.numErrors = copy.numErrors;
+		this.log.clear();
+		this.log.addAll(copy.log);
+	}
+
 	@Override
 	public LogResult log(LogEntry entry) {
 		log.add(entry);

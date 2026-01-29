@@ -54,16 +54,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -942,7 +933,7 @@ public class ScriptLoader {
 			return string;
 		return optionsData.replaceOptions(string);
 	}
-	
+
 	/**
 	 * Loads a section by converting it to {@link TriggerItem}s.
 	 */
@@ -951,9 +942,10 @@ public class ScriptLoader {
 
 		if (Skript.debug())
 			parser.setIndentation(parser.getIndentation() + "    ");
-		
+
 		ArrayList<TriggerItem> items = new ArrayList<>();
 
+		boolean executionStops = false;
 		for (Node subNode : node) {
 			parser.setNode(subNode);
 
@@ -964,10 +956,11 @@ public class ScriptLoader {
 			if (!SkriptParser.validateLine(expr))
 				continue;
 
+			TriggerItem item;
 			if (subNode instanceof SimpleNode) {
 				long start = System.currentTimeMillis();
-				Statement stmt = Statement.parse(expr, items, "Can't understand this condition/effect: " + expr);
-				if (stmt == null)
+				item = Statement.parse(expr, items, "Can't understand this condition/effect: " + expr);
+				if (item == null)
 					continue;
 				long requiredTime = SkriptConfig.longParseTimeWarningThreshold.value().getMilliSeconds();
 				if (requiredTime > 0) {
@@ -980,34 +973,72 @@ public class ScriptLoader {
 				}
 
 				if (Skript.debug() || subNode.debug())
-					Skript.debug(parser.getIndentation() + stmt.toString(null, true));
+					Skript.debug(parser.getIndentation() + item.toString(null, true));
 
-				items.add(stmt);
+				items.add(item);
 			} else if (subNode instanceof SectionNode) {
 				TypeHints.enterScope(); // Begin conditional type hints
 
-				Section section = Section.parse(expr, "Can't understand this section: " + expr, (SectionNode) subNode, items);
-				if (section == null)
+				RetainingLogHandler handler = SkriptLogger.startRetainingLog();
+				find_section:
+				try {
+					item = Section.parse(expr, "Can't understand this section: " + expr, (SectionNode) subNode, items);
+					if (item != null)
+						break find_section;
+
+					// back up the failure log
+					RetainingLogHandler backup = handler.backup();
+					handler.clear();
+
+					item = Statement.parse(expr, "Can't understand this effect: " + expr, (SectionNode) subNode, items);
+
+					if (item != null)
+						break find_section;
+					Collection<LogEntry> errors = handler.getErrors();
+
+					// restore the failure log
+					if (errors.isEmpty()) {
+						handler.restore(backup);
+					} else { // We specifically want these two errors in preference to the section error!
+						String firstError = errors.iterator().next().getMessage();
+						if (!firstError.contains("is a valid statement but cannot function as a section (:)")
+							&& !firstError.contains("You cannot have two section-starters in the same line"))
+							handler.restore(backup);
+					}
 					continue;
+				} finally {
+					handler.printLog();
+					handler.close();
+				}
 
 				if (Skript.debug() || subNode.debug())
-					Skript.debug(parser.getIndentation() + section.toString(null, true));
+					Skript.debug(parser.getIndentation() + item.toString(null, true));
 
-				items.add(section);
+				items.add(item);
 
 				// Destroy these conditional type hints
 				TypeHints.exitScope();
+			} else {
+				continue;
 			}
+
+			/*if (executionStops
+				&& !SkriptConfig.disableUnreachableCodeWarnings.value()
+				&& parser.isActive()
+				&& !parser.getCurrentScript().suppressesWarning(ScriptWarning.UNREACHABLE_CODE)) {
+				Skript.warning("Unreachable code. The previous statement stops further execution.");
+			}
+			executionStops = item.executionIntent() != null*/;
 		}
-		
+
 		for (int i = 0; i < items.size() - 1; i++)
 			items.get(i).setNext(items.get(i + 1));
 
 		parser.setNode(node);
-		
+
 		if (Skript.debug())
 			parser.setIndentation(parser.getIndentation().substring(0, parser.getIndentation().length() - 4));
-		
+
 		return items;
 	}
 
