@@ -108,17 +108,17 @@ public abstract class PropertyCondition<T> extends Condition implements Checker<
 
 		switch (propertyType) {
 			case BE:
-				Skript.registerCondition(condition,
+				Skript.registerCondition(condition, ConditionType.PROPERTY,
 						"%" + type + "% (is|are) " + property,
 						"%" + type + "% (isn't|is not|aren't|are not) " + property);
 				break;
 			case CAN:
-				Skript.registerCondition(condition,
+				Skript.registerCondition(condition, ConditionType.PROPERTY,
 						"%" + type + "% can " + property,
 						"%" + type + "% (can't|cannot|can not) " + property);
 				break;
 			case HAVE:
-				Skript.registerCondition(condition,
+				Skript.registerCondition(condition, ConditionType.PROPERTY,
 						"%" + type + "% (has|have) " + property,
 						"%" + type + "% (doesn't|does not|do not|don't) have " + property);
 				break;
@@ -184,7 +184,7 @@ public abstract class PropertyCondition<T> extends Condition implements Checker<
 				return expr.toString(event, debug) + (condition.isNegated() ? " won't " : " will ") + "be " + property;
 			default:
 				assert false;
-				throw new AssertionError();
+				return null;
 		}
 	}
 }

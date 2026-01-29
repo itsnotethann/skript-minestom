@@ -35,9 +35,13 @@ import ch.njol.skript.util.Contract;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 
 public class DefaultFunctions {
+
+	private static final DecimalFormat DEFAULT_INTEGER_FORMAT = new DecimalFormat("###,###");
+	private static final DecimalFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat("###,###.##");
 	
 	private static String str(double n) {
 		return StringUtils.toString(n, 4);
@@ -430,6 +434,45 @@ public class DefaultFunctions {
 				"concat(\"hello \", \"there\") # hello there",
 				"concat(\"foo \", 100, \" bar\") # foo 100 bar"
 			).since("2.9.0");
+
+		Functions.registerFunction(new SimpleJavaFunction<>("formatNumber", new Parameter[]{
+					 new Parameter<>("number", DefaultClasses.NUMBER, true, null),
+					 new Parameter<>("format", DefaultClasses.STRING, true, new SimpleLiteral<>("", true))
+				 }, DefaultClasses.STRING, true) {
+					 @Override
+					 public String[] executeSimple(Object[][] params) {
+						 Number number = (Number) params[0][0];
+						 String format = (String) params[1][0];
+
+						 if (format.isEmpty()) {
+							 if (number instanceof Double || number instanceof Float) {
+								 return new String[]{DEFAULT_DECIMAL_FORMAT.format(number)};
+							 } else {
+								 return new String[]{DEFAULT_INTEGER_FORMAT.format(number)};
+							 }
+						 }
+
+						 try {
+							 return new String[]{new DecimalFormat(format).format(number)};
+						 } catch (IllegalArgumentException e) {
+							 return null; // invalid format
+						 }
+					 }
+				 })
+				 .description(
+					 "Converts numbers to human-readable format. By default, '###,###' (e.g. '123,456,789') " +
+						 "will be used for whole numbers and '###,###.##' (e.g. '123,456,789.00) will be used for decimal numbers. " +
+						 "A hashtag '#' represents a digit, a comma ',' is used to separate numbers, and a period '.' is used for decimals. ",
+					 "Will return none if the format is invalid.",
+					 "For further reference, see this <a href=\"https://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html\" target=\"_blank\">article</a>.")
+				 .examples(
+					 "command /balance:",
+					 "\taliases: bal",
+					 "\texecutable by: players",
+					 "\ttrigger:",
+					 "\t\tset {_money} to formatNumber({money::%sender's uuid%})",
+					 "\t\tsend \"Your balance: %{_money}%\" to sender")
+				 .since("INSERT VERSION");
 
 	}
 	

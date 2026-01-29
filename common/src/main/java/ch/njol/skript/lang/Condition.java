@@ -33,6 +33,25 @@ import java.util.Iterator;
  */
 public abstract class Condition extends Statement {
 
+	public enum ConditionType {
+		/**
+		 * Conditions that contain other expressions, e.g. "%properties% is/are within %expressions%"
+		 *
+		 * @see #PROPERTY
+		 */
+		COMBINED,
+
+		/**
+		 * Property conditions, e.g. "%properties% is/are data value[s]"
+		 */
+		PROPERTY,
+
+		/**
+		 * Conditions whose pattern matches (almost) everything or should be last checked.
+		 */
+		PATTERN_MATCHES_EVERYTHING;
+	}
+
 	private boolean negated;
 
 	protected Condition() {}

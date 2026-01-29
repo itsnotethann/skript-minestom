@@ -418,6 +418,19 @@ public final class ParserInstance implements Experimented {
 		return indentation;
 	}
 
+	// Parsing stack
+
+	private final ParsingStack parsingStack = new ParsingStack();
+
+	/**
+	 * Gets the current parsing stack.
+	 * <p>
+	 * Although the stack can be modified, doing so is not recommended.
+	 */
+	public ParsingStack getParsingStack() {
+		return parsingStack;
+	}
+
 	// Experiments API
 
 	@Override
@@ -640,8 +653,8 @@ public final class ParserInstance implements Experimented {
 	@Deprecated
 	public SkriptEvent getCurrentSkriptEvent() {
 		Structure structure = getCurrentStructure();
-		if (structure instanceof SkriptEvent)
-			return (SkriptEvent) structure;
+		if (structure instanceof SkriptEvent event)
+			return event;
 		return null;
 	}
 
@@ -650,7 +663,7 @@ public final class ParserInstance implements Experimented {
 	 */
 	@Deprecated
 	public void setCurrentSkriptEvent(@Nullable SkriptEvent currentSkriptEvent) {
-		setCurrentStructure(currentSkriptEvent);
+		this.setCurrentStructure(currentSkriptEvent);
 	}
 
 	/**
@@ -658,7 +671,7 @@ public final class ParserInstance implements Experimented {
 	 */
 	@Deprecated
 	public void deleteCurrentSkriptEvent() {
-		setCurrentStructure(null);
+		this.setCurrentStructure(null);
 	}
 
 	/**

@@ -18,8 +18,6 @@
  */
 package ch.njol.skript.lang;
 
-import ch.njol.skript.sections.SecLoop;
-import ch.njol.skript.sections.SecWhile;
 import org.bukkit.event.Event;
 
 import java.util.Map;
@@ -27,9 +25,9 @@ import java.util.WeakHashMap;
 
 /**
  * Represents a loop section.
- * 
- * @see SecWhile
- * @see SecLoop
+ *
+ * @see ch.njol.skript.sections.SecWhile
+ * @see ch.njol.skript.sections.SecLoop
  */
 public abstract class LoopSection extends Section implements SyntaxElement, Debuggable, SectionExitHandler {
 

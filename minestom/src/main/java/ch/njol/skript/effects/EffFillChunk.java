@@ -2,6 +2,7 @@ package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Effect;
+import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.sections.EffSecCreateInstance;
@@ -12,7 +13,7 @@ import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
 @SuppressWarnings("NotNullFieldNotInitialized")
-public class EffFillChunk extends Effect {
+public class EffFillChunk extends Effect implements EventRestrictedSyntax {
 
 	static {
 		Skript.registerEffect(EffFillChunk.class,
@@ -28,10 +29,6 @@ public class EffFillChunk extends Effect {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-		if (!getParser().isCurrentEvent(EffSecCreateInstance.TerrainGenerateEvent.class)) {
-			Skript.error("You can only use the fill chunk effect within the generator section of the instance creator section.");
-			return false;
-		}
 		betweenY = parseResult.mark == 1;
 		minHeight = (Expression<Integer>) expressions[0];
 		maxHeight = (Expression<Integer>) expressions[1];
@@ -60,6 +57,11 @@ public class EffFillChunk extends Effect {
 		return "fill chunk blocks" +
 			(betweenY ? " between y levels " + minHeight.toString(event, debug) + " and " + maxHeight.toString(event, debug) : "") +
 			" with " + block.toString(event, debug);
+	}
+
+	@Override
+	public Class<? extends Event>[] supportedEvents() {
+		return new Class[]{EffSecCreateInstance.TerrainGenerateEvent.class};
 	}
 
 }

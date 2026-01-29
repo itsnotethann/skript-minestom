@@ -21,6 +21,7 @@ package ch.njol.util.coll.iterator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import com.google.common.collect.PeekingIterator;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
@@ -28,7 +29,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * 
  * @author Peter Güttinger
  */
-public class ArrayIterator<T> implements Iterator<T> {
+public class ArrayIterator<T> implements PeekingIterator<T> {
 	
 	@Nullable
 	private final T[] array;
@@ -50,6 +51,14 @@ public class ArrayIterator<T> implements Iterator<T> {
 		if (array == null)
 			return false;
 		return index < array.length;
+	}
+
+	@Override
+	public T peek() {
+		int peekIndex = index + 1;
+		if (array == null || peekIndex >= array.length)
+			return null;
+		return array[peekIndex];
 	}
 	
 	@Override

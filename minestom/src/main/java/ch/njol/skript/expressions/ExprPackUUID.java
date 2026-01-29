@@ -1,6 +1,7 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -10,7 +11,7 @@ import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
-public class ExprPackUUID extends SimpleExpression<String> {
+public class ExprPackUUID extends SimpleExpression<String> implements EventRestrictedSyntax {
 
 	static {
 		Skript.registerExpression(ExprPackUUID.class, String.class, ExpressionType.SIMPLE, "[resource] pack (uuid|id)");
@@ -18,10 +19,6 @@ public class ExprPackUUID extends SimpleExpression<String> {
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-		if (!getParser().isCurrentEvent(EffSecSendPack.ResourcePackCallbackEvent.class)) {
-			Skript.error("You can only use the pack status expression in the send resource pack callback section.");
-			return false;
-		}
 		return true;
 	}
 
@@ -43,6 +40,11 @@ public class ExprPackUUID extends SimpleExpression<String> {
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
 		return "resource pack uuid";
+	}
+
+	@Override
+	public Class<? extends Event>[] supportedEvents() {
+		return new Class[]{EffSecSendPack.ResourcePackCallbackEvent.class};
 	}
 
 }

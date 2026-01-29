@@ -37,7 +37,7 @@ import ch.njol.skript.util.Patterns;
 import ch.njol.util.Kleenean;
 import com.google.common.collect.ImmutableSet;
 import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.arithmetic.Arithmetics;
 import org.skriptlang.skript.lang.arithmetic.OperationInfo;
 import org.skriptlang.skript.lang.arithmetic.Operator;
@@ -141,21 +141,21 @@ public class ExprArithmetic<L, R, T> extends SimpleExpression<T> {
 		 * If there are no unparsed literals, nothing happens at this step.
 		 * If there are unparsed literals, one of three possible execution flows will occur:
 		 *
-	 	 * Case 1. 'first' and 'second' are unparsed literals
-	 	 * In this case, there is not a lot of information to work with.
-	 	 * 'first' and 'second' are attempted to be converted to fit one of all operations using 'operator'.
-	 	 * If they cannot be matched with the types of a known operation, init will fail.
-	 	 *
-	 	 * Case 2. 'first' is an unparsed literal, 'second' is not
-	 	 * In this case, 'first' needs to be converted into the "left" type of
-	 	 *  any operation using 'operator' with the type of 'second' as the right type.
-	 	 * If 'first' cannot be converted, init will fail.
-	 	 * If no operations are found for converting 'first', init will fail, UNLESS the type of 'second' is object,
-	 	 *  where operations will be searched again later with the context of the type of first.
-	 	 * TODO When 'first' can represent multiple literals, it might be worth checking which of those can work with 'operator' and 'second'
-	 	 *
-	 	 * Case 3. 'second' is an unparsed literal, 'first' is not
-	 	 * In this case, 'second' needs to be converted into the "right" type of
+		 * Case 1. 'first' and 'second' are unparsed literals
+		 * In this case, there is not a lot of information to work with.
+		 * 'first' and 'second' are attempted to be converted to fit one of all operations using 'operator'.
+		 * If they cannot be matched with the types of a known operation, init will fail.
+		 *
+		 * Case 2. 'first' is an unparsed literal, 'second' is not
+		 * In this case, 'first' needs to be converted into the "left" type of
+		 *  any operation using 'operator' with the type of 'second' as the right type.
+		 * If 'first' cannot be converted, init will fail.
+		 * If no operations are found for converting 'first', init will fail, UNLESS the type of 'second' is object,
+		 *  where operations will be searched again later with the context of the type of first.
+		 * TODO When 'first' can represent multiple literals, it might be worth checking which of those can work with 'operator' and 'second'
+		 *
+		 * Case 3. 'second' is an unparsed literal, 'first' is not
+		 * In this case, 'second' needs to be converted into the "right" type of
 		 *  any operation using 'operator' with the type of 'first' as the "left" type.
 		 * If 'second' cannot be converted, init will fail.
 		 * If no operations are found for converting 'second', init will fail, UNLESS the type of 'first' is object,
@@ -182,31 +182,29 @@ public class ExprArithmetic<L, R, T> extends SimpleExpression<T> {
 			} else { // first needs converting
 				// attempt to convert <first> to types that make valid operations with <second>
 				Class<?> secondClass = second.getReturnType();
-				Class[] leftTypes = Arithmetics.getOperations(operator).stream()
-					.filter(info -> info.getRight().isAssignableFrom(secondClass))
-					.map(OperationInfo::getLeft)
-					.toArray(Class[]::new);
-				if (leftTypes.length == 0) { // no known operations with second's type
+				List<? extends OperationInfo<?, ?, ?>> operations = Arithmetics.lookupRightOperations(operator, secondClass);
+				if (operations.isEmpty()) { // no known operations with second's type
 					if (secondClass != Object.class) // there won't be any operations
 						return error(first.getReturnType(), secondClass);
 					first = (Expression<L>) first.getConvertedExpression(Object.class);
 				} else {
-					first = (Expression<L>) first.getConvertedExpression(leftTypes);
+					first = (Expression<L>) first.getConvertedExpression(operations.stream()
+																				   .map(OperationInfo::getLeft)
+																				   .toArray(Class[]::new));
 				}
 			}
 		} else if (second instanceof UnparsedLiteral) { // second needs converting
 			// attempt to convert <second> to types that make valid operations with <first>
 			Class<?> firstClass = first.getReturnType();
-			List<? extends OperationInfo<?, ?, ?>> operations = Arithmetics.getOperations(operator, firstClass);
+			List<? extends OperationInfo<?, ?, ?>> operations = Arithmetics.lookupLeftOperations(operator, firstClass);
 			if (operations.isEmpty()) { // no known operations with first's type
 				if (firstClass != Object.class) // there won't be any operations
 					return error(firstClass, second.getReturnType());
 				second = (Expression<R>) second.getConvertedExpression(Object.class);
 			} else {
 				second = (Expression<R>) second.getConvertedExpression(operations.stream()
-						.map(OperationInfo::getRight)
-						.toArray(Class[]::new)
-				);
+																				 .map(OperationInfo::getRight)
+																				 .toArray(Class[]::new));
 			}
 		}
 
@@ -241,14 +239,13 @@ public class ExprArithmetic<L, R, T> extends SimpleExpression<T> {
 			Class<?>[] returnTypes = null;
 			if (!(firstClass == Object.class && secondClass == Object.class)) { // both aren't object
 				if (firstClass == Object.class) {
-					returnTypes = Arithmetics.getOperations(operator).stream()
-							.filter(info -> info.getRight().isAssignableFrom(secondClass))
-							.map(OperationInfo::getReturnType)
-							.toArray(Class[]::new);
+					returnTypes = Arithmetics.lookupRightOperations(operator, secondClass).stream()
+											 .map(OperationInfo::getReturnType)
+											 .toArray(Class[]::new);
 				} else { // secondClass is Object
-					returnTypes = Arithmetics.getOperations(operator, firstClass).stream()
-						.map(OperationInfo::getReturnType)
-						.toArray(Class[]::new);
+					returnTypes = Arithmetics.lookupLeftOperations(operator, firstClass).stream()
+											 .map(OperationInfo::getReturnType)
+											 .toArray(Class[]::new);
 				}
 			}
 			if (returnTypes == null) { // both are object; can't determine anything

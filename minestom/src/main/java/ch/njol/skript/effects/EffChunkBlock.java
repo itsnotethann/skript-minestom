@@ -2,6 +2,7 @@ package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Effect;
+import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.sections.EffSecCreateInstance;
@@ -13,7 +14,7 @@ import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
 @SuppressWarnings("NotNullFieldNotInitialized")
-public class EffChunkBlock extends Effect {
+public class EffChunkBlock extends Effect implements EventRestrictedSyntax {
 
 	static {
 		Skript.registerEffect(EffChunkBlock.class, "(set|assign) chunk [generat(or|ion)] block at %points% to %block%");
@@ -25,10 +26,6 @@ public class EffChunkBlock extends Effect {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-		if (!getParser().isCurrentEvent(EffSecCreateInstance.TerrainGenerateEvent.class)) {
-			Skript.error("You can only use the chunk block effect within the generator section of the instance creator section.");
-			return false;
-		}
 		points = (Expression<Point>) expressions[0];
 		block = (Expression<Block>) expressions[1];
 		return true;
@@ -48,6 +45,11 @@ public class EffChunkBlock extends Effect {
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
 		return "set chunk block at " + points.toString(event, debug) + " to " + block.toString(event, debug);
+	}
+
+	@Override
+	public Class<? extends Event>[] supportedEvents() {
+		return new Class[]{EffSecCreateInstance.TerrainGenerateEvent.class};
 	}
 
 }

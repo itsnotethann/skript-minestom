@@ -13,18 +13,8 @@ public class EffectCommandEvent extends Event implements CancellableEvent {
 	private static final HandlerList HANDLERS = new HandlerList();
 
 	static {
-		EventValues.registerEventValue(EffectCommandEvent.class, Player.class, new Getter<>() {
-			@Override
-			public Player get(EffectCommandEvent arg) {
-				return arg.getExecutor();
-			}
-		}, EventValues.TIME_NOW);
-		EventValues.registerEventValue(EffectCommandEvent.class, Instance.class, new Getter<>() {
-			@Override
-			public Instance get(EffectCommandEvent arg) {
-				return arg.getExecutor().getInstance();
-			}
-		}, EventValues.TIME_NOW);
+		EventValues.registerEventValue(EffectCommandEvent.class, Player.class, EffectCommandEvent::getExecutor, EventValues.TIME_NOW);
+		EventValues.registerEventValue(EffectCommandEvent.class, Instance.class, event -> event.getExecutor().getInstance(), EventValues.TIME_NOW);
 	}
 
 	private final Player executor;

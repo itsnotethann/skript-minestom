@@ -1119,6 +1119,7 @@ public class MinestomClasses {
 			if (from instanceof ConsoleSender sender) return sender;
 			return null;
 		});
+		Converters.registerConverter(Entity.class, EntityType.class, Entity::getEntityType);
 		Converters.registerConverter(Entity.class, LivingEntity.class, from -> {
 			if (from instanceof LivingEntity livingEntity) return livingEntity;
 			return null;

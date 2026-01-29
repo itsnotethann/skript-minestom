@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
+import java.util.function.Function;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAPIException;
@@ -636,6 +637,25 @@ public class Variable<T> implements Expression<T> {
 	}
 
 	@Override
+	public <R> void changeInPlace(Event event, Function<T, R> changeFunction) {
+		if (!list) {
+			T value = getSingle(event);
+			if (value == null)
+				return;
+			set(event, changeFunction.apply(value));
+			return;
+		}
+		variablesIterator(event).forEachRemaining(pair -> {
+			String index = pair.getKey();
+			T value = Converters.convert(pair.getValue(), types);
+			if (value == null)
+				return;
+			Object newValue = changeFunction.apply(value);
+			setIndex(event, index, newValue);
+		});
+	}
+
+	@Override
 	@Nullable
 	public T getSingle(Event event) {
 		if (list)
@@ -714,6 +734,11 @@ public class Variable<T> implements Expression<T> {
 	@Override
 	public Expression<? extends T> simplify() {
 		return this;
+	}
+
+	@Override
+	public boolean supportsLoopPeeking() {
+		return true;
 	}
 
 }

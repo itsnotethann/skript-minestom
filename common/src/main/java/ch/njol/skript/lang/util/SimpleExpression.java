@@ -207,32 +207,6 @@ public abstract class SimpleExpression<T> implements Expression<T> {
 		if (CollectionUtils.containsSuperclass(to, getReturnType()))
 			return (Expression<? extends R>) this;
 
-		// we might be to cast some of the possible return types to R
-		List<ConverterInfo<? extends T, R>> infos = new ArrayList<>();
-		for (Class<? extends T> type : this.possibleReturnTypes()) {
-			if (CollectionUtils.containsSuperclass(to, type)) { // this type is of R
-				// build a converter that for casting to R
-				// safety check is present in the event that we do not get this type at runtime
-				final Class<R> toType = (Class<R>) type;
-				infos.add(new ConverterInfo<>(getReturnType(), toType, fromObject -> {
-					if (toType.isInstance(fromObject))
-						return (R) fromObject;
-					return null;
-				}, 0));
-			}
-		}
-		int size = infos.size();
-		if (size == 1) { // if there is only one info, there is no need to wrap it in a list
-			ConverterInfo<? extends T, R> info = infos.get(0);
-			//noinspection rawtypes
-			return new ConvertedExpression(this, info.getTo(), info);
-		}
-		if (size > 1) {
-			//noinspection rawtypes
-			return new ConvertedExpression(this, Utils.getSuperType(infos.stream().map(ConverterInfo::getTo).toArray(Class[]::new)), infos, false);
-		}
-
-		// attempt traditional conversion with proper converters
 		return this.getConvertedExpr(to);
 	}
 
@@ -378,6 +352,11 @@ public abstract class SimpleExpression<T> implements Expression<T> {
 
 	@Override
 	public boolean getAnd() {
+		return true;
+	}
+
+	@Override
+	public boolean supportsLoopPeeking() {
 		return true;
 	}
 }

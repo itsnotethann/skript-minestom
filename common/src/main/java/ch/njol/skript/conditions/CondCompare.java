@@ -95,7 +95,7 @@ public class CondCompare extends Condition implements VerboseAssert {
 	});
 
 	static {
-		Skript.registerCondition(CondCompare.class, patterns.getPatterns());
+		Skript.registerCondition(CondCompare.class, ConditionType.PATTERN_MATCHES_EVERYTHING, patterns.getPatterns());
 	}
 
 	private Expression<?> first;
