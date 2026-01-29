@@ -16,8 +16,8 @@ import net.kyori.adventure.nbt.TagStringIO;
 import net.kyori.adventure.resource.ResourcePackStatus;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.ConsoleSender;
@@ -39,6 +39,7 @@ import net.minestom.server.registry.RegistryKey;
 import net.minestom.server.scoreboard.Sidebar;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.skriptlang.skript.lang.arithmetic.Arithmetics;
 import org.skriptlang.skript.lang.arithmetic.Operator;
 import org.skriptlang.skript.lang.comparator.Comparators;
@@ -97,23 +98,7 @@ public class MinestomClasses {
 			.user("command ?senders?")
 			.name("Command Sender")
 			.description("Something that can execute a command and receive messages (players/console).")
-			.defaultExpression(new EventValueExpression<>(CommandSender.class))
-			.parser(new Parser<>() {
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return false;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull CommandSender o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull CommandSender o) {
-					return o instanceof Player player ? player.getUsername() : "console";
-				}
-			}));
+			.defaultExpression(new EventValueExpression<>(CommandSender.class)));
 		Classes.registerClass(new ClassInfo<>(ConsoleSender.class, "consolesender")
 			.user("console ?senders?")
 			.name("Console Sender")
@@ -193,56 +178,24 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toString(@NotNull Entity o, int flags) {
-					return toVariableNameString(o);
+					return Classes.toString(o.getEntityType());
 				}
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull Entity o) {
-					return o.getEntityType().name().toLowerCase(Locale.ENGLISH);
+					return o.getUuid().toString();
 				}
 			}));
 		Classes.registerClass(new ClassInfo<>(LivingEntity.class, "livingentity")
 			.user("living ?entit(y|ies)")
 			.name("Living Entity")
 			.description("An entity that has health, armor, and a main/offhand.")
-			.defaultExpression(new EventValueExpression<>(LivingEntity.class))
-			.parser(new Parser<>() {
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return false;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull LivingEntity o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull LivingEntity o) {
-					return o.getEntityType().name().toLowerCase(Locale.ENGLISH);
-				}
-			}));
+			.defaultExpression(new EventValueExpression<>(LivingEntity.class)));
 		Classes.registerClass(new ClassInfo<>(EntityCreature.class, "entitycreature")
 			.user("entity ?creatures?")
 			.name("Entity Creature")
 			.description("An entity that has health, armor, main/offhand, and is able to pathfind.")
-			.defaultExpression(new EventValueExpression<>(EntityCreature.class))
-			.parser(new Parser<>() {
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return false;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull EntityCreature o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull EntityCreature o) {
-					return o.getEntityType().name().toLowerCase(Locale.ENGLISH);
-				}
-			}));
+			.defaultExpression(new EventValueExpression<>(EntityCreature.class)));
 		Classes.registerClass(new ClassInfo<>(EquipmentHandler.class, "equipmenthandler")
 			.user("equipment ?handlers?")
 			.name("Equipment Handler")
@@ -469,7 +422,7 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull Instance o) {
-					return "instance uuid: " + o.getUuid();
+					return "instance with uuid: " + o.getUuid();
 				}
 			}));
 		Classes.registerClass(new ClassInfo<>(InstanceContainer.class, "instancecontainer")
@@ -548,7 +501,7 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull Block o) {
-					return o.state();
+					return o.state(); // leave this because properties can be complex
 				}
 			})
 			.serializer(new Serializer<>() {
@@ -582,7 +535,8 @@ public class MinestomClasses {
 				protected boolean canBeInstantiated() {
 					return false;
 				}
-			}));
+			})
+			.supplier(Block.values().toArray(new Block[0])));
 		Classes.registerClass(new ClassInfo<>(GameMode.class, "gamemode")
 			.user("game ?modes?")
 			.name("Game Mode")
@@ -613,7 +567,8 @@ public class MinestomClasses {
 					return o.name().toLowerCase(Locale.ENGLISH);
 				}
 			})
-			.serializer(new EnumSerializer<>(GameMode.class)));
+			.serializer(new EnumSerializer<>(GameMode.class))
+			.supplier(GameMode.values()));
 		Classes.registerClass(new ClassInfo<>(Component.class, "component")
 			.user("components?")
 			.name("Component")
@@ -632,7 +587,37 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull Component o) {
-					return PlainTextComponentSerializer.plainText().serialize(o);
+					return LegacyComponentSerializer.legacyAmpersand().serialize(o);
+				}
+			})
+			.serializer(new Serializer<Component>() {
+				@Override
+				public Fields serialize(Component o) throws NotSerializableException {
+					Fields fields = new Fields();
+					fields.putObject("gson", GsonComponentSerializer.gson().serialize(o));
+					return fields;
+				}
+
+				@Override
+				public void deserialize(Component o, Fields f) throws StreamCorruptedException, NotSerializableException {
+					assert false;
+				}
+
+				@Override
+				protected @NonNull Component deserialize(@NotNull Fields f) throws StreamCorruptedException {
+					String componentString = f.getObject("gson", String.class);
+					assert componentString != null;
+					return GsonComponentSerializer.gson().deserialize(componentString);
+				}
+
+				@Override
+				public boolean mustSyncDeserialization() {
+					return false;
+				}
+
+				@Override
+				protected boolean canBeInstantiated() {
+					return false;
 				}
 			}));
 		Classes.registerClass(new ClassInfo<>(TagResolver.class, "tagresolver")
@@ -684,7 +669,7 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull ResourcePackStatus o) {
-					return o.name().toLowerCase(Locale.ENGLISH).replace('_', ' ');
+					return typeFormatted(o.name());
 				}
 			})
 			.serializer(new EnumSerializer<>(ResourcePackStatus.class)));
@@ -891,7 +876,7 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull EntityType o) {
-					return o.key().asString();
+					return keyToString(o.key());
 				}
 			})
 			.serializer(new Serializer<>() {
@@ -925,7 +910,8 @@ public class MinestomClasses {
 				protected boolean canBeInstantiated() {
 					return false;
 				}
-			}));
+			})
+			.supplier(EntityType.values().toArray(new EntityType[0])));
 		Classes.registerClass(new ClassInfo<>(EquipmentSlot.class, "equipmentslot")
 			.user("equipment ?slots?")
 			.name("Equipment Slot")
@@ -953,7 +939,7 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull EquipmentSlot o) {
-					return o.name().toLowerCase(Locale.ENGLISH).replace('_', ' ') + " slot";
+					return typeFormatted(o.name()) + " slot";
 				}
 			})
 			.serializer(new EnumSerializer<>(EquipmentSlot.class)));
@@ -975,10 +961,10 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull Sidebar o) {
-					return "scoreboard titled \"" + PlainTextComponentSerializer.plainText().serialize(o.getTitle()) + "\"";
+					return "scoreboard titled \"" + LegacyComponentSerializer.legacyAmpersand().serialize(o.getTitle()) + "\"";
 				}
 			}));
-		Classes.registerClass(new ClassInfo<>(Material.class, "material")
+		/*Classes.registerClass(new ClassInfo<>(Material.class, "material")
 			.user("materials?")
 			.name("Material")
 			.description("A material. Only used for ExprName, see type \"Item\"")
@@ -998,7 +984,7 @@ public class MinestomClasses {
 				public @NotNull String toVariableNameString(@NotNull Material o) {
 					return keyToString(o.key());
 				}
-			}));
+			}));*/
 		Classes.registerClass(new ClassInfo<>(Enchantment.class, "enchantment")
 			.user("enchantments?")
 			.name("Enchantment")
@@ -1248,7 +1234,12 @@ public class MinestomClasses {
 	}
 
 	private static String keyToString(Key key) {
-		return key.asString().toLowerCase(Locale.ENGLISH).replace("minecraft:", "").replace('_', ' ');
+		return typeFormatted(key.asString());
 	}
+
+	private static String typeFormatted(String string) {
+		return string.toLowerCase(Locale.ENGLISH).replace("minecraft:", "").replace('_', ' ');
+	}
+
 
 }

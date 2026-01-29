@@ -4,11 +4,10 @@ import ch.njol.skript.events.wrapper.EventWrapper;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Getter;
 import ch.njol.skript.util.Item;
+import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
-import net.minestom.server.event.trait.ItemEvent;
-import net.minestom.server.event.trait.PlayerEvent;
-import net.minestom.server.event.trait.PlayerInstanceEvent;
+import net.minestom.server.event.trait.*;
 import net.minestom.server.instance.Instance;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -18,8 +17,9 @@ import java.util.function.Function;
 public class MarkerRegistration {
 
 	public static void register() {
-		registerEventValue(PlayerInstanceEventMarker.class, Instance.class, PlayerInstanceEvent.class,
-			PlayerInstanceEvent::getInstance, EventValues.TIME_NOW);
+		registerEventValue(EntityInstanceEventMarker.class, Instance.class, EntityInstanceEvent.class,
+			EntityInstanceEvent::getInstance, EventValues.TIME_NOW);
+		registerEventValue(EntityEventMarker.class, Entity.class, EntityEvent.class, EntityEvent::getEntity, EventValues.TIME_NOW);
 		registerEventValue(PlayerEventMarker.class, Player.class, PlayerEvent.class, PlayerEvent::getPlayer, EventValues.TIME_NOW);
 		registerEventValue(ItemEventMarker.class, Item.class, ItemEvent.class, itemEvent -> new Item(itemEvent.getItemStack()), EventValues.TIME_NOW);
 	}

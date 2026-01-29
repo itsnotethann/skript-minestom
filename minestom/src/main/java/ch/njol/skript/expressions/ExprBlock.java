@@ -18,11 +18,14 @@ import net.minestom.server.instance.block.Block;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("NotNullFieldNotInitialized")
 public class ExprBlock extends SimpleExpression<Block> {
 
 	static {
-		Skript.registerExpression(ExprBlock.class, Block.class, ExpressionType.SIMPLE, "block[s] [type[s]] %direction% [%point%] [in [(world|instance)] %instance%]");
+		Skript.registerExpression(ExprBlock.class, Block.class, ExpressionType.SIMPLE, "block[s] [type[s]] %directions% [%points%] [in [(world|instance)] %instances%]");
 	}
 
 	private Expression<? extends Point> pointExpr;
@@ -38,15 +41,15 @@ public class ExprBlock extends SimpleExpression<Block> {
 
 	@Override
 	protected @Nullable Block[] get(Event event) {
-		Instance instance = instanceExpr.getSingle(event);
-		if (instance == null) return new Block[0];
+		Instance[] instances = instanceExpr.getArray(event);
 		Point[] points = pointExpr.getArray(event);
-		int length = points.length;
-		Block[] blocks = new Block[length];
-		for (int i = 0; i < length; i++) {
-			blocks[i] = instance.getBlock(points[i]);
+		List<Block> blocks = new ArrayList<>();
+		for (Instance instance : instances) {
+			for (int i = 0; i < points.length; i++) {
+				blocks.add(instance.getBlock(points[i]));
+			}
 		}
-		return blocks;
+		return blocks.toArray(new Block[0]);
 	}
 
 	@SuppressWarnings("DataFlowIssue")
