@@ -22,12 +22,12 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.jar.JarEntry;
@@ -156,57 +156,106 @@ public abstract class Utils {
 //		return new AmountResponse(s);
 //	}
 
-	/**
-	 * Loads classes of the plugin by package. Useful for registering many syntax elements like Skript does it.
-	 * 
-	 * @param basePackage The base package to add to all sub packages, e.g. <tt>"ch.njol.skript"</tt>.
-	 * @param subPackages Which subpackages of the base package should be loaded, e.g. <tt>"expressions", "conditions", "effects"</tt>. Subpackages of these packages will be loaded
-	 *            as well. Use an empty array to load all subpackages of the base package.
-	 * @throws IOException If some error occurred attempting to read the plugin's jar file.
-	 * @return This SkriptAddon
-	 */
 	public static Class<?>[] getClasses(Plugin plugin, String basePackage, String... subPackages) throws IOException {
-		assert subPackages != null;
-		JarFile jar = new JarFile(getFile(plugin));
-		for (int i = 0; i < subPackages.length; i++)
-			subPackages[i] = subPackages[i].replace('.', '/') + "/";
-		basePackage = basePackage.replace('.', '/') + "/";
-		List<Class<?>> classes = new ArrayList<>();
-		try {
-			List<String> classNames = new ArrayList<>();
+		Objects.requireNonNull(plugin, "plugin");
+		Objects.requireNonNull(basePackage, "basePackage");
+		if (subPackages == null) subPackages = new String[0];
 
-			for (JarEntry e : new EnumerationIterable<>(jar.entries())) {
-				if (e.getName().startsWith(basePackage) && e.getName().endsWith(".class") && !e.getName().endsWith("package-info.class")) {
-					boolean load = subPackages.length == 0;
-					for (String sub : subPackages) {
-						if (e.getName().startsWith(sub, basePackage.length())) {
-							load = true;
-							break;
-						}
-					}
+		ClassLoader cl = plugin.getClass().getClassLoader();
 
-					if (load)
-						classNames.add(e.getName().replace('/', '.').substring(0, e.getName().length() - ".class".length()));
-				}
-			}
-
-			classNames.sort(String::compareToIgnoreCase);
-
-			for (String c : classNames) {
-				try {
-					classes.add(Class.forName(c, true, plugin.getClass().getClassLoader()));
-				} catch (ClassNotFoundException | NoClassDefFoundError ex) {
-					Skript.exception(ex, "Cannot load class " + c);
-				} catch (ExceptionInInitializerError err) {
-					Skript.exception(err.getCause(), "class " + c + " generated an exception while loading");
-				}
-			}
-		} finally {
-			try {
-				jar.close();
-			} catch (IOException e) {}
+		String basePath = basePackage.replace('.', '/') + "/";
+		String[] subPaths = new String[subPackages.length];
+		for (int i = 0; i < subPackages.length; i++) {
+			subPaths[i] = subPackages[i].replace('.', '/') + "/";
 		}
-		return classes.toArray(new Class<?>[classes.size()]);
+
+		// Collect class names first, then load in sorted order like Skript does
+		Set<String> classNames = new HashSet<>();
+
+		Enumeration<URL> roots = cl.getResources(basePath);
+		while (roots.hasMoreElements()) {
+			URL url = roots.nextElement();
+			String protocol = url.getProtocol();
+
+			if ("jar".equals(protocol)) {
+				// jar:file:/.../something.jar!/ch/njol/skript/
+				JarURLConnection conn = (JarURLConnection) url.openConnection();
+				try (JarFile jar = conn.getJarFile()) {
+					Enumeration<JarEntry> entries = jar.entries();
+					while (entries.hasMoreElements()) {
+						JarEntry e = entries.nextElement();
+						String name = e.getName();
+
+						if (!name.startsWith(basePath)) continue;
+						if (!name.endsWith(".class")) continue;
+						if (name.endsWith("package-info.class")) continue;
+
+						if (!shouldLoad(name, basePath, subPaths)) continue;
+
+						classNames.add(name.substring(0, name.length() - ".class".length()).replace('/', '.'));
+					}
+				}
+			} else if ("file".equals(protocol)) {
+				// file:/.../build/classes/java/main/ch/njol/skript/
+				try {
+					Path baseDir = Paths.get(url.toURI()); // points at the basePath dir
+					if (!Files.isDirectory(baseDir)) continue;
+
+					// Walk everything under baseDir and convert back to class names
+					try (var stream = Files.walk(baseDir)) {
+						stream
+							.filter(p -> p.toString().endsWith(".class"))
+							.filter(p -> !p.getFileName().toString().equals("package-info.class"))
+							.forEach(p -> {
+								String rel = baseDir.relativize(p).toString().replace('\\', '/'); // subpath under basePath
+								String fullName = basePath + rel; // still path form
+								if (!shouldLoad(fullName, basePath, subPaths)) return;
+
+								String cls = (basePath + rel)
+									.substring(0, (basePath + rel).length() - ".class".length())
+									.replace('/', '.');
+
+								// basePath already included; convert to package form
+								classNames.add(basePackage + "." + rel.substring(0, rel.length() - ".class".length()).replace('/', '.'));
+							});
+					}
+				} catch (Exception ignored) {
+					// If a weird URL shows up, just skip it rather than hard-failing startup
+				}
+			} else {
+				// Optional: handle "jrt" or other protocols if you ever need it
+			}
+		}
+
+		List<String> sorted = new ArrayList<>(classNames);
+		sorted.sort(String::compareToIgnoreCase);
+
+		List<Class<?>> out = new ArrayList<>(sorted.size());
+		for (String c : sorted) {
+			try {
+				out.add(Class.forName(c, true, cl));
+			} catch (ClassNotFoundException | NoClassDefFoundError ex) {
+				Skript.exception(ex, "Cannot load class " + c);
+			} catch (ExceptionInInitializerError err) {
+				Skript.exception(err.getCause(), "class " + c + " generated an exception while loading");
+			}
+		}
+
+		return out.toArray(new Class<?>[0]);
+	}
+
+	private static boolean shouldLoad(String entryName, String basePath, String[] subPaths) {
+		// entryName is jar/path form: ch/njol/skript/expressions/Foo.class
+		if (!entryName.startsWith(basePath)) return false;
+
+		if (subPaths.length == 0) return true;
+
+		int afterBase = basePath.length();
+		for (String sub : subPaths) {
+			// sub is like "expressions/" but we want it relative to basePath
+			if (entryName.startsWith(sub, afterBase)) return true;
+		}
+		return false;
 	}
 
 	/**

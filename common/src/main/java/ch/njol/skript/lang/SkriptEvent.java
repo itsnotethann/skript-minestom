@@ -248,7 +248,7 @@ public abstract class SkriptEvent extends Structure {
 	 * Override this method to allow Skript to not force synchronization.
 	 */
 	public boolean canExecuteAsynchronously() {
-		return false;
+		return true;
 	}
 
 	/**

@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class EvtFirstPlayerSpawn extends SkriptEvent {
 
 	static {
-		Skript.registerEvent("First Player Spawn", EvtFirstPlayerSpawn.class, PlayerSpawnWrapper.class, "first player spawn");
+		Skript.registerEvent("First Player Spawn", EvtFirstPlayerSpawn.class, PlayerSpawnWrapper.class, "first [player] spawn");
 	}
 
 	@Override
