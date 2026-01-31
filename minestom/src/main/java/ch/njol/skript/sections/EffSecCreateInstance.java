@@ -61,10 +61,6 @@ public class EffSecCreateInstance extends EffectSection {
 			if (!relightInstances.contains(instance)) return;
 			LightingChunk.relight(instance, List.of(event.getChunk()));
 		});
-		MinecraftServer.getGlobalEventHandler().addListener(PlayerSwapItemEvent.class, event -> {
-			System.out.println("relighting");
-			LightingChunk.relight(event.getInstance(), Collections.singleton(event.getPlayer().getChunk()));
-		});
 	}
 
 	private int matchedPattern;
@@ -197,6 +193,7 @@ public class EffSecCreateInstance extends EffectSection {
 			InstanceContainer instanceContainer = originalInstance.getSingle(event);
 			if (instanceContainer == null) return null;
 			instance = MinecraftServer.getInstanceManager().createSharedInstance(instanceContainer);
+			instance.enableAutoChunkLoad(instanceContainer.hasEnabledAutoChunkLoad());
 		}
 
 		storage.change(event, new Instance[]{instance}, Changer.ChangeMode.SET); // store the created instance on the variable

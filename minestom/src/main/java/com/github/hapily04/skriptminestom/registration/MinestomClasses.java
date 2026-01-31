@@ -14,11 +14,13 @@ import com.github.hapily04.skriptminestom.util.NumberUtils;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.nbt.TagStringIO;
 import net.kyori.adventure.resource.ResourcePackStatus;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.color.Color;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.coordinate.BlockVec;
@@ -1105,6 +1107,56 @@ public class MinestomClasses {
 				}
 			})
 			.serializer(new YggdrasilSerializer<>()));
+		Classes.registerClass(new ClassInfo<>(Sound.class, "sound")
+			.user("sounds?")
+			.name("Sound")
+			.description("A sound with an id, seed, category, volume, and pitch.")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull Sound o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull Sound o) {
+					return o.toString();
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(Sound.Source.class, "soundcategory")
+			.user("sound ?categor(y|ies)")
+			.name("Sound Category")
+			.description("A sound category e.g. master")
+			.parser(new Parser<>() {
+				public Sound.@Nullable Source parse(@NotNull String s, @NotNull ParseContext context) {
+					s = s.toUpperCase(Locale.ENGLISH);
+					for (Sound.Source source : Sound.Source.values()) {
+						if (source.name().equals(s)) return source;
+					}
+					return null;
+				}
+
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return true;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull Sound.Source o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull Sound.Source o) {
+					return o.name().toLowerCase(Locale.ENGLISH);
+				}
+			})
+			.serializer(new EnumSerializer<>(Sound.Source.class))
+			.supplier(Sound.Source.values()));
 
 		/*
 		 * Converters
@@ -1179,10 +1231,14 @@ public class MinestomClasses {
 		/*
 		 *	Arithmetic
 		 */
-		Arithmetics.registerOperation(Operator.ADDITION, Vec.class, Vec.class, Vec::add);
-		Arithmetics.registerOperation(Operator.SUBTRACTION, Vec.class, Vec.class, Vec::sub);
-		Arithmetics.registerOperation(Operator.MULTIPLICATION, Vec.class, Vec.class, Vec::mul);
-		Arithmetics.registerOperation(Operator.DIVISION, Vec.class, Vec.class, Vec::div);
+		Arithmetics.registerOperation(Operator.ADDITION, Vec.class, Vec::add);
+		Arithmetics.registerOperation(Operator.SUBTRACTION, Vec.class, Vec::sub);
+		Arithmetics.registerOperation(Operator.MULTIPLICATION, Vec.class, Vec::mul);
+		Arithmetics.registerOperation(Operator.DIVISION, Vec.class, Vec::div);
+		Arithmetics.registerOperation(Operator.ADDITION, Vec.class, Number.class, (vec, num) -> vec.add(num.doubleValue()));
+		Arithmetics.registerOperation(Operator.SUBTRACTION, Vec.class, Number.class, (vec, num) -> vec.sub(num.doubleValue()));
+		Arithmetics.registerOperation(Operator.MULTIPLICATION, Vec.class, Number.class, (vec, num) -> vec.mul(num.doubleValue()));
+		Arithmetics.registerOperation(Operator.DIVISION, Vec.class, Number.class, (vec, num) -> vec.div(num.doubleValue()));
 
 		/*
 		 *	Variable Intermediaries

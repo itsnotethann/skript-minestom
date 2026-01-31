@@ -4,6 +4,8 @@ import net.kyori.adventure.nbt.*;
 import net.minestom.server.component.DataComponent;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.entity.metadata.animal.SheepMeta;
+import net.minestom.server.tag.Tag;
+import net.minestom.server.tag.Taggable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,9 +73,15 @@ public class NBTUtils {
 		return TagStringIO.tagStringIO().asString(compound);
 	}
 
+	public static <T> T getTagOrElse(Taggable taggable, Tag<T> tag, T other) {
+		T object = taggable.getTag(tag);
+		return object == null ? other : object;
+	}
+
 	// todo this doesn't just check item components, it checks all data components
 	private static boolean isItemComponentKey(String key) {
 		return DataComponent.fromKey(key.startsWith("minecraft:") ? key : ("minecraft:" + key)) != null;
 	}
+
 
 }

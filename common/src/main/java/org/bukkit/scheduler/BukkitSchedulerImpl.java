@@ -27,7 +27,6 @@ public class BukkitSchedulerImpl implements BukkitScheduler {
 
 			if (task.ticksLeft <= 0) {
 				currentTask = task;
-
 				if (task.async)
 					new Thread(task.runnable).start();
 				else task.runnable.run();

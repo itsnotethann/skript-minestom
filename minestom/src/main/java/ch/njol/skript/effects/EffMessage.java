@@ -99,12 +99,12 @@ public class EffMessage extends Effect {
 		for (Expression<?> expression : getMessages()) {
 			if (expression instanceof VariableString vs) {
 				for (String s : vs.getArray(e)) {
-					components.add(Component.text(s));
+					components.add(Component.text(onlyValid(s)));
 				}
 			} else {
 				for (Object o : expression.getArray(e)) {
 					if (o instanceof Component component) components.add(component);
-					else components.add(Component.text(toString(o)));
+					else components.add(Component.text(onlyValid(toString(o))));
 				}
 			}
 		}
@@ -120,6 +120,15 @@ public class EffMessage extends Effect {
 			return new Expression[] {CollectionUtils.getRandom(messages)};
 		}
 		return messages;
+	}
+
+	// NetworkBufferTypeImpl @ 979
+	@SuppressWarnings({"ConstantValue", "UnnecessaryLocalVariable"})
+	private String onlyValid(String s) {
+		final int strlen = s.length();
+		int utflen = strlen;
+		if (utflen > 65535 || /* overflow */ utflen < strlen) return s.substring(0, 65535);
+		return s;
 	}
 
 	private String toString(Object object) {

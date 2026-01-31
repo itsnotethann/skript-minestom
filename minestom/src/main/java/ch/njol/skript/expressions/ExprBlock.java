@@ -25,7 +25,8 @@ import java.util.List;
 public class ExprBlock extends SimpleExpression<Block> {
 
 	static {
-		Skript.registerExpression(ExprBlock.class, Block.class, ExpressionType.SIMPLE, "block[s] [type[s]] %directions% [%points%] [in [(world|instance)] %instances%]");
+		Skript.registerExpression(ExprBlock.class, Block.class, ExpressionType.SIMPLE,
+			"block[s] [type[s]] %directions% %points% [in [(world|instance)] %instances%]");
 	}
 
 	private Expression<? extends Point> pointExpr;

@@ -172,15 +172,15 @@ public class SkriptMinestom {
 				ParserInstance parserInstance = ParserInstance.get();
 				parserInstance.setCurrentEvent("effect command", EffectCommandEvent.class);
 				Effect effect = Effect.parse(message, null);
+				TagResolver effectCommand = Placeholder.unparsed("effect_command", message);
 				if (effect != null) {
-					TagResolver effectCommand = Placeholder.unparsed("effect_command", message);
 					player.sendMessage(SKRIPT_MINI_MESSAGE.deserialize("<skript_minestom_tag> <base_grey>Executing effect command: <yellow><effect_command>", effectCommand));
 					if (SkriptConfig.logEffectCommands.value()) {
 						MinecraftServer.getCommandManager().getConsoleSender().sendMessage(player.getUsername() + " issued effect command: " + message);
 					}
 					TriggerItem.walk(effect, effectCommandEvent);
 					Variables.removeLocals(effectCommandEvent);
-				} else player.sendMessage(SKRIPT_MINI_MESSAGE.deserialize("<skript_minestom_tag> <error_color>Couldn't find an effect under '<yellow>" + message + "<error_color>'."));
+				} else player.sendMessage(SKRIPT_MINI_MESSAGE.deserialize("<skript_minestom_tag> <error_color>Couldn't find an effect under '<yellow><effect_command><error_color>'.", effectCommand));
 			}
 		});
 	}
