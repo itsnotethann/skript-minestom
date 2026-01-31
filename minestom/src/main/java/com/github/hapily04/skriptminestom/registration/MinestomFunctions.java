@@ -5,10 +5,13 @@ import ch.njol.skript.lang.function.*;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.registrations.DefaultClasses;
+import ch.njol.util.coll.CollectionUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.minestom.server.color.AlphaColor;
+import net.minestom.server.color.Color;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
@@ -74,6 +77,28 @@ public class MinestomFunctions {
 
 		}) {
 		});*/
+		Functions.registerFunction(new SimpleJavaFunction<>("rgb", new Parameter[]{
+					 new Parameter<>("red", DefaultClasses.LONG, true, null),
+					 new Parameter<>("green", DefaultClasses.LONG, true, null),
+					 new Parameter<>("blue", DefaultClasses.LONG, true, null),
+					 new Parameter<>("alpha", DefaultClasses.LONG, true, new SimpleLiteral<>(255L, true))
+				 }, Classes.getExactClassInfo(Color.class), true) {
+					 @Override
+					 public Color[] executeSimple(Object[][] params) {
+						 Long red = (Long) params[0][0];
+						 Long green = (Long) params[1][0];
+						 Long blue = (Long) params[2][0];
+						 Long alpha = (Long) params[3][0];
+
+						 return CollectionUtils.array(new AlphaColor(red.intValue(), green.intValue(), blue.intValue(), alpha.intValue()));
+					 }
+				 }).description("Returns a RGB color from the given red, green and blue parameters. Alpha values can be added optionally, " +
+					 "but these only take affect in certain situations, like text display backgrounds.")
+				 .examples(
+					 "dye player's leggings rgb(120, 30, 45)",
+					 "set the colour of a text display to rgb(10, 50, 100, 50)"
+				 )
+				 .since("2.5, 2.10 (alpha)");
 	}
 
 }

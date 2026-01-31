@@ -11,14 +11,17 @@ public class Slot extends Item {
 
 	private final Updater updater;
 
-	public Slot(ItemStack item, AbstractInventory container, int slot) {
+	public Slot(ItemStack item, Updater updater) {
 		super(item);
-		updater = new InventoryUpdater(container, slot);
+		this.updater = updater;
+	}
+
+	public Slot(ItemStack item, AbstractInventory container, int slot) {
+		this(item ,new InventoryUpdater(container, slot));
 	}
 
 	public Slot(ItemStack item, EquipmentHandler handler, EquipmentSlot slot) {
-		super(item);
-		updater = new EquipmentUpdater(handler, slot);
+		this(item, new EquipmentUpdater(handler, slot));
 	}
 
 	@Override
@@ -29,7 +32,7 @@ public class Slot extends Item {
 		if (notifyContainer && preModificationItem.equals(containerSlotItem)) updater.update(getItem());
 	}
 
-	interface Updater {
+	public interface Updater {
 
 		void update(ItemStack item);
 

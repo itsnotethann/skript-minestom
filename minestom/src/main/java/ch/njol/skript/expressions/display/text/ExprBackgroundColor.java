@@ -1,0 +1,57 @@
+package ch.njol.skript.expressions.display.text;
+
+import ch.njol.skript.classes.Changer;
+import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import ch.njol.util.coll.CollectionUtils;
+import net.minestom.server.color.AlphaColor;
+import net.minestom.server.color.Color;
+import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.metadata.display.TextDisplayMeta;
+import org.bukkit.event.Event;
+
+public class ExprBackgroundColor extends SimplePropertyExpression<Entity, Color> {
+
+	static {
+		register(ExprBackgroundColor.class, Color.class, "background color", "entities");
+	}
+
+	@Override
+	public Color convert(Entity from) {
+		if (!(from.getEntityMeta() instanceof TextDisplayMeta meta)) return null;
+		return new AlphaColor(meta.getBackgroundColor());
+	}
+
+	@Override
+	public @org.eclipse.jdt.annotation.Nullable Class<?>[] acceptChange(Changer.ChangeMode mode) {
+		if (mode == Changer.ChangeMode.SET || mode == Changer.ChangeMode.RESET) return CollectionUtils.array(Color.class);
+		return null;
+	}
+
+	@SuppressWarnings("ConstantValue")
+	@Override
+	public void change(Event event, @org.jspecify.annotations.Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
+		Color color = delta == null ? null : (Color) delta[0];
+		for (Entity entity : getExpr().getArray(event)) {
+			if (!(entity.getEntityMeta() instanceof TextDisplayMeta meta)) continue;
+			switch (mode) {
+				case SET -> {
+					if (color == null) return;
+					if (!(color instanceof AlphaColor)) color = color.withAlpha(255);
+					meta.setBackgroundColor(((AlphaColor) color).asARGB());
+				}
+				case RESET -> meta.setBackgroundColor(0x40000000);
+			}
+		}
+	}
+
+	@Override
+	protected String getPropertyName() {
+		return "background color";
+	}
+
+	@Override
+	public Class<? extends Color> getReturnType() {
+		return Color.class;
+	}
+
+}

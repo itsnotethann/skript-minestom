@@ -16,6 +16,8 @@ import net.kyori.adventure.nbt.TagStringIO;
 import net.kyori.adventure.resource.ResourcePackStatus;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -28,6 +30,9 @@ import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.*;
+import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
+import net.minestom.server.entity.metadata.display.ItemDisplayMeta;
+import net.minestom.server.entity.metadata.display.TextDisplayMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.SharedInstance;
@@ -1133,7 +1138,7 @@ public class MinestomClasses {
 			.description("A sound category e.g. master")
 			.parser(new Parser<>() {
 				public Sound.@Nullable Source parse(@NotNull String s, @NotNull ParseContext context) {
-					s = s.toUpperCase(Locale.ENGLISH);
+					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
 					for (Sound.Source source : Sound.Source.values()) {
 						if (source.name().equals(s)) return source;
 					}
@@ -1152,11 +1157,152 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull Sound.Source o) {
-					return o.name().toLowerCase(Locale.ENGLISH);
+					return typeFormatted(o.name());
 				}
 			})
 			.serializer(new EnumSerializer<>(Sound.Source.class))
 			.supplier(Sound.Source.values()));
+		Classes.registerClass(new ClassInfo<>(AbstractDisplayMeta.BillboardConstraints.class, "billboardconstraint")
+			.user("bill ?board ?constraints?")
+			.name("Billboard Constraints")
+			.description("Billboard constraint e.g. FIXED")
+			.parser(new Parser<>() {
+				public AbstractDisplayMeta.BillboardConstraints parse(@NotNull String s, @NotNull ParseContext context) {
+					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
+					for (AbstractDisplayMeta.BillboardConstraints constraint : AbstractDisplayMeta.BillboardConstraints.values()) {
+						if (constraint.name().equals(s)) return constraint;
+					}
+					return null;
+				}
+
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return true;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull AbstractDisplayMeta.BillboardConstraints o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull AbstractDisplayMeta.BillboardConstraints o) {
+					return typeFormatted(o.name());
+				}
+			})
+			.serializer(new EnumSerializer<>(AbstractDisplayMeta.BillboardConstraints.class))
+			.supplier(AbstractDisplayMeta.BillboardConstraints.values()));
+		Classes.registerClass(new ClassInfo<>(NamedTextColor.class, "namedtextcolor")
+			.user("named ?text ?colors?")
+			.name("Named Text Color")
+			.description("Team colors (dark red, dark aqua, etc.)")
+			.parser(new Parser<>() {
+				public NamedTextColor parse(@NotNull String s, @NotNull ParseContext context) {
+					s = s.toLowerCase(Locale.ENGLISH).replace(' ', '_');
+					for (NamedTextColor color : NamedTextColor.NAMES.values()) {
+						if (color.toString().equals(s)) return color;
+					}
+					return null;
+				}
+
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return true;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull NamedTextColor o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull NamedTextColor o) {
+					return typeFormatted(o.toString());
+				}
+			})
+			//.serializer(new EnumSerializer<>(AbstractDisplayMeta.BillboardConstraints.class)) todo too lazy to create serializer
+			.supplier(NamedTextColor.NAMES.values().toArray(new NamedTextColor[0])));
+		Classes.registerClass(new ClassInfo<>(Color.class, "color")
+			.user("colors?")
+			.name("Color")
+			.description("Color (outside of the team color range)")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull Color o, int flags) {
+					// doesn't seem to work how I intended
+					return LegacyComponentSerializer.legacyAmpersand().serialize(Component.empty().color(TextColor.color(o.asRGB())).asComponent());
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull Color o) {
+					return "color r: " + o.red() + " g: " + o.green() + " b: " + o.blue();
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(ItemDisplayMeta.DisplayContext.class, "displaycontext")
+			.user("display ?contexts?")
+			.name("Item Display Context")
+			.description("The context in which an item display is rendered (e.g. GUI)")
+			.parser(new Parser<>() {
+				public ItemDisplayMeta.DisplayContext parse(@NotNull String s, @NotNull ParseContext context) {
+					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
+					for (ItemDisplayMeta.DisplayContext ctx : ItemDisplayMeta.DisplayContext.values()) {
+						if (ctx.name().equals(s)) return ctx;
+					}
+					return null;
+				}
+
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return true;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull ItemDisplayMeta.DisplayContext o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull ItemDisplayMeta.DisplayContext o) {
+					return typeFormatted(o.name());
+				}
+			})
+			.serializer(new EnumSerializer<>(ItemDisplayMeta.DisplayContext.class))
+			.supplier(ItemDisplayMeta.DisplayContext.values()));
+		Classes.registerClass(new ClassInfo<>(TextDisplayMeta.Alignment.class, "textalignment")
+			.user("textalignments?")
+			.name("Text Alignment")
+			.description("The text alignment of a text display (center, left, or right)")
+			.parser(new Parser<>() {
+				public TextDisplayMeta.Alignment parse(@NotNull String s, @NotNull ParseContext context) {
+					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
+					for (TextDisplayMeta.Alignment alignment : TextDisplayMeta.Alignment.values()) {
+						if (alignment.name().equals(s)) return alignment;
+					}
+					return null;
+				}
+
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return true;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull TextDisplayMeta.Alignment o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull TextDisplayMeta.Alignment o) {
+					return typeFormatted(o.name());
+				}
+			})
+			.serializer(new EnumSerializer<>(TextDisplayMeta.Alignment.class))
+			.supplier(TextDisplayMeta.Alignment.values()));
 
 		/*
 		 * Converters

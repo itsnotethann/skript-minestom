@@ -44,7 +44,6 @@ public class EffSecEditEntityMeta extends Section {
 
 	@Override
 	protected @Nullable TriggerItem walk(Event event) {
-		//AbstractDisplayMeta
 		Object locals = Variables.copyLocalVariables(event);
 		for (Entity entity : entities.getArray(event)) {
 			EntityMeta meta = entity.getEntityMeta();
