@@ -1,0 +1,66 @@
+package ch.njol.skript.expressions;
+
+import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer;
+import ch.njol.skript.events.wrapper.PlayerChatWrapper;
+import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.sections.ExprSecInstance;
+import ch.njol.util.Kleenean;
+import ch.njol.util.coll.CollectionUtils;
+import net.kyori.adventure.text.Component;
+import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.Player;
+import org.bukkit.event.Event;
+import org.jspecify.annotations.Nullable;
+
+public class ExprCamera extends SimplePropertyExpression<Player, Entity> {
+
+	static {
+		register(ExprCamera.class, Entity.class, "camera [target]", "players");
+	}
+
+	@Override
+	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+		if (!ExprSecInstance.inEffChange(this)) {
+			Skript.error("You can't get the camera target of a player.");
+			return false;
+		}
+		return super.init(expressions, matchedPattern, isDelayed, parseResult);
+	}
+
+	@Override
+	public @Nullable Entity convert(Player from) {
+		return null;
+	}
+
+	@Override
+	public @org.eclipse.jdt.annotation.Nullable Class<?>[] acceptChange(Changer.ChangeMode mode) {
+		if (mode == Changer.ChangeMode.SET || mode == Changer.ChangeMode.RESET) return CollectionUtils.array(Entity.class);
+		return null;
+	}
+
+	@SuppressWarnings("ConstantValue")
+	@Override
+	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
+		Entity target = delta == null ? null : (Entity) delta[0];
+		for (Player player : getExpr().getArray(event)) {
+			if (mode == Changer.ChangeMode.SET) {
+				if (target == null) return;
+				player.spectate(target);
+			} else player.stopSpectating();
+		}
+	}
+
+	@Override
+	protected String getPropertyName() {
+		return "camera target";
+	}
+
+	@Override
+	public Class<? extends Entity> getReturnType() {
+		return Entity.class;
+	}
+
+}
