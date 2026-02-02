@@ -51,10 +51,12 @@ public class ReloadCommand extends Command {
 				if (!LuckPermsPlayer.hasPermission(sender, "skript.reload.all")) return;
 				reloadingMessage(sender, "all scripts and config");
 				try (TimingLogHandler timingLogHandler = new TimingLogHandler().start()) {
-					SkriptConfig.load();
-					ScriptLoader.unloadScripts(ScriptLoader.getLoadedScripts());
-					ScriptLoader.loadScripts(Skript.getInstance().getScriptsFolder(), OpenCloseable.combine(new RedirectingLogHandler(sender, null), timingLogHandler))
-								.whenComplete((scriptInfo, throwable) -> reloadedMessage(sender, timingLogHandler, "all scripts and config"));
+					try (RedirectingLogHandler redirectingLogHandler = new RedirectingLogHandler(sender, null).start()) {
+						SkriptConfig.load();
+						ScriptLoader.unloadScripts(ScriptLoader.getLoadedScripts());
+						ScriptLoader.loadScripts(Skript.getInstance().getScriptsFolder(), OpenCloseable.combine(redirectingLogHandler, timingLogHandler))
+									.whenComplete((scriptInfo, throwable) -> reloadedMessage(sender, timingLogHandler, "all scripts and config"));
+					}
 				}
 			} else if (locationProvided.equalsIgnoreCase("config")) {
 				if (!LuckPermsPlayer.hasPermission(sender, "skript.reload.config")) return;
