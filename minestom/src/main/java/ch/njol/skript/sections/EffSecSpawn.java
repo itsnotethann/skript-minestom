@@ -15,8 +15,13 @@ import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.List;
+import java.util.Set;
 
 public class EffSecSpawn extends EffectSection {
+
+	private static final Set<EntityType> NO_GRAVITY_TYPES = Set.of(EntityType.INTERACTION, EntityType.MARKER,
+		EntityType.ITEM_DISPLAY, EntityType.TEXT_DISPLAY, EntityType.BLOCK_DISPLAY, EntityType.PAINTING, EntityType.ITEM_FRAME,
+		EntityType.GLOW_ITEM_FRAME, EntityType.OMINOUS_ITEM_SPAWNER, EntityType.AREA_EFFECT_CLOUD);
 
 	static {
 		Skript.registerSection(EffSecSpawn.class,
@@ -69,6 +74,7 @@ public class EffSecSpawn extends EffectSection {
 							case "living" -> new LivingEntity(type);
 							case null, default -> new Entity(type);
 						};
+						if (NO_GRAVITY_TYPES.contains(entity.getEntityType())) entity.setNoGravity(true);
 						if (spawnTrigger != null) {
 							Event e = new EntitySpawnWrapper(new EntitySpawnEvent(entity, instance));
 							Variables.setLocalVariables(e, variables);

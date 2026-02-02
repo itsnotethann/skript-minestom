@@ -193,7 +193,7 @@ public class EffSecCreateInstance extends EffectSection {
 			InstanceContainer instanceContainer = originalInstance.getSingle(event);
 			if (instanceContainer == null) return null;
 			instance = MinecraftServer.getInstanceManager().createSharedInstance(instanceContainer);
-			instance.enableAutoChunkLoad(instanceContainer.hasEnabledAutoChunkLoad());
+			//instance.enableAutoChunkLoad(instanceContainer.hasEnabledAutoChunkLoad());
 		}
 
 		storage.change(event, new Instance[]{instance}, Changer.ChangeMode.SET); // store the created instance on the variable
@@ -226,7 +226,7 @@ public class EffSecCreateInstance extends EffectSection {
 	}
 
 	private void preLoadChunks(InstanceContainer container, File file, boolean strict) {
-		container.enableAutoChunkLoad(false);
+		//container.enableAutoChunkLoad(false);
 		ChunkLoader loader = container.getChunkLoader();
 		boolean loadServerRenderDistance = true;
 		if (loader instanceof PolarLoader polarLoader) {
@@ -287,7 +287,7 @@ public class EffSecCreateInstance extends EffectSection {
 			}
 		}
 		if (strict) {
-			container.enableAutoChunkLoad(false);
+			//container.enableAutoChunkLoad(false);
 			container.setChunkLoader(ChunkLoader.noop());
 		}
 	}
