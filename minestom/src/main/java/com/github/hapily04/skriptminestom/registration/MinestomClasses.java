@@ -42,6 +42,7 @@ import net.minestom.server.inventory.EquipmentHandler;
 import net.minestom.server.inventory.Inventory;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
 import net.minestom.server.registry.RegistryKey;
 import net.minestom.server.scoreboard.Sidebar;
 import net.minestom.server.tag.Taggable;
@@ -1324,6 +1325,36 @@ public class MinestomClasses {
 			})
 			.serializer(new EnumSerializer<>(TextDisplayMeta.Alignment.class))
 			.supplier(TextDisplayMeta.Alignment.values()));
+		Classes.registerClass(new ClassInfo<>(EntityAnimationPacket.Animation.class, "animation")
+			.user("animations?")
+			.name("Entity Animation")
+			.description("An animation that an entity can play (main hand swing, leave bed, etc.)")
+			.parser(new Parser<>() {
+				public EntityAnimationPacket.Animation parse(@NotNull String s, @NotNull ParseContext context) {
+					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
+					for (EntityAnimationPacket.Animation animation : EntityAnimationPacket.Animation.values()) {
+						if (animation.name().equals(s)) return animation;
+					}
+					return null;
+				}
+
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return true;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull EntityAnimationPacket.Animation o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull EntityAnimationPacket.Animation o) {
+					return typeFormatted(o.name());
+				}
+			})
+			.serializer(new EnumSerializer<>(EntityAnimationPacket.Animation.class))
+			.supplier(EntityAnimationPacket.Animation.values()));
 
 		/*
 		 * Converters
