@@ -15,7 +15,7 @@ public class ExprVectorRotatedAroundAnother extends SimpleExpression<Vec> {
 
 	static {
 		Skript.registerExpression(ExprVectorRotatedAroundAnother.class, Vec.class, ExpressionType.COMBINED,
-			"%vectors% rotated around (0¦x|1¦y|2¦z)(-| )axis by %number% [degrees]");
+			"%vectors% rotated around %vector% by %number% [degrees]");
 	}
 
 	@SuppressWarnings("null")

@@ -1,0 +1,78 @@
+package ch.njol.skript.sections;
+
+import ch.njol.skript.Skript;
+import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.events.wrapper.EntitySpawnWrapper;
+import ch.njol.skript.lang.*;
+import ch.njol.skript.variables.Variables;
+import ch.njol.util.Kleenean;
+import net.minestom.server.coordinate.Point;
+import net.minestom.server.coordinate.Pos;
+import net.minestom.server.entity.Entity;
+import net.minestom.server.event.entity.EntitySpawnEvent;
+import net.minestom.server.instance.Instance;
+import org.bukkit.event.Event;
+import org.eclipse.jdt.annotation.Nullable;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+public class EffSecTeleport extends EffectSection {
+
+	static {
+		Skript.registerSection(EffSecTeleport.class, "teleport %entities% to %point% [in [(world|instance)] %-instance%]");
+	}
+
+	private Expression<Entity> entities;
+	private Expression<Point> point;
+	@Nullable
+	private Expression<Instance> instance;
+
+	@Nullable
+	private Trigger callback;
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult, @Nullable SectionNode sectionNode, @Nullable List<TriggerItem> triggerItems) {
+		entities = (Expression<Entity>) expressions[0];
+		point = (Expression<Point>) expressions[1];
+		instance = (Expression<Instance>) expressions[2];
+		if (sectionNode != null) callback = loadCode(sectionNode, "teleport callback", EntitySpawnWrapper.class);
+		return true;
+	}
+
+	@Override
+	protected @Nullable TriggerItem walk(Event event) {
+		Point point = this.point.getSingle(event);
+		if (point == null) return super.walk(event, false);
+		Pos pos = point.asPos();
+		Instance i = instance != null ? instance.getSingle(event) : null;
+		Object variables = Variables.copyLocalVariables(event);
+		for (Entity entity : entities.getArray(event)) {
+			CompletableFuture<Void> future;
+			Instance instance;
+			if (i == null || i.equals(entity.getInstance())) {
+				future = entity.teleport(pos);
+				instance = entity.getInstance();
+			}
+			else {
+				future = entity.setInstance(i, pos);
+				instance = i;
+			}
+			future.whenComplete((_, throwable) -> {
+				if (throwable != null || callback == null) return;
+				Event e = new EntitySpawnWrapper(new EntitySpawnEvent(entity, instance));
+				Variables.withLocalVariables(variables, e, () -> TriggerItem.walk(callback, e));
+			});
+		}
+		return super.walk(event, false);
+	}
+
+	@Override
+	public String toString(@Nullable Event event, boolean debug) {
+		return "teleport " + entities.toString(event, debug) + " to " + point.toString(event, debug) +
+			(instance != null ? " in instance " + instance.toString(event, debug) : "");
+	}
+
+}
