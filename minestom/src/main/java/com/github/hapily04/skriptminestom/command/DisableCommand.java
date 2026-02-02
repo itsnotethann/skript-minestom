@@ -22,6 +22,7 @@ import static com.github.hapily04.skriptminestom.command.reload.ReloadCommand.in
 import static com.github.hapily04.skriptminestom.util.MessageUtils.SKRIPT_MINI_MESSAGE;
 
 // todo fix suggestions for this command
+// todo make disabling not temporary (- in file name)
 public class DisableCommand extends Command {
 
 	private static final Component DISABLE_USAGE = SKRIPT_MINI_MESSAGE.deserialize("<skript_minestom_tag> <error_color>Usage: /skript disable <file>");

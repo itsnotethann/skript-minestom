@@ -30,12 +30,10 @@ public class ReloadCommand extends Command {
 
 	public ReloadCommand() {
 		super("reload");
-		setCondition((sender, commandString) -> LuckPermsPlayer.hasPermission(sender, "skript.reload"));
-		setDefaultExecutor((sender, context) -> sender.sendMessage(RELOAD_USAGE));
-		//addSubcommand(new AllCommand());
-		//addSubcommand(new ConfigCommand());
+		setCondition((sender, _) -> LuckPermsPlayer.hasPermission(sender, "skript.reload"));
+		setDefaultExecutor((sender, _) -> sender.sendMessage(RELOAD_USAGE));
 		Argument<String[]> folderFileArg = new ArgumentStringArray("to_reload")
-			.setSuggestionCallback((sender, context, suggestion) -> {
+			.setSuggestionCallback((sender, _, suggestion) -> {
 				suggestion.addEntry(new SuggestionEntry("all"));
 				suggestion.addEntry(new SuggestionEntry("config"));
 				File scriptsFolder = Skript.getInstance().getScriptsFolder();
@@ -55,7 +53,7 @@ public class ReloadCommand extends Command {
 						SkriptConfig.load();
 						ScriptLoader.unloadScripts(ScriptLoader.getLoadedScripts());
 						ScriptLoader.loadScripts(Skript.getInstance().getScriptsFolder(), OpenCloseable.combine(redirectingLogHandler, timingLogHandler))
-									.whenComplete((scriptInfo, throwable) -> reloadedMessage(sender, timingLogHandler, "all scripts and config"));
+									.whenComplete((_, _) -> reloadedMessage(sender, timingLogHandler, "all scripts and config"));
 					}
 				}
 			} else if (locationProvided.equalsIgnoreCase("config")) {
@@ -79,7 +77,7 @@ public class ReloadCommand extends Command {
 						if (directory) {
 							ScriptLoader.unloadScripts(ScriptLoader.getScripts(scriptFile));
 							ScriptLoader.loadScripts(scriptFile, OpenCloseable.combine(redirectingLogHandler, timingLogHandler))
-										.whenComplete((scriptInfo, throwable) -> {
+										.whenComplete((_, _) -> {
 											reloadedMessage(sender, timingLogHandler, "scripts in " + originalProvidedLocation);
 										});
 							return;
@@ -87,9 +85,7 @@ public class ReloadCommand extends Command {
 						Script script = ScriptLoader.getScript(scriptFile);
 						if (script != null) ScriptLoader.unloadScript(script);
 						ScriptLoader.loadScripts(scriptFile, OpenCloseable.combine(redirectingLogHandler, timingLogHandler))
-									.whenComplete((scriptInfo, throwable) -> {
-										reloadedMessage(sender, timingLogHandler, originalProvidedLocation);
-									});
+									.whenComplete((_, _) -> reloadedMessage(sender, timingLogHandler, originalProvidedLocation));
 					}
 				}
 			}
