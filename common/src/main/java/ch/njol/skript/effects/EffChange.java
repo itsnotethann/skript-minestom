@@ -78,25 +78,30 @@ import ch.njol.util.Kleenean;
 		"reset chunk at the targeted block"})
 @Since("1.0 (set, add, remove, delete), 2.0 (remove all)")
 public class EffChange extends Effect {
-	private static Patterns<ChangeMode> patterns = new Patterns<>(new Object[][] {
-			{"(add|give) %objects% to %~objects%", ChangeMode.ADD},
-			{"increase %~objects% by %objects%", ChangeMode.ADD},
-			{"give %~objects% %objects%", ChangeMode.ADD},
+	public static final Patterns<ChangeInfo> PATTERNS = new Patterns<>(new Object[][] {
+			{"(add|give) %objects% to %~objects%", new ChangeInfo(ChangeMode.ADD, 1, 0)},
+			{"increase %~objects% by %objects%", new ChangeInfo(ChangeMode.ADD, 0, 1)},
+			{"give %~objects% %objects%", new ChangeInfo(ChangeMode.ADD, 0, 1)},
 			
-			{"set %~objects% to %objects%", ChangeMode.SET},
+			{"set %~objects% to %objects%", new ChangeInfo(ChangeMode.SET, 0, 1)},
 			
-			{"remove (all|every) %objects% from %~objects%", ChangeMode.REMOVE_ALL},
+			{"remove (all|every) %objects% from %~objects%", new ChangeInfo(ChangeMode.REMOVE_ALL, 1, 0)},
 			
-			{"(remove|subtract) %objects% from %~objects%", ChangeMode.REMOVE},
-			{"(reduce|decrease) %~objects% by %objects%", ChangeMode.REMOVE},
+			{"(remove|subtract) %objects% from %~objects%", new ChangeInfo(ChangeMode.REMOVE, 1, 0)},
+			{"(reduce|decrease) %~objects% by %objects%", new ChangeInfo(ChangeMode.REMOVE, 0, 1)},
 			
-			{"(delete|clear) %~objects%", ChangeMode.DELETE},
+			{"(delete|clear) %~objects%", new ChangeInfo(ChangeMode.DELETE)},
 			
-			{"reset %~objects%", ChangeMode.RESET}
+			{"reset %~objects%", new ChangeInfo(ChangeMode.RESET)}
 	});
+
+	private static final int[][] EXPECTED_INDEX = new int[][]{
+		{0, 1},
+		{1, 0}
+	};
 	
 	static {
-		Skript.registerEffect(EffChange.class, patterns.getPatterns());
+		Skript.registerEffect(EffChange.class, PATTERNS.getPatterns());
 	}
 	
 	@SuppressWarnings("null")
@@ -114,41 +119,11 @@ public class EffChange extends Effect {
 	@SuppressWarnings({"unchecked", "null"})
 	@Override
 	public boolean init(final Expression<?>[] exprs, final int matchedPattern, final Kleenean isDelayed, final ParseResult parser) {
-		mode = patterns.getInfo(matchedPattern);
-		
-		switch (mode) {
-			case ADD:
-				if (matchedPattern == 0) {
-					changer = exprs[0];
-					changed = exprs[1];
-				} else {
-					changer = exprs[1];
-					changed = exprs[0];
-				}
-				break;
-			case SET:
-				changer = exprs[1];
-				changed = exprs[0];
-				break;
-			case REMOVE_ALL:
-				changer = exprs[0];
-				changed = exprs[1];
-				break;
-			case REMOVE:
-				if (matchedPattern == 5) {
-					changer = exprs[0];
-					changed = exprs[1];
-				} else {
-					changer = exprs[1];
-					changed = exprs[0];
-				}
-				break;
-			case DELETE:
-				changed = exprs[0];
-				break;
-			case RESET:
-				changed = exprs[0];
-		}
+		ChangeInfo info = PATTERNS.getInfo(matchedPattern);
+		mode = info.mode;
+		int changeToIndex = info.changeToIndex;
+		if (changeToIndex >= 0) changer = exprs[changeToIndex];
+		changed = exprs[info.toBeChangedIndex];
 		
 		CountingLogHandler h = new CountingLogHandler(Level.SEVERE).start();
 		Class<?>[] rs;
@@ -267,7 +242,7 @@ public class EffChange extends Effect {
 				}
 			}
 
-			if (changed instanceof Variable && !((Variable<?>) changed).isLocal() && (mode == ChangeMode.SET || ((Variable<?>) changed).isList() && mode == ChangeMode.ADD)) {
+			if (changed instanceof Variable<?> variable && !variable.isLocal() && !variable.isEphemeral() && (mode == ChangeMode.SET || variable.isList() && mode == ChangeMode.ADD)) {
 				final ClassInfo<?> ci = Classes.getSuperClassInfo(ch.getReturnType());
 				if (ci.getC() != Object.class && ci.getSerializer() == null && ci.getSerializeAs() == null && !SkriptConfig.disableObjectCannotBeSavedWarnings.value()) {
 					if (getParser().isActive() && !getParser().getCurrentScript().suppressesWarning(ScriptWarning.VARIABLE_SAVE)) {
@@ -315,6 +290,14 @@ public class EffChange extends Effect {
 		}
 		assert false;
 		return "";
+	}
+
+	public record ChangeInfo(ChangeMode mode, int toBeChangedIndex, int changeToIndex) {
+
+		ChangeInfo(ChangeMode mode) {
+			this(mode, 0, -1);
+		}
+
 	}
 	
 }

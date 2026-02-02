@@ -29,6 +29,7 @@ public class ExprVectorRotatedXYZ extends SimpleExpression<Vec> {
 	private Expression<Number> degree;
 	private int axis;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
 		vectors = (Expression<Vec>) expressions[0];

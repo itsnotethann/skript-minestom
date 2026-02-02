@@ -13,7 +13,7 @@ import org.eclipse.jdt.annotation.Nullable;
 public class EffUnregisterInstance extends Effect {
 
 	static {
-		Skript.registerEffect(EffUnregisterInstance.class, "unregister %instances%");
+		Skript.registerEffect(EffUnregisterInstance.class, "unregister [instance[s]] %instances%");
 	}
 
 	private Expression<Instance> instance;

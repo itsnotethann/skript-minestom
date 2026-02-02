@@ -44,6 +44,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.registry.RegistryKey;
 import net.minestom.server.scoreboard.Sidebar;
+import net.minestom.server.tag.Taggable;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
@@ -171,6 +172,26 @@ public class MinestomClasses {
 						inventoryChange(delta, mode, inventory);
 					}
 				}
+			}));
+		Classes.registerClass(new ClassInfo<>(Taggable.class, "taggable")
+			.user("taggables?")
+			.name("Taggable")
+			.description("An object that can hold tags (entities, instances, etc.)")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull Taggable o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull Taggable o) {
+					return o.toString();
+				} // todo better toString maybe or maybe not because this shouldn't get called
 			}));
 		Classes.registerClass(new ClassInfo<>(Entity.class, "entity")
 			.user("entit(y|ies)")
@@ -1131,7 +1152,7 @@ public class MinestomClasses {
 				public @NotNull String toVariableNameString(@NotNull Sound o) {
 					return o.toString();
 				}
-			}));
+			})); // todo serializer
 		Classes.registerClass(new ClassInfo<>(Sound.Source.class, "soundcategory")
 			.user("sound ?categor(y|ies)")
 			.name("Sound Category")

@@ -69,6 +69,7 @@ public class Variable<T> implements Expression<T> {
 	private final static String SINGLE_SEPARATOR_CHAR = ":";
 	public final static String SEPARATOR = SINGLE_SEPARATOR_CHAR + SINGLE_SEPARATOR_CHAR;
 	public final static String LOCAL_VARIABLE_TOKEN = "_";
+	public final static String EPHEMERAL_VARIABLE_TOKEN = "-";
 
 	/**
 	 * Script this variable was created in.
@@ -85,13 +86,14 @@ public class Variable<T> implements Expression<T> {
 	private final Class<? extends T>[] types;
 
 	private final boolean local;
+	private final boolean ephemeral;
 	private final boolean list;
 
 	@Nullable
 	private final Variable<?> source;
 
 	@SuppressWarnings("unchecked")
-	private Variable(VariableString name, Class<? extends T>[] types, boolean local, boolean list, @Nullable Variable<?> source) {
+	private Variable(VariableString name, Class<? extends T>[] types, boolean local, boolean ephemeral, boolean list, @Nullable Variable<?> source) {
 		assert types.length > 0;
 
 		assert name.isSimple() || name.getMode() == StringMode.VARIABLE_NAME;
@@ -101,6 +103,7 @@ public class Variable<T> implements Expression<T> {
 		this.script = parser.isActive() ? parser.getCurrentScript() : null;
 
 		this.local = local;
+		this.ephemeral = ephemeral;
 		this.list = list;
 
 		this.name = name;
@@ -183,6 +186,7 @@ public class Variable<T> implements Expression<T> {
 			return null;
 
 		boolean isLocal = name.startsWith(LOCAL_VARIABLE_TOKEN);
+		boolean isEphemeral = name.startsWith(EPHEMERAL_VARIABLE_TOKEN);
 		boolean isPlural = name.endsWith(SEPARATOR + "*");
 
 		ParserInstance parser = ParserInstance.get();
@@ -205,7 +209,7 @@ public class Variable<T> implements Expression<T> {
 					assert type != null;
 					if (type.isAssignableFrom(hint)) {
 						// Hint matches, use variable with exactly correct type
-						return new Variable<>(variableString, CollectionUtils.array(type), true, isPlural, null);
+						return new Variable<>(variableString, CollectionUtils.array(type), true, false, isPlural, null);
 					}
 				}
 
@@ -213,7 +217,7 @@ public class Variable<T> implements Expression<T> {
 				for (Class<? extends T> type : types) {
 					if (Converters.converterExists(hint, type)) {
 						// Hint matches, even though converter is needed
-						return new Variable<>(variableString, CollectionUtils.array(type), true, isPlural, null);
+						return new Variable<>(variableString, CollectionUtils.array(type), true, false, isPlural, null);
 					}
 				}
 
@@ -228,7 +232,7 @@ public class Variable<T> implements Expression<T> {
 			}
 		}
 
-		return new Variable<>(variableString, types, isLocal, isPlural, null);
+		return new Variable<>(variableString, types, isLocal, isEphemeral, isPlural, null);
 	}
 
 	@Override
@@ -238,6 +242,10 @@ public class Variable<T> implements Expression<T> {
 
 	public boolean isLocal() {
 		return local;
+	}
+
+	public boolean isEphemeral() {
+		return ephemeral;
 	}
 
 	public boolean isList() {
@@ -284,7 +292,7 @@ public class Variable<T> implements Expression<T> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <R> Variable<R> getConvertedExpression(Class<R>... to) {
-		return new Variable<>(name, to, local, list, this);
+		return new Variable<>(name, to, local, ephemeral, list, this);
 	}
 
 	/**
