@@ -59,7 +59,7 @@ public class ExprNumbers extends SimpleExpression<Number> {
 			s = f;
 			f = temp;
 		}
-		
+
 		final List<Number> list = new ArrayList<>();
 		if (mode == 0) {
 			final double amount = Math.floor(f.doubleValue() - s.doubleValue() + 1);

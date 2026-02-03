@@ -1,21 +1,27 @@
 package com.github.hapily04.skriptminestom.registration;
 
 import ch.njol.skript.classes.ClassInfo;
+import ch.njol.skript.effects.particle.*;
 import ch.njol.skript.lang.function.*;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.registrations.DefaultClasses;
+import ch.njol.skript.util.Timespan;
 import ch.njol.util.coll.CollectionUtils;
+import com.github.hapily04.skriptminestom.util.NumberUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.util.RGBLike;
 import net.minestom.server.color.AlphaColor;
 import net.minestom.server.color.Color;
+import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.particle.Particle;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 
@@ -99,6 +105,80 @@ public class MinestomFunctions {
 					 "set the colour of a text display to rgb(10, 50, 100, 50)"
 				 )
 				 .since("2.5, 2.10 (alpha)");
+
+		// Particle Data
+		Functions.registerFunction(new SimpleJavaFunction<>("dustOption", new Parameter[]{
+			new Parameter<>("color", Classes.getExactClassInfo(RGBLike.class), true, null),
+			new Parameter<>("size", DefaultClasses.NUMBER, true, new SimpleLiteral<Number>(1f, true))
+		}, Classes.getExactClassInfo(DustOption.class), true) {
+			@Override
+			public DustOption[] executeSimple(Object[][] params) {
+				RGBLike color = (RGBLike) params[0][0];
+				Number size = (Number) params[1][0];
+				return CollectionUtils.array(new DustOption(color, size.floatValue()));
+			}
+		});
+		Functions.registerFunction(new SimpleJavaFunction<>("dustTransition", new Parameter[]{
+			new Parameter<>("color", Classes.getExactClassInfo(RGBLike.class), true, null),
+			new Parameter<>("transition-color", Classes.getExactClassInfo(RGBLike.class), true, null),
+			new Parameter<>("size", DefaultClasses.NUMBER, true, new SimpleLiteral<Number>(1f, true))
+		}, Classes.getExactClassInfo(DustTransition.class), true) {
+			@Override
+			public DustTransition[] executeSimple(Object[][] params) {
+				RGBLike color = (RGBLike) params[0][0];
+				RGBLike transitionColor = (RGBLike) params[1][0];
+				Number size = (Number) params[2][0];
+				return CollectionUtils.array(new DustTransition(color, transitionColor, size.floatValue()));
+			}
+		});
+		Functions.registerFunction(new SimpleJavaFunction<>("entityVibrationData", new Parameter[]{
+			new Parameter<>("entity", Classes.getExactClassInfo(Entity.class), true, null),
+			new Parameter<>("travel-time", Classes.getExactClassInfo(Timespan.class), true, null)
+		}, Classes.getExactClassInfo(VibrationData.class), true) {
+			@Override
+			public VibrationData[] executeSimple(Object[][] params) {
+				Entity entity = (Entity) params[0][0];
+				Timespan travelTime = (Timespan) params[1][0];
+				return CollectionUtils.array(new VibrationData(Particle.Vibration.SourceType.ENTITY, null,
+					entity.getEntityId(), (float) entity.getEyeHeight(), (int) NumberUtils.ticksFrom(travelTime)));
+			}
+		});
+		Functions.registerFunction(new SimpleJavaFunction<>("blockVibrationData", new Parameter[]{
+			new Parameter<>("block", Classes.getExactClassInfo(Point.class), true, null),
+			new Parameter<>("travel-time", Classes.getExactClassInfo(Timespan.class), true, null)
+		}, Classes.getExactClassInfo(VibrationData.class), true) {
+			@Override
+			public VibrationData[] executeSimple(Object[][] params) {
+				Point point = (Point) params[0][0];
+				Timespan travelTime = (Timespan) params[1][0];
+				return CollectionUtils.array(new VibrationData(Particle.Vibration.SourceType.BLOCK, point,
+					-1, 0, (int) NumberUtils.ticksFrom(travelTime)));
+			}
+		});
+		Functions.registerFunction(new SimpleJavaFunction<>("trailData", new Parameter[]{
+			new Parameter<>("target", Classes.getExactClassInfo(Point.class), true, null),
+			new Parameter<>("color", Classes.getExactClassInfo(RGBLike.class), true, null),
+			new Parameter<>("duration", Classes.getExactClassInfo(Timespan.class), true, null)
+		}, Classes.getExactClassInfo(TrailData.class), true) {
+			@Override
+			public TrailData[] executeSimple(Object[][] params) {
+				Point target = (Point) params[0][0];
+				RGBLike color = (RGBLike) params[1][0];
+				Timespan duration = (Timespan) params[2][0];
+				return CollectionUtils.array(new TrailData(target, color, (int) NumberUtils.ticksFrom(duration)));
+			}
+		});
+		Functions.registerFunction(new SimpleJavaFunction<>("effectData", new Parameter[]{
+			new Parameter<>("color", Classes.getExactClassInfo(RGBLike.class), true, null),
+			new Parameter<>("power", Classes.getExactClassInfo(Number.class), true, null)
+		}, Classes.getExactClassInfo(EffectData.class), true) {
+			@Override
+			public EffectData[] executeSimple(Object[][] params) {
+				RGBLike color = (RGBLike) params[0][0];
+				Number power = (Number) params[1][0];
+				return CollectionUtils.array(new EffectData(color, power.floatValue()));
+			}
+		});
 	}
 
 }

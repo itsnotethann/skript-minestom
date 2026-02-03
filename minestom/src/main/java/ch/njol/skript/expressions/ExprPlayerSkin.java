@@ -1,0 +1,54 @@
+package ch.njol.skript.expressions;
+
+import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer;
+import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.util.Kleenean;
+import ch.njol.util.coll.CollectionUtils;
+import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.Player;
+import net.minestom.server.entity.PlayerSkin;
+import org.bukkit.event.Event;
+import org.jspecify.annotations.Nullable;
+
+public class ExprPlayerSkin extends SimplePropertyExpression<Player, PlayerSkin> {
+
+	static {
+		register(ExprPlayerSkin.class, PlayerSkin.class, "skin", "players");
+	}
+
+	@Override
+	public @Nullable PlayerSkin convert(Player from) {
+		return from.getSkin();
+	}
+
+	@Override
+	public @org.eclipse.jdt.annotation.Nullable Class<?>[] acceptChange(Changer.ChangeMode mode) {
+		if (mode == Changer.ChangeMode.SET) return CollectionUtils.array(PlayerSkin.class);
+		return null;
+	}
+
+	@SuppressWarnings("ConstantValue")
+	@Override
+	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
+		PlayerSkin skin = delta == null ? null : (PlayerSkin) delta[0];
+		if (skin == null) return;
+		for (Player p : getExpr().getArray(event)) {
+			p.setSkin(skin);
+		}
+	}
+
+	@Override
+	protected String getPropertyName() {
+		return "skin";
+	}
+
+	@Override
+	public Class<? extends PlayerSkin> getReturnType() {
+		return PlayerSkin.class;
+	}
+
+}

@@ -2,6 +2,7 @@ package com.github.hapily04.skriptminestom.registration;
 
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.classes.*;
+import ch.njol.skript.effects.particle.*;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.lang.util.SimpleLiteral;
@@ -21,6 +22,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.util.RGBLike;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.color.Color;
 import net.minestom.server.command.CommandSender;
@@ -43,6 +45,7 @@ import net.minestom.server.inventory.Inventory;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
+import net.minestom.server.particle.Particle;
 import net.minestom.server.registry.RegistryKey;
 import net.minestom.server.scoreboard.Sidebar;
 import net.minestom.server.tag.Taggable;
@@ -61,6 +64,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import static com.github.hapily04.skriptminestom.util.NumberUtils.timespanFrom;
 
 public class MinestomClasses {
 
@@ -1355,6 +1360,158 @@ public class MinestomClasses {
 			})
 			.serializer(new EnumSerializer<>(EntityAnimationPacket.Animation.class))
 			.supplier(EntityAnimationPacket.Animation.values()));
+		Classes.registerClass(new ClassInfo<>(Particle.class, "particle")
+			.user("particles?")
+			.name("Particle")
+			.description("Particle (e.g. dust)")
+			.parser(new Parser<>() {
+				public Particle parse(@NotNull String s, @NotNull ParseContext context) {
+					s = s.toLowerCase(Locale.ENGLISH).replace(' ', '_');
+					if (!s.contains("minecraft:")) s = "minecraft:" + s;
+					if (!Key.parseable(s)) return null;
+					return Particle.fromKey(s);
+				}
+
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return true;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull Particle o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull Particle o) {
+					return keyToString(o.key());
+				}
+			})
+			.supplier(Particle.values().toArray(new Particle[0])));
+		Classes.registerClass(new ClassInfo<>(DustOption.class, "dustoption")
+			.user("dust ?options?")
+			.name("Dust Option")
+			.description("Dust options for the dust particle")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull DustOption o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull DustOption o) {
+					return "dust options color: " + Classes.toString(o.getColor()) + " scale: " + o.getScale();
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(DustTransition.class, "dusttransition")
+			.user("dust ?transitions?")
+			.name("Dust Transition")
+			.description("Dust options for the dust color transition particle")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull DustTransition o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull DustTransition o) {
+					return "dust transition original color: " + Classes.toString(o.getColor()) + " to color: " + Classes.toString(o.getTransitionColor())
+						+ " scale: " + o.getScale();
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(EffectData.class, "effectdata")
+			.user("effect ?datas?")
+			.name("Effect Data")
+			.description("Effect data options for the effect and instance effect particles.")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull EffectData o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull EffectData o) {
+					return "effect data options color: " + Classes.toString(o.getColor()) + " power: " + o.getPower();
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(TrailData.class, "traildata")
+			.user("trail ?datas?")
+			.name("Trail Data")
+			.description("Trail data options for the trail particle")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull TrailData o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull TrailData o) {
+					return "trail data options target: " + Classes.toString(o.getTarget()) + " color: " + Classes.toString(o.getColor())
+						+ " duration: " + Classes.toString(timespanFrom(o.getDuration()));
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(VibrationData.class, "vibrationdata")
+			.user("vibration ?datas?")
+			.name("Vibration Data")
+			.description("Vibration data options for the vibration particle")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull VibrationData o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull VibrationData o) {
+					return "vibration data options type: " + o.getSourceType().name().toLowerCase(Locale.ENGLISH) + " block: " + Classes.toString(o.getSourceBlock())
+						+ " entity id: " + o.getSourceEntityId() + " entity eye height: " + o.getSourceEntityEyeHeight()
+						+ " travel time: " + Classes.toString(timespanFrom(o.getTravelTicks()));
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(RGBLike.class, "rgblike")
+			.user("rgb ?likes?")
+			.name("RGB Like (Color)")
+			.description("Essentially a color")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull RGBLike o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull RGBLike o) {
+					return "r: " + o.red() + " g: " + o.green() + " b: " + o.blue();
+				}
+			}));
 
 		/*
 		 * Converters
@@ -1415,6 +1572,15 @@ public class MinestomClasses {
 		Converters.registerConverter(Slot.class, Item.class, from -> new Item(from.getItem()));
 		Converters.registerConverter(Vec.class, Direction.class, Direction::new);
 		Converters.registerConverter(Direction.class, Vec.class, Direction::getDirection);
+		Converters.registerConverter(Player.class, PlayerSkin.class, Player::getSkin);
+		Converters.registerConverter(RGBLike.class, NamedTextColor.class, from -> {
+			if (from instanceof NamedTextColor color) return color;
+			return null;
+		});
+		Converters.registerConverter(RGBLike.class, Color.class, from -> {
+			if (from instanceof Color color) return color;
+			return null;
+		});
 
 		/*
 		 *	Comparators
