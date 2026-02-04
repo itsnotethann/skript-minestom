@@ -13,20 +13,28 @@ import net.minestom.server.event.entity.EntitySpawnEvent;
 import net.minestom.server.instance.Instance;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
+import org.skriptlang.skript.lang.entry.EntryContainer;
+import org.skriptlang.skript.lang.entry.EntryValidator;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public class EffSecSpawn extends EffectSection {
 
+	private static final EntryValidator ENTRY_VALIDATOR;
 	private static final Set<EntityType> NO_GRAVITY_TYPES = Set.of(EntityType.INTERACTION, EntityType.MARKER,
 		EntityType.ITEM_DISPLAY, EntityType.TEXT_DISPLAY, EntityType.BLOCK_DISPLAY, EntityType.PAINTING, EntityType.ITEM_FRAME,
 		EntityType.GLOW_ITEM_FRAME, EntityType.OMINOUS_ITEM_SPAWNER, EntityType.AREA_EFFECT_CLOUD);
 
 	static {
+		ENTRY_VALIDATOR = EntryValidator.builder()
+										.addSection("before spawn", true)
+										.addSection("after spawn", true)
+										.build();
 		Skript.registerSection(EffSecSpawn.class,
-			"(summon|spawn) [(:navigable|:living)] %entitytypes% [%directions% %points%] [in [(world|instance)[s]] %instances%]",
-			"(summon|spawn) %integer% [of] [(:navigable|:living)] %entitytypes% [%directions% %points%] [in [(world|instance)[s]] %instances%]");
+			"(summon|spawn) [(:navigable|:living)] %entitytypes% [%directions% %points%] [in [(world|instance)[s]] %instances%] [:sync]",
+			"(summon|spawn) %integer% [of] [(:navigable|:living)] %entitytypes% [%directions% %points%] [in [(world|instance)[s]] %instances%] [:sync]");
 	}
 
 	private Expression<Number> amount;
@@ -36,7 +44,10 @@ public class EffSecSpawn extends EffectSection {
 	@Nullable
 	private String type;
 	@Nullable
-	private Trigger spawnTrigger;
+	private Trigger beforeSpawnTrigger;
+	@Nullable
+	private Trigger afterSpawnTrigger;
+	private boolean sync = false;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -47,7 +58,19 @@ public class EffSecSpawn extends EffectSection {
 		points = Direction.combine((Expression<? extends Direction>) expressions[1+matchedPattern], (Expression<? extends Point>) expressions[2+matchedPattern]);
 		instances = (Expression<Instance>) expressions[3+matchedPattern];
 		if (!parseResult.tags.isEmpty()) type = parseResult.tags.getFirst();
-		if (sectionNode != null) spawnTrigger = loadCode(sectionNode, "spawn trigger", EntitySpawnWrapper.class);
+		if (sectionNode != null) {
+			EntryContainer container = ENTRY_VALIDATOR.validate(sectionNode);
+			if (container == null) return false;
+			SectionNode beforeSpawn = container.getOptional("before spawn", SectionNode.class, false);
+			if (beforeSpawn != null) beforeSpawnTrigger = loadCode(beforeSpawn, "before spawn", EntitySpawnWrapper.class);
+			SectionNode afterSpawn = container.getOptional("after spawn", SectionNode.class, false);
+			if (afterSpawn != null) afterSpawnTrigger = loadCode(afterSpawn, "after spawn", EntitySpawnWrapper.class);
+			if (beforeSpawn == null && afterSpawn == null) {
+				Skript.error("You can't run abstract code within this section! Either put it under 'before spawn' or 'after spawn'.");
+				return false;
+			}
+		}
+		sync = parseResult.hasTag("sync");
 		return true;
 	}
 
@@ -75,13 +98,20 @@ public class EffSecSpawn extends EffectSection {
 							case null, default -> new Entity(type);
 						};
 						if (NO_GRAVITY_TYPES.contains(entity.getEntityType())) entity.setNoGravity(true);
-						if (spawnTrigger != null) {
+						if (beforeSpawnTrigger != null) {
 							Event e = new EntitySpawnWrapper(new EntitySpawnEvent(entity, instance));
 							Variables.setLocalVariables(e, variables);
-							TriggerItem.walk(spawnTrigger, e);
+							TriggerItem.walk(beforeSpawnTrigger, e);
 							mostRecentLocals = Variables.copyLocalVariables(e);
 						}
-						entity.setInstance(instance, point);
+						Object finalMostRecentLocals = mostRecentLocals;
+						CompletableFuture<Void> future = entity.setInstance(instance, point)
+															   .whenComplete((_, throwable) -> {
+							if (throwable != null || afterSpawnTrigger == null) return;
+							Event e = new EntitySpawnWrapper(new EntitySpawnEvent(entity, instance));
+							Variables.withLocalVariables(finalMostRecentLocals, e, () -> TriggerItem.walk(afterSpawnTrigger, e));
+						});
+						if (sync) future.join();
 					}
 				}
 			}
