@@ -96,7 +96,7 @@ public class MinestomFunctions {
 						 Long blue = (Long) params[2][0];
 						 Long alpha = (Long) params[3][0];
 
-						 return CollectionUtils.array(new AlphaColor(red.intValue(), green.intValue(), blue.intValue(), alpha.intValue()));
+						 return CollectionUtils.array(new AlphaColor(alpha.intValue(), red.intValue(), green.intValue(), blue.intValue()));
 					 }
 				 }).description("Returns a RGB color from the given red, green and blue parameters. Alpha values can be added optionally, " +
 					 "but these only take affect in certain situations, like text display backgrounds.")

@@ -18,7 +18,6 @@ import net.kyori.adventure.resource.ResourcePackStatus;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -1262,7 +1261,8 @@ public class MinestomClasses {
 				@Override
 				public @NotNull String toString(@NotNull Color o, int flags) {
 					// doesn't seem to work how I intended
-					return LegacyComponentSerializer.legacyAmpersand().serialize(Component.empty().color(TextColor.color(o.asRGB())).asComponent());
+					//return LegacyComponentSerializer.legacyAmpersand().serialize(Component.empty().color(TextColor.color(o.asRGB())).asComponent());
+					return toVariableNameString(o);
 				}
 
 				@Override

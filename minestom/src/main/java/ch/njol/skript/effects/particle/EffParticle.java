@@ -17,6 +17,7 @@ import net.minestom.server.network.packet.server.play.ParticlePacket;
 import net.minestom.server.particle.Particle;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
+import org.skriptlang.skript.lang.converter.Converters;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -47,7 +48,7 @@ public class EffParticle extends Effect {
 
 		Skript.registerEffect(EffParticle.class,
 			"[:force] draw %integer% [of] %particle% "
-				+ "[(using|with) %-item/dustoption/dusttransition/block/color/number/integer/vibrationdata/traildata/effectdata%]"
+				+ "[(using|with) %-item/dustoption/dusttransition/block/rgblike/number/integer/vibrationdata/traildata/effectdata%]"
 				+ " [(with offset|offset by) %-vector%] [%directions% %points%] [in [(world|instance)] %-instances%] "
 				+ "[(to|for) %-players%] [with (speed|extra) %-number%] [without (:distance) limit[s]]");
 	}
@@ -87,12 +88,12 @@ public class EffParticle extends Effect {
 			Class<?> usingClass = using.getReturnType();
 			Class<?> expectedExtraClass = PARTICLE_REGISTRY.get(particleClass).expectedExtra;
 			if (!expectedExtraClass.isAssignableFrom(usingClass)) {
-				if (Block.class.isAssignableFrom(expectedExtraClass) && Item.class.isAssignableFrom(usingClass)) using = using.getConvertedExpression(Block.class);
-				else {
+				if (!Converters.converterExists(usingClass, expectedExtraClass)) {
 					String type = Classes.getSuperClassInfo(usingClass).toString();
 					Skript.error("Particle '" + particleName + "' doesn't accept particle data of type '" + type + "'.");
 					return false;
 				}
+				using = using.getConvertedExpression(expectedExtraClass);
 			}
 		} else if (PARTICLE_REGISTRY.containsKey(particleClass)) {
 			String requiredUsingType = Classes.getExactClassName(PARTICLE_REGISTRY.get(particleClass).expectedExtra);
