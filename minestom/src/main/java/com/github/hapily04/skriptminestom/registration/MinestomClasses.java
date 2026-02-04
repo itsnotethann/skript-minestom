@@ -1581,6 +1581,7 @@ public class MinestomClasses {
 			if (from instanceof Color color) return color;
 			return null;
 		});
+		Converters.registerConverter(Item.class, Block.class, from -> from.getItem().material().block());
 
 		/*
 		 *	Comparators

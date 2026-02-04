@@ -1,6 +1,7 @@
 package ch.njol.skript.effects.particle;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Direction;
@@ -46,7 +47,7 @@ public class EffParticle extends Effect {
 
 		Skript.registerEffect(EffParticle.class,
 			"[:force] draw %integer% [of] %particle% "
-				+ "[(using|with) %-block/dustoption/dusttransition/item/color/number/integer/vibrationdata/traildata/effectdata%]"
+				+ "[(using|with) %-item/dustoption/dusttransition/block/color/number/integer/vibrationdata/traildata/effectdata%]"
 				+ " [(with offset|offset by) %-vector%] [%directions% %points%] [in [(world|instance)] %-instances%] "
 				+ "[(to|for) %-players%] [with (speed|extra) %-number%] [without (:distance) limit[s]]");
 	}
@@ -56,7 +57,7 @@ public class EffParticle extends Effect {
 	private Expression<Integer> amount;
 	private Particle particle;
 	@Nullable
-	private Expression<Object> using;
+	private Expression<?> using;
 	@Nullable
 	private Expression<Vec> offset;
 	private Expression<Point> points;
@@ -74,7 +75,7 @@ public class EffParticle extends Effect {
 		force = parseResult.hasTag("force");
 		amount = (Expression<Integer>) expressions[0];
 		particle = ((Literal<Particle>) expressions[1]).getSingle();
-		using = (Expression<Object>) expressions[2];
+		using = expressions[2];
 
 		Class<? extends Particle> particleClass = particle.getClass();
 		String particleName = Classes.toString(particle);
@@ -83,12 +84,16 @@ public class EffParticle extends Effect {
 				Skript.error("Particle '" + particleName + "' doesn't accept extra particle data (e.g. dust option).");
 				return false;
 			}
-			/*Class<?> usingClass = using.getReturnType();
-			if (!PARTICLE_REGISTRY.get(particleClass).expectedExtra.equals(usingClass)) {
-				String providedUsingType = Classes.getExactClassName(usingClass);
-				Skript.error("Particle '" + particleName + "' doesn't accept particle data of type '" + providedUsingType + "'.");
-				return false;
-			}*/
+			Class<?> usingClass = using.getReturnType();
+			Class<?> expectedExtraClass = PARTICLE_REGISTRY.get(particleClass).expectedExtra;
+			if (!expectedExtraClass.isAssignableFrom(usingClass)) {
+				if (Block.class.isAssignableFrom(expectedExtraClass) && Item.class.isAssignableFrom(usingClass)) using = using.getConvertedExpression(Block.class);
+				else {
+					String type = Classes.getSuperClassInfo(usingClass).toString();
+					Skript.error("Particle '" + particleName + "' doesn't accept particle data of type '" + type + "'.");
+					return false;
+				}
+			}
 		} else if (PARTICLE_REGISTRY.containsKey(particleClass)) {
 			String requiredUsingType = Classes.getExactClassName(PARTICLE_REGISTRY.get(particleClass).expectedExtra);
 			Skript.error("Particle '" + particleName + "' requires extra data of type '" + requiredUsingType + "', but none was provided.");
