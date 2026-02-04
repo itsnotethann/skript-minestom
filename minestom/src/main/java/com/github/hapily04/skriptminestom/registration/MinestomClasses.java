@@ -23,6 +23,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.util.RGBLike;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.color.AlphaColor;
 import net.minestom.server.color.Color;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.ConsoleSender;
@@ -1270,6 +1271,26 @@ public class MinestomClasses {
 					return "color r: " + o.red() + " g: " + o.green() + " b: " + o.blue();
 				}
 			}));
+		Classes.registerClass(new ClassInfo<>(AlphaColor.class, "alphacolor")
+			.user("alpha ?colors?")
+			.name("Alpha Color")
+			.description("Alpha Color (color with an alpha (transparency) value)")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull AlphaColor o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull AlphaColor o) {
+					return "alpha color r: " + o.red() + " g: " + o.green() + " b: " + o.blue() + " alpha: " + o.alpha();
+				}
+			}));
 		Classes.registerClass(new ClassInfo<>(ItemDisplayMeta.DisplayContext.class, "displaycontext")
 			.user("display ?contexts?")
 			.name("Item Display Context")
@@ -1579,8 +1600,9 @@ public class MinestomClasses {
 		});
 		Converters.registerConverter(RGBLike.class, Color.class, from -> {
 			if (from instanceof Color color) return color;
-			return null;
+			return new Color(from.red(), from.green(), from.blue());
 		});
+		Converters.registerConverter(Color.class, AlphaColor.class, from -> from.withAlpha(255));
 		Converters.registerConverter(Item.class, Block.class, from -> from.getItem().material().block());
 
 		/*
