@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
 public class ExprShadow extends SimplePropertyExpression<Entity, Boolean> {
 
 	static {
-		register(ExprShadow.class, Boolean.class, "shadow [property]", "entities");
+		register(ExprShadow.class, Boolean.class, "[text] shadow [property]", "entities");
 	}
 
 	@Override

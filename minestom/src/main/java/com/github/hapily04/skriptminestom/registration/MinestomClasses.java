@@ -1533,6 +1533,26 @@ public class MinestomClasses {
 					return "r: " + o.red() + " g: " + o.green() + " b: " + o.blue();
 				}
 			}));
+		Classes.registerClass(new ClassInfo<>(PlayerSkin.class, "skin")
+			.user("skins?")
+			.name("Skin")
+			.description("A skin with textures and a signature")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull PlayerSkin o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull PlayerSkin o) {
+					return "skin textures: " + o.textures() + " signature: " + o.signature();
+				}
+			}));
 
 		/*
 		 * Converters
