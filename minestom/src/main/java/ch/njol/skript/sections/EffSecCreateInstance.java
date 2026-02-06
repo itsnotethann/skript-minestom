@@ -16,7 +16,6 @@ import net.hollowcube.polar.PolarLoader;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.ServerFlag;
 import net.minestom.server.event.instance.InstanceChunkLoadEvent;
-import net.minestom.server.event.player.PlayerSwapItemEvent;
 import net.minestom.server.instance.*;
 import net.minestom.server.instance.anvil.AnvilLoader;
 import net.minestom.server.instance.block.Block;
@@ -35,7 +34,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.BiConsumer;
 
 @Name("Create Instance")
 @Description("Creates a new instance container or a shared instance.")
@@ -54,7 +52,7 @@ public class EffSecCreateInstance extends EffectSection {
 	// maybe a preload-super-strict option that only loads chunks w blocks in them instead of every chunk that the world provides?
 	private static final List<String> VALID_GENERATOR_PRESET_ENTRIES = List.of("strict", "normal");
 	private static final Generator BLANK_GENERATOR = unit -> unit.modifier().fill(Block.AIR);
-	private static final List<Instance> relightInstances = new ArrayList<>();
+	private static final List<Instance> RELIGHT_INSTANCES = new ArrayList<>();
 
 	static {
 		ENTRY_VALIDATOR = EntryValidator.builder()
@@ -71,7 +69,7 @@ public class EffSecCreateInstance extends EffectSection {
 
 		MinecraftServer.getGlobalEventHandler().addListener(InstanceChunkLoadEvent.class, event -> {
 			Instance instance = event.getInstance();
-			if (!relightInstances.contains(instance)) return;
+			if (!RELIGHT_INSTANCES.contains(instance)) return;
 			LightingChunk.relight(instance, List.of(event.getChunk()));
 		});
 	}
@@ -177,7 +175,7 @@ public class EffSecCreateInstance extends EffectSection {
 			InstanceContainer container = (InstanceContainer) instance;
 			if (dynamicLighting) {
 				instance.setChunkSupplier(LightingChunk::new);
-				relightInstances.add(container);
+				RELIGHT_INSTANCES.add(container);
 			}
 			assert worldFile != null; // shouldn't be null because we throw a skript error if the file doesn't exist or if it's null
 			if (loader != null) {

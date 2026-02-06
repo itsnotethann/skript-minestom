@@ -28,6 +28,7 @@ import ch.njol.skript.log.ErrorQuality;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Checker;
+import ch.njol.util.Predicate;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -134,11 +135,11 @@ public interface Expression<T> extends SyntaxElement, Debuggable, Loopable<T> {
 	 * or as the innermost check of nested checks.
 	 * <p>
 	 * Usual implementation (may differ, e.g. may return false for nonexistent values independent of <tt>negated</tt>):
-	 * 
+	 *
 	 * <pre>
 	 * return negated ^ {@link #check(Event, Checker)};
 	 * </pre>
-	 * 
+	 *
 	 * @param event The event to be used for evaluation
 	 * @param checker The checker that determines whether this expression matches
 	 * @param negated The checking condition's negated state. This is used to invert the output of the checker if set to true (i.e. <tt>negated ^ checker.check(...)</tt>)
@@ -150,7 +151,7 @@ public interface Expression<T> extends SyntaxElement, Debuggable, Loopable<T> {
 	/**
 	 * Checks this expression against the given checker. This method must only be used around other checks, use {@link #check(Event, Checker, boolean)} for a simple check or the
 	 * innermost check of a nested check.
-	 * 
+	 *
 	 * @param event The event to be used for evaluation
 	 * @param checker A checker that determines whether this expression matches
 	 * @return Whether this expression matches the given checker

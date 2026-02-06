@@ -48,6 +48,7 @@ public class MinestomFunctions {
 			@SuppressWarnings("NullableProblems")
 			@Override
 			public @Nullable Pos @NotNull [] executeSimple(Object[][] params) {
+				if (parametersNull(params, 2)) return new Pos[0];
 				Number x = (Number) params[0][0];
 				Number y = (Number) params[1][0];
 				Number z = (Number) params[2][0];
@@ -63,6 +64,7 @@ public class MinestomFunctions {
 		}, Classes.getExactClassInfo(Vec.class), true) {
 			@Override
 			public @Nullable Vec @NotNull [] executeSimple(Object[][] params) {
+				if (parametersNull(params, 2)) return new Vec[0];
 				Number x = (Number) params[0][0];
 				Number y = (Number) params[1][0];
 				Number z = (Number) params[2][0];
@@ -75,6 +77,7 @@ public class MinestomFunctions {
 		}, Classes.getExactClassInfo(Component.class), true) {
 			@Override
 			public @Nullable Component[] execute(FunctionEvent<?> e, Object[][] params) {
+				if (parametersNull(params, 0)) return new Component[0];
 				String input = (String) params[0][0];
 				TagResolver[] resolvers = (TagResolver[]) params[1];
 				return new Component[]{BASIC_MINI_MESSAGE.deserialize(input, resolvers)};
@@ -92,11 +95,11 @@ public class MinestomFunctions {
 				 }, Classes.getExactClassInfo(Color.class), true) {
 					 @Override
 					 public Color[] executeSimple(Object[][] params) {
+						 if (parametersNull(params, 2)) return new Color[0];
 						 Long red = (Long) params[0][0];
 						 Long green = (Long) params[1][0];
 						 Long blue = (Long) params[2][0];
 						 Long alpha = (Long) params[3][0];
-
 						 return CollectionUtils.array(new AlphaColor(alpha.intValue(), red.intValue(), green.intValue(), blue.intValue()));
 					 }
 				 }).description("Returns a RGB color from the given red, green and blue parameters. Alpha values can be added optionally, " +
@@ -114,6 +117,7 @@ public class MinestomFunctions {
 		}, Classes.getExactClassInfo(DustOption.class), true) {
 			@Override
 			public DustOption[] executeSimple(Object[][] params) {
+				if (parametersNull(params, 0)) return new DustOption[0];
 				RGBLike color = (RGBLike) params[0][0];
 				Number size = (Number) params[1][0];
 				return CollectionUtils.array(new DustOption(color, size.floatValue()));
@@ -126,6 +130,7 @@ public class MinestomFunctions {
 		}, Classes.getExactClassInfo(DustTransition.class), true) {
 			@Override
 			public DustTransition[] executeSimple(Object[][] params) {
+				if (parametersNull(params, 1)) return new DustTransition[0];
 				RGBLike color = (RGBLike) params[0][0];
 				RGBLike transitionColor = (RGBLike) params[1][0];
 				Number size = (Number) params[2][0];
@@ -138,6 +143,7 @@ public class MinestomFunctions {
 		}, Classes.getExactClassInfo(VibrationData.class), true) {
 			@Override
 			public VibrationData[] executeSimple(Object[][] params) {
+				if (parametersNull(params, 1)) return new VibrationData[0];
 				Entity entity = (Entity) params[0][0];
 				Timespan travelTime = (Timespan) params[1][0];
 				return CollectionUtils.array(new VibrationData(Particle.Vibration.SourceType.ENTITY, null,
@@ -150,6 +156,7 @@ public class MinestomFunctions {
 		}, Classes.getExactClassInfo(VibrationData.class), true) {
 			@Override
 			public VibrationData[] executeSimple(Object[][] params) {
+				if (parametersNull(params, 1)) return new VibrationData[0];
 				Point point = (Point) params[0][0];
 				Timespan travelTime = (Timespan) params[1][0];
 				return CollectionUtils.array(new VibrationData(Particle.Vibration.SourceType.BLOCK, point,
@@ -163,6 +170,7 @@ public class MinestomFunctions {
 		}, Classes.getExactClassInfo(TrailData.class), true) {
 			@Override
 			public TrailData[] executeSimple(Object[][] params) {
+				if (parametersNull(params, 2)) return new TrailData[0];
 				Point target = (Point) params[0][0];
 				RGBLike color = (RGBLike) params[1][0];
 				Timespan duration = (Timespan) params[2][0];
@@ -175,6 +183,7 @@ public class MinestomFunctions {
 		}, Classes.getExactClassInfo(EffectData.class), true) {
 			@Override
 			public EffectData[] executeSimple(Object[][] params) {
+				if (parametersNull(params, 1)) return new EffectData[0];
 				RGBLike color = (RGBLike) params[0][0];
 				Number power = (Number) params[1][0];
 				return CollectionUtils.array(new EffectData(color, power.floatValue()));
@@ -187,6 +196,7 @@ public class MinestomFunctions {
 		}, Classes.getExactClassInfo(TagResolver.class), true) {
 			@Override
 			public TagResolver[] executeSimple(Object[][] params) {
+				if (parametersNull(params, 1)) return new TagResolver[0];
 				String name = (String) params[0][0];
 				Object value = params[1][0];
 				boolean parsed = (boolean) params[2][0];
@@ -195,6 +205,13 @@ public class MinestomFunctions {
 				return new TagResolver[0];
 			}
 		}).description("Creates a MiniMessage tag resolver.").examples("set {_resolver} to resolver(\"name\", player's name)");
+	}
+
+	private static boolean parametersNull(Object[][] params, int toIndex) {
+		for (int i = 0; i <= toIndex; i++) {
+			if (params[i].length == 0) return true;
+		}
+		return false;
 	}
 
 }
