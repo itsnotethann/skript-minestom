@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,6 +14,9 @@ import net.kyori.adventure.resource.ResourcePackStatus;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Resource Pack Status")
+@Description("The status of a resource pack in a resource pack callback event.")
+@Examples("if resource pack status is successfully loaded:")
 public class ExprPackStatus extends SimpleExpression<ResourcePackStatus> {
 
 	static {

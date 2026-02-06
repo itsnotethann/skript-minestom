@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Item;
@@ -18,6 +21,9 @@ import net.minestom.server.scoreboard.Sidebar;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+@Name("Name")
+@Description("The name of a player, entity, or item.")
+@Examples("set name of player to \"Custom Name\"")
 public class ExprName extends SimplePropertyExpression<Object, Component> {
 
 	private static final Component PLAYER_INVENTORY_TITLE = Component.text("player inventory");

@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -10,6 +13,9 @@ import net.minestom.server.coordinate.Point;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Point Offset")
+@Description("A point offset by a certain amount.")
+@Examples("set {_p} to player's location offset by (1, 2, 3)")
 public class ExprPointOffset extends SimpleExpression<Point> {
 
 	static {

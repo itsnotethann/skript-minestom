@@ -17,6 +17,7 @@ import net.kyori.adventure.nbt.TagStringIO;
 import net.kyori.adventure.resource.ResourcePackStatus;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -574,7 +575,8 @@ public class MinestomClasses {
 		Classes.registerClass(new ClassInfo<>(GameMode.class, "gamemode")
 			.user("game ?modes?")
 			.name("Game Mode")
-			.description("Creative, survival, spectator, and adventure.")
+			.description("Represents a Minecraft game mode. Possible values: survival, creative, adventure, spectator.")
+			.examples("set player's game mode to creative")
 			.defaultExpression(new EventValueExpression<>(GameMode.class))
 			.parser(new Parser<>() {
 				@Nullable
@@ -606,7 +608,8 @@ public class MinestomClasses {
 		Classes.registerClass(new ClassInfo<>(Component.class, "component")
 			.user("components?")
 			.name("Component")
-			.description("A piece of text with formatting.")
+			.description("A piece of text with formatting (adventure component).")
+			.examples("set player's tab list header to mm(\"<rainbow>Hello!\")")
 			.defaultExpression(new EventValueExpression<>(Component.class))
 			.parser(new Parser<>() {
 				@Override
@@ -657,7 +660,8 @@ public class MinestomClasses {
 		Classes.registerClass(new ClassInfo<>(TagResolver.class, "tagresolver")
 			.user("tag ?resolvers?")
 			.name("Tag Resolver")
-			.description("Replace within the text for MiniMessage.")
+			.description("Replace tags within a MiniMessage string.")
+			.examples("set {_r} to resolver(\"name\", player's name)")
 			.defaultExpression(new EventValueExpression<>(TagResolver.class))
 			.parser(new Parser<>() {
 				@Override
@@ -672,6 +676,28 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull TagResolver o) {
+					return o.toString();
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(ComponentLike.class, "componentlike")
+			.user("component ?likes?")
+			.name("Component Like")
+			.description("Represents something that can be viewed as a component, like a regular component or a hover event.")
+			.examples("set {_c} to mm(\"Hello\")")
+			.defaultExpression(new EventValueExpression<>(ComponentLike.class))
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull ComponentLike o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull ComponentLike o) {
 					return o.toString();
 				}
 			}));
@@ -710,7 +736,8 @@ public class MinestomClasses {
 		Classes.registerClass(new ClassInfo<>(AbstractInventory.class, "inventory")
 			.user("inventor(y|ies)")
 			.name("Inventory")
-			.description("An inventory (player's inventory, anvil inventory, etc.)")
+			.description("Represents an inventory, such as a player's inventory or an anvil inventory.")
+			.examples("open player's inventory to player")
 			.defaultExpression(new EventValueExpression<>(AbstractInventory.class))
 			.parser(new Parser<>() {
 				@Override
@@ -793,7 +820,8 @@ public class MinestomClasses {
 		Classes.registerClass(new ClassInfo<>(Item.class, "item")
 			.user("items?")
 			.name("Item")
-			.description("An item.")
+			.description("An item with its amount, enchantments and other data.")
+			.examples("give player stone")
 			.defaultExpression(new EventValueExpression<>(Item.class))
 			.parser(new Parser<>() {
 				@SuppressWarnings("PatternValidation")
@@ -888,6 +916,7 @@ public class MinestomClasses {
 			.user("entity ?types?")
 			.name("Entity Type")
 			.description("The type of an entity (zombie, player, skeleton, etc.)")
+			.examples("spawn zombie at player")
 			.defaultExpression(new EventValueExpression<>(EntityType.class))
 			.parser(new Parser<>() {
 				@Nullable
@@ -949,7 +978,8 @@ public class MinestomClasses {
 		Classes.registerClass(new ClassInfo<>(EquipmentSlot.class, "equipmentslot")
 			.user("equipment ?slots?")
 			.name("Equipment Slot")
-			.description("") // todo
+			.description("An equipment slot for an entity. Possible values: main_hand, off_hand, boots, leggings, chestplate, helmet.")
+			.examples("set helmet of player to diamond helmet")
 			.defaultExpression(new EventValueExpression<>(EquipmentSlot.class))
 			.parser(new Parser<>() {
 				@Nullable
@@ -1022,7 +1052,8 @@ public class MinestomClasses {
 		Classes.registerClass(new ClassInfo<>(Enchantment.class, "enchantment")
 			.user("enchantments?")
 			.name("Enchantment")
-			.description("An enchantment for an item (sharpness 1, knockback, knockback 1, etc.)")
+			.description("An enchantment for an item, including its level.")
+			.examples("enchant player's tool with sharpness 5")
 			.defaultExpression(new EventValueExpression<>(Enchantment.class))
 			.parser(new Parser<>() {
 				@Nullable
@@ -1103,13 +1134,8 @@ public class MinestomClasses {
 		Classes.registerClass(new ClassInfo<>(Direction.class, "direction")
 			.user("directions?")
 			.name("Direction")
-			.description("A direction, e.g. north, east, behind, 5 south east, 1.3 meters to the right, etc.",
-				"<a href='#location'>Locations</a> and some <a href='#block'>blocks</a> also have a direction, but without a length.",
-				"Please note that directions have changed extensively in the betas and might not work perfectly. They can also not be used as command arguments.")
-			.usage("see <a href='./expressions.html#ExprDirection'>direction (expression)</a>")
-			.examples("set the block below the victim to a chest",
-				"loop blocks from the block infront of the player to the block 10 below the player:",
-				"	set the block behind the loop-block to water")
+			.description("Represents a direction (north, south, east, west, up, down).")
+			.examples("set {_dir} to north")
 			.since("2.0")
 			.defaultExpression(new SimpleLiteral<>(new Direction(new double[] {0, 0, 0}), true))
 			.parser(new Parser<>() {
@@ -1624,6 +1650,10 @@ public class MinestomClasses {
 		});
 		Converters.registerConverter(Color.class, AlphaColor.class, from -> from.withAlpha(255));
 		Converters.registerConverter(Item.class, Block.class, from -> from.getItem().material().block());
+		Converters.registerConverter(ComponentLike.class, Component.class, from -> {
+			if (from instanceof Component c) return c;
+			return null;
+		});
 
 		/*
 		 *	Comparators

@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.LivingEntity;
@@ -8,6 +11,9 @@ import net.minestom.server.entity.attribute.Attribute;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+@Name("Fire Ticks")
+@Description("The number of ticks an entity is on fire.")
+@Examples("set fire ticks of player to 100")
 public class ExprFireTicks extends SimplePropertyExpression<LivingEntity, Integer> {
 
 	static {

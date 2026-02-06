@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.util.Enchantment;
 import ch.njol.skript.util.Item;
@@ -14,6 +17,9 @@ import java.util.Arrays;
 
 import static com.github.hapily04.skriptminestom.registration.MinestomClasses.ITEM_CHANGER;
 
+@Name("Health")
+@Description("The health of a living entity.")
+@Examples("set health of player to 20")
 public class ExprHealth extends SimplePropertyExpression<LivingEntity, Number> {
 
 	static {

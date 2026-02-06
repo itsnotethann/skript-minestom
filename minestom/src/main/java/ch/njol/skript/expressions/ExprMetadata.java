@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
@@ -21,6 +24,9 @@ import org.skriptlang.skript.lang.arithmetic.Operator;
 import java.util.ArrayList;
 import java.util.List;
 
+@Name("Metadata")
+@Description("The metadata of an entity or an object.")
+@Examples("set metadata \"key\" of player to \"value\"")
 public class ExprMetadata extends PropertyExpression<Taggable, Object> {
 
 	static {

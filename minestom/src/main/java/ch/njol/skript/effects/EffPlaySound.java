@@ -1,6 +1,9 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -14,6 +17,13 @@ import net.minestom.server.instance.Instance;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Play Sound")
+@Description("Plays a sound at a certain location, for certain players, or from an entity.")
+@Examples({
+	"play sound \"entity.player.levelup\" at player to all players",
+	"play sound \"ambient.cave\" at point(10, 64, 10) in player's instance",
+	"play sound \"entity.villager.ambient\" from targeted entity to player"
+})
 public class EffPlaySound extends Effect {
 
 	static {

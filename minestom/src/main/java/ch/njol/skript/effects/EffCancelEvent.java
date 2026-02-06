@@ -64,17 +64,6 @@ public class EffCancelEvent extends Effect {
 	public void execute(final Event e) {
 		net.minestom.server.event.Event trueEvent = ((EventWrapper<?>) e).getEvent();
 		if (trueEvent instanceof CancellableEvent cancellable) cancellable.setCancelled(cancel);
-		/*if (e instanceof PlayerInteractEvent) {
-			EvtClick.interactTracker.eventModified((Cancellable) e);
-			((PlayerInteractEvent) e).setUseItemInHand(cancel ? Result.DENY : Result.DEFAULT);
-			((PlayerInteractEvent) e).setUseInteractedBlock(cancel ? Result.DENY : Result.DEFAULT);
-		} else if (e instanceof BlockCanBuildEvent) {
-			((BlockCanBuildEvent) e).setBuildable(!cancel);
-		} else if (e instanceof PlayerDropItemEvent) {
-			PlayerUtils.updateInventory(((PlayerDropItemEvent) e).getPlayer());
-		} else if (e instanceof InventoryInteractEvent) {
-			PlayerUtils.updateInventory(((Player) ((InventoryInteractEvent) e).getWhoClicked()));
-		}*/
 	}
 
 	@Override

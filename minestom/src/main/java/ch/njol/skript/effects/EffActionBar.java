@@ -1,6 +1,9 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -10,6 +13,9 @@ import net.minestom.server.entity.Player;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Action Bar")
+@Description("Sends an action bar to the given players.")
+@Examples("send action bar \"Hello World!\" to all players")
 public class EffActionBar extends Effect {
 
 	static {

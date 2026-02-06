@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -14,6 +17,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Name("Inventory Slot")
+@Description("A specific slot of an inventory.")
+@Examples("set slot 0 of player's inventory to diamond")
 public class ExprSlot extends PropertyExpression<AbstractInventory, Slot> {
 
 	static {

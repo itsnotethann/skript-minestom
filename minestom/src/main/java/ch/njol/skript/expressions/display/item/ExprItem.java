@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions.display.item;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.expressions.display.block.ExprBlock;
 import ch.njol.skript.util.Item;
@@ -13,6 +16,9 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
 import org.bukkit.event.Event;
 
+@Name("Display Item")
+@Description("The item displayed by an item display entity.")
+@Examples("set display item of targeted entity to diamond sword")
 public class ExprItem extends SimplePropertyExpression<Entity, Item> {
 
 	static {

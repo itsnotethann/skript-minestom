@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions.display.text;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.expressions.display.item.ExprDisplayContext;
 import ch.njol.util.coll.CollectionUtils;
@@ -10,6 +13,9 @@ import net.minestom.server.entity.metadata.display.ItemDisplayMeta;
 import net.minestom.server.entity.metadata.display.TextDisplayMeta;
 import org.bukkit.event.Event;
 
+@Name("Display Text")
+@Description("The text displayed by a text display entity.")
+@Examples("set display text of targeted entity to \"Hello World!\"")
 public class ExprText extends SimplePropertyExpression<Entity, Component> {
 
 	static {

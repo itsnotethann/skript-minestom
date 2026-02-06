@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -17,6 +20,9 @@ import java.util.List;
 
 import static com.github.hapily04.skriptminestom.registration.MinestomClasses.ITEM_CHANGER;
 
+@Name("Enchantments")
+@Description("The enchantments of an item.")
+@Examples("set enchantments of player's tool to protection 4 and unbreaking 3")
 public class ExprEnchants extends PropertyExpression<Item, Enchantment> {
 
 	static {

@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -12,6 +15,9 @@ import net.minestom.server.instance.generator.GenerationUnit;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Chunk Vector")
+@Description("The start or end block vector of a chunk being generated. Only available within a generator section.")
+@Examples("set {_start} to chunk start vector")
 public class ExprChunkVector extends SimpleExpression<Point> {
 
 	static {

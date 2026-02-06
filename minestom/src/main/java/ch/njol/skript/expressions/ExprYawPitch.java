@@ -1,5 +1,8 @@
 package ch.njol.skript.expressions;
 
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -14,6 +17,9 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import static ch.njol.skript.util.VectorMath.*;
 
+@Name("Yaw/Pitch")
+@Description("The yaw or pitch of a point or entity.")
+@Examples("set {_yaw} to yaw of player")
 public class ExprYawPitch extends PropertyExpression<Object, Number> {
 
 	static {

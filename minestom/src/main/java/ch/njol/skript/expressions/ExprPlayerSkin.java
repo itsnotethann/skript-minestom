@@ -2,6 +2,9 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -14,6 +17,9 @@ import net.minestom.server.entity.PlayerSkin;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+@Name("Player Skin")
+@Description("The skin of a player.")
+@Examples("set skin of player to skin of \"jeb_\"")
 public class ExprPlayerSkin extends SimplePropertyExpression<Player, PlayerSkin> {
 
 	static {

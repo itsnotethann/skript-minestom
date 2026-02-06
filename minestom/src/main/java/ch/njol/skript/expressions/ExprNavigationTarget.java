@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.coordinate.Point;
@@ -9,6 +12,9 @@ import net.minestom.server.entity.pathfinding.Navigator;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+@Name("Navigation Target")
+@Description("The navigation target of an entity.")
+@Examples("set navigation target of targeted entity to player")
 public class ExprNavigationTarget extends SimplePropertyExpression<EntityCreature, Point> {
 
 	static {

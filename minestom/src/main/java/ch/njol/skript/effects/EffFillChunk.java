@@ -1,6 +1,9 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
@@ -13,6 +16,9 @@ import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
 @SuppressWarnings("NotNullFieldNotInitialized")
+@Name("Fill Chunk")
+@Description("Fills a chunk or a portion of it with a specific block within a chunk generator.")
+@Examples({"fill chunk with stone", "fill chunk between y levels 0 and 64 with water"})
 public class EffFillChunk extends Effect implements EventRestrictedSyntax {
 
 	static {

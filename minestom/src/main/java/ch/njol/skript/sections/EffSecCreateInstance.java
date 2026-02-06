@@ -3,6 +3,9 @@ package ch.njol.skript.sections;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
@@ -34,6 +37,16 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.BiConsumer;
 
+@Name("Create Instance")
+@Description("Creates a new instance container or a shared instance.")
+@Examples({
+	"create instance and store it in {_instance}:",
+	"    file: \"worlds/lobby\"",
+	"    loader: \"anvil\"",
+	"    generator:",
+	"        fill chunk with stone",
+	"    preload option: \"normal\""
+})
 public class EffSecCreateInstance extends EffectSection {
 
 	private static final EntryValidator ENTRY_VALIDATOR;

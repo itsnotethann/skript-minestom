@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,6 +14,9 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Item Named")
+@Description("An item with a specific custom name.")
+@Examples("give player stone named \"Lucky Stone\"")
 public class ExprItemNamed extends SimpleExpression<Item> {
 
 	static {

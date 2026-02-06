@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -16,6 +19,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+@Name("Viewers")
+@Description("The viewers of an entity.")
+@Examples("broadcast \"Viewers: %viewers of player%\"")
 public class ExprViewers extends PropertyExpression<Entity, Player> {
 
 	static {

@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions.display.text;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.color.AlphaColor;
@@ -9,6 +12,9 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.metadata.display.TextDisplayMeta;
 import org.bukkit.event.Event;
 
+@Name("Text Alignment")
+@Description("The alignment of a text display entity.")
+@Examples("set alignment of targeted entity to center")
 public class ExprAlignment extends SimplePropertyExpression<Entity, TextDisplayMeta.Alignment> {
 
 	static {

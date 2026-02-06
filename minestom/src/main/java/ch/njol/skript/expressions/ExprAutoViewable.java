@@ -1,12 +1,18 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Entity;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+@Name("Automatic Viewability")
+@Description("The automatic viewability state of an entity.")
+@Examples("set auto viewable state of player to true")
 public class ExprAutoViewable extends SimplePropertyExpression<Entity, Boolean> {
 
 	static {

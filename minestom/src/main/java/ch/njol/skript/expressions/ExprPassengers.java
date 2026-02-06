@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -16,6 +19,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+@Name("Passengers")
+@Description("The passengers of an entity.")
+@Examples({
+	"set {_passengers::*} to passengers of player",
+	"add targeted entity to passengers of player",
+	"remove player from passengers of vehicle"
+})
 public class ExprPassengers extends PropertyExpression<Entity, Entity> {
 
 	static {

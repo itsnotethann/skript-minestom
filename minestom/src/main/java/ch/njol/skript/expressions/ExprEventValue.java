@@ -2,6 +2,9 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.ClassInfo;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.expressions.base.WrapperExpression;
 import ch.njol.skript.lang.Expression;
@@ -14,6 +17,9 @@ import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Event Value")
+@Description("Returns the value of a certain type in an event (e.g. 'player', 'event-string').")
+@Examples("on chat:\n\tset {_m} to event-string")
 public class ExprEventValue extends WrapperExpression<Object> {
 
 	static {

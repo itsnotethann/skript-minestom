@@ -2,6 +2,9 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.PlayerChatWrapper;
 import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
@@ -13,6 +16,9 @@ import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+@Name("Chat Message")
+@Description("The raw message in a chat event.")
+@Examples("broadcast the chat message")
 public class ExprChatMessage extends SimpleExpression<String> implements EventRestrictedSyntax {
 
 	static {

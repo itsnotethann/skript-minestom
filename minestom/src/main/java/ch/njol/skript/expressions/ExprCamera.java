@@ -2,6 +2,9 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.PlayerChatWrapper;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
@@ -15,6 +18,9 @@ import net.minestom.server.entity.Player;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+@Name("Camera Target")
+@Description("The camera target of a player. Only available within an instance change effect.")
+@Examples("set camera target of player to targeted entity")
 public class ExprCamera extends SimplePropertyExpression<Player, Entity> {
 
 	static {

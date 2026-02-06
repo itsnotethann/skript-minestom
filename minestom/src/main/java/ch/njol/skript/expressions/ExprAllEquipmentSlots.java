@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -10,6 +13,9 @@ import net.minestom.server.entity.EquipmentSlot;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+@Name("All Equipment Slots")
+@Description("Returns all possible equipment slots.")
+@Examples("set {_slots::*} to all equipment slots")
 public class ExprAllEquipmentSlots extends SimpleExpression<EquipmentSlot> {
 
 	private static final EquipmentSlot[] ARMOR_EQUIPMENT_SLOTS = EquipmentSlot.armors().toArray(new EquipmentSlot[0]);

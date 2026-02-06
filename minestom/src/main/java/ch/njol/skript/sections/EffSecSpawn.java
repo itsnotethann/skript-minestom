@@ -2,6 +2,9 @@ package ch.njol.skript.sections;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.EntitySpawnWrapper;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.util.Direction;
@@ -20,6 +23,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+@Name("Spawn Entity")
+@Description("Spawns one or more entities at a location.")
+@Examples({
+	"spawn living zombie at player's location:",
+	"    before spawn:",
+	"        set display name of entity to \"Custom Zombie\"",
+	"    after spawn:",
+	"        broadcast \"Zombie spawned!\""
+})
 public class EffSecSpawn extends EffectSection {
 
 	private static final EntryValidator ENTRY_VALIDATOR;

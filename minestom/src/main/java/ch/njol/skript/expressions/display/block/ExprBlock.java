@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions.display.block;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Entity;
@@ -8,6 +11,9 @@ import net.minestom.server.entity.metadata.display.BlockDisplayMeta;
 import net.minestom.server.instance.block.Block;
 import org.bukkit.event.Event;
 
+@Name("Display Block")
+@Description("The block displayed by a block display entity.")
+@Examples("set display block of targeted entity to stone")
 public class ExprBlock extends SimplePropertyExpression<Entity, Block> {
 
 	static {

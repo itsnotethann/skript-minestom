@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions.display.item;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.util.Item;
 import ch.njol.skript.util.Slot;
@@ -10,6 +13,9 @@ import net.minestom.server.entity.metadata.display.ItemDisplayMeta;
 import net.minestom.server.item.ItemStack;
 import org.bukkit.event.Event;
 
+@Name("Item Display Context")
+@Description("The display context of an item display entity.")
+@Examples("set display context of targeted entity to head")
 public class ExprDisplayContext extends SimplePropertyExpression<Entity, ItemDisplayMeta.DisplayContext> {
 
 	static {

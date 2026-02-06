@@ -1,6 +1,9 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
@@ -14,6 +17,9 @@ import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
 @SuppressWarnings("NotNullFieldNotInitialized")
+@Name("Set/Assign Chunk Block")
+@Description("Sets a block at a specific point within a chunk generator.")
+@Examples("set chunk block at point(0, 64, 0) to stone")
 public class EffChunkBlock extends Effect implements EventRestrictedSyntax {
 
 	static {

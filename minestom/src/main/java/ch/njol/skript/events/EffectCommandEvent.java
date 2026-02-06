@@ -1,5 +1,9 @@
 package ch.njol.skript.events;
 
+import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Getter;
 import net.minestom.server.entity.Player;
@@ -8,6 +12,9 @@ import net.minestom.server.instance.Instance;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+@Name("Effect Command Event")
+@Description("Internal event used when an effect is used as a command.")
+@Examples("on effect command:")
 public class EffectCommandEvent extends Event implements CancellableEvent {
 
 	private static final HandlerList HANDLERS = new HandlerList();

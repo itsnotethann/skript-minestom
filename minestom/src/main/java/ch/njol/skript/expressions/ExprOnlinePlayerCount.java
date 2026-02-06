@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -10,6 +13,9 @@ import net.minestom.server.MinecraftServer;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+@Name("Online Player Count")
+@Description("The number of online players.")
+@Examples("broadcast \"Online: %number of online players%\"")
 public class ExprOnlinePlayerCount extends SimpleExpression<Integer> {
 
 	static {

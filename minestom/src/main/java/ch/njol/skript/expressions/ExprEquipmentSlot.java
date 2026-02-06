@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -20,6 +23,9 @@ import java.util.List;
 
 import static net.minestom.server.utils.inventory.PlayerInventoryUtils.OFFHAND_SLOT;
 
+@Name("Equipment Slot")
+@Description("The equipment slot of an entity or player.")
+@Examples("set helmet of player to diamond helmet")
 public class ExprEquipmentSlot extends PropertyExpression<EquipmentHandler, Slot> {
 
 	static {

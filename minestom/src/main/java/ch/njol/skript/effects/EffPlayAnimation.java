@@ -1,6 +1,9 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,6 +14,9 @@ import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Play Animation")
+@Description("Plays an animation for the given entities.")
+@Examples("play animation \"swing_main_hand\" for all players")
 public class EffPlayAnimation extends Effect {
 
 	static {

@@ -2,6 +2,9 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.PlayerChatWrapper;
 import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
@@ -15,6 +18,9 @@ import net.minestom.server.entity.Entity;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+@Name("Chat Format")
+@Description("The format of a chat message in a chat event.")
+@Examples("set chat format to \"[Admin] %player%: %message%\"")
 public class ExprChatFormat extends SimpleExpression<Component> implements EventRestrictedSyntax {
 
 	static {

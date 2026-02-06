@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions.display.text;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.color.Color;
@@ -8,6 +11,9 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.metadata.display.TextDisplayMeta;
 import org.bukkit.event.Event;
 
+@Name("Line Width")
+@Description("The line width of a text display entity.")
+@Examples("set line width of targeted entity to 200")
 public class ExprLineWidth extends SimplePropertyExpression<Entity, Integer> {
 
 	static {

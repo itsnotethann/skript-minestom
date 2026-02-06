@@ -2,6 +2,9 @@ package ch.njol.skript.sections;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.variables.Variables;
@@ -17,6 +20,13 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
+@Name("Edit Entity Meta")
+@Description("Edits the metadata of one or more entities.")
+@Examples({
+	"edit meta of player:",
+	"    set custom name of entity to \"New Name\"",
+	"    set custom name visibility of entity to true"
+})
 public class EffSecEditEntityMeta extends Section {
 
 	static {

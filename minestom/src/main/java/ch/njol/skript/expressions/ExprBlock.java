@@ -2,6 +2,9 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -22,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("NotNullFieldNotInitialized")
+@Name("Block")
+@Description("The block at a certain location in an instance.")
+@Examples("set block at player's location to stone")
 public class ExprBlock extends SimpleExpression<Block> {
 
 	static {

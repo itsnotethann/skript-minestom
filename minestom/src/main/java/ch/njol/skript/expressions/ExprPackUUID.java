@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -11,6 +14,9 @@ import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Resource Pack UUID")
+@Description("The UUID of a resource pack in a resource pack callback event.")
+@Examples("broadcast \"Pack %resource pack uuid% updated!\"")
 public class ExprPackUUID extends SimpleExpression<String> implements EventRestrictedSyntax {
 
 	static {

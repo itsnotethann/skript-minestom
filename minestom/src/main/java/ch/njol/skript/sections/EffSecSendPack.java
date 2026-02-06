@@ -2,6 +2,9 @@ package ch.njol.skript.sections;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Getter;
@@ -21,6 +24,13 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+@Name("Send Resource Pack")
+@Description("Sends a resource pack to one or more players.")
+@Examples({
+	"send resource pack from \"https://example.com/pack.zip\" with uuid \"...\" with hash \"...\" to player:",
+	"    if resource pack status is successfully loaded:",
+	"        broadcast \"Pack loaded!\""
+})
 @SuppressWarnings("NullableProblems")
 public class EffSecSendPack extends EffectSection {
 

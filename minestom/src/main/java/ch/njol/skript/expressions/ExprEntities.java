@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -20,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@Name("Entities")
+@Description("Returns all entities on the server, optionally filtered by type, radius, or instance.")
+@Examples("set {_entities::*} to all zombies in radius 10 of player")
 public class ExprEntities extends SimpleExpression<Entity> {
 
 	static {

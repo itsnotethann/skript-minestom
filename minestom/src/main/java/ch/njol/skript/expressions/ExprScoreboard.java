@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -12,6 +15,9 @@ import net.minestom.server.scoreboard.Sidebar;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+@Name("New Sidebar Scoreboard")
+@Description("Creates a new sidebar scoreboard.")
+@Examples("set {_s} to a new sidebar scoreboard named \"Stats\"")
 public class ExprScoreboard extends SimpleExpression<Sidebar> {
 
 	static {

@@ -1,9 +1,15 @@
 package ch.njol.skript.expressions;
 
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import net.minestom.server.entity.Entity;
 import org.jspecify.annotations.Nullable;
 
+@Name("UUID")
+@Description("The UUID of an entity.")
+@Examples("broadcast \"UUID: %uuid of player%\"")
 public class ExprUUID extends SimplePropertyExpression<Entity, String> {
 
 	static {

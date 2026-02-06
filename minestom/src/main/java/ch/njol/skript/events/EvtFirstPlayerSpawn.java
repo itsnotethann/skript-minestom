@@ -1,6 +1,9 @@
 package ch.njol.skript.events;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.EventWrapper;
 import ch.njol.skript.events.wrapper.PlayerSpawnWrapper;
 import ch.njol.skript.lang.Literal;
@@ -11,6 +14,9 @@ import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 
+@Name("Join / First Player Spawn")
+@Description("Called when a player joins the server for the first time in a session.")
+@Examples("on player join:")
 public class EvtFirstPlayerSpawn extends SkriptEvent {
 
 	static {

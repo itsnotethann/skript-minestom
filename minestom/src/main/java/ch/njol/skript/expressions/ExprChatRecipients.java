@@ -2,6 +2,9 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.PlayerChatWrapper;
 import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
@@ -20,6 +23,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+@Name("Chat Recipients")
+@Description("The recipients of a chat message in a chat event.")
+@Examples("remove player from chat recipients")
 public class ExprChatRecipients  extends SimpleExpression<Player> implements EventRestrictedSyntax {
 
 	static {

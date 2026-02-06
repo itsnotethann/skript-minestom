@@ -1,12 +1,18 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+@Name("Arrow Count")
+@Description("The number of arrows in a living entity.")
+@Examples("set arrow count of player to 5")
 public class ExprArrowCount extends SimplePropertyExpression<LivingEntity, Integer> {
 
 	static {

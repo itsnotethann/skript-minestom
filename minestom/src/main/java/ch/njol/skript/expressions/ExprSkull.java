@@ -1,5 +1,8 @@
 package ch.njol.skript.expressions;
 
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.util.Item;
 import net.minestom.server.component.DataComponents;
@@ -9,6 +12,9 @@ import net.minestom.server.item.Material;
 import net.minestom.server.network.player.ResolvableProfile;
 import org.jspecify.annotations.Nullable;
 
+@Name("Skull Item")
+@Description("Creates a skull item from a skin.")
+@Examples("give player skull of skin of \"jeb_\"")
 public class ExprSkull extends SimplePropertyExpression<PlayerSkin, Item> {
 
 	static {
