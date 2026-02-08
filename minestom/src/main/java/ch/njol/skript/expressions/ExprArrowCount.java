@@ -16,7 +16,7 @@ import org.jspecify.annotations.Nullable;
 public class ExprArrowCount extends SimplePropertyExpression<LivingEntity, Integer> {
 
 	static {
-		register(ExprFireTicks.class, Integer.class, "arrow count", "livingentities");
+		register(ExprArrowCount.class, Integer.class, "arrow count", "livingentities");
 	}
 
 	@Override
