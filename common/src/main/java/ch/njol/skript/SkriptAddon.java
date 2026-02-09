@@ -96,6 +96,10 @@ public final class SkriptAddon {
 	public SkriptAddon setLanguageFileDirectory(String directory) {
 		if (languageFileDirectory != null)
 			throw new IllegalStateException();
+		return UNSAFE_setLanguageFileDirectory(directory);
+	}
+
+	public SkriptAddon UNSAFE_setLanguageFileDirectory(String directory) {
 		directory = "" + directory.replace('\\', '/');
 		if (directory.endsWith("/"))
 			directory = "" + directory.substring(0, directory.length() - 1);

@@ -26,6 +26,15 @@ public class SimpleEvents {
 		Skript.registerEvent("Swap Hand Item", SimpleEvent.class, PlayerSwapItemWrapper.class, "swap[ping of] [(hand|held)] item[s]")
 			.description("Called when a player swaps items in their hands.")
 			.examples("on swap hand item:");
+		Skript.registerEvent("Inventory Click", SimpleEvent.class, InventoryPreClickWrapper.class, "inventory click")
+			.description("Called when a player clicks while in an inventory.")
+			.examples("on inventory click:");
+		Skript.registerEvent("Inventory Open", SimpleEvent.class, InventoryOpenWrapper.class, "inventory open")
+			  .description("Called when a player opens an inventory.")
+			  .examples("on inventory open:");
+		Skript.registerEvent("Inventory Close", SimpleEvent.class, InventoryCloseWrapper.class, "inventory close")
+			  .description("Called when a player closes an inventory.")
+			  .examples("on inventory close:");
 	}
 
 }

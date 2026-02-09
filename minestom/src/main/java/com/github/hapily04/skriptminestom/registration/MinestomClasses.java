@@ -43,6 +43,7 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.inventory.AbstractInventory;
 import net.minestom.server.inventory.EquipmentHandler;
 import net.minestom.server.inventory.Inventory;
+import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
@@ -600,11 +601,75 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull GameMode o) {
-					return o.name().toLowerCase(Locale.ENGLISH);
+					return typeFormatted(o.name());
 				}
 			})
 			.serializer(new EnumSerializer<>(GameMode.class))
 			.supplier(GameMode.values()));
+		Classes.registerClass(new ClassInfo<>(InventoryType.class, "inventorytype")
+			.user("inventory ?types?")
+			.name("Inventory Type")
+			.description("Inventory type todo convert")
+			.defaultExpression(new EventValueExpression<>(InventoryType.class))
+			.parser(new Parser<>() {
+				@Nullable
+				public InventoryType parse(@NotNull String s, @NotNull ParseContext context) {
+					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
+					for (InventoryType type : InventoryType.values()) {
+						if (type.name().equals(s)) return type;
+					}
+					return null;
+				}
+
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return true;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull InventoryType o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull InventoryType o) {
+					return typeFormatted(o.name());
+				}
+			})
+			.serializer(new EnumSerializer<>(InventoryType.class))
+			.supplier(InventoryType.values()));
+		Classes.registerClass(new ClassInfo<>(ClickType.class, "clicktype")
+			.user("click ?types?")
+			.name("Click Type")
+			.description("Click type todo convert")
+			.defaultExpression(new EventValueExpression<>(ClickType.class))
+			.parser(new Parser<>() {
+				@Nullable
+				public ClickType parse(@NotNull String s, @NotNull ParseContext context) {
+					s = s.toUpperCase(Locale.ENGLISH);
+					for (ClickType type : ClickType.values()) {
+						if (type.name().equals(s)) return type;
+					}
+					return null;
+				}
+
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return true;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull ClickType o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull ClickType o) {
+					return typeFormatted(o.name());
+				}
+			})
+			.serializer(new EnumSerializer<>(ClickType.class))
+			.supplier(ClickType.values()));
 		Classes.registerClass(new ClassInfo<>(Component.class, "component")
 			.user("components?")
 			.name("Component")
@@ -922,6 +987,7 @@ public class MinestomClasses {
 				@Nullable
 				public EntityType parse(@NotNull String s, @NotNull ParseContext context) {
 					s = s.toLowerCase(Locale.ENGLISH).replace(' ', '_');
+					s = Utils.isPlural(s).updated();
 					if (!s.contains("minecraft:")) s = "minecraft:" + s;
 					if (!Key.parseable(s)) return null;
 					return EntityType.fromKey(s);

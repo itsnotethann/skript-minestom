@@ -11,11 +11,19 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.logging.Logger;
 
 public abstract class JavaPlugin implements Plugin {
 	private PluginClassLoader loader;
 	private PluginDescriptionFile description;
 	private boolean enabled = false;
+	private Logger logger;
+
+	@Override
+	public void onEnable() {}
+
+	@Override
+	public void onDisable() {}
 
 	public final void init(PluginDescriptionFile description, PluginClassLoader loader) {
 		this.description = description;
@@ -37,6 +45,13 @@ public abstract class JavaPlugin implements Plugin {
 		} catch (URISyntaxException ignored) {
 			return new File(".");
 		}
+	}
+
+	public Logger getLogger() {
+		if (logger == null) {
+			logger = Logger.getLogger(getName());
+		}
+		return logger;
 	}
 
 	@Override

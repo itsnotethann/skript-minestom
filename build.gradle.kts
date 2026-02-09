@@ -2,8 +2,8 @@ plugins {
 	`maven-publish`
 }
 
-group = "org.skriptlang"
-version = "2.9.1"
+group = "com.github.hapily04.skriptminestom"
+version = "0.1.0"
 
 repositories {
 	mavenCentral()
@@ -16,11 +16,22 @@ subprojects {
 	publishing {
 		publications {
 			create<MavenPublication>("maven") {
-				groupId = "org.skriptlang.skript"
+				groupId = "com.github.hapily04.skriptminestom"
 				artifactId = project.name
 				version = rootProject.version.toString()
 
 				from(components["java"])
+			}
+		}
+		repositories {
+			maven {
+				url = uri("https://maven.hapily.me/snapshots")
+				credentials {
+					username = (project.findProperty("repoHapilyUsername") as? String)
+						?: throw GradleException("Missing global property 'repoHapilyUsername'")
+					password = (project.findProperty("repoHapilyPassword") as? String)
+						?: throw GradleException("Missing global property 'repoHapilyPassword'")
+				}
 			}
 		}
 	}

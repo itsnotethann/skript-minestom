@@ -1,12 +1,13 @@
 plugins {
 	id("com.gradleup.shadow") version "9.3.0"
-    kotlin("jvm") version "2.1.10"
+	kotlin("jvm") version "2.3.0"
 	application
 	java
+	`maven-publish`
 }
 
 group = "com.github.hapily04"
-version = "2.9.1"
+version = "0.1.0"
 
 repositories {
     mavenCentral()
@@ -25,16 +26,13 @@ dependencies {
 	implementation("it.unimi.dsi:fastutil:8.5.18") // fix polar error
 	implementation("dev.lu15:luckperms-minestom:5.5-SNAPSHOT")
 	implementation("com.h2database:h2:2.2.224") // fix luckperms cause it's lowkey being  stupid
-	implementation("dev.lu15:spark-minestom:1.10-SNAPSHOT")
+	//implementation("dev.lu15:spark-minestom:1.10-SNAPSHOT")
 	implementation("org.spongepowered:configurate-hocon:3.7.2") // configuration using hocon
 	implementation("org.jline:jline:3.28.0") // part of terminal implementation
 	compileOnly("org.jetbrains:annotations:26.0.2")
 	implementation(group = "org.eclipse.jdt", name = "org.eclipse.jdt.annotation", version = "2.2.700")
 	implementation("org.slf4j:slf4j-simple:2.0.16")
 	implementation("com.google.code.gson:gson:2.11.0")
-	implementation("com.github.echolightmc:MSGuis:1.5-SNAPSHOT") {
-		exclude("net.minestom", "minestom")
-	}
 	implementation(project(":common"))
 }
 
@@ -44,4 +42,22 @@ kotlin {
 
 application {
 	mainClass = "com.github.hapily04.skriptminestom.SkriptMinestom"
+}
+
+java {
+	withSourcesJar()
+}
+
+publishing {
+	repositories {
+		maven {
+			url = uri("https://maven.hapily.me/snapshots")
+			credentials {
+				username = (project.findProperty("repoHapilyUsername") as? String)
+					?: throw GradleException("Missing global property 'repoHapilyUsername'")
+				password = (project.findProperty("repoHapilyPassword") as? String)
+					?: throw GradleException("Missing global property 'repoHapilyPassword'")
+			}
+		}
+	}
 }

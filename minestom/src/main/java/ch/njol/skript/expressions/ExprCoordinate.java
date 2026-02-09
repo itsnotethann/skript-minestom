@@ -13,11 +13,11 @@ import org.eclipse.jdt.annotation.Nullable;
 
 @Name("Coordinate")
 @Description("The x, y, or z coordinate of a point.")
-@Examples("set {_x} to x-coordinate of player's location")
+@Examples("set {_x} to x-coordinate of player's position")
 public class ExprCoordinate extends PropertyExpression<Point, Number> {
 
 	static {
-		register(ExprCoordinate.class, Number.class, "(1:x|2:y|3:z)[(-| )(coord[inate]|pos[ition]|loc[ation])[s]]", "points");
+		register(ExprCoordinate.class, Number.class, "(1:x|2:y|3:z)[(-| )(coord[inate]|pos[ition])[s]]", "points");
 	}
 
 	private int match;
