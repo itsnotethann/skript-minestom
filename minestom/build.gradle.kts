@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.github.hapily04"
-version = "0.1.0"
+version = "1.0.0-alpha.1"
 
 repositories {
     mavenCentral()

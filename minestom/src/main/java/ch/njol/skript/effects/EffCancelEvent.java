@@ -49,6 +49,7 @@ public class EffCancelEvent extends Effect {
 		final Class<? extends Event>[] es = getParser().getCurrentEvents();
 		if (es == null)
 			return false;
+		// chatgpt
 		for (final Class<? extends Event> e : es) {
 			Class<? extends net.minestom.server.event.Event> minestomEventClass = getMinestomEventType(e);
 			if (minestomEventClass == null || !CancellableEvent.class.isAssignableFrom(minestomEventClass)) {
