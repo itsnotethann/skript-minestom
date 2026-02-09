@@ -27,6 +27,7 @@ import me.lucko.luckperms.common.config.generic.adapter.EnvironmentVariableConfi
 import me.lucko.luckperms.common.config.generic.adapter.MultiConfigurationAdapter;
 import me.lucko.luckperms.minestom.CommandRegistry;
 import me.lucko.luckperms.minestom.LuckPermsMinestom;
+import me.lucko.spark.minestom.SparkMinestom;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -55,7 +56,7 @@ public class SkriptMinestom {
 
 	private static Properties properties;
 	private static LuckPerms luckPerms;
-	//private static SparkMinestom spark;
+	private static SparkMinestom spark;
 
 	static void main() {
 		properties = PropertyUtils.loadServerProperties();
@@ -63,7 +64,7 @@ public class SkriptMinestom {
 		MinecraftServer server = MinecraftServer.init(PropertyUtils.getAuth(properties));
 
 		luckPerms = initLuckPerms();
-		//spark = initSpark();
+		spark = initSpark();
 
 		MinecraftServer.getConnectionManager().setPlayerProvider(
 			(playerConnection, gameProfile) -> new LuckPermsPlayer(luckPerms, playerConnection, gameProfile));
@@ -103,13 +104,13 @@ public class SkriptMinestom {
 			.enable();
 	}
 
-	/*private static SparkMinestom initSpark() {
+	private static SparkMinestom initSpark() {
 		Path directory = new File(FileUtils.getServerDirectory(), "spark").toPath();
 		return SparkMinestom.builder(directory)
 			.commands(true) // enables registration of Spark commands
 			.permissionHandler((sender, a) -> LuckPermsPlayer.hasPermission(sender, "spark"))
 			.enable();
-	}*/
+	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	private static void initSkript() throws URISyntaxException {
@@ -193,7 +194,7 @@ public class SkriptMinestom {
 			for (Player p : MinecraftServer.getConnectionManager().getOnlinePlayers()) {
 				p.kick(kickComponent);
 			}
-			//spark.shutdown();
+			spark.shutdown();
 			Plugin skript = Bukkit.getPluginManager().getPlugin("Skript");
 			if (skript != null) skript.onDisable();
 			LuckPermsMinestom.disable();
