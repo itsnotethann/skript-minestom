@@ -11,7 +11,6 @@ import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.log.RedirectingLogHandler;
 import ch.njol.skript.log.SkriptLogger;
-import ch.njol.skript.util.Utils;
 import ch.njol.skript.variables.Variables;
 import com.github.hapily04.skriptminestom.command.SkriptCommand;
 import com.github.hapily04.skriptminestom.command.StopCommand;

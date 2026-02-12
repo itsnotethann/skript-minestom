@@ -3,11 +3,13 @@ package ch.njol.skript.events.wrapper.marker;
 import ch.njol.skript.events.wrapper.EventWrapper;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Item;
+import net.minestom.server.coordinate.BlockVec;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.trait.*;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.instance.block.Block;
 import net.minestom.server.inventory.AbstractInventory;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -23,6 +25,8 @@ public class MarkerRegistration {
 		registerEventValue(PlayerEventMarker.class, Player.class, PlayerEvent.class, PlayerEvent::getPlayer);
 		registerEventValue(ItemEventMarker.class, Item.class, ItemEvent.class, itemEvent -> new Item(itemEvent.getItemStack()));
 		registerEventValue(InventoryEventMarker.class, AbstractInventory.class, InventoryEvent.class, InventoryEvent::getInventory);
+		registerEventValue(BlockEventMarker.class, Block.class, BlockEvent.class, BlockEvent::getBlock);
+		registerEventValue(BlockEventMarker.class, BlockVec.class, BlockEvent.class, BlockEvent::getBlockPosition);
 	}
 
 	private static <M, T, E extends Event> void registerEventValue(Class<M> markerClass, Class<T> returnType, Class<E> expectedEventClass, Function<E, T> getter) {
