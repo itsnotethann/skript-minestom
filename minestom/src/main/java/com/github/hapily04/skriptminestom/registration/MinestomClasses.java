@@ -168,7 +168,7 @@ public class MinestomClasses {
 				public @Nullable Class<?> @NotNull [] acceptChange(@NotNull ChangeMode mode) {
 					return switch (mode) {
 						case ADD, REMOVE -> CollectionUtils.array(AbstractInventory[].class, Item[].class);
-						case REMOVE_ALL -> CollectionUtils.array(Item[].class);
+						case REMOVE_ALL, DELETE -> CollectionUtils.array(Item[].class);
 						default -> null;
 					};
 				}
@@ -829,7 +829,7 @@ public class MinestomClasses {
 				public @Nullable Class<?> @NotNull [] acceptChange(@NotNull ChangeMode mode) {
 					return switch (mode) {
 						case ADD, REMOVE -> CollectionUtils.array(AbstractInventory[].class, Item[].class);
-						case REMOVE_ALL -> CollectionUtils.array(Item[].class);
+						case REMOVE_ALL, DELETE -> CollectionUtils.array(Item[].class);
 						default -> null;
 					};
 				}
@@ -1758,6 +1758,7 @@ public class MinestomClasses {
 	}
 
 	private static void inventoryChange(Object[] delta, Changer.ChangeMode mode, AbstractInventory inventory) {
+		if (mode == Changer.ChangeMode.DELETE) inventory.clear();
 		for (Object o : delta) {
 			assert o != null;
 			Item[] items;
