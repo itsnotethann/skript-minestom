@@ -6,6 +6,7 @@ import ch.njol.skript.effects.particle.*;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.lang.util.SimpleLiteral;
+import ch.njol.skript.localization.Noun;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.*;
 import ch.njol.skript.variables.Variables;
@@ -57,6 +58,7 @@ import org.jspecify.annotations.NonNull;
 import org.skriptlang.skript.lang.arithmetic.Arithmetics;
 import org.skriptlang.skript.lang.arithmetic.Operator;
 import org.skriptlang.skript.lang.comparator.Comparators;
+import org.skriptlang.skript.lang.comparator.Relation;
 import org.skriptlang.skript.lang.converter.Converters;
 
 import java.io.IOException;
@@ -110,8 +112,8 @@ public class MinestomClasses {
 		/*
 		 * Classes
 		 */
-		Classes.registerClass(new ClassInfo<>(CommandSender.class, "commandsender")
-			.user("command ?senders?")
+		Classes.registerClass(new ClassInfo<>(CommandSender.class, "sender") // sender instead of commandsender for StructCommand
+			.user("senders?")
 			.name("Command Sender")
 			.description("Something that can execute a command and receive messages (players/console).")
 			.defaultExpression(new EventValueExpression<>(CommandSender.class)));
@@ -1729,6 +1731,10 @@ public class MinestomClasses {
 			String s1 = legacy.serialize(o1);
 			String s2 = legacy.serialize(o2);
 			return Comparators.compare(s1, s2);
+		});
+		Comparators.registerComparator(CommandSender.class, EntityType.class, (o1, o2) -> {
+			if (!(o1 instanceof Player)) return Relation.get(false);
+			return Relation.get(o2.equals(EntityType.PLAYER));
 		});
 
 		/*

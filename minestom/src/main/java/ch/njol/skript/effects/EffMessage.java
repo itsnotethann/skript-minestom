@@ -63,7 +63,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public class EffMessage extends Effect {
 
 	static {
-		Skript.registerEffect(EffMessage.class, "(message|send [message[s]]) %objects% [to %commandsenders%]",
+		Skript.registerEffect(EffMessage.class, "(message|send [message[s]]) %objects% [to %senders%]",
 			"broadcast %objects%");
 	}
 
