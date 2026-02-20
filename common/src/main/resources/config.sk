@@ -334,7 +334,7 @@ databases:
 
 		pattern: (?!-).*
 
-		file: ./run/Skript/variables.csv
+		file: ./Skript/variables.csv
 
 		backup interval: 2 hours
 

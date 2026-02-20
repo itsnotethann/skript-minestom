@@ -168,6 +168,7 @@ public final class Skript extends JavaPlugin implements Listener {
 
 	private static boolean disabled = false;
 	private static boolean partDisabled = false;
+	private static boolean starting = true;
 
 	public static Skript getInstance() {
 		final Skript i = instance;
@@ -509,6 +510,11 @@ public final class Skript extends JavaPlugin implements Listener {
 					throw Skript.exception(e);
 				}
 			});
+		starting = false;
+	}
+
+	public static boolean isStarting() {
+		return starting;
 	}
 
 	public static void onRegistration(Runnable runnable) {

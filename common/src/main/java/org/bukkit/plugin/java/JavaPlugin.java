@@ -35,7 +35,7 @@ public abstract class JavaPlugin implements Plugin {
 	}
 
 	public File getDataFolder() {
-		return new File("run/" + getName());
+		return new File(getName());
 	}
 
 	protected File getFile() {
