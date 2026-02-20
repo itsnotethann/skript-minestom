@@ -1770,7 +1770,10 @@ public class MinestomClasses {
 	}
 
 	private static void inventoryChange(Object[] delta, Changer.ChangeMode mode, AbstractInventory inventory) {
-		if (mode == Changer.ChangeMode.DELETE) inventory.clear();
+		if (mode == Changer.ChangeMode.DELETE) {
+			inventory.clear();
+			return;
+		}
 		for (Object o : delta) {
 			assert o != null;
 			Item[] items;

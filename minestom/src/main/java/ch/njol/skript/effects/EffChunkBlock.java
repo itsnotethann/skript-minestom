@@ -44,7 +44,7 @@ public class EffChunkBlock extends Effect implements EventRestrictedSyntax {
 		Point[] points = this.points.getArray(event);
 		UnitModifier modifier = ((EffSecCreateInstance.TerrainGenerateEvent) event).getUnit().modifier();
 		for (Point point : points) {
-			modifier.setBlock(point, block);
+			modifier.setRelative((int) point.x(), (int) point.y(), (int) point.z(), block);
 		}
 	}
 
