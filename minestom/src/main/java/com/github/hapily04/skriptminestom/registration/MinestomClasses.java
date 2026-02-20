@@ -37,6 +37,7 @@ import net.minestom.server.entity.*;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import net.minestom.server.entity.metadata.display.ItemDisplayMeta;
 import net.minestom.server.entity.metadata.display.TextDisplayMeta;
+import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.SharedInstance;
@@ -473,6 +474,11 @@ public class MinestomClasses {
 			.name("Shared Instance")
 			.description("A world sharing the blocks from its underlying Instance Container. Entities are not shared.")
 			.defaultExpression(new EventValueExpression<>(SharedInstance.class)));
+		Classes.registerClass(new ClassInfo<>(Chunk.class, "chunk")
+			.user("chunks?")
+			.name("Chunk")
+			.description("A block container")
+			.defaultExpression(new EventValueExpression<>(Chunk.class)));
 		Classes.registerClass(new ClassInfo<>(Block.class, "block")
 			.user("blocks?")
 			.name("Block")
