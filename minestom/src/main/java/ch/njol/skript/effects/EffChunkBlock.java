@@ -16,10 +16,12 @@ import net.minestom.server.instance.generator.UnitModifier;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+import static net.minestom.server.coordinate.CoordConversion.*;
+
 @SuppressWarnings("NotNullFieldNotInitialized")
 @Name("Set/Assign Chunk Block")
 @Description("Sets a block at a specific point within a chunk generator.")
-@Examples("set chunk block at point(0, 64, 0) to stone")
+@Examples("set chunk block at vector(0, 64, 0) to stone")
 public class EffChunkBlock extends Effect implements EventRestrictedSyntax {
 
 	static {
@@ -44,7 +46,7 @@ public class EffChunkBlock extends Effect implements EventRestrictedSyntax {
 		Point[] points = this.points.getArray(event);
 		UnitModifier modifier = ((EffSecCreateInstance.TerrainGenerateEvent) event).getUnit().modifier();
 		for (Point point : points) {
-			modifier.setRelative((int) point.x(), (int) point.y(), (int) point.z(), block);
+			modifier.setRelative(sectionBlockIndexGetX((int) point.x()), globalToSectionRelative((int) point.y()), sectionBlockIndexGetZ((int) point.z()), block);
 		}
 	}
 
