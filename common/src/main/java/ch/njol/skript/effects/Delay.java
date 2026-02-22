@@ -15,6 +15,9 @@ import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -32,26 +35,26 @@ import java.util.WeakHashMap;
 public class Delay extends Effect {
 
 	static {
-		Skript.registerEffect(Delay.class, "(wait|halt) [for] %timespan%");
+		Skript.registerEffect(Delay.class, "(wait|halt) [for] %timespan% [async:async(hronously)]");
 	}
 
 	@SuppressWarnings("NotNullFieldNotInitialized")
 	protected Expression<Timespan> duration;
+	private boolean async;
 
 	@SuppressWarnings({"unchecked", "null"})
 	@Override
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
 		getParser().setHasDelayBefore(Kleenean.TRUE);
-
+		async = parseResult.hasTag("async");
 		duration = (Expression<Timespan>) exprs[0];
-		if (duration instanceof Literal) { // If we can, do sanity check for delays
+		if (duration instanceof Literal && !async) { // If we can, do sanity check for delays
 			Timespan timespan = ((Literal<Timespan>) duration).getSingle();
 			long millis = timespan.getAs(Timespan.TimePeriod.MILLISECOND);
 			if (millis < 50) {
 				Skript.warning("Delays less than one tick are not possible, defaulting to one tick.");
 			}
 		}
-
 		return true;
 	}
 
@@ -61,7 +64,8 @@ public class Delay extends Effect {
 		debug(event, true);
 		long start = Skript.debug() ? System.nanoTime() : 0;
 		TriggerItem next = getNext();
-		if (next != null && Skript.getInstance().isEnabled()) { // See https://github.com/SkriptLang/Skript/issues/3702
+		Plugin plugin = Skript.getInstance();
+		if (next != null && plugin.isEnabled()) { // See https://github.com/SkriptLang/Skript/issues/3702
 			addDelayedEvent(event);
 
 			Timespan duration = this.duration.getSingle(event);
@@ -70,20 +74,23 @@ public class Delay extends Effect {
 
 			// Back up local variables
 			Object localVars = Variables.removeLocals(event);
-
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), () -> {
-				Skript.debug(getIndentation() + "... continuing after " + (System.nanoTime() - start) / 1_000_000_000. + "s");
-
-				// Re-set local variables
-				if (localVars != null)
-					Variables.setLocalVariables(event, localVars);
-
-				TriggerItem.walk(next, event);
-				Variables.removeLocals(event); // Clean up local vars, we may be exiting now
-
-			}, Math.max(duration.getAs(Timespan.TimePeriod.TICK), 1)); // Minimum delay is one tick, less than it is useless!
+			BukkitScheduler scheduler = Bukkit.getScheduler();
+			long delay = duration.getAs(Timespan.TimePeriod.TICK);
+			if (!async) scheduler.scheduleSyncDelayedTask(plugin, () -> runTask(localVars, start, event, next), delay);
+			else scheduler.runTaskLaterAsynchronously(plugin, () -> runTask(localVars, start, event, next), delay);
 		}
 		return null;
+	}
+
+	private void runTask(@Nullable Object localVars, long start, Event event, TriggerItem next) {
+		Skript.debug(getIndentation() + "... continuing after " + (System.nanoTime() - start) / 1_000_000_000. + "s");
+
+		// Re-set local variables
+		if (localVars != null)
+			Variables.setLocalVariables(event, localVars);
+
+		TriggerItem.walk(next, event);
+		Variables.removeLocals(event); // Clean up local vars, we may be exiting now
 	}
 
 	@Override
@@ -93,7 +100,7 @@ public class Delay extends Effect {
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return "wait for " + duration.toString(event, debug) + (event == null ? "" : "...");
+		return "wait for " + duration.toString(event, debug) + (event == null ? "" : "...") + (async ? " async" : "");
 	}
 
 	private static final Set<Event> DELAYED =
