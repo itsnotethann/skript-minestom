@@ -1,4 +1,4 @@
-package ch.njol.skript.events.wrapper.click;
+package ch.njol.skript.events.click;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.events.wrapper.*;
@@ -10,10 +10,7 @@ import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerHand;
 import net.minestom.server.event.item.PlayerBeginItemUseEvent;
-import net.minestom.server.event.player.PlayerBlockInteractEvent;
-import net.minestom.server.event.player.PlayerEntityInteractEvent;
-import net.minestom.server.event.player.PlayerHandAnimationEvent;
-import net.minestom.server.event.player.PlayerStartDiggingEvent;
+import net.minestom.server.event.player.*;
 import net.minestom.server.instance.block.Block;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
@@ -33,7 +30,7 @@ public class EvtClick extends SkriptEvent {
 
 	static {
 		Class<? extends Event>[] eventTypes = CollectionUtils.array(PlayerBlockInteractWrapper.class, PlayerEntityInteractWrapper.class,
-			PlayerBeginItemUseWrapper.class, PlayerStartDiggingWrapper.class, PlayerHandAnimationWrapper.class);
+			PlayerUseItemWrapper.class, PlayerStartDiggingWrapper.class, PlayerHandAnimationWrapper.class);
 		Skript.registerEvent("Click", EvtClick.class, eventTypes,
 				  "[(" + RIGHT + ":right|" + LEFT + ":left)(| |-)][mouse(| |-)]click[ing] [on %-entitytypes/blocks%] [(with|using|holding) %-items%]",
 				  "[(" + RIGHT + ":right|" + LEFT + ":left)(| |-)][mouse(| |-)]click[ing] (with|using|holding) %items% on %entitytypes/blocks%")
@@ -103,11 +100,11 @@ public class EvtClick extends SkriptEvent {
 				if (!INTERACT_TRACKER.checkEvent(player, e, hand)) yield false;
 				yield verifyEvent(o, e.getEntity().getEntityType(), player, hand);
 			}
-			case PlayerBeginItemUseWrapper wr -> {
+			case PlayerUseItemWrapper wr -> {
 				if (click == LEFT) yield false;
 				if (o != null && click != ANY) yield false;
-				PlayerBeginItemUseEvent e = wr.getEvent();
-				yield verifyItem(e.getPlayer(), e.getHand());
+				PlayerUseItemEvent e = wr.getEvent();
+				yield verifyEvent(o, null, e.getPlayer(), e.getHand());
 			}
 			case PlayerStartDiggingWrapper wr -> {
 				if (click == RIGHT) yield false;
@@ -125,7 +122,7 @@ public class EvtClick extends SkriptEvent {
 				Player player = e.getPlayer();
 				PlayerHand hand = e.getHand();
 				if (!INTERACT_TRACKER.checkEvent(player, e, hand)) yield false;
-				yield verifyItem(e.getPlayer(), hand);
+				yield verifyEvent(o, null, e.getPlayer(), hand);
 			}
 			default -> false;
 		};

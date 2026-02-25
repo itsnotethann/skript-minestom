@@ -1,4 +1,4 @@
-package ch.njol.skript.events.wrapper.click;
+package ch.njol.skript.events.click;
 
 import java.util.HashMap;
 import java.util.HashSet;

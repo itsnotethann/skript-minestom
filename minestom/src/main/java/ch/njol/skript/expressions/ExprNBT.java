@@ -66,7 +66,6 @@ public class ExprNBT extends SimpleExpression<NBTCompound> {
 					CompoundBinaryTag compoundBinaryTag;
 					if (custom) {
 						CustomData customData = internalItem.get(DataComponents.CUSTOM_DATA);
-						System.out.println("is custom data null? " + (customData == null));
 						compoundBinaryTag = customData != null ? customData.nbt() : CompoundBinaryTag.empty();
 					} else {
 						CompoundBinaryTag itemNBT = internalItem.toItemNBT();
