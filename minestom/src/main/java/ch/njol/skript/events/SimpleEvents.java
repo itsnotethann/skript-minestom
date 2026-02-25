@@ -10,7 +10,6 @@ public class SimpleEvents {
 		Skript.registerEvent("Player Configuration/Connect", SimpleEvent.class, AsyncPlayerConfigurationWrapper.class, "[player] (config[ur(e|ation)]|connect[ing])")
 			.description("Called when a player is configuring/connecting to the server.")
 			.examples("on player connect:");
-		//Skript.registerEvent("Player Spawn/Join Instance", SimpleEvent.class, PlayerSpawnWrapper.class, "[player] (spawn|join [instance])");
 		Skript.registerEvent("Player Leave", SimpleEvent.class, PlayerDisconnectWrapper.class, "[player] (quit[ting]|disconnect[ing]|log[ ]out|logging out|leav(e|ing))")
 			.description("Called when a player leaves the server.")
 			.examples("on player quit:");

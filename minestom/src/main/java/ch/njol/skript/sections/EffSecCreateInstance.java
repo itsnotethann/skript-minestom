@@ -56,13 +56,13 @@ public class EffSecCreateInstance extends EffectSection {
 
 	static {
 		ENTRY_VALIDATOR = EntryValidator.builder()
-										.addEntryData(new LiteralEntryData<>("dynamic lighting", null, true, Boolean.class))
-										.addEntry("file", null, true)
-										.addEntry("loader", null, true)
-										//.addEntryData(new ExpressionEntryData<>("dimension", null, true, DimensionType.class))
-										.addSection("generator", true)
-										.addEntry("preload option", null, true)
-										.build();
+			.addEntryData(new LiteralEntryData<>("dynamic lighting", null, true, Boolean.class))
+			.addEntry("file", null, true)
+			.addEntry("loader", null, true)
+			//.addEntryData(new ExpressionEntryData<>("dimension", null, true, DimensionType.class))
+			.addSection("generator", true)
+			.addEntry("preload option", null, true)
+			.build();
 		Skript.registerSection(EffSecCreateInstance.class,
 			"create instance [container] (and store it|stored) in %objects%",
 			"create shared instance from [instance] %instancecontainer% (and store it|stored) in %objects%");
@@ -190,7 +190,7 @@ public class EffSecCreateInstance extends EffectSection {
 						System.err.println("Runtime error while trying to set chunk loader to polar: " + e.getMessage());
 					}
 				}
-			}
+			} else System.out.println("loader is null");
 			if (generator != null) {
 				Object variables = Variables.copyLocalVariables(event);
 				container.setGenerator(unit -> {
@@ -297,10 +297,10 @@ public class EffSecCreateInstance extends EffectSection {
 				}
 			}
 		}
-		if (strict) {
+		/*if (strict) {
 			//container.enableAutoChunkLoad(false);
 			container.setChunkLoader(ChunkLoader.noop());
-		}
+		}*/
 	}
 
 	private void loadRenderDistanceChunk(Instance container, int x, int z, boolean strict, int chunkViewDistance) {

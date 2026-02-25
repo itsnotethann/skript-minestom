@@ -37,10 +37,8 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Name("Loop")
 @Description({
@@ -87,9 +85,9 @@ public class SecLoop extends LoopSection {
 
 	protected @UnknownNullability Expression<?> expression;
 
-	private final transient Map<Event, Object> current = new WeakHashMap<>();
-	private final transient Map<Event, Iterator<?>> iteratorMap = new WeakHashMap<>();
-	private final transient Map<Event, Object> previous = new WeakHashMap<>();
+	private final transient Map<Event, Object> current = new ConcurrentHashMap<>();
+	private final transient Map<Event, Iterator<?>> iteratorMap = new ConcurrentHashMap<>();
+	private final transient Map<Event, Object> previous = new ConcurrentHashMap<>();
 
 	protected @Nullable TriggerItem actualNext;
 	private boolean guaranteedToLoop;
@@ -146,7 +144,7 @@ public class SecLoop extends LoopSection {
 			debug(event, false);
 			return actualNext;
 		} else {
-			previous.put(event, current.get(event));
+			if (current.containsKey(event)) previous.put(event, current.get(event));
 			if (nextValue != null) {
 				this.store(event, nextValue);
 				nextValue = null;
@@ -159,7 +157,7 @@ public class SecLoop extends LoopSection {
 
 	protected void store(Event event, Object next) {
 		this.current.put(event, next);
-		this.currentLoopCounter.put(event, (currentLoopCounter.getOrDefault(event, 0L)) + 1);
+		this.currentLoopCounter.put(event, currentLoopCounter.getOrDefault(event, 0L) + 1);
 	}
 
 	@Override

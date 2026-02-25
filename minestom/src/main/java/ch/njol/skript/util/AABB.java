@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 // almost entirely converted using chatgpt to minestom
 /**
@@ -25,32 +26,59 @@ import java.util.NoSuchElementException;
  */
 public final class AABB implements Iterable<BlockVec> {
 
-	final Instance instance;
-	final Vec lowerBound, upperBound;
+	final @Nullable Instance instance;
+	final Point lowerBound, upperBound;
 
-	public AABB(@NotNull Point p1, @NotNull Point p2, @NotNull Instance instance) {
+	/**
+	 * Supports optional instance for two points.
+	 * If instance is null, no Y clamping is performed.
+	 */
+	public AABB(@NotNull Point p1, @NotNull Point p2, @Nullable Instance instance) {
 		this.instance = instance;
 
-		// use block coordinates like the Bukkit version (getBlockX/Y/Z)
-		int x1 = p1.blockX(), y1 = p1.blockY(), z1 = p1.blockZ();
-		int x2 = p2.blockX(), y2 = p2.blockY(), z2 = p2.blockZ();
+		// use exact coordinates (do NOT truncate decimals)
+		double x1 = p1.x(), y1 = p1.y(), z1 = p1.z();
+		double x2 = p2.x(), y2 = p2.y(), z2 = p2.z();
 
-		this.lowerBound = new Vec(Math.min(x1, x2), Math.min(y1, y2), Math.min(z1, z2));
-		this.upperBound = new Vec(Math.max(x1, x2), Math.max(y1, y2), Math.max(z1, z2));
+		double minX = Math.min(x1, x2);
+		double maxX = Math.max(x1, x2);
+		double minY = Math.min(y1, y2);
+		double maxY = Math.max(y1, y2);
+		double minZ = Math.min(z1, z2);
+		double maxZ = Math.max(z1, z2);
+
+		if (instance != null) {
+			DimensionType type = instance.getCachedDimensionType();
+			double dimMinY = type.minY();
+			double dimMaxY = type.minY() + type.height() - 1; // correct even if minY != 0
+			minY = Math.max(minY, dimMinY);
+			maxY = Math.min(maxY, dimMaxY);
+		}
+
+		this.lowerBound = new Vec(minX, minY, minZ);
+		this.upperBound = new Vec(maxX, maxY, maxZ);
 	}
 
-	public AABB(@NotNull BlockVec b1, @NotNull BlockVec b2, @NotNull Instance instance) {
+	public AABB(@NotNull BlockVec b1, @NotNull BlockVec b2, @Nullable Instance instance) {
 		this.instance = instance;
-		this.lowerBound = new Vec(
-			Math.min(b1.x(), b2.x()),
-			Math.min(b1.y(), b2.y()),
-			Math.min(b1.z(), b2.z())
-		);
-		this.upperBound = new Vec(
-			Math.max(b1.x(), b2.x()),
-			Math.max(b1.y(), b2.y()),
-			Math.max(b1.z(), b2.z())
-		);
+
+		double minX = Math.min(b1.x(), b2.x());
+		double maxX = Math.max(b1.x(), b2.x());
+		double minY = Math.min(b1.y(), b2.y());
+		double maxY = Math.max(b1.y(), b2.y());
+		double minZ = Math.min(b1.z(), b2.z());
+		double maxZ = Math.max(b1.z(), b2.z());
+
+		if (instance != null) {
+			DimensionType type = instance.getCachedDimensionType();
+			double dimMinY = type.minY();
+			double dimMaxY = type.minY() + type.height() - 1;
+			minY = Math.max(minY, dimMinY);
+			maxY = Math.min(maxY, dimMaxY);
+		}
+
+		this.lowerBound = new Vec(minX, minY, minZ);
+		this.upperBound = new Vec(maxX, maxY, maxZ);
 	}
 
 	public AABB(@NotNull Point center, double rX, double rY, double rZ, @NotNull Instance instance) {
@@ -59,7 +87,7 @@ public final class AABB implements Iterable<BlockVec> {
 
 		DimensionType type = instance.getCachedDimensionType();
 		int minY = type.minY();
-		int maxY = type.height() - 1;
+		int maxY = type.minY() + type.height() - 1; // correct even if minY != 0
 
 		this.lowerBound = new Vec(
 			center.x() - rX,
@@ -92,7 +120,7 @@ public final class AABB implements Iterable<BlockVec> {
 
 		DimensionType type = instance.getCachedDimensionType();
 		int minY = type.minY();
-		int maxY = type.height() - 1;
+		int maxY = type.minY() + type.height() - 1; // correct even if minY != 0
 
 		int chunkX = chunk.getChunkX();
 		int chunkZ = chunk.getChunkZ();
@@ -102,9 +130,10 @@ public final class AABB implements Iterable<BlockVec> {
 	}
 
 	public boolean contains(@NotNull Point p) {
-		return lowerBound.x() - Skript.EPSILON < p.x() && p.x() < upperBound.x() + Skript.EPSILON
-			&& lowerBound.y() - Skript.EPSILON < p.y() && p.y() < upperBound.y() + Skript.EPSILON
-			&& lowerBound.z() - Skript.EPSILON < p.z() && p.z() < upperBound.z() + Skript.EPSILON;
+		// inclusive bounds (with EPS) to avoid edge/boundary weirdness
+		return p.x() >= lowerBound.x() - Skript.EPSILON && p.x() <= upperBound.x() + Skript.EPSILON
+			&& p.y() >= lowerBound.y() - Skript.EPSILON && p.y() <= upperBound.y() + Skript.EPSILON
+			&& p.z() >= lowerBound.z() - Skript.EPSILON && p.z() <= upperBound.z() + Skript.EPSILON;
 	}
 
 	public boolean contains(@NotNull BlockVec b) {
@@ -115,10 +144,14 @@ public final class AABB implements Iterable<BlockVec> {
 	}
 
 	public Vec getDimensions() {
-		return upperBound.sub(lowerBound);
+		return new Vec(
+			upperBound.x() - lowerBound.x(),
+			upperBound.y() - lowerBound.y(),
+			upperBound.z() - lowerBound.z()
+		);
 	}
 
-	public Instance getInstance() {
+	public @Nullable Instance getInstance() {
 		return instance;
 	}
 
@@ -176,7 +209,7 @@ public final class AABB implements Iterable<BlockVec> {
 		int result = 1;
 		result = 31 * result + lowerBound.hashCode();
 		result = 31 * result + upperBound.hashCode();
-		result = 31 * result + instance.hashCode();
+		result = 31 * result + Objects.hashCode(instance);
 		return result;
 	}
 
@@ -187,6 +220,6 @@ public final class AABB implements Iterable<BlockVec> {
 		if (!(obj instanceof AABB other)) return false;
 		if (!lowerBound.equals(other.lowerBound)) return false;
 		if (!upperBound.equals(other.upperBound)) return false;
-		return instance.equals(other.instance);
+		return Objects.equals(instance, other.instance);
 	}
 }

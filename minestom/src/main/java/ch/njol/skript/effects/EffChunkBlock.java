@@ -10,8 +10,11 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.sections.EffSecCreateInstance;
 import ch.njol.util.Kleenean;
+import net.minestom.server.coordinate.BlockVec;
+import net.minestom.server.coordinate.CoordConversion;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.instance.generator.GenerationUnit;
 import net.minestom.server.instance.generator.UnitModifier;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
@@ -44,9 +47,20 @@ public class EffChunkBlock extends Effect implements EventRestrictedSyntax {
 		Block block = this.block.getSingle(event);
 		if (block == null) return;
 		Point[] points = this.points.getArray(event);
-		UnitModifier modifier = ((EffSecCreateInstance.TerrainGenerateEvent) event).getUnit().modifier();
+		GenerationUnit unit = ((EffSecCreateInstance.TerrainGenerateEvent) event).getUnit();
+		Point start = unit.absoluteStart();
+		Point end = unit.absoluteEnd();
+		int startX = start.blockX();
+		int startZ = start.blockZ();
+		int endX = end.blockX();
+		int endZ = end.blockZ();
+		UnitModifier modifier = unit.modifier();
 		for (Point point : points) {
-			modifier.setRelative(sectionBlockIndexGetX((int) point.x()), globalToSectionRelative((int) point.y()), sectionBlockIndexGetZ((int) point.z()), block);
+			int x = startX + ((int) point.x());
+			int z = startZ + ((int) point.z());
+			Point p = new BlockVec(x, (int) point.y(), z);
+			if (p.x() < startX || p.x() >= endX || p.z() < startZ || p.z() >= endZ) continue; // out of bounds
+			modifier.setBlock(x, (int) point.y(), z, block);
 		}
 	}
 

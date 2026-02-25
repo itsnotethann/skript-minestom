@@ -1,0 +1,47 @@
+package ch.njol.skript.events;
+
+import ch.njol.skript.Skript;
+import ch.njol.skript.events.wrapper.PlayerBlockBreakWrapper;
+import ch.njol.skript.events.wrapper.PlayerBlockPlaceWrapper;
+import ch.njol.skript.lang.Literal;
+import ch.njol.skript.lang.SkriptEvent;
+import ch.njol.skript.lang.SkriptParser;
+import net.minestom.server.instance.block.Block;
+import org.bukkit.event.Event;
+import org.eclipse.jdt.annotation.Nullable;
+
+public class EvtBlockBreak extends SkriptEvent {
+
+	static {
+		Skript.registerEvent("Player Block Break", EvtBlockBreak.class, PlayerBlockBreakWrapper.class,
+			"[block] break[ing] [[of] %-blocks%]");
+	}
+
+	@Nullable
+	private Literal<Block> blocks;
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean init(Literal<?>[] args, int matchedPattern, SkriptParser.ParseResult parseResult) {
+		blocks = (Literal<Block>) args[0];
+		return true;
+	}
+
+	@Override
+	public boolean check(Event event) {
+		if (blocks == null) return true;
+		Block toCheck = ((PlayerBlockBreakWrapper) event).getEvent().getBlock();
+		Block[] blocks = this.blocks.getAll();
+		for (Block block : blocks) {
+			if (block.equals(toCheck)) return true;
+		}
+		return false;
+	}
+
+	@Override
+	public String toString(@Nullable Event event, boolean debug) {
+		return "block break" + (blocks != null ? (" of " + blocks.toString(event, debug)) : "");
+	}
+
+}
+

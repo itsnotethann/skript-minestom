@@ -20,8 +20,10 @@ package ch.njol.skript.lang;
 
 import org.bukkit.event.Event;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Represents a loop section.
@@ -31,7 +33,7 @@ import java.util.WeakHashMap;
  */
 public abstract class LoopSection extends Section implements SyntaxElement, Debuggable, SectionExitHandler {
 
-	protected final transient Map<Event, Long> currentLoopCounter = new WeakHashMap<>();
+	protected final transient Map<Event, Long> currentLoopCounter = new ConcurrentHashMap<>();
 
 	/**
 	 * @param event The event where the loop is used to return its loop iterations

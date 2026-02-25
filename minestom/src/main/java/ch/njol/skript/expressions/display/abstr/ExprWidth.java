@@ -4,7 +4,9 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.metadata.EntityMeta;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
+import net.minestom.server.entity.metadata.other.InteractionMeta;
 import org.bukkit.event.Event;
 
 public class ExprWidth extends SimplePropertyExpression<Entity, Number> {
@@ -15,8 +17,10 @@ public class ExprWidth extends SimplePropertyExpression<Entity, Number> {
 
 	@Override
 	public @org.jspecify.annotations.Nullable Number convert(Entity from) {
-		if (!(from.getEntityMeta() instanceof AbstractDisplayMeta meta)) return null;
-		return meta.getWidth();
+		EntityMeta entityMeta = from.getEntityMeta();
+		if (entityMeta instanceof AbstractDisplayMeta meta) return meta.getWidth();
+		if (entityMeta instanceof InteractionMeta meta) return meta.getWidth();
+		return null;
 	}
 
 	@Override
@@ -30,13 +34,23 @@ public class ExprWidth extends SimplePropertyExpression<Entity, Number> {
 	public void change(Event event, @org.jspecify.annotations.Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Number width = delta == null ? null : (Number) delta[0];
 		for (Entity entity : getExpr().getArray(event)) {
-			if (!(entity.getEntityMeta() instanceof AbstractDisplayMeta meta)) continue;
-			switch (mode) {
-				case SET -> {
-					if (width == null) return;
-					meta.setWidth(width.floatValue());
+			EntityMeta entityMeta = entity.getEntityMeta();
+			if (entityMeta instanceof AbstractDisplayMeta meta) {
+				switch (mode) {
+					case SET -> {
+						if (width == null) return;
+						meta.setWidth(width.floatValue());
+					}
+					case RESET -> meta.setWidth(0);
 				}
-				case RESET -> meta.setWidth(0);
+			} else if (entityMeta instanceof InteractionMeta meta) {
+				switch (mode) {
+					case SET -> {
+						if (width == null) return;
+						meta.setWidth(width.floatValue());
+					}
+					case RESET -> meta.setWidth(0);
+				}
 			}
 		}
 	}

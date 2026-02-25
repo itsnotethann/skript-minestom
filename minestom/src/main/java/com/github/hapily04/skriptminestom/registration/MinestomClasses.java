@@ -12,8 +12,11 @@ import ch.njol.skript.util.*;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.coll.CollectionUtils;
 import ch.njol.yggdrasil.Fields;
+import com.github.hapily04.skriptminestom.util.NBTUtils;
 import com.github.hapily04.skriptminestom.util.NumberUtils;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.nbt.BinaryTagIO;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.nbt.TagStringIO;
 import net.kyori.adventure.resource.ResourcePackStatus;
 import net.kyori.adventure.sound.Sound;
@@ -29,14 +32,19 @@ import net.minestom.server.color.AlphaColor;
 import net.minestom.server.color.Color;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.ConsoleSender;
+import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import net.minestom.server.coordinate.BlockVec;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
+import net.minestom.server.dialog.Dialog;
+import net.minestom.server.dialog.DialogAction;
+import net.minestom.server.dialog.DialogInput;
 import net.minestom.server.entity.*;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import net.minestom.server.entity.metadata.display.ItemDisplayMeta;
 import net.minestom.server.entity.metadata.display.TextDisplayMeta;
+import net.minestom.server.event.player.PlayerCustomClickEvent;
 import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
@@ -62,6 +70,7 @@ import org.skriptlang.skript.lang.comparator.Comparators;
 import org.skriptlang.skript.lang.comparator.Relation;
 import org.skriptlang.skript.lang.converter.Converters;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.StreamCorruptedException;
@@ -427,9 +436,9 @@ public class MinestomClasses {
 
 				@Override
 				protected @NotNull BlockVec deserialize(@NotNull Fields f) throws StreamCorruptedException {
-					double x = f.getPrimitive("x", int.class);
-					double y = f.getPrimitive("y", int.class);
-					double z = f.getPrimitive("z", int.class);
+					double x = f.getPrimitive("x", double.class);
+					double y = f.getPrimitive("y", double.class);
+					double z = f.getPrimitive("z", double.class);
 					return new BlockVec(x, y, z);
 				}
 
@@ -478,7 +487,23 @@ public class MinestomClasses {
 			.user("chunks?")
 			.name("Chunk")
 			.description("A block container")
-			.defaultExpression(new EventValueExpression<>(Chunk.class)));
+			.defaultExpression(new EventValueExpression<>(Chunk.class))
+			.parser(new Parser<Chunk>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public String toString(Chunk o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public String toVariableNameString(Chunk o) {
+					return "chunk[" + o.getChunkX() + "," + o.getChunkZ() + "]";
+				}
+			}));
 		Classes.registerClass(new ClassInfo<>(Block.class, "block")
 			.user("blocks?")
 			.name("Block")
@@ -552,7 +577,8 @@ public class MinestomClasses {
 				@Override
 				public @NotNull Fields serialize(@NotNull Block o) {
 					Fields fields = new Fields();
-					fields.putPrimitive("id", o.stateId());
+					fields.putPrimitive("data-version", MinecraftServer.DATA_VERSION);
+					fields.putObject("state", o.state());
 					return fields;
 				}
 
@@ -563,10 +589,12 @@ public class MinestomClasses {
 
 				@Override
 				protected @NotNull Block deserialize(@NotNull Fields f) throws StreamCorruptedException {
-					int id = f.getPrimitive("id", int.class);
-					Block block = Block.fromStateId(id);
+					//int dataVersion = f.getPrimitive("data-version", int.class);
+					String state = f.getObject("state", String.class);
+					if (state == null) throw new StreamCorruptedException("State was not found.");
+					Block block = Block.fromState(state);
 					if (block == null)
-						throw new StreamCorruptedException("Block with state id '" + id + "' was not found.");
+						throw new StreamCorruptedException("Block with state id '" + state + "' was not found.");
 					return block;
 				}
 
@@ -774,6 +802,27 @@ public class MinestomClasses {
 					return o.toString();
 				}
 			}));
+		Classes.registerClass(new ClassInfo<>(SuggestionEntry.class, "suggestionentry")
+			.user("suggestion ?entr(y|ies)?")
+			.name("Suggestion Entry")
+			.description("An entry for the suggestions section of a command containing the suggestion and a component tooltip.")
+			.examples("add suggestionEntry(\"hello\", mm(\"<red>tooltip!\")) to suggestions")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull SuggestionEntry o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull SuggestionEntry o) {
+					return "suggestion entry: " + o.getEntry() + " tooltip: " + Classes.toString(o.getTooltip());
+				}
+			}));
 		Classes.registerClass(new ClassInfo<>(ResourcePackStatus.class, "resourcepackstatus")
 			.user("resource ?pack ?status(es)?")
 			.name("Resource Pack Status")
@@ -944,7 +993,7 @@ public class MinestomClasses {
 				public @NotNull Fields serialize(@NotNull Item o) throws NotSerializableException {
 					Fields fields = new Fields();
 					try {
-						fields.putObject("item-nbt", TagStringIO.tagStringIO().asString(o.getItem().toItemNBT()));
+						fields.putObject("item-nbt", NBTUtils.asString(o.getItem().toItemNBT()));
 					} catch (IOException e) {
 						throw new NotSerializableException("Error whilst trying to to serialize an item: " + e.getMessage());
 					}
@@ -961,7 +1010,7 @@ public class MinestomClasses {
 					try {
 						Object nbt = f.getObject("item-nbt");
 						if (nbt == null) throw new StreamCorruptedException("Error occurred whilst trying to deserialize an itemstack.");
-						return new Item(ItemStack.fromItemNBT(TagStringIO.tagStringIO().asCompound((String) nbt)));
+						return new Item(ItemStack.fromItemNBT(NBTUtils.asCompound((String) nbt)));
 					} catch (IOException e) {
 						throw new StreamCorruptedException("Error occurred whilst trying to deserialize an itemstack.");
 					}
@@ -1481,6 +1530,35 @@ public class MinestomClasses {
 			})
 			.serializer(new EnumSerializer<>(EntityAnimationPacket.Animation.class))
 			.supplier(EntityAnimationPacket.Animation.values()));
+		Classes.registerClass(new ClassInfo<>(NBTUtils.TagType.class, "tagtype")
+			.user("tag ?types?")
+			.name("NBT Tag Type")
+			.description("The tag type of an nbt tag (e.g. int array)")
+			.parser(new Parser<>() {
+				public NBTUtils.TagType parse(@NotNull String s, @NotNull ParseContext context) {
+					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
+					for (NBTUtils.TagType tagType : NBTUtils.TagType.values()) {
+						if (tagType.name().equals(s)) return tagType;
+					}
+					return null;
+				}
+
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return true;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull NBTUtils.TagType o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull NBTUtils.TagType o) {
+					return typeFormatted(o.name());
+				}
+			})
+			.supplier(NBTUtils.TagType.values()));
 		Classes.registerClass(new ClassInfo<>(Particle.class, "particle")
 			.user("particles?")
 			.name("Particle")
@@ -1651,6 +1729,64 @@ public class MinestomClasses {
 				@Override
 				public @NotNull String toVariableNameString(@NotNull PlayerSkin o) {
 					return "skin textures: " + o.textures() + " signature: " + o.signature();
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(NBTCompound.class, "nbtcompound")
+			.user("nbt ?compounds?")
+			.name("NBT Compound")
+			.description("A compound (e.g. {test:1b,hello:\"hi\"}")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull NBTCompound o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull NBTCompound o) {
+					try {
+						return NBTUtils.asString(o.getCompound());
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			})
+			.changer(new Changer<>() {
+				@Override
+				public @Nullable Class<?>[] acceptChange(ChangeMode mode) {
+					return switch (mode) {
+						case ADD, REMOVE -> CollectionUtils.array(NBTCompound[].class);
+						case SET, RESET, DELETE -> CollectionUtils.array(NBTCompound.class);
+						default -> null;
+					};
+				}
+
+				@Override
+				public void change(NBTCompound[] what, @Nullable Object[] delta, ChangeMode mode) {
+					if (mode != ChangeMode.ADD && mode != ChangeMode.REMOVE) {
+						for (NBTCompound compound : what) {
+							switch (mode) {
+								case DELETE, RESET -> compound.update((_) -> CompoundBinaryTag.empty());
+								case SET -> {
+									if (delta.length == 0 || delta[0] == null) continue;
+									compound.update((_) -> ((NBTCompound) delta[0]).getCompound());
+								}
+							}
+						}
+						return;
+					}
+					for (Object o : delta) {
+						if (!(o instanceof NBTCompound oCompound)) continue;
+						CompoundBinaryTag oCompoundTag = oCompound.getCompound();
+						for (NBTCompound compound : what) {
+							if (mode == ChangeMode.ADD) compound.update((c) -> NBTUtils.deepMerge(c, oCompoundTag));
+							else compound.update((c) -> NBTUtils.deepMerge(c, oCompoundTag, true));
+						}
+					}
 				}
 			}));
 

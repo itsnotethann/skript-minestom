@@ -2,6 +2,7 @@ package ch.njol.skript.expressions;
 
 
 import ch.njol.skript.expressions.base.PropertyExpression;
+import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import net.minestom.server.coordinate.BlockVec;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Vec;
@@ -31,17 +32,16 @@ import ch.njol.util.Kleenean;
 public class ExprPositionOf extends PropertyExpression<Point, Point> {
 
 	static {
-		Skript.registerExpression(ExprPositionOf.class, Point.class, ExpressionType.PROPERTY,
-			"[center:center[ed]] position of %point%", "%point%'[s] [center:center[ed]] position");
+		register(ExprPositionOf.class, Point.class, "[:block] position", "points");
 	}
 
-	private boolean centered;
+	private boolean block;
 
-	@SuppressWarnings({"unchecked", "null"})
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(final Expression<?>[] exprs, final int matchedPattern, final Kleenean isDelayed, final ParseResult parseResult) {
-		setExpr((Expression<? extends Point>) exprs[0]);
-		centered = parseResult.hasTag("center");
+	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
+		setExpr((Expression<? extends Point>) expressions[0]);
+		block = parseResult.hasTag("block");
 		return true;
 	}
 
@@ -50,13 +50,9 @@ public class ExprPositionOf extends PropertyExpression<Point, Point> {
 		Point[] points = new Point[source.length];
 		for (int i = 0; i < source.length; i++) {
 			Point point = source[i];
-			points[i] = centered ? toCenter(point) : point;
+			points[i] = block ? point.asBlockVec() : point;
 		}
 		return points;
-	}
-
-	private Point toCenter(Point point) {
-		return new Vec(point.blockX()+0.5, point.y(), point.blockZ()+0.5);
 	}
 
 	@Override
@@ -65,8 +61,8 @@ public class ExprPositionOf extends PropertyExpression<Point, Point> {
 	}
 
 	@Override
-	public String toString(final @Nullable Event e, final boolean debug) {
-		return "the " + (centered ? "block " : "") + "position of " + getExpr().toString(e, debug);
+	public String toString(@Nullable Event event, boolean debug) {
+		return (block ? "block " : "") + "position of " + getExpr().toString(event, debug);
 	}
 
 }

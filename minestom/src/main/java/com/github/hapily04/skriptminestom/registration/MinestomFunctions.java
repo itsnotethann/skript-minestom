@@ -17,6 +17,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.util.RGBLike;
 import net.minestom.server.color.AlphaColor;
 import net.minestom.server.color.Color;
+import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
@@ -81,6 +82,18 @@ public class MinestomFunctions {
 				String input = (String) params[0][0];
 				TagResolver[] resolvers = (TagResolver[]) params[1];
 				return new Component[]{BASIC_MINI_MESSAGE.deserialize(input, resolvers)};
+			}
+		}).description("Deserializes a MiniMessage string into a Component, with optional tag resolvers.").examples("send mm(\"<red>Hello <name>!\", resolver(\"name\", player's name))");
+		Functions.registerFunction(new JavaFunction<>("suggestionEntry", new Parameter[]{
+			new Parameter<>("entry", DefaultClasses.STRING, true, null),
+			new Parameter<>("tooltip", Classes.getExactClassInfo(Component.class), true, new SimpleLiteral<>(new Component[0], Component.class, true))
+		}, Classes.getExactClassInfo(SuggestionEntry.class), true) {
+			@Override
+			public @Nullable SuggestionEntry[] execute(FunctionEvent<?> e, Object[][] params) {
+				if (parametersNull(params, 0)) return new SuggestionEntry[0];
+				String entry = (String) params[0][0];
+				Component tooltip = (Component) params[1][0];
+				return new SuggestionEntry[]{new SuggestionEntry(entry, tooltip)};
 			}
 		}).description("Deserializes a MiniMessage string into a Component, with optional tag resolvers.").examples("send mm(\"<red>Hello <name>!\", resolver(\"name\", player's name))");
 		/*Functions.registerFunction(new SimpleJavaFunction<TagResolver>("tagresolver", new Parameter<>[] {

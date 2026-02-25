@@ -9,11 +9,13 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.util.Item;
+import ch.njol.skript.util.NBTCompound;
 import ch.njol.util.Kleenean;
 import com.github.hapily04.skriptminestom.util.NBTUtils;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.nbt.TagStringIO;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.tag.Tag;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -21,42 +23,43 @@ import java.io.IOException;
 
 @SuppressWarnings("NullableProblems")
 @Name("Item with NBT")
-@Description("An item with a specific NBT string.")
-@Examples("give player stone with nbt \"{display:{Name:'\\\"Custom\\\"'}}\"")
+@Description("An item with a specific NBT.")
+@Examples("give player stone with nbt from \"{display:{Name:'Custom'}}\"")
 public class ExprItemWithNBT extends SimpleExpression<Item> {
 
 	static {
-		Skript.registerExpression(ExprItemWithNBT.class, Item.class, ExpressionType.COMBINED, "%item% with nbt %string%");
+		Skript.registerExpression(ExprItemWithNBT.class, Item.class, ExpressionType.COMBINED,
+			"%item% with nbt %nbtcompounds%");
 	}
 
 	private Expression<Item> item;
-	private Expression<String> nbt;
+	private Expression<NBTCompound> nbt;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
 		item = (Expression<Item>) expressions[0];
-		nbt = (Expression<String>) expressions[1];
+		nbt = (Expression<NBTCompound>) expressions[1];
 		return true;
 	}
 
 	@Override
 	protected @Nullable Item[] get(Event event) {
-		String nbt = this.nbt.getSingle(event);
+		NBTCompound nbt = this.nbt.getSingle(event);
 		Item item = this.item.getSingle(event);
 		if (nbt == null || item == null) return new Item[0];
 		item = item.copy();
+		CompoundBinaryTag incomingCompound = nbt.getCompound();
+		CompoundBinaryTag itemCompound = item.getItem().toItemNBT();
+		itemCompound = NBTUtils.mergeItemNBT(itemCompound, incomingCompound, item.getItem());
 		try {
-			CompoundBinaryTag incomingCompound = TagStringIO.tagStringIO().asCompound(nbt);
-			CompoundBinaryTag itemCompound = item.getItem().toItemNBT();
-			itemCompound = NBTUtils.mergeItemNBT(itemCompound, incomingCompound);
-			ItemStack newItemStack = ItemStack.fromItemNBT(itemCompound);
-			item.modify(_ -> newItemStack);
-			return new Item[]{item};
+			System.out.println("DEBUG: " + NBTUtils.asString(itemCompound));
 		} catch (IOException e) {
-			Skript.error("Error reading nbt: " + e.getMessage());
-			return new Item[0];
+			throw new RuntimeException(e);
 		}
+		ItemStack newItemStack = ItemStack.fromItemNBT(itemCompound);
+		item.modify(_ -> newItemStack);
+		return new Item[]{item};
 	}
 
 	@Override

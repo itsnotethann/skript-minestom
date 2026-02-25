@@ -18,28 +18,35 @@ import org.eclipse.jdt.annotation.Nullable;
 public class EffSaveInstance extends Effect {
 
 	static {
-		Skript.registerEffect(EffSaveInstance.class, "save %instances%['[s] chunks] [to storage]");
+		Skript.registerEffect(EffSaveInstance.class, "save %instances% [without:without [saving] tags]");
 	}
 
 	private Expression<Instance> instance;
+
+	private boolean tags;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
 		instance = (Expression<Instance>) expressions[0];
+		tags = !parseResult.hasTag("without");
 		return true;
 	}
 
 	@Override
 	protected void execute(Event event) {
 		for (Instance instance : this.instance.getArray(event)) {
-			instance.saveChunksToStorage();
+			instance.saveChunksToStorage().whenComplete((_, throwable) -> {
+				if (throwable != null) return;
+				System.out.println("tags: " + tags);
+				if (tags) instance.saveInstance();
+			});
 		}
 	}
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return "save " + instance.toString(event, debug) + " to storage";
+		return "save " + instance.toString(event, debug) + (!tags ? " without saving tags" : "");
 	}
 
 }

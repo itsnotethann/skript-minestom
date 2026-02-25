@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.*;
+import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.structures.command.StructCommand;
 import ch.njol.skript.util.LiteralUtils;
 import ch.njol.util.Kleenean;
@@ -42,6 +43,8 @@ public class SecArgument extends Section {
 
 	static {
 		Skript.registerSection(SecArgument.class, "arg[ument] <.+>");
+		EventValues.registerEventValue(SuggestionCallbackEvent.class, CommandSender.class, SuggestionCallbackEvent::getSender);
+		EventValues.registerEventValue(SuggestionCallbackEvent.class, String.class, from -> from.context.getInput());
 	}
 
 	private List<SecArgument> subArguments = new ArrayList<>();
@@ -141,7 +144,7 @@ public class SecArgument extends Section {
 		return "argument";
 	}
 
-	static class SuggestionCallbackEvent extends Event {
+	public static class SuggestionCallbackEvent extends Event {
 
 		private final CommandSender sender;
 		private final CommandContext context;
