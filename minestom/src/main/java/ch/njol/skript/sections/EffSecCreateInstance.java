@@ -297,10 +297,10 @@ public class EffSecCreateInstance extends EffectSection {
 				}
 			}
 		}
-		/*if (strict) {
+		if (strict) {
 			//container.enableAutoChunkLoad(false);
 			container.setChunkLoader(ChunkLoader.noop());
-		}*/
+		}
 	}
 
 	private void loadRenderDistanceChunk(Instance container, int x, int z, boolean strict, int chunkViewDistance) {

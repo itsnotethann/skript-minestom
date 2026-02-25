@@ -38,7 +38,6 @@ public class EffSaveInstance extends Effect {
 		for (Instance instance : this.instance.getArray(event)) {
 			instance.saveChunksToStorage().whenComplete((_, throwable) -> {
 				if (throwable != null) return;
-				System.out.println("tags: " + tags);
 				if (tags) instance.saveInstance();
 			});
 		}
