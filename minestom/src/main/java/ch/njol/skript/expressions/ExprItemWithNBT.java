@@ -52,11 +52,6 @@ public class ExprItemWithNBT extends SimpleExpression<Item> {
 		CompoundBinaryTag incomingCompound = nbt.getCompound();
 		CompoundBinaryTag itemCompound = item.getItem().toItemNBT();
 		itemCompound = NBTUtils.mergeItemNBT(itemCompound, incomingCompound, item.getItem());
-		try {
-			System.out.println("DEBUG: " + NBTUtils.asString(itemCompound));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 		ItemStack newItemStack = ItemStack.fromItemNBT(itemCompound);
 		item.modify(_ -> newItemStack);
 		return new Item[]{item};

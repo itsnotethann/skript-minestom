@@ -52,7 +52,7 @@ public class EffSecCreateInstance extends EffectSection {
 	// maybe a preload-super-strict option that only loads chunks w blocks in them instead of every chunk that the world provides?
 	private static final List<String> VALID_GENERATOR_PRESET_ENTRIES = List.of("strict", "normal");
 	private static final Generator BLANK_GENERATOR = unit -> unit.modifier().fill(Block.AIR);
-	private static final List<Instance> RELIGHT_INSTANCES = new ArrayList<>();
+	public static final List<Instance> RELIGHT_INSTANCES = new ArrayList<>();
 
 	static {
 		ENTRY_VALIDATOR = EntryValidator.builder()
