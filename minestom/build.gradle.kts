@@ -1,6 +1,7 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
 	id("com.gradleup.shadow") version "9.3.0"
-	kotlin("jvm") version "2.3.0"
 	application
 	java
 	`maven-publish`
@@ -36,8 +37,8 @@ dependencies {
 	implementation(project(":common"))
 }
 
-kotlin {
-    jvmToolchain(25)
+tasks.withType<JavaCompile>().configureEach {
+	options.release.set(25)
 }
 
 application {
