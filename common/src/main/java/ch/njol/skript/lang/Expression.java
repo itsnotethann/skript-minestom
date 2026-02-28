@@ -32,6 +32,7 @@ import ch.njol.util.Predicate;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.skriptlang.skript.lang.converter.Converter;
 
 import java.util.*;
@@ -108,6 +109,15 @@ public interface Expression<T> extends SyntaxElement, Debuggable, Loopable<T> {
 		if (iterator == null) {
 			return Stream.empty();
 		}
+		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
+	}
+
+	/**
+	 * Gets a non-null stream for all values of this expression via {@link #getAll(Event)}.
+	 * @param event The event.
+	 */
+	default Stream<? extends @NotNull T> streamAll(Event event) {
+		Iterator<? extends T> iterator = Arrays.stream(getAll(event)).iterator();
 		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
 	}
 
