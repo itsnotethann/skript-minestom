@@ -35,10 +35,6 @@ public class ExprInstanceCopy extends SimpleExpression<InstanceContainer> {
 		for (int i = 0; i < containers.length; i++) {
 			InstanceContainer original = containers[i];
 			InstanceContainer newContainer = original.copy();
-			// todo remove these setters once minestom accepts pr
-			newContainer.setChunkSupplier(original.getChunkSupplier());
-			newContainer.setChunkLoader(original.getChunkLoader());
-			newContainer.setGenerator(original.generator());
 			MinecraftServer.getInstanceManager().registerInstance(newContainer);
 			if (RELIGHT_INSTANCES.contains(original)) RELIGHT_INSTANCES.add(newContainer);
 			containers[i] = newContainer;
