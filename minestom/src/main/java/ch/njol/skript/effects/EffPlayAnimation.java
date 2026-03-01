@@ -39,12 +39,14 @@ public class EffPlayAnimation extends Effect {
 
 	@Override
 	protected void execute(Event event) {
+		Entity[] entities = this.entities.getArray(event);
+		Player[] players = this.players == null ? null : this.players.getArray(event);
 		for (EntityAnimationPacket.Animation animation : animations.getArray(event)) {
-			for (Entity entity : entities.getArray(event)) {
+			for (Entity entity : entities) {
 				EntityAnimationPacket packet = new EntityAnimationPacket(entity.getEntityId(), animation);
 				if (players == null) entity.getInstance().sendGroupedPacket(packet);
 				else {
-					for (Player player : players.getArray(event)) {
+					for (Player player : players) {
 						player.sendPacket(packet);
 					}
 				}

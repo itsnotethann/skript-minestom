@@ -79,6 +79,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.github.hapily04.skriptminestom.util.MessageUtils.LEGACY_SERIALIZER;
 import static com.github.hapily04.skriptminestom.util.NumberUtils.timespanFrom;
 
 public class MinestomClasses {
@@ -725,7 +726,7 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull Component o) {
-					return LegacyComponentSerializer.legacyAmpersand().serialize(o);
+					return LEGACY_SERIALIZER.serialize(o);
 				}
 			})
 			.serializer(new Serializer<Component>() {
