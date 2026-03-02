@@ -218,7 +218,7 @@ public class StructCommand extends Structure {
 		CommandTriggerEvent event = new CommandTriggerEvent(sender);
 		for (Argument<?> arg : args) {
 			Object o = context.get(arg);
-			o = ArgumentType.convertToSkriptObject(o);
+			o = ArgumentType.convertToSkriptObject(o, sender);
 			String id = arg.getId();
 			if (o.getClass().isArray()) {
 				Object[] arr = (Object[]) o;

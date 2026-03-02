@@ -1,9 +1,11 @@
 package ch.njol.skript.structures.command;
 
 import ch.njol.skript.util.Item;
+import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.arguments.*;
 import net.minestom.server.command.builder.arguments.minecraft.*;
 import net.minestom.server.command.builder.arguments.minecraft.registry.ArgumentEntityType;
+import net.minestom.server.command.builder.arguments.minecraft.registry.ArgumentParticle;
 import net.minestom.server.command.builder.arguments.number.ArgumentDouble;
 import net.minestom.server.command.builder.arguments.number.ArgumentFloat;
 import net.minestom.server.command.builder.arguments.number.ArgumentInteger;
@@ -11,12 +13,17 @@ import net.minestom.server.command.builder.arguments.number.ArgumentLong;
 import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeBlockPosition;
 import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeVec2;
 import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeVec3;
+import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.GameMode;
+import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.utils.entity.EntityFinder;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public enum ArgumentType {
 
@@ -38,12 +45,17 @@ public enum ArgumentType {
 	GAME_MODE("gamemode", GameMode.class),
 
 	// minecraft specific
+	PARTICLE("particle", ArgumentParticle::new),
 	ENTITY_TYPE("entitytype", ArgumentEntityType::new),
 	BLOCK("block", ArgumentBlockState::new),
-	ENTITY("entity", s -> new ArgumentEntity(s).singleEntity(true)),
-	ENTITIES("entities", ArgumentEntity::new),
-	PLAYER("player", s -> new ArgumentEntity(s).singleEntity(true).onlyPlayers(true)),
-	PLAYERS("players", s -> new ArgumentEntity(s).onlyPlayers(true)),
+	ENTITY("entity", s -> new ArgumentEntity(s).map((_, entityFinder) ->
+		new CustomEntityFinder(entityFinder.setLimit(1), false, true))),
+	ENTITIES("entities", s -> new ArgumentEntity(s).map((_, entityFinder) ->
+		new CustomEntityFinder(entityFinder, false, false))),
+	PLAYER("player", s -> new ArgumentEntity(s).map((_, entityFinder) ->
+		new CustomEntityFinder(entityFinder.setLimit(1), true, true))),
+	PLAYERS("players", s -> new ArgumentEntity(s).map((_, entityFinder) ->
+		new CustomEntityFinder(entityFinder, true, false))),
 	ITEM("item", ArgumentItemStack::new),
 	COMPONENT("component", ArgumentComponent::new),
 	UUID("uuid", ArgumentUUID::new),
@@ -69,9 +81,19 @@ public enum ArgumentType {
 		this(expectedInitialInput, s -> new ArgumentEnum<>(s, enumClass).setFormat(ArgumentEnum.Format.LOWER_CASED));
 	}
 
-	public static Object convertToSkriptObject(Object o) {
+	public static Object convertToSkriptObject(Object o, CommandSender sender) {
 		if (o instanceof UUID uuid) return uuid.toString();
 		if (o instanceof ItemStack itemStack) return new Item(itemStack);
+		if (o instanceof CustomEntityFinder(EntityFinder entityFinder, boolean onlyPlayers, boolean single)) {
+			Stream<Entity> entityStream = entityFinder.find(sender).stream();
+			if (onlyPlayers) entityStream = entityStream.filter(entity -> entity instanceof Player);
+			List<Entity> entities = entityStream.toList();
+			if (single) {
+				if (entities.isEmpty()) return null;
+				return entities.getFirst();
+			}
+			return entities.toArray(new Entity[0]);
+		}
 		return o;
 	}
 
@@ -82,5 +104,7 @@ public enum ArgumentType {
 	public BiFunction<String, String, Argument<?>> getProvider() {
 		return provider;
 	}
+
+	private record CustomEntityFinder(EntityFinder entityFinder, boolean onlyPlayers, boolean single) {}
 
 }
