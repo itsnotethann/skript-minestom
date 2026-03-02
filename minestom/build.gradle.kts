@@ -32,7 +32,7 @@ dependencies {
 	implementation("org.jline:jline:3.28.0") // part of terminal implementation
 	compileOnly("org.jetbrains:annotations:26.0.2")
 	implementation(group = "org.eclipse.jdt", name = "org.eclipse.jdt.annotation", version = "2.2.700")
-	implementation("org.slf4j:slf4j-simple:2.0.16")
+	implementation("ch.qos.logback:logback-classic:1.5.32")
 	implementation("com.google.code.gson:gson:2.11.0")
 	implementation(project(":common"))
 }

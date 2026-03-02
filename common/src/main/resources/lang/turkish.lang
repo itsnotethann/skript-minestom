@@ -7,7 +7,7 @@ none: <tanımsız>
 # -- Skript --
 skript:
 	copyright: ~ © Peter Güttinger yani Njol tarafından yapıldı ~
-	prefix: <base_grey>[<gold>Skript<base_grey>] <reset>
+	prefix: <skript_minestom_tag> <reset>
 	quotes error: Tırnak işaretlerinin (") geçersiz kullanımı. "Tırnak işareti içindeki metinde" tırnak işaretleri kullanmak istiyorsanız 2 tane kullanın: "".
 	brackets error: Geçersiz miktar veya parantez yerleşimi. Lütfen her açılan paranteze karşılık gelen bir kapatma parantezine sahip olduğundan emin olun.
 	invalid reload: Skript sadece Bukkit'in '/reload' veya Skript'in '/skript reload' komuduyla tekrar yüklenebilir.

@@ -48,15 +48,15 @@ skript command:
 		gen-docs: 使用插件文件夹中的docs/templates生成文档
 		test: 用于运行内部的Skript测试
 
-	invalid script: 无法在scripts文件夹中找到脚本<grey>“<gold>%s<grey>”<red>！
-	invalid folder: 无法在scripts文件夹中找到文件夹<grey>“<gold>%s<grey>”<red>！
+	invalid script: 无法在scripts文件夹中找到脚本<grey>“<gold>%s<grey>”<error_color>！
+	invalid folder: 无法在scripts文件夹中找到文件夹<grey>“<gold>%s<grey>”<error_color>！
 	reload:
 		warning line info: <gold><bold>第%s行：<gray>（%s）<reset>\n
 		error line info: <light_red><bold>第%s行：<gray>（%s）<reset>\n
 		reloading: 正在重新加载<gold>%s<reset>…
 		reloaded: <lime>已成功重新加载<gold>%s<lime>。<gray>（<gold>%2$sms<gray>）
 		error: <light_red>在重新加载<gold>%1$s<light_red>时遇到了<gold>%2$s<light_red>个错误！<gray>（<gold>%3$sms<gray>）
-		script disabled: <gold>%s<reset>已禁用。使用<gray>/<gold>skript <cyan>enable <red>%s<reset>来启用它。
+		script disabled: <gold>%s<reset>已禁用。使用<gray>/<gold>skript <cyan>enable <error_color>%s<reset>来启用它。
 		warning details: <yellow>    %s<reset>\n
 		error details: <light_red>    %s<reset>\n
 		other details: <white>    %s<reset>\n
@@ -77,7 +77,7 @@ skript command:
 			error: <light_red>在解析禁用的脚本时遇到了<gold>%s<light_red>个错误！
 			io error: <light_red>无法加载一个或多个脚本 - 一些脚本可能已被重命名，并在服务器重新启动时启用：<gold>%s
 		single:
-			already enabled: <gold>%s<reset>已经启用了！如果它已被更改，使用<gray>/<gold>skript <cyan>reload <red>%s<reset>来重新加载。
+			already enabled: <gold>%s<reset>已经启用了！如果它已被更改，使用<gray>/<gold>skript <cyan>reload <error_color>%s<reset>来重新加载。
 			enabling: 正在启用<gold>%s<reset>…
 			enabled: 已成功启用并解析<gold>%s<reset>。
 			error: <light_red>在解析<gold>%1$s<light_red>时遇到了<gold>%2$s<light_red>个错误！
@@ -106,7 +106,7 @@ skript command:
 			# multiple versions:
 			# 	title: <gold>%s<r> update¦ has¦s have¦ been released since this version (<gold>%s<r>) of Skript:
 			# 	footer: To show the changelog of a version type <gold>/skript update changes <version><reset>
-			# invalid version: No changelog for the version <gold>%s<red> available
+			# invalid version: No changelog for the version <gold>%s<error_color> available
 			title: <bold><cyan>%s<reset>（%s）
 			next page: <grey>第%s/%s页。使用<gold>/skript update changes %s<gray>查看下一页（提示：使用上箭头键）
 	info:
@@ -124,13 +124,13 @@ updater:
 	checking: 正在检查最新版的Skript…
 	check in progress: 新版本的检查已经在进行中了。
 	updater disabled: 更新程序已禁用，未能检查Skript的最新版本。
-	check error: <red>检查最新版的Skript时出现了错误：<light_red>%s
+	check error: <error_color>检查最新版的Skript时出现了错误：<light_red>%s
 	running latest version: 你目前正在运行最新的Skript稳定版本。
 	running latest version (beta): 你目前运行的是Skript的<i>测试<r>版本，没有新的<i>稳定<r>版可用。请注意，你必须手动更新到较新的测试版！
 	update available: 新版本的Skript可用：<gold>%s<reset>（你目前正在运行<gold>%s<reset>）。
 	downloading: 正在下载Skript<gold>%s<reset>…
 	download in progress: 最新版的下载已经在进行中了。
-	download error: <red>下载最新版的Skript时出现了错误：<light_red>%s
+	download error: <error_color>下载最新版的Skript时出现了错误：<light_red>%s
 	downloaded: 最新版本的Skript已下载完成! 重新启动服务器或使用/reload来应用更改。
 	internal error: 在检查Skript的最新版本时发生了一个内部错误。请查看服务器日志以了解详情。
 	custom version: 你目前正在运行一个自定义的Skript版本。不会自动安装更新。

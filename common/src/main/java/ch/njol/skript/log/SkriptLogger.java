@@ -20,15 +20,16 @@ package ch.njol.skript.log;
 
 import java.util.Collection;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.util.LoggerUtils;
 import org.eclipse.jdt.annotation.Nullable;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.log.LogHandler.LogResult;
+import org.slf4j.Logger;
 
 /**
  * @author Peter Güttinger
@@ -103,7 +104,7 @@ public abstract class SkriptLogger {
 			int i = 1;
 			while (!h.equals(handlers.remove()))
 				i++;
-			LOGGER.severe("[Skript] " + i + " log handler" + (i == 1 ? " was" : "s were") + " not stopped properly!" +
+			LoggerUtils.log(LOGGER, Level.SEVERE, "<skript_minestom_tag> " + i + " log handler" + (i == 1 ? " was" : "s were") + " not stopped properly!" +
 				" (at " + getCaller() + ") " +
 				"[if you're a server admin and you see this message please file a bug report at https://github.com/SkriptLang/skript/issues if there is not already one]");
 		}
@@ -180,7 +181,7 @@ public abstract class SkriptLogger {
 			}
 		}
 		entry.logged();
-		LOGGER.info("[Skript] " + entry.toFormattedString());
+		LoggerUtils.log(LOGGER, Level.INFO, "<skript_minestom_tag> " + entry.toFormattedString());
 	}
 	
 	public static void logAll(Collection<LogEntry> entries) {

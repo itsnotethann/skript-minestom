@@ -82,6 +82,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.LoggerUtils;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
@@ -1218,7 +1219,7 @@ public final class Skript extends JavaPlugin implements Listener {
 		String issuesUrl = "https://github.com/SkriptLang/Skript/issues";
 
 		logEx();
-		logEx("[Skript] Severe Error:");
+		logEx("<skript_minestom_tag> Severe Error:");
 		logEx(info);
 		logEx();
 
@@ -1348,18 +1349,18 @@ public final class Skript extends JavaPlugin implements Listener {
 	}
 
 	static void logEx() {
-		SkriptLogger.LOGGER.severe(EXCEPTION_PREFIX);
+		LoggerUtils.log(SkriptLogger.LOGGER, Level.SEVERE, EXCEPTION_PREFIX);
 	}
 
 	static void logEx(final String... lines) {
 		for (final String line : lines)
-			SkriptLogger.LOGGER.severe(EXCEPTION_PREFIX + line);
+			LoggerUtils.log(SkriptLogger.LOGGER, Level.SEVERE, EXCEPTION_PREFIX + line);
 	}
 
 	private static final Message SKRIPT_PREFIX_MESSAGE = new Message("skript.prefix");
 
 	public static String getSkriptPrefix() {
-		return SKRIPT_PREFIX_MESSAGE.getValueOrDefault("<base_grey>[<gold>Skript<base_grey>] <reset>");
+		return SKRIPT_PREFIX_MESSAGE.getValueOrDefault("<skript_minestom_tag> <reset>");
 	}
 
 	/**

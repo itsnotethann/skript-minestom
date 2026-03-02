@@ -65,7 +65,7 @@ effect command token: !
 # Some example commands which can be used if this setting is enabled:
 #	!heal player - heals the player (doesn't do anything if used from the console)
 #	!repair tool - repairs the currently held item
-#	!broadcast "<red>Please read the rules!" - if you want to get rid of the quotes you have to define a custom command
+#	!broadcast "<error_color>Please read the rules!" - if you want to get rid of the quotes you have to define a custom command
 #	!set time to 6:00 - sets the time in the current world
 # The command can also be abused, so only give the permission to trusted players, like owners & co-owners:
 #	!set player's balance to 999999999 - when a compatible economy plugin is installed, this will give the command sender as much money as desired

@@ -1,0 +1,14 @@
+<configuration>
+	<conversionRule conversionWord="customHighlight" class="com.github.hapily04.skriptminestom.util.CustomHighlighter" />
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>
+				%customHighlight([%d{HH:mm:ss} %level]) %white(%msg){}%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE"/>
+	</root>
+</configuration>

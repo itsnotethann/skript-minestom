@@ -40,6 +40,9 @@ dependencies {
 	shadow "com.googlecode.json-simple:json-simple:1.1.1"
 	shadow "commons-lang:commons-lang:2.6"
 	shadow "org.yaml:snakeyaml:1.32"
+	shadow "ch.qos.logback:logback-classic:1.5.32"
+	shadow "net.kyori:adventure-text-minimessage:4.26.1"
+	shadow "net.kyori:adventure-text-serializer-ansi:4.26.1"
 }
 
 task jar(overwrite: true, type: ShadowJar) {
@@ -72,6 +75,9 @@ tasks.withType(ShadowJar) {
 		include(dependency("com.googlecode.json-simple:json-simple"))
 		include(dependency("commons-lang:commons-lang"))
 		include(dependency("org.yaml:snakeyaml"))
+		include(dependency("ch.qos.logback:logback-classic"))
+		include(dependency("net.kyori:adventure-text-minimessage"))
+		include(dependency("net.kyori:adventure-text-serializer-ansi"))
 	}
 //	relocate 'io.papermc.lib', 'ch.njol.skript.paperlib'
 	relocate 'org.bstats', 'ch.njol.skript.bstats'

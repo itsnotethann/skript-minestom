@@ -25,6 +25,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.logging.Level;
 
+import org.bukkit.util.LoggerUtils;
 import org.eclipse.jdt.annotation.Nullable;
 
 import ch.njol.skript.Skript;
@@ -77,7 +78,7 @@ public class RetainingLogHandler extends LogHandler {
 	@Override
 	public void onStop() {
 		if (!printedErrorOrLog && Skript.testing())
-			SkriptLogger.LOGGER.warning("Retaining log wasn't instructed to print anything at " + SkriptLogger.getCaller());
+			LoggerUtils.log(SkriptLogger.LOGGER, Level.WARNING, "Retaining log wasn't instructed to print anything at " + SkriptLogger.getCaller());
 	}
 	
 	@Override

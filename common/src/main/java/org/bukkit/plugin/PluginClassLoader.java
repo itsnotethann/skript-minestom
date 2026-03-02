@@ -62,12 +62,8 @@ public class PluginClassLoader extends URLClassLoader {
 						if ((thisDescription.getDepend().contains(pluginName) || thisDescription.getSoftDepend().contains(pluginName)) || thisDescription.getName().equals(pluginName))
 							return clazz;
 
-						Bukkit.getLogger().warning(String.format(
-							"Plugin '%s' loaded class '%s' from non-dependency plugin '%s'.",
-							thisDescription.getName(),
-							clazz.getName(),
-							description.getName()
-						));
+						Bukkit.getLogger().warn("Plugin '{}' loaded class '{}' from non-dependency plugin '{}'.",
+							thisDescription.getName(), clazz.getName(), description.getName());
 					}
 				} catch (ClassNotFoundException ignored) {
 				}
@@ -83,10 +79,7 @@ public class PluginClassLoader extends URLClassLoader {
 
 		URL resource = findResource("plugin.yml"); // Only searches this loader’s URLs
 		if (resource == null) {
-			Bukkit.getLogger().warning(String.format(
-				"Found JAR '%s' in the plugins folder without a plugin.yml file.",
-				file.getName()
-			));
+			Bukkit.getLogger().warn("Found JAR '{}' in the plugins folder without a plugin.yml file.", file.getName());
 			return null;
 		}
 

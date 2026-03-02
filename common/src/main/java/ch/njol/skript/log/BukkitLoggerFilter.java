@@ -38,23 +38,23 @@ import ch.njol.util.LoggerFilter;
  */
 public class BukkitLoggerFilter {
 	
-	private static final LoggerFilter filter = new LoggerFilter(SkriptLogger.LOGGER);
+	/*private static final LoggerFilter filter = new LoggerFilter(SkriptLogger.LOGGER);
 	
 	static {
 		Skript.closeOnDisable(filter);
-	}
+	}*/
 	
 	/**
 	 * Adds a filter to Bukkit's log.
 	 * 
 	 * @param f A filter to filter log messages
 	 */
-	public static void addFilter(Filter f) {
+	/*public static void addFilter(Filter f) {
 		filter.addFilter(f);
 	}
 	
 	public static boolean removeFilter(Filter f) {
 		return filter.removeFilter(f);
-	}
+	}*/
 	
 }

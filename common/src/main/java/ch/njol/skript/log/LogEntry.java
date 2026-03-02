@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import ch.njol.skript.localization.ArgsMessage;
 import ch.njol.skript.util.Utils;
 
+import org.bukkit.util.LoggerUtils;
 import org.eclipse.jdt.annotation.Nullable;
 
 import ch.njol.skript.Skript;
@@ -117,13 +118,13 @@ public class LogEntry {
 	void discarded(String info) {
 		used = true;
 		if (tracked)
-			SkriptLogger.LOGGER.warning(" # LogEntry '" + message + "'" + from + " discarded" + findCaller() + "; " + (new Exception()).getStackTrace()[1] + "; " + info);
+			LoggerUtils.log(SkriptLogger.LOGGER, Level.WARNING, " # LogEntry '" + message + "'" + from + " discarded" + findCaller() + "; " + (new Exception()).getStackTrace()[1] + "; " + info);
 	}
 
 	void logged() {
 		used = true;
 		if (tracked)
-			SkriptLogger.LOGGER.warning(" # LogEntry '" + message + "'" + from + " logged" + findCaller());
+			LoggerUtils.log(SkriptLogger.LOGGER, Level.WARNING, " # LogEntry '" + message + "'" + from + " logged" + findCaller());
 	}
 
 	@Override

@@ -48,15 +48,15 @@ skript command:
 		gen-docs: pluginフォルダ内にテンプレートを使用してドキュメントを生成します。
 		test: 内部テストを実行するために使用します。
 
-	invalid script: 指定されたスクリプト <grey>'<gold>%s<grey>'<red> はscriptsフォルダ内では見つかりませんでした！
-	invalid folder: 指定されたフォルダ <grey>'<gold>%s<grey>'<red> はscriptsフォルダ内では見つかりませんでした！
+	invalid script: 指定されたスクリプト <grey>'<gold>%s<grey>'<error_color> はscriptsフォルダ内では見つかりませんでした！
+	invalid folder: 指定されたフォルダ <grey>'<gold>%s<grey>'<error_color> はscriptsフォルダ内では見つかりませんでした！
 	reload:
 		warning line info: <gold><bold>%s行目:<gray> (%s)<reset>\n
 		error line info: <light_red><bold>%s行目:<gray> (%s)<reset>\n
 		reloading: <gold>%s<reset>を読み込み中...
 		reloaded: <gold>%s<lime>の読み込みに成功しました。<gray>(<gold>%2$sms<gray>)
 		error: <gold>%2$s <light_red>個のエラーが<gold>%1$s<light_red>の読み込み中に発見されました！ <gray>(<gold>%3$sms<gray>)
-		script disabled: <gold>%s<reset>は現在無効化されています。<gray>/<gold>skript <cyan>enable <red>%s<reset>を使用して有効化できます。
+		script disabled: <gold>%s<reset>は現在無効化されています。<gray>/<gold>skript <cyan>enable <error_color>%s<reset>を使用して有効化できます。
 		warning details: <yellow>    %s<reset>\n
 		error details: <light_red>    %s<reset>\n
 		other details: <white>    %s<reset>\n
@@ -77,7 +77,7 @@ skript command:
 			error: <light_red>解析中に%s個のエラーが見つかりました！
 			io error: <light_red>一つもしくは複数のスクリプトがロードできませんでした。 一部のスクリプトはファイル名が変更された可能性があります。 またサーバー再起動時に有効化されます: <gold>%s
 		single:
-			already enabled: <gold>%s<reset>はすでに有効化されています! もし変更を反映したい場合は<gray>/<gold>skript <cyan>reload <red>%s<reset>を使用して再読み込みします。
+			already enabled: <gold>%s<reset>はすでに有効化されています! もし変更を反映したい場合は<gray>/<gold>skript <cyan>reload <error_color>%s<reset>を使用して再読み込みします。
 			enabling: <gold>%s<reset>を有効化しています...
 			enabled: <gold>%s<reset>の解析・有効化に成功しました。
 			error: <gold>%1$s<light_red>を解析中に<gold>%2$s<light_red>個のエラーが見つかりました！
@@ -106,7 +106,7 @@ skript command:
 			# multiple versions:
 			# 	title: <gold>%s<r>個のアップデートが 現在のSkriptバージョン (<gold>%s<r>) に存在します:
 			# 	footer: このバージョンの変更履歴を確認したい場合は<gold>/skript update changes <version><reset>を実行してください。
-			# invalid version: バージョン<gold>%s<red>の変更履歴はありません。
+			# invalid version: バージョン<gold>%s<error_color>の変更履歴はありません。
 			title: <bold><cyan>%s<reset> (%s)
 			next page: <grey>(%s/%s) <gold>/skript update changes %s<gray> で次のページを表示します。 (ヒント: 上矢印キーを押すと良いかもしれません)
 	info:
@@ -124,13 +124,13 @@ updater:
 	checking: Skriptの最新バージョンを確認中...
 	check in progress: 最新バージョンは現在確認中です。
 	updater disabled: 更新が無効化されているため、Skriptの最新バージョンの確認は行われませんでした。
-	check error: <red>Skriptの最新バージョンの確認中にエラーが発生しました:<light_red> %s
+	check error: <error_color>Skriptの最新バージョンの確認中にエラーが発生しました:<light_red> %s
 	running latest version: 最新安定版のSkriptが動作しています。
 	running latest version (beta): <i>ベータ版<r>のSkriptが動作しています。 また新しい<i>安定版<r>のSkriptはありません。 新しいベータ版へのアップデートは手動で行う必要があるためご注意ください！
 	update available: 新しいバージョンのSkriptが存在します: <gold>%s<reset> (現在は<gold>%s<reset>が動作しています。)
 	downloading: Skript <gold>%s<reset>をダウンロード中...
 	download in progress: Skriptの最新バージョンは現在ダウンロード中です。
-	download error: <red>Skriptの最新バージョンをダウンロード中にエラーが発生しました:<light_red> %s
+	download error: <error_color>Skriptの最新バージョンをダウンロード中にエラーが発生しました:<light_red> %s
 	downloaded: Skriptの最新バージョンがダウンロードされました！ サーバーを再起動、または/reloadを使用し更新を適用してください。
 	internal error: 内部エラーが発生したためSkriptの最新バージョンの確認に失敗しました。 詳細はサーバーログをご確認ください。
 	custom version: カスタマイズされたSkriptが動作しています。 アップデートは自動的にインストールされません。

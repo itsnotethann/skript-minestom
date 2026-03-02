@@ -88,10 +88,7 @@ public class SimplePluginManager implements PluginManager {
 				plugins.put(description.getName(), plugin);
 				return plugin;
 			} catch (ClassNotFoundException | NoSuchMethodException exception) {
-				Bukkit.getLogger().warning(String.format(
-					"Found plugin '%s' with an invalid main class.",
-					description.getName()
-				));
+				Bukkit.getLogger().warn("Found plugin '{}' with an invalid main class.", description.getName());
 			}
 		} catch (MalformedURLException | ReflectiveOperationException exception) {
 			exception.printStackTrace();

@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.logging.Level;
 
+import org.bukkit.util.LoggerUtils;
 import org.skriptlang.skript.lang.script.Script;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
@@ -112,7 +113,7 @@ public class EffLog extends Effect {
 					if (!logFile.endsWith(".log"))
 						logFile += ".log";
 					if (logFile.equals("server.log")) {
-						SkriptLogger.LOGGER.log(logLevel, message);
+						LoggerUtils.log(SkriptLogger.LOGGER, logLevel, message);
 						continue;
 					}
 					PrintWriter logWriter = writers.get(logFile);
@@ -138,7 +139,7 @@ public class EffLog extends Effect {
 					if (script != null)
 						scriptName = script.getConfig().getFileName();
 				}
-				SkriptLogger.LOGGER.log(logLevel, "[" + scriptName + "] " + message);
+				LoggerUtils.log(SkriptLogger.LOGGER, logLevel, "[" + scriptName + "] " + message);
 			}
 		}
 	}

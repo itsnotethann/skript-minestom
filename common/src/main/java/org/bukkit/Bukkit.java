@@ -9,20 +9,16 @@ import org.bukkit.scheduler.BukkitSchedulerImpl;
 import org.bukkit.scheduler.DefaultTicker;
 import org.bukkit.scheduler.Ticker;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.logging.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Bukkit {
 	private static final Thread primaryThread = Thread.currentThread();
 	private static final PluginManager pluginManager = new SimplePluginManager();
-	private static final Logger logger = Logger.getLogger("Bukkit");
+	private static final Logger logger = LoggerFactory.getLogger(Bukkit.class);
 	private static BukkitScheduler scheduler = null;
 	private static ServicesManager servicesManager = null;
 	private static Ticker ticker = new DefaultTicker();
-
-	static {
-		fixLoggerFormatting();
-	}
 
 	public static PluginManager getPluginManager() {
 		return pluginManager;
@@ -59,20 +55,5 @@ public class Bukkit {
 
 	public static void setTicker(Ticker ticker) {
 		Bukkit.ticker = ticker;
-	}
-
-	private static void fixLoggerFormatting() {
-		Logger rootLogger = LogManager.getLogManager().getLogger("");
-		for (Handler handler : rootLogger.getHandlers()) {
-			handler.setFormatter(new Formatter() {
-				@Override
-				public String format(LogRecord record) {
-					return String.format("[%1$tT %2$s]: %3$s%n",
-						record.getMillis(),
-						record.getLevel().getName(),
-						record.getMessage());
-				}
-			});
-		}
 	}
 }

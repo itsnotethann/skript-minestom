@@ -9,7 +9,7 @@ none: <none>
 # -- Skript --
 skript:
 	copyright: ~ created by & © Peter Güttinger aka Njol ~
-	prefix: <base_grey>[<gold>Skript<base_grey>] <reset>
+	prefix: <skript_minestom_tag> <reset>
 	quotes error: Неверное использование кавычек ("). Если вам необходимо использовать кавычки внутри строки, просто продублируйте их: "".
 	brackets error: Неверная расстановка скобок. Убедитесь, что каждой открывающей скобке соответствует закрывающая.
 	invalid reload: Skript может быть перезагружен только командой '/reload' из Bukkit или командой '/skript reload' из Skript.
