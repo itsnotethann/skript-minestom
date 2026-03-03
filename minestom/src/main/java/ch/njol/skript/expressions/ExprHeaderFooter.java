@@ -26,7 +26,7 @@ public class ExprHeaderFooter extends PropertyExpression<Player, Component> {
 	private static final Tag<Component> FOOTER_TAG = Tag.Transient("skript-minestom:tablist-footer");
 
 	static {
-		register(ExprHeaderFooter.class, Component.class, "tab[[ ]list] (:header|footer|:name)", "players");
+		register(ExprHeaderFooter.class, Component.class, "tab[[ ]list] (:header|footer|(name:([display] name)))", "players");
 	}
 
 	private boolean header;
