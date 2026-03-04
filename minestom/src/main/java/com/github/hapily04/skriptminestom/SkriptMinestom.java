@@ -27,6 +27,8 @@ import me.lucko.luckperms.common.config.generic.adapter.MultiConfigurationAdapte
 import me.lucko.luckperms.minestom.CommandRegistry;
 import me.lucko.luckperms.minestom.LuckPermsMinestom;
 import me.lucko.spark.minestom.SparkMinestom;
+import mx.kenzie.mirror.ConstructorAccessor;
+import mx.kenzie.mirror.Mirror;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -80,6 +82,7 @@ public class SkriptMinestom {
 			MinestomTerminal.start();
 		} catch (Exception e) {
 			SkriptLogger.LOGGER.error("An error occurred while initializing Skript-Minestom: {}", e.getMessage());
+			e.printStackTrace();
 			System.exit(1);
 		}
 	}
@@ -142,15 +145,10 @@ public class SkriptMinestom {
 					eventType = (Class<? extends Event>) parameters[0];
 				}
 				if (constructor == null) continue;
-				constructor.setAccessible(true);
-				Constructor<? extends Event> finalConstructor = constructor;
+				ConstructorAccessor<? extends Event> mirrorConstructor = Mirror.of(bukkitEventClazz).constructor(eventType);
 				geh.addListener(eventType.asSubclass(net.minestom.server.event.Event.class), event -> {
-					try {
-						EventWrapper eventWrapper = (EventWrapper) finalConstructor.newInstance(event);
-						pluginManager.callEvent(eventWrapper);
-					} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-						SkriptLogger.LOGGER.error("Error calling event: {}", e.getMessage());
-					}
+					EventWrapper eventWrapper = (EventWrapper) mirrorConstructor.newInstance(event);
+					pluginManager.callEvent(eventWrapper);
 				});
 			}
 		}

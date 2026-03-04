@@ -18,6 +18,7 @@ repositories {
 	maven("https://maven.hapily.me/releases")
 	maven("https://maven.hapily.me/snapshots")
 	maven("https://oss.sonatype.org/content/repositories/snapshots/")
+	maven("https://repo.kenzie.mx/releases")
 }
 
 dependencies {
@@ -34,6 +35,7 @@ dependencies {
 	implementation(group = "org.eclipse.jdt", name = "org.eclipse.jdt.annotation", version = "2.2.700")
 	implementation("ch.qos.logback:logback-classic:1.5.32")
 	implementation("com.google.code.gson:gson:2.11.0")
+	implementation("mx.kenzie:mirror:5.0.3")
 	implementation(project(":common"))
 }
 
