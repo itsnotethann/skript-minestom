@@ -995,6 +995,7 @@ public class MinestomClasses {
 				public @NotNull Fields serialize(@NotNull Item o) throws NotSerializableException {
 					Fields fields = new Fields();
 					try {
+						fields.putPrimitive("data-version", MinecraftServer.DATA_VERSION);
 						fields.putObject("item-nbt", NBTUtils.asString(o.getItem().toItemNBT()));
 					} catch (IOException e) {
 						throw new NotSerializableException("Error whilst trying to to serialize an item: " + e.getMessage());

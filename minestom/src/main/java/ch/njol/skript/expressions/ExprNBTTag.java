@@ -73,7 +73,10 @@ public class ExprNBTTag extends SimpleExpression<Object> {
 				} else tags.add(converted);
 			}
 		}
-		return tags.toArray(size -> (Object[]) Array.newInstance(tagType.getSkriptCompatibleClass(), size));
+		Class<?> arrayType = tagType.getSkriptCompatibleClass();
+		if (arrayType.isArray()) arrayType = arrayType.getComponentType();
+		Class<?> finalArrayType = arrayType;
+		return tags.toArray(size -> (Object[]) Array.newInstance(finalArrayType, size));
 	}
 
 	@Override
