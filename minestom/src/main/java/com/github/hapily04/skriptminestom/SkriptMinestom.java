@@ -32,6 +32,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.luckperms.api.LuckPerms;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.ServerFlag;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerChatEvent;
@@ -39,6 +40,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -70,7 +72,6 @@ public class SkriptMinestom {
 		MinecraftServer.setBrandName(properties.getProperty(SERVER_BRAND));
 
 		MinecraftServer.getCommandManager().register(new SkriptCommand(), new StopCommand());
-
 		try {
 			initSkript();
 			initEffectCommands();
@@ -78,7 +79,7 @@ public class SkriptMinestom {
 			server.start(properties.getProperty(ADDRESS_KEY), Integer.parseInt(properties.getProperty(PropertyUtils.PORT_KEY)));
 			MinestomTerminal.start();
 		} catch (Exception e) {
-			System.err.println("An error occurred while initializing Skript-Minestom: " + e.getMessage());
+			SkriptLogger.LOGGER.error("An error occurred while initializing Skript-Minestom: {}", e.getMessage());
 			System.exit(1);
 		}
 	}
@@ -148,7 +149,7 @@ public class SkriptMinestom {
 						EventWrapper eventWrapper = (EventWrapper) finalConstructor.newInstance(event);
 						pluginManager.callEvent(eventWrapper);
 					} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-						System.err.println("Error calling event: " + e.getMessage());
+						SkriptLogger.LOGGER.error("Error calling event: {}", e.getMessage());
 					}
 				});
 			}
