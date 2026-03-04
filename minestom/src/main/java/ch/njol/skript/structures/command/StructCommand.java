@@ -302,7 +302,9 @@ public class StructCommand extends Structure {
 		String initialInput = typeInput.split(" ")[0];
 		for (ArgumentType type : ArgumentType.values()) {
 			if (!type.matchesInitialInput(initialInput)) continue;
-			return type.getProvider().apply(name, typeInput);
+			Argument<?> arg = type.getProvider().apply(name, typeInput);
+			if (arg == null) continue;
+			return arg;
 		}
 		Skript.error("No argument type was found given '" + typeInput + "'.");
 		return null;

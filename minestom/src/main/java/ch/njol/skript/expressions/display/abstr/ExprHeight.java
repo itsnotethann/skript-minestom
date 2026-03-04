@@ -12,7 +12,7 @@ import org.bukkit.event.Event;
 public class ExprHeight extends SimplePropertyExpression<Entity, Number> {
 
 	static {
-		register(ExprHeight.class, Number.class, "width", "entities");
+		register(ExprHeight.class, Number.class, "height", "entities");
 	}
 
 	@Override

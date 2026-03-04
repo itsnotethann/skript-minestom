@@ -81,6 +81,7 @@ public class EvtClick extends SkriptEvent {
 	@Override
 	public boolean check(Event event) {
 		Object o = type == null ? null : type.getSingle();
+		System.out.println("event: " + event.getClass());
 		return switch (event) {
 			case PlayerBlockInteractWrapper wr -> {
 				if (click == LEFT) yield false;
@@ -98,7 +99,7 @@ public class EvtClick extends SkriptEvent {
 				Player player = e.getPlayer();
 				PlayerHand hand = e.getHand();
 				if (!INTERACT_TRACKER.checkEvent(player, e, hand)) yield false;
-				yield verifyEvent(o, e.getEntity().getEntityType(), player, hand);
+				yield verifyEvent(o, e.getTarget().getEntityType(), player, hand);
 			}
 			case PlayerUseItemWrapper wr -> {
 				if (click == LEFT) yield false;

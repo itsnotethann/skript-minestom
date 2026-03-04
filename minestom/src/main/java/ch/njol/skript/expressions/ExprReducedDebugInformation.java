@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
 public class ExprReducedDebugInformation extends SimplePropertyExpression<Player, Boolean> {
 
 	static {
-		register(ExprReducedDebugInformation.class, Boolean.class, "reduced debug information [property]", "players");
+		register(ExprReducedDebugInformation.class, Boolean.class, "reduced debug info[rmation] [property]", "players");
 	}
 
 	@Override

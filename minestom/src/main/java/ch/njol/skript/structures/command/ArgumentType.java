@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 public enum ArgumentType {
 
-	// todo ranges and more mc specific support
+	// todo ranges, resources, and more mc specific support
 
 	// basic
 	LITERAL("literal", ArgumentLiteral::new),

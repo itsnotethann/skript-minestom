@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.util.NBTCompound;
 import ch.njol.util.Kleenean;
 import com.github.hapily04.skriptminestom.util.FileUtils;
@@ -41,9 +42,9 @@ public class EffSaveNBT extends Effect {
 			try (FileOutputStream output = new FileOutputStream(f)) {
 				BinaryTagIO.writer().write(compoundBinaryTag, output, BinaryTagIO.Compression.GZIP);
 			} catch (FileNotFoundException e) {
-				Skript.error("Couldn't find file at '" + file + "' while attempting to create an nbt compound.");
+				SkriptLogger.LOGGER.error("Couldn't find file at '{}' while attempting to create an nbt compound.", file);
 			} catch (IOException e) {
-				Skript.error("An error occurred whilst trying to save nbt to file '" + file + "': " + e.getMessage());
+				SkriptLogger.LOGGER.error("An error occurred whilst trying to save nbt to file '{}': {}", file, e.getMessage());
 			}
 		}
 	}
