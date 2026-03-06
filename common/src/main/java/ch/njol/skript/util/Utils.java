@@ -105,6 +105,7 @@ public abstract class Utils {
 		plurals.add(new WordEnding("child", "children")); // grandchild, etc.
 
 		plurals.add(new WordEnding("sheep", "sheep", true));
+		plurals.add(new WordEnding("fangs", "fangs"));
 
 		// general ending
 		plurals.add(new WordEnding("", "s"));

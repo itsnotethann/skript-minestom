@@ -88,7 +88,7 @@ public class ExprEntities extends SimpleExpression<Entity> {
 	public String toString(@org.eclipse.jdt.annotation.Nullable Event event, boolean debug) {
 		SyntaxStringBuilder builder = new SyntaxStringBuilder(event, debug);
 		builder.append("all");
-		if (types != null) builder.append("of the entities of type", types);
+		if (types != null) builder.append("entities of type", types);
 		else builder.append("entities");
 		if (radius != null && points != null) builder.append("in radius", radius, "of", points);
 		if (instances != null) builder.append("in instances", instances);
