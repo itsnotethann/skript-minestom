@@ -42,7 +42,6 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.localization.Language;
 import ch.njol.skript.localization.Message;
 import ch.njol.skript.localization.PluralizingArgsMessage;
-import ch.njol.skript.log.BukkitLoggerFilter;
 import ch.njol.skript.log.CountingLogHandler;
 import ch.njol.skript.log.ErrorDescLogHandler;
 import ch.njol.skript.log.ErrorQuality;
@@ -54,14 +53,11 @@ import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.update.ReleaseManifest;
 import ch.njol.skript.update.ReleaseStatus;
-import ch.njol.skript.update.UpdateManifest;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.EmptyStacktraceException;
 import ch.njol.skript.util.ExceptionUtils;
 import ch.njol.skript.util.FileUtils;
 import ch.njol.skript.util.Getter;
-import ch.njol.skript.util.Task;
-import ch.njol.skript.util.Utils;
 import ch.njol.skript.util.Version;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Closeable;
@@ -70,13 +66,8 @@ import ch.njol.util.NullableChecker;
 import ch.njol.util.StringUtils;
 import ch.njol.util.coll.iterator.CheckedIterator;
 import ch.njol.util.coll.iterator.EnumerationIterable;
-import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import org.bstats.bukkit.Metrics;
-import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -86,9 +77,6 @@ import org.bukkit.util.LoggerUtils;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
-import org.junit.After;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
 import org.skriptlang.skript.lang.comparator.Comparator;
 import org.skriptlang.skript.lang.comparator.Comparators;
 import org.skriptlang.skript.lang.converter.Converter;
@@ -104,9 +92,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -119,16 +105,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.logging.Filter;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -665,14 +645,6 @@ public final class Skript extends JavaPlugin implements Listener {
 		} catch (final SecurityException e) {
 			return false;
 		}
-	}
-
-	@Nullable
-	static Metrics metrics;
-
-	@Nullable
-	public static Metrics getMetrics() {
-		return metrics;
 	}
 
 	@SuppressWarnings("null")

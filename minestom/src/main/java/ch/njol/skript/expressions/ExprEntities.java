@@ -15,6 +15,7 @@ import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
+import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
@@ -62,7 +63,7 @@ public class ExprEntities extends SimpleExpression<Entity> {
 		List<Entity> entities = new ArrayList<>();
 		for (Instance instance : instances) {
 			for (Entity e : instance.getEntities()) {
-				if (types != null && !types.contains(e.getEntityType())) continue;
+				if (types != null && !typesCheck(e, types)) continue;
 				Pos entityPos = e.getPosition();
 				if (radius != null && points != null) {
 					for (Point point : points) {
@@ -93,6 +94,11 @@ public class ExprEntities extends SimpleExpression<Entity> {
 		if (radius != null && points != null) builder.append("in radius", radius, "of", points);
 		if (instances != null) builder.append("in instances", instances);
 		return builder.toString();
+	}
+
+	private boolean typesCheck(Entity e, Collection<EntityType> types) {
+		if (e instanceof Player && types.contains(EntityType.PLAYER)) return true;
+		return types.contains(e.getEntityType());
 	}
 
 }

@@ -30,7 +30,6 @@ allprojects {
 }
 
 dependencies {
-	shadow group: 'org.bstats', name: 'bstats-bukkit', version: '3.0.2'
 	shadow group: 'net.kyori', name: 'adventure-text-serializer-bungeecord', version: '4.3.2'
 
 	shadow group: 'org.eclipse.jdt', name: 'org.eclipse.jdt.annotation', version: '2.2.700'
