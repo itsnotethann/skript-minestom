@@ -29,11 +29,14 @@ public class SimpleEvents {
 			.description("Called when a player clicks while in an inventory.")
 			.examples("on inventory click:");
 		Skript.registerEvent("Inventory Open", SimpleEvent.class, InventoryOpenWrapper.class, "inventory open")
-			  .description("Called when a player opens an inventory.")
-			  .examples("on inventory open:");
+			.description("Called when a player opens an inventory.")
+			.examples("on inventory open:");
 		Skript.registerEvent("Inventory Close", SimpleEvent.class, InventoryCloseWrapper.class, "inventory close")
-			  .description("Called when a player closes an inventory.")
-			  .examples("on inventory close:");
+			.description("Called when a player closes an inventory.")
+			.examples("on inventory close:");
+		Skript.registerEvent("Server List Ping", SimpleEvent.class, ServerListPingWrapper.class, "server[ ]list ping")
+			.description("Called when the client pings this server from their server list.")
+			.examples("server list ping:");
 	}
 
 }

@@ -20,7 +20,6 @@ public class PropertyUtils {
 	public static final String ENTITY_VIEW_DISTANCE = "entity-view-distance";
 	public static final String DISPATCHER_THREADS = "dispatcher-threads";
     public static final String SERVER_STOPPING_MINIMESSAGE = "server-stopping-minimessage";
-	public static final String SERVER_BRAND = "server-brand";
 
 	private static final File SERVER_PROPERTIES_FILE = new File(FileUtils.getServerDirectory(), "server.properties");
 
@@ -50,7 +49,6 @@ public class PropertyUtils {
 		properties.setProperty(ENTITY_VIEW_DISTANCE, "32");
 		properties.setProperty(DISPATCHER_THREADS, "1");
         properties.setProperty(SERVER_STOPPING_MINIMESSAGE, "<white>Server is stopping.");
-		properties.setProperty(SERVER_BRAND, "Skript-Minestom");
 		return properties;
 	}
 

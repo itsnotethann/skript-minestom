@@ -81,7 +81,6 @@ public class EvtClick extends SkriptEvent {
 	@Override
 	public boolean check(Event event) {
 		Object o = type == null ? null : type.getSingle();
-		System.out.println("event: " + event.getClass());
 		return switch (event) {
 			case PlayerBlockInteractWrapper wr -> {
 				if (click == LEFT) yield false;

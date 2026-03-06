@@ -57,7 +57,7 @@ public class ExprEntities extends SimpleExpression<Entity> {
 	protected @Nullable Entity[] get(Event event) {
 		Collection<Instance> instances = this.instances == null ? MinecraftServer.getInstanceManager().getInstances() : List.of(this.instances.getArray(event));
 		Collection<EntityType> types = this.types == null ? null : List.of(this.types.getArray(event));
-		Double radius = this.radius == null ? null : (this.radius.getSingle(event) == null ? null : this.radius.getSingle(event).doubleValue());
+		Double radius = this.radius == null ? null : (this.radius.getSingle(event) == null ? null : Math.pow(this.radius.getSingle(event).doubleValue(), 2));
 		Collection<Point> points = this.points == null ? null : List.of(this.points.getArray(event));
 		List<Entity> entities = new ArrayList<>();
 		for (Instance instance : instances) {
@@ -66,7 +66,7 @@ public class ExprEntities extends SimpleExpression<Entity> {
 				Pos entityPos = e.getPosition();
 				if (radius != null && points != null) {
 					for (Point point : points) {
-						if (entityPos.distance(point) <= radius) entities.add(e);
+						if (point.distanceSquared(entityPos) <= radius) entities.add(e);
 					}
 				} else entities.add(e);
 			}

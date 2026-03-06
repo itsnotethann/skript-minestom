@@ -58,6 +58,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
 import net.minestom.server.particle.Particle;
+import net.minestom.server.ping.ServerListPingType;
 import net.minestom.server.registry.RegistryKey;
 import net.minestom.server.scoreboard.Sidebar;
 import net.minestom.server.tag.Taggable;
@@ -70,6 +71,7 @@ import org.skriptlang.skript.lang.comparator.Comparators;
 import org.skriptlang.skript.lang.comparator.Relation;
 import org.skriptlang.skript.lang.converter.Converters;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.NotSerializableException;
@@ -1562,6 +1564,56 @@ public class MinestomClasses {
 				}
 			})
 			.supplier(NBTUtils.TagType.values()));
+		Classes.registerClass(new ClassInfo<>(ServerListPingType.class, "pingtype")
+			.user("ping ?types?")
+			.name("Server List Ping Type")
+			.description("The ping type of a ServerListPing event")
+			.defaultExpression(new EventValueExpression<>(ServerListPingType.class))
+			.parser(new Parser<>() {
+				public ServerListPingType parse(@NotNull String s, @NotNull ParseContext context) {
+					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
+					for (ServerListPingType tagType : ServerListPingType.values()) {
+						if (tagType.name().equals(s)) return tagType;
+					}
+					return null;
+				}
+
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return true;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull ServerListPingType o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull ServerListPingType o) {
+					return typeFormatted(o.name());
+				}
+			})
+			.supplier(ServerListPingType.values()));
+		Classes.registerClass(new ClassInfo<>(BufferedImage.class, "bufferedimage")
+			.user("buffered ?images?")
+			.name("Buffered Image")
+			.defaultExpression(new EventValueExpression<>(BufferedImage.class))
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull BufferedImage o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull BufferedImage o) {
+					return "buffered image";
+				}
+			}));
 		Classes.registerClass(new ClassInfo<>(Particle.class, "particle")
 			.user("particles?")
 			.name("Particle")
@@ -1718,6 +1770,7 @@ public class MinestomClasses {
 			.user("skins?")
 			.name("Skin")
 			.description("A skin with textures and a signature")
+			.defaultExpression(new EventValueExpression<>(PlayerSkin.class))
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1797,7 +1850,7 @@ public class MinestomClasses {
 		 * Converters
 		 */
 		Converters.registerConverter(String.class, Component.class, Component::text);
-		Converters.registerConverter(Component.class, String.class, c -> LegacyComponentSerializer.legacyAmpersand().serialize(c));
+		Converters.registerConverter(Component.class, String.class, LEGACY_SERIALIZER::serialize);
 		Converters.registerConverter(CommandSender.class, Player.class, from -> {
 			if (from instanceof Player player) return player;
 			return null;
@@ -1872,9 +1925,8 @@ public class MinestomClasses {
 		 *	Comparators
 		 */
 		Comparators.registerComparator(Component.class, Component.class, (o1, o2) -> {
-			LegacyComponentSerializer legacy = LegacyComponentSerializer.legacyAmpersand();
-			String s1 = legacy.serialize(o1);
-			String s2 = legacy.serialize(o2);
+			String s1 = LEGACY_SERIALIZER.serialize(o1);
+			String s2 = LEGACY_SERIALIZER.serialize(o2);
 			return Comparators.compare(s1, s2);
 		});
 		Comparators.registerComparator(CommandSender.class, EntityType.class, (o1, o2) -> {

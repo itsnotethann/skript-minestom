@@ -57,6 +57,8 @@ import static com.github.hapily04.skriptminestom.util.PropertyUtils.*;
 
 public class SkriptMinestom {
 
+	public static final String DEFAULT_BRAND_NAME = "Skript-Minestom";
+
 	private static Properties properties;
 	private static LuckPerms luckPerms;
 	private static SparkMinestom spark;
@@ -69,9 +71,9 @@ public class SkriptMinestom {
 		luckPerms = initLuckPerms();
 		spark = initSpark();
 
+		MinecraftServer.setBrandName(DEFAULT_BRAND_NAME);
 		MinecraftServer.getConnectionManager().setPlayerProvider(
 			(playerConnection, gameProfile) -> new LuckPermsPlayer(luckPerms, playerConnection, gameProfile));
-		MinecraftServer.setBrandName(properties.getProperty(SERVER_BRAND));
 
 		MinecraftServer.getCommandManager().register(new SkriptCommand(), new StopCommand());
 		try {
