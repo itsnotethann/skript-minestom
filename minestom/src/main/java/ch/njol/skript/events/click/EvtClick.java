@@ -38,9 +38,9 @@ public class EvtClick extends SkriptEvent {
 				  "Please note that rightclick events with an empty hand while not looking at a block are not sent to the server, so there's no way to detect them.",
 				  "Also note that a leftclick on an entity is an attack and thus not covered by the 'click' event, but the 'damage' event.")
 			  .examples("on click:",
-				  "on rightclick holding a fishing rod:",
-				  "on leftclick on a stone or obsidian:",
-				  "on rightclick on a creeper:",
+				  "on rightclick holding fishing rod:",
+				  "on leftclick on stone or obsidian:",
+				  "on rightclick on creeper:",
 				  "on click with a sword:",
 				  "on click on chest[facing=north]:",
 				  "on click on campfire[lit=true]:")

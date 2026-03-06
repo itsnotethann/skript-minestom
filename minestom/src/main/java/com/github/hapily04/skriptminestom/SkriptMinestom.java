@@ -3,6 +3,7 @@ package com.github.hapily04.skriptminestom;
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.events.EffectCommandEvent;
+import ch.njol.skript.events.minestom.CustomConnectEvent;
 import ch.njol.skript.events.wrapper.EventWrapper;
 import ch.njol.skript.events.wrapper.marker.MarkerRegistration;
 import ch.njol.skript.lang.Effect;
@@ -36,6 +37,7 @@ import net.luckperms.api.LuckPerms;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.ServerFlag;
 import net.minestom.server.entity.Player;
+import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerChatEvent;
 import org.bukkit.Bukkit;
@@ -73,7 +75,13 @@ public class SkriptMinestom {
 
 		MinecraftServer.setBrandName(DEFAULT_BRAND_NAME);
 		MinecraftServer.getConnectionManager().setPlayerProvider(
-			(playerConnection, gameProfile) -> new LuckPermsPlayer(luckPerms, playerConnection, gameProfile));
+			(playerConnection, gameProfile) -> {
+				Player player = new LuckPermsPlayer(luckPerms, playerConnection, gameProfile);
+				CustomConnectEvent customConnectEvent = new CustomConnectEvent(player);
+				EventDispatcher.call(customConnectEvent);
+				if (customConnectEvent.isKicked()) return null;
+				return player;
+			});
 
 		MinecraftServer.getCommandManager().register(new SkriptCommand(), new StopCommand());
 		try {
