@@ -36,7 +36,6 @@ public class ExprSilent extends SimplePropertyExpression<Entity, Boolean> {
 				case SET -> {
 					if (state == null) return;
 					e.setSilent(state);
-					e.sendPacketsToViewers(new ChangeGameStatePacket(ChangeGameStatePacket.Reason.DEMO_EVENT, )));
 				}
 				case RESET -> e.setSilent(false);
 			}
