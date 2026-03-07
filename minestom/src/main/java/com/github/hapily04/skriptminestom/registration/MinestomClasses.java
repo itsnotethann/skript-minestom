@@ -1933,6 +1933,7 @@ public class MinestomClasses {
 			if (!(o1 instanceof Player)) return Relation.get(false);
 			return Relation.get(o2.equals(EntityType.PLAYER));
 		});
+		Comparators.registerComparator(Entity.class, EntityType.class, (o1, o2) -> Relation.get(o1.getEntityType().equals(o2)));
 
 		/*
 		 *	Arithmetic
