@@ -80,6 +80,7 @@ public class EvtClick extends SkriptEvent {
 
 	@Override
 	public boolean check(Event event) {
+		System.out.println("checking " + event.getClass());
 		Object o = type == null ? null : type.getSingle();
 		return switch (event) {
 			case PlayerBlockInteractWrapper wr -> {
@@ -104,7 +105,10 @@ public class EvtClick extends SkriptEvent {
 				if (click == LEFT) yield false;
 				if (o != null && click != ANY) yield false;
 				PlayerUseItemEvent e = wr.getEvent();
-				yield verifyEvent(o, null, e.getPlayer(), e.getHand());
+				Player player = e.getPlayer();
+				PlayerHand hand = e.getHand();
+				if (!INTERACT_TRACKER.checkEvent(player, e, hand)) yield false;
+				yield verifyEvent(o, null, player, hand);
 			}
 			case PlayerStartDiggingWrapper wr -> {
 				if (click == RIGHT) yield false;
