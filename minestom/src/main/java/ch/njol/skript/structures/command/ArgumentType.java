@@ -1,6 +1,8 @@
 package ch.njol.skript.structures.command;
 
 import ch.njol.skript.util.Item;
+import ch.njol.skript.util.NBTCompound;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.arguments.*;
 import net.minestom.server.command.builder.arguments.minecraft.*;
@@ -59,7 +61,7 @@ public enum ArgumentType {
 	ITEM("item", ArgumentItemStack::new),
 	COMPONENT("component", ArgumentComponent::new),
 	UUID("uuid", ArgumentUUID::new),
-	//NBT("nbt", ArgumentNbtTag::new), // todo uncomment when nbt syntax is complete
+	NBT_COMPOUND("nbtcompound", ArgumentNbtCompoundTag::new),
 	RELATIVE_BLOCK_POSITION("blockposition", ArgumentRelativeBlockPosition::new),
 	VECTOR_3("vector", ArgumentRelativeVec3::new),
 	VECTOR_2("2dvector", ArgumentRelativeVec2::new);
@@ -84,6 +86,7 @@ public enum ArgumentType {
 	public static Object convertToSkriptObject(Object o, CommandSender sender) {
 		if (o instanceof UUID uuid) return uuid.toString();
 		if (o instanceof ItemStack itemStack) return new Item(itemStack);
+		if (o instanceof CompoundBinaryTag compound) return new NBTCompound(compound);
 		if (o instanceof CustomEntityFinder(EntityFinder entityFinder, boolean onlyPlayers, boolean single)) {
 			Stream<Entity> entityStream = entityFinder.find(sender).stream();
 			if (onlyPlayers) entityStream = entityStream.filter(entity -> entity instanceof Player);
