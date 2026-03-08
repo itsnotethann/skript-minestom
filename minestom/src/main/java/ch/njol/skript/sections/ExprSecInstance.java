@@ -36,7 +36,7 @@ public class ExprSecInstance extends SectionExpression<Instance> {
 	public boolean init(Expression<?>[] expressions, int pattern, Kleenean delayed, SkriptParser.ParseResult result, @Nullable SectionNode node, @Nullable List<TriggerItem> triggerItems) {
 		entities = (Expression<Entity>) expressions[0];
 		if (inEffChange(this) && node != null) runWhenComplete = loadCode(node, "instance set callback",
-			EntitySpawnWrapper.class);
+			null, (Runnable) null, EntitySpawnWrapper.class);
 		return true;
 	}
 

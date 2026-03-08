@@ -1,58 +1,53 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.lang.function;
 
 import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ReturnHandler;
+import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.parser.ParserInstance;
+import ch.njol.skript.lang.util.SimpleEvent;
+import ch.njol.skript.variables.HintManager;
+import ch.njol.skript.variables.Variables;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.script.Script;
-import org.eclipse.jdt.annotation.Nullable;
 
-import ch.njol.skript.config.SectionNode;
-import ch.njol.skript.lang.Trigger;
-import ch.njol.skript.lang.util.SimpleEvent;
-import ch.njol.skript.variables.Variables;
+import java.util.Arrays;
 
 public class ScriptFunction<T> extends Function<T> implements ReturnHandler<T> {
 
 	private final Trigger trigger;
 
 	private final ThreadLocal<Boolean> returnValueSet = ThreadLocal.withInitial(() -> false);
-	private ThreadLocal<T @Nullable []> returnValues = new ThreadLocal<>();
+	private final ThreadLocal<T @Nullable []> returnValues = new ThreadLocal<>();
+	private final ThreadLocal<String @Nullable []> returnKeys = new ThreadLocal<>();
 
 	/**
-	 * @deprecated use {@link ScriptFunction#ScriptFunction(Signature, SectionNode)}
+	 * @deprecated use {@link ScriptFunction#ScriptFunction(Signature, SectionNode)} instead.
 	 */
-	@Deprecated
+	@Deprecated(since = "2.9.0", forRemoval = true)
 	public ScriptFunction(Signature<T> sign, Script script, SectionNode node) {
 		this(sign, node);
 	}
-	
+
 	public ScriptFunction(Signature<T> sign, SectionNode node) {
 		super(sign);
 
 		Functions.currentFunction = this;
+		HintManager hintManager = ParserInstance.get().getHintManager();
 		try {
+			hintManager.enterScope(false);
+			for (Parameter<?> parameter : sign.getParameters()) {
+				String hintName = parameter.name();
+				if (!parameter.isSingleValue()) {
+					hintName += Variable.SEPARATOR + "*";
+				}
+				hintManager.set(hintName, parameter.type());
+			}
 			trigger = loadReturnableTrigger(node, "function " + sign.getName(), new SimpleEvent());
 		} finally {
+			hintManager.exitScope();
 			Functions.currentFunction = null;
 		}
 		trigger.setLineNumber(node.getLine());
@@ -61,29 +56,47 @@ public class ScriptFunction<T> extends Function<T> implements ReturnHandler<T> {
 	// REMIND track possible types of local variables (including undefined variables) (consider functions, commands, and EffChange) - maybe make a general interface for this purpose
 	// REM: use patterns, e.g. {_a%b%} is like "a.*", and thus subsequent {_axyz} may be set and of that type.
 	@Override
-	public T @Nullable [] execute(final FunctionEvent<?> e, final Object[][] params) {
+	public T @Nullable [] execute(FunctionEvent<?> event, Object[][] params) {
 		Parameter<?>[] parameters = getSignature().getParameters();
 		for (int i = 0; i < parameters.length; i++) {
-			Parameter<?> p = parameters[i];
+			Parameter<?> parameter = parameters[i];
 			Object[] val = params[i];
-			if (p.single && val.length > 0) {
-				Variables.setVariable(p.name, val[0], e, true);
+			if (parameter.single && val.length > 0) {
+				Variables.setVariable(parameter.name, val[0], event, true);
+				continue;
+			}
+
+			boolean keyed = Arrays.stream(val).allMatch(it -> it instanceof KeyedValue<?>);
+			if (keyed) {
+				for (Object value : val) {
+					KeyedValue<?> keyedValue = (KeyedValue<?>) value;
+					Variables.setVariable(parameter.name + Variable.SEPARATOR + keyedValue.key(), keyedValue.value(), event, true);
+				}
 			} else {
-				for (int j = 0; j < val.length; j++) {
-					Variables.setVariable(p.name + "::" + (j + 1), val[j], e, true);
+				int count = 0;
+				for (Object value : val) {
+					// backup for if the passed argument is not a keyed value.
+					// an example of this is passing `xs: integers = (1, 2)` as a parameter.
+					Variables.setVariable(parameter.name + Variable.SEPARATOR + count, value, event, true);
+					count++;
 				}
 			}
 		}
-		
-		trigger.execute(e);
+
+		trigger.execute(event);
 		ClassInfo<T> returnType = getReturnType();
 		return returnType != null ? returnValues.get() : null;
 	}
 
+	@Override
+	public @NotNull String @Nullable [] returnedKeys() {
+		return returnKeys.get();
+	}
+
 	/**
-	 * @deprecated Use {@link ScriptFunction#returnValues(Event, Expression)}
+	 * @deprecated Use {@link ScriptFunction#returnValues(Event, Expression)} instead.
 	 */
-	@Deprecated
+	@Deprecated(since = "2.9.0", forRemoval = true)
 	@ApiStatus.Internal
 	public final void setReturnValue(@Nullable T[] values) {
 		assert !returnValueSet.get();
@@ -95,6 +108,7 @@ public class ScriptFunction<T> extends Function<T> implements ReturnHandler<T> {
 	public boolean resetReturnValue() {
 		returnValueSet.remove();
 		returnValues.remove();
+		returnKeys.remove();
 		return true;
 	}
 
@@ -103,6 +117,8 @@ public class ScriptFunction<T> extends Function<T> implements ReturnHandler<T> {
 		assert !returnValueSet.get();
 		returnValueSet.set(true);
 		this.returnValues.set(value.getArray(event));
+		if (KeyProviderExpression.canReturnKeys(value))
+			this.returnKeys.set(((KeyProviderExpression<?>) value).getArrayKeys(event));
 	}
 
 	@Override

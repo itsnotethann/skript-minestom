@@ -19,9 +19,19 @@ public class Bukkit {
 	private static BukkitScheduler scheduler = null;
 	private static ServicesManager servicesManager = null;
 	private static Ticker ticker = new DefaultTicker();
+	private static Server server = null;
 
 	public static PluginManager getPluginManager() {
 		return pluginManager;
+	}
+
+	public static Server getServer() {
+		return server;
+	}
+
+	public static void setServer(Server server) {
+		if (server == null) throw new IllegalStateException("Server has already been set!");
+		Bukkit.server = server;
 	}
 
 	public static Logger getLogger() {

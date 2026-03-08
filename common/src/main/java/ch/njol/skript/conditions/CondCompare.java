@@ -1,35 +1,7 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.conditions;
-
-import ch.njol.skript.lang.VerboseAssert;
-import ch.njol.skript.log.ParseLogHandler;
-import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.ClassInfo;
-
-import org.skriptlang.skript.lang.comparator.Comparator;
-import org.skriptlang.skript.lang.comparator.ComparatorInfo;
-import org.skriptlang.skript.lang.comparator.Relation;
-
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -38,27 +10,34 @@ import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionList;
 import ch.njol.skript.lang.Literal;
-import ch.njol.skript.lang.ParseContext;
+import ch.njol.skript.lang.SimplifiedCondition;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.UnparsedLiteral;
+import ch.njol.skript.lang.VerboseAssert;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.log.ErrorQuality;
+import ch.njol.skript.log.ParseLogHandler;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.registrations.Classes;
-
-import org.skriptlang.skript.lang.comparator.Comparators;
 import ch.njol.skript.util.Patterns;
 import ch.njol.skript.util.Utils;
-import ch.njol.util.Checker;
 import ch.njol.util.Kleenean;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.lang.comparator.Comparator;
+import org.skriptlang.skript.lang.comparator.ComparatorInfo;
+import org.skriptlang.skript.lang.comparator.Comparators;
+import org.skriptlang.skript.lang.comparator.Relation;
 import org.skriptlang.skript.lang.util.Cyclical;
+
+import java.util.function.Predicate;
 
 @Name("Comparison")
 @Description({"A very general condition, it simply compares two values. Usually you can only compare for equality (e.g. block is/isn't of &lt;type&gt;), " +
 	"but some values can also be compared using greater than/less than. In that case you can also test for whether an object is between two others.",
 	"Note: This is the only element where not all patterns are shown. It has actually another two sets of similar patters, " +
 		"but with <code>(was|were)</code> or <code>will be</code> instead of <code>(is|are)</code> respectively, " +
-		"which check different <a href='expressions.html#ExprTimeState'>time states</a> of the first expression."})
+		"which check different <a href='#ExprTimeState'>time states</a> of the first expression."})
 @Examples({"the clicked block is a stone slab or a double stone slab",
 	"time in the player's world is greater than 8:00",
 	"the creature is not an enderman or an ender dragon"})
@@ -236,7 +215,6 @@ public class CondCompare extends Condition implements VerboseAssert {
 					comparator = Comparators.getComparator(first.getReturnType(), secondReturnType);
 				}
 			}
-
 		}
 
 		return comparator != null;
@@ -258,12 +236,8 @@ public class CondCompare extends Condition implements VerboseAssert {
 			source = expression.getSource();
 
 		// Try to get access to unparsed content of it
-		if (source instanceof UnparsedLiteral) {
-			String unparsed = ((UnparsedLiteral) source).getData();
-			T data = Classes.parse(unparsed, type, ParseContext.DEFAULT);
-			if (data != null) { // Success, let's make a literal of it
-				return new SimpleLiteral<>(data, false, new UnparsedLiteral(unparsed));
-			}
+		if (source instanceof UnparsedLiteral unparsedLiteral) {
+			return unparsedLiteral.reparse(type);
 		}
 		return null; // Context-sensitive parsing failed; can't really help it
 	}
@@ -351,11 +325,11 @@ public class CondCompare extends Condition implements VerboseAssert {
 			second.getAnd() && !second.isSingle())
 			return compareLists(event);
 
-		return first.check(event, (Checker<Object>) o1 ->
-			second.check(event, (Checker<Object>) o2 -> {
+		return first.check(event, (Predicate<Object>) o1 ->
+			second.check(event, (Predicate<Object>) o2 -> {
 					if (third == null)
 						return relation.isImpliedBy(comparator != null ? comparator.compare(o1, o2) : Comparators.compare(o1, o2));
-					return third.check(event, (Checker<Object>) o3 -> {
+					return third.check(event, (Predicate<Object>) o3 -> {
 						boolean isBetween;
 						if (comparator != null) {
 							if (o1 instanceof Cyclical<?> && o2 instanceof Cyclical<?> && o3 instanceof Cyclical<?>) {
@@ -422,6 +396,13 @@ public class CondCompare extends Condition implements VerboseAssert {
 				return !shouldMatch;
 		}
 		return shouldMatch;
+	}
+
+	@Override
+	public Condition simplify() {
+		if (first instanceof Literal<?> && second instanceof Literal<?> && (third == null || third instanceof Literal<?>))
+			return SimplifiedCondition.fromCondition(this);
+		return this;
 	}
 
 	@Override

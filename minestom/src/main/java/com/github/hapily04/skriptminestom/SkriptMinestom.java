@@ -13,6 +13,7 @@ import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.log.RedirectingLogHandler;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.variables.Variables;
+import com.github.hapily04.skriptminestom.bukkit.BukkitServer;
 import com.github.hapily04.skriptminestom.command.SkriptCommand;
 import com.github.hapily04.skriptminestom.command.StopCommand;
 import com.github.hapily04.skriptminestom.luckperms.DummyContextProvider;
@@ -90,9 +91,9 @@ public class SkriptMinestom {
 			scheduleShutdownTasks();
 			server.start(properties.getProperty(ADDRESS_KEY), Integer.parseInt(properties.getProperty(PropertyUtils.PORT_KEY)));
 			MinestomTerminal.start();
-		} catch (Exception e) {
-			SkriptLogger.LOGGER.error("An error occurred while initializing Skript-Minestom: {}", e.getMessage());
-			e.printStackTrace();
+		} catch (Throwable t) {
+			SkriptLogger.LOGGER.error("An error occurred while initializing Skript-Minestom:");
+			t.printStackTrace();
 			System.exit(1);
 		}
 	}
@@ -128,6 +129,7 @@ public class SkriptMinestom {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	private static void initSkript() throws URISyntaxException {
 		//Bukkit.setTicker(tick -> MinecraftServer.getSchedulerManager().scheduleTask(tick, TaskSchedule.tick(1), TaskSchedule.tick(1))); // tick on minestom's thread
+		Bukkit.setServer(new BukkitServer());
 		Bukkit.getScheduler(); // initialize scheduler
 
 		PluginManager pluginManager = Bukkit.getPluginManager();
@@ -139,7 +141,7 @@ public class SkriptMinestom {
 		});
 		skript.setEnabled(true);
 		skript.onEnable(); // have to manually initialize, addons are initialized on their own
-		Skript.getAddonInstance().UNSAFE_setLanguageFileDirectory("minestomlang");
+		//Skript.getAddonInstance(true).UNSAFE_setLanguageFileDirectory("minestomlang"); // todo figure out how to do this if lang file is used
 
 		// init events
 		GlobalEventHandler geh = MinecraftServer.getGlobalEventHandler();

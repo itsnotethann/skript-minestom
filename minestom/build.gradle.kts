@@ -12,17 +12,17 @@ version = "1.0.0-alpha.1"
 
 repositories {
     mavenCentral()
-	maven("https://jitpack.io")
 	maven("https://repo.hypera.dev/snapshots/")
 	maven("https://repo.lucko.me/")
 	maven("https://maven.hapily.me/releases")
 	maven("https://maven.hapily.me/snapshots")
 	maven("https://oss.sonatype.org/content/repositories/snapshots/")
 	maven("https://repo.kenzie.mx/releases")
+	maven("https://jitpack.io")
 }
 
 dependencies {
-	implementation("net.minestom:minestom-sm:2026.03.06e-1.21.11")
+	implementation("net.minestom:minestom-sm:2026.03.08-1.21.11")
 	implementation("net.kyori:adventure-text-minimessage:4.26.1") // todo 5.0
 	implementation("dev.hollowcube:polar:1.15.0")
 	implementation("it.unimi.dsi:fastutil:8.5.18") // fix polar error

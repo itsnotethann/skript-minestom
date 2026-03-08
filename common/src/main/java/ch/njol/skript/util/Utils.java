@@ -22,14 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.JarURLConnection;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +31,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.eclipse.jdt.annotation.Nullable;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.util.Callback;
 import ch.njol.util.Checker;
@@ -47,6 +39,7 @@ import ch.njol.util.Pair;
 import ch.njol.util.StringUtils;
 import ch.njol.util.coll.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
+import org.skriptlang.skript.util.ClassLoader;
 
 /**
  * Utility class.
@@ -199,92 +192,25 @@ public abstract class Utils {
 //		return new AmountResponse(s);
 //	}
 
+	@Deprecated
 	public static Class<?>[] getClasses(Plugin plugin, String basePackage, String... subPackages) throws IOException {
-		Objects.requireNonNull(plugin, "plugin");
-		Objects.requireNonNull(basePackage, "basePackage");
-		if (subPackages == null) subPackages = new String[0];
+		List<Class<?>> classes = new ArrayList<>();
 
-		ClassLoader cl = plugin.getClass().getClassLoader();
-
-		String basePath = basePackage.replace('.', '/') + "/";
-		String[] subPaths = new String[subPackages.length];
-		for (int i = 0; i < subPackages.length; i++) {
-			subPaths[i] = subPackages[i].replace('.', '/') + "/";
+		ClassLoader loader = ClassLoader.builder()
+			.basePackage(basePackage)
+			.addSubPackages(subPackages)
+			.deep(true)
+			.initialize(true)
+			.forEachClass(classes::add)
+			.build();
+		File jarFile = getFile(plugin);
+		if (jarFile != null) {
+			loader.loadClasses(plugin.getClass(), jarFile);
+		} else {
+			loader.loadClasses(plugin.getClass());
 		}
 
-		// Collect class names first, then load in sorted order like Skript does
-		Set<String> classNames = new HashSet<>();
-
-		Enumeration<URL> roots = cl.getResources(basePath);
-		while (roots.hasMoreElements()) {
-			URL url = roots.nextElement();
-			String protocol = url.getProtocol();
-
-			if ("jar".equals(protocol)) {
-				// jar:file:/.../something.jar!/ch/njol/skript/
-				JarURLConnection conn = (JarURLConnection) url.openConnection();
-				try (JarFile jar = conn.getJarFile()) {
-					Enumeration<JarEntry> entries = jar.entries();
-					while (entries.hasMoreElements()) {
-						JarEntry e = entries.nextElement();
-						String name = e.getName();
-
-						if (!name.startsWith(basePath)) continue;
-						if (!name.endsWith(".class")) continue;
-						if (name.endsWith("package-info.class")) continue;
-
-						if (!shouldLoad(name, basePath, subPaths)) continue;
-
-						classNames.add(name.substring(0, name.length() - ".class".length()).replace('/', '.'));
-					}
-				}
-			} else if ("file".equals(protocol)) {
-				// file:/.../build/classes/java/main/ch/njol/skript/
-				try {
-					Path baseDir = Paths.get(url.toURI()); // points at the basePath dir
-					if (!Files.isDirectory(baseDir)) continue;
-
-					// Walk everything under baseDir and convert back to class names
-					try (var stream = Files.walk(baseDir)) {
-						stream
-							.filter(p -> p.toString().endsWith(".class"))
-							.filter(p -> !p.getFileName().toString().equals("package-info.class"))
-							.forEach(p -> {
-								String rel = baseDir.relativize(p).toString().replace('\\', '/'); // subpath under basePath
-								String fullName = basePath + rel; // still path form
-								if (!shouldLoad(fullName, basePath, subPaths)) return;
-
-								String cls = (basePath + rel)
-									.substring(0, (basePath + rel).length() - ".class".length())
-									.replace('/', '.');
-
-								// basePath already included; convert to package form
-								classNames.add(basePackage + "." + rel.substring(0, rel.length() - ".class".length()).replace('/', '.'));
-							});
-					}
-				} catch (Exception ignored) {
-					// If a weird URL shows up, just skip it rather than hard-failing startup
-				}
-			} else {
-				// Optional: handle "jrt" or other protocols if you ever need it
-			}
-		}
-
-		List<String> sorted = new ArrayList<>(classNames);
-		sorted.sort(String::compareToIgnoreCase);
-
-		List<Class<?>> out = new ArrayList<>(sorted.size());
-		for (String c : sorted) {
-			try {
-				out.add(Class.forName(c, true, cl));
-			} catch (ClassNotFoundException | NoClassDefFoundError ex) {
-				Skript.exception(ex, "Cannot load class " + c);
-			} catch (ExceptionInInitializerError err) {
-				Skript.exception(err.getCause(), "class " + c + " generated an exception while loading");
-			}
-		}
-
-		return out.toArray(new Class<?>[0]);
+		return classes.toArray(new Class[0]);
 	}
 
 	private static boolean shouldLoad(String entryName, String basePath, String[] subPaths) {
@@ -587,62 +513,26 @@ public abstract class Utils {
 	final static Map<String, String> englishChat = new HashMap<>();
 	
 	private final static Pattern stylePattern = Pattern.compile("<([^<>]+)>");
-	
+
 	/**
 	 * Replaces &lt;chat styles&gt; in the message
-	 * 
+	 *
 	 * @param message
 	 * @return message with localised chat styles converted to Minecraft's format
 	 */
-	public static String replaceChatStyles(final String message) {
-		if (message.isEmpty())
-			return message;
-		String m = StringUtils.replaceAll(Matcher.quoteReplacement("" + message.replace("<<none>>", "")), stylePattern, new Callback<String, Matcher>() {
-			@Override
-			public String run(final Matcher m) {
-				final String tag = m.group(1).toLowerCase(Locale.ENGLISH);
-				final String f = chat.get(tag);
-				if (f != null)
-					return f;
-				return "" + m.group();
-			}
-		});
-		assert m != null;
-		// Restore user input post-sanitization
-		// Sometimes, the message has already been restored
-		if (!message.equals(m)) {
-			m = m.replace("\\$", "$").replace("\\\\", "\\");
-		}
-		return "" + m;
+	public static @NotNull String replaceChatStyles(String message) {
+		return message;
 	}
-	
+
 	/**
 	 * Replaces english &lt;chat styles&gt; in the message. This is used for messages in the language file as the language of colour codes is not well defined while the language is
 	 * changing, and for some hardcoded messages.
-	 * 
+	 *
 	 * @param message
 	 * @return message with english chat styles converted to Minecraft's format
 	 */
 	public static String replaceEnglishChatStyles(final String message) {
-		if (message.isEmpty())
-			return message;
-		String m = StringUtils.replaceAll(Matcher.quoteReplacement(message), stylePattern, new Callback<String, Matcher>() {
-			@Override
-			public String run(final Matcher m) {
-				final String tag = m.group(1).toLowerCase(Locale.ENGLISH);
-				final String f = englishChat.get(tag);
-				if (f != null)
-					return f;
-				return "" + m.group();
-			}
-		});
-		assert m != null;
-		// Restore user input post-sanitization
-		// Sometimes, the message has already been restored
-		if (!message.equals(m)) {
-			m = m.replace("\\$", "$").replace("\\\\", "\\");
-		}
-		return "" + m;
+		return message;
 	}
 
 	private static final Pattern HEX_PATTERN = Pattern.compile("(?i)#{0,2}[0-9a-f]{6}");

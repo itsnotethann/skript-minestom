@@ -15,6 +15,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.util.RGBLike;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.color.AlphaColor;
 import net.minestom.server.color.Color;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
@@ -22,13 +23,17 @@ import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.network.ConnectionManager;
 import net.minestom.server.particle.Particle;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.UUID;
 
+import static ch.njol.skript.expressions.ExprSkinFrom.UUID_REGEX;
 import static com.github.hapily04.skriptminestom.util.MessageUtils.BASIC_MINI_MESSAGE;
 
 @SuppressWarnings("NullableProblems")
@@ -203,9 +208,9 @@ public class MinestomFunctions {
 			}
 		}).description("Creates effect data for an effect particle.").examples("set {_data} to effectData(red, 1)");
 		Functions.registerFunction(new SimpleJavaFunction<>("resolver", new Parameter[]{
-			new Parameter<>("name", Classes.getExactClassInfo(String.class), true, null),
+			new Parameter<>("name", DefaultClasses.STRING, true, null),
 			new Parameter<>("value", Classes.getExactClassInfo(Object.class), true, null),
-			new Parameter<>("parsed", Classes.getExactClassInfo(Boolean.class), true, new SimpleLiteral<>(false, true))
+			new Parameter<>("parsed", DefaultClasses.BOOLEAN, true, new SimpleLiteral<>(false, true))
 		}, Classes.getExactClassInfo(TagResolver.class), true) {
 			@Override
 			public TagResolver[] executeSimple(Object[][] params) {
@@ -218,6 +223,29 @@ public class MinestomFunctions {
 				return new TagResolver[0];
 			}
 		}).description("Creates a MiniMessage tag resolver.").examples("set {_resolver} to resolver(\"name\", player's name)");
+		Functions.registerFunction(new SimpleJavaFunction<>("player", new Parameter[]{
+			new Parameter<>("from", DefaultClasses.STRING, true, null),
+			new Parameter<>("strict", DefaultClasses.BOOLEAN, true, new SimpleLiteral<>(false, true))
+		}, Classes.getExactClassInfo(Player.class), true) {
+			@Override
+			public Player[] executeSimple(Object[][] params) {
+				if (parametersNull(params, 0)) return new Player[0];
+				String input = (String) params[0][0];
+				boolean strict = (boolean) params[1][0];
+				return new Player[]{findPlayer(input, strict)};
+			}
+		}).description("Find an online player from their username or UUID.").examples("send \"test\" to player(\"bob\")");
+	}
+
+	static Player findPlayer(String input, boolean strict) {
+		ConnectionManager connectionManager = MinecraftServer.getConnectionManager();
+		Player player;
+		if (input.contains("-") && input.matches(UUID_REGEX.pattern())) player = connectionManager.getOnlinePlayerByUuid(UUID.fromString(input));
+		else {
+			if (!strict) player = connectionManager.findOnlinePlayer(input);
+			else player = connectionManager.getOnlinePlayerByUsername(input);
+		}
+		return player;
 	}
 
 	private static boolean parametersNull(Object[][] params, int toIndex) {

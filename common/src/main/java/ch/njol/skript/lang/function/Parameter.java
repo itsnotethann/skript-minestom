@@ -1,21 +1,3 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.lang.function;
 
 import ch.njol.skript.Skript;
@@ -32,15 +14,16 @@ import ch.njol.skript.util.LiteralUtils;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.NonNullPair;
 import ch.njol.util.StringUtils;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
+import org.skriptlang.skript.common.function.DefaultFunction;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class Parameter<T> {
+public final class Parameter<T> implements org.skriptlang.skript.common.function.Parameter<T> {
 
 	public final static Pattern PARAM_PATTERN = Pattern.compile("^\\s*([^:(){}\",]+?)\\s*:\\s*([a-zA-Z ]+?)\\s*(?:\\s*=\\s*(.+))?\\s*$");
 
@@ -51,43 +34,114 @@ public final class Parameter<T> {
 	 * then the valid variable names may not necessarily match this string in casing.
 	 */
 	final String name;
-	
+
 	/**
 	 * Type of the parameter.
 	 */
 	final ClassInfo<T> type;
-	
+
 	/**
 	 * Expression that will provide default value of this parameter
 	 * when the function is called.
 	 */
-	@Nullable
-	final Expression<? extends T> def;
-	
+	final @Nullable Expression<? extends T> def;
+
 	/**
 	 * Whether this parameter takes one or many values.
 	 */
 	final boolean single;
-	
-	@SuppressWarnings("null")
+
+	/**
+	 * Whether this parameter takes in key-value pairs.
+	 * <br>
+	 * If this is true, a {@link ch.njol.skript.lang.KeyedValue} array containing key-value pairs will be passed to
+	 * {@link Function#execute(FunctionEvent, Object[][])} rather than a value-only object array.
+	 */
+	final boolean keyed;
+
+	private final Set<Modifier> modifiers;
+
+	/**
+	 * @deprecated Use {@link DefaultFunction.Builder#parameter(String, Class, Modifier...)} instead.
+	 */
+	@Deprecated(since = "2.13", forRemoval = true)
 	public Parameter(String name, ClassInfo<T> type, boolean single, @Nullable Expression<? extends T> def) {
+		this(name, type, single, def, false);
+	}
+
+	/**
+	 * @deprecated Use {@link DefaultFunction.Builder#parameter(String, Class, Modifier...)} instead.
+	 */
+	@Deprecated(since = "2.13", forRemoval = true)
+	public Parameter(String name, ClassInfo<T> type, boolean single, @Nullable Expression<? extends T> def, boolean keyed) {
 		this.name = name;
 		this.type = type;
 		this.def = def;
 		this.single = single;
+		this.keyed = keyed;
+		this.modifiers = new HashSet<>();
+
+		if (def != null) {
+			modifiers.add(Modifier.OPTIONAL);
+		}
+		if (keyed) {
+			modifiers.add(Modifier.KEYED);
+		}
 	}
-	
+
 	/**
-	 * Get the Type of this parameter.
-	 * @return Type of the parameter
+	 * @deprecated Use {@link DefaultFunction.Builder#parameter(String, Class, Modifier...)} instead.
+	 */
+	@Deprecated(since = "2.13", forRemoval = true)
+	public Parameter(String name, ClassInfo<T> type, boolean single, @Nullable Expression<? extends T> def, boolean keyed, boolean optional) {
+		this.name = name;
+		this.type = type;
+		this.def = def;
+		this.single = single;
+		this.keyed = keyed;
+		this.modifiers = new HashSet<>();
+
+		if (optional) {
+			modifiers.add(Modifier.OPTIONAL);
+		}
+		if (keyed) {
+			modifiers.add(Modifier.KEYED);
+		}
+	}
+
+	/**
+	 * Constructs a new parameter for script functions.
+	 *
+	 * @param name The name.
+	 * @param type The type of the parameter.
+	 * @param single Whether the parameter is single.
+	 * @param def The default value.
+	 */
+	Parameter(String name, ClassInfo<T> type, boolean single, @Nullable Expression<? extends T> def, Modifier... modifiers) {
+		this.name = name;
+		this.type = type;
+		this.def = def;
+		this.single = single;
+		this.modifiers = Set.of(modifiers);
+		this.keyed = this.modifiers.contains(Modifier.KEYED);
+	}
+
+	/**
+	 * Returns whether this parameter is optional or not.
+	 * @return Whether this parameter is optional or not.
+	 */
+	public boolean isOptional() {
+		return modifiers.contains(Modifier.OPTIONAL);
+	}
+
+	/**
+	 * @return The type of this parameter as a {@link ClassInfo}.
 	 */
 	public ClassInfo<T> getType() {
 		return type;
 	}
-	
-	@SuppressWarnings("unchecked")
-	@Nullable
-	public static <T> Parameter<T> newInstance(String name, ClassInfo<T> type, boolean single, @Nullable String def) {
+
+	public static <T> @Nullable Parameter<T> newInstance(String name, ClassInfo<T> type, boolean single, @Nullable String def) {
 		if (!Variable.isValidVariableName(name, true, false)) {
 			Skript.error("A parameter's name must be a valid variable name.");
 			// ... because it will be made available as local variable
@@ -96,9 +150,10 @@ public final class Parameter<T> {
 		Expression<? extends T> d = null;
 		if (def != null) {
 			RetainingLogHandler log = SkriptLogger.startRetainingLog();
-			
+
 			// Parse the default value expression
 			try {
+				//noinspection unchecked
 				d = new SkriptParser(def, SkriptParser.ALL_FLAGS, ParseContext.DEFAULT).parseExpression(type.getC());
 				if (d == null || LiteralUtils.hasUnparsedLiteral(d)) {
 					log.printErrors("Can't understand this expression: " + def);
@@ -109,7 +164,16 @@ public final class Parameter<T> {
 				log.stop();
 			}
 		}
-		return new Parameter<>(name, type, single, d);
+
+		Set<Modifier> modifiers = new HashSet<>();
+		if (d != null) {
+			modifiers.add(Modifier.OPTIONAL);
+		}
+		if (!single) {
+			modifiers.add(Modifier.KEYED);
+		}
+
+		return new Parameter<>(name, type, single, d, modifiers.toArray(new Modifier[0]));
 	}
 
 	/**
@@ -118,8 +182,7 @@ public final class Parameter<T> {
 	 * @param args The string to parse.
 	 * @return The parsed parameters
 	 */
-	@Nullable
-	public static List<Parameter<?>> parse(String args) {
+	public static @Nullable List<Parameter<?>> parse(String args) {
 		List<Parameter<?>> params = new ArrayList<>();
 		boolean caseInsensitive = SkriptConfig.caseInsensitiveVariables.value();
 		int j = 0;
@@ -174,25 +237,23 @@ public final class Parameter<T> {
 		}
 		return params;
 	}
-	
+
 	/**
-	 * Get the name of this parameter.
-	 * <p>Will be used as name for the local variable that contains value of it inside function.</p>
-	 * @return Name of this parameter
+	 * @deprecated Use {@link #name()} instead.
 	 */
+	@Deprecated(forRemoval = true, since = "2.13")
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * Get the Expression that will be used to provide the default value of this parameter when the function is called.
 	 * @return Expression that will provide default value of this parameter
 	 */
-	@Nullable
-	public Expression<? extends T> getDefaultExpression() {
+	public @Nullable Expression<? extends T> getDefaultExpression() {
 		return def;
 	}
-	
+
 	/**
 	 * Get whether this parameter takes one or many values.
 	 * @return True if this parameter takes one value, false otherwise
@@ -200,10 +261,42 @@ public final class Parameter<T> {
 	public boolean isSingleValue() {
 		return single;
 	}
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Parameter<?> parameter)) {
+			return false;
+		}
+
+		return modifiers.equals(parameter.modifiers)
+			&& single == parameter.single
+			&& name.equals(parameter.name)
+			&& type.equals(parameter.type)
+			&& Objects.equals(def, parameter.def);
+	}
+
 	@Override
 	public String toString() {
-		return name + ": " + Utils.toEnglishPlural(type.getCodeName(), !single) + (def != null ? " = " + def.toString(null, true) : "");
+		return toString(Skript.debug());
 	}
-	
+
+	public String toString(boolean debug) {
+		return name + ": " + Utils.toEnglishPlural(type.getCodeName(), !single) + (def != null ? " = " + def.toString(null, debug) : "");
+	}
+
+	@Override
+	public @NotNull String name() {
+		return name;
+	}
+
+	@Override
+	public @NotNull Class<T> type() {
+		return type.getC();
+	}
+
+	@Override
+	public @Unmodifiable @NotNull Set<Modifier> modifiers() {
+		return Collections.unmodifiableSet(modifiers);
+	}
+
 }

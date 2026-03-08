@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Predicate;
 
 /**
  * A list of expressions.
@@ -159,7 +160,7 @@ public class ExpressionList<T> implements Expression<T> {
 	}
 
 	@Override
-	public boolean check(Event event, Checker<? super T> checker, boolean negated) {
+	public boolean check(Event event, Predicate<? super T> checker, boolean negated) {
 		for (Expression<? extends T> expr : expressions) {
 			boolean result = expr.check(event, checker) ^ negated;
 			// exit early if we find a FALSE and we're ANDing, or a TRUE and we're ORing
@@ -172,7 +173,7 @@ public class ExpressionList<T> implements Expression<T> {
 	}
 
 	@Override
-	public boolean check(Event event, Checker<? super T> checker) {
+	public boolean check(Event event, Predicate<? super T> checker) {
 		return check(event, checker, false);
 	}
 

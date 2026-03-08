@@ -74,13 +74,13 @@ public abstract class Task implements Runnable, Closeable {
 		
 		if (period == -1) {
 			if (async) {
-				taskID = Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, this, delay);
+				taskID = Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, this, delay).getTaskId();
 			} else {
 				taskID = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this, delay);
 			}
 		} else {
 			if (async) {
-				taskID = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, delay, period);
+				taskID = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, delay, period).getTaskId();
 			} else {
 				taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this, delay, period);
 			}

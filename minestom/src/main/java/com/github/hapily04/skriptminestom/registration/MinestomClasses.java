@@ -159,8 +159,7 @@ public class MinestomClasses {
 			.parser(new Parser<>() {
 				@Nullable
 				public Player parse(@NotNull String s, @NotNull ParseContext context) {
-					// todo support uuids
-					return MinecraftServer.getConnectionManager().findOnlinePlayer(s);
+					return MinestomFunctions.findPlayer(s, false);
 				}
 
 				@Override

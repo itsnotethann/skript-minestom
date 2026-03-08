@@ -40,7 +40,7 @@ public class ExpressionSection extends Section {
 			return false;
 		}
 		return this.init(expressions, matchedPattern, isDelayed, parseResult, context.sectionNode, context.triggerItems)
-			&& context.claim(expression);
+			/*&& context.claim(expression)*/;
 	}
 
 	@Override

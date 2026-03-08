@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAPIException;
@@ -700,12 +701,12 @@ public class Variable<T> implements Expression<T> {
 	}
 
 	@Override
-	public boolean check(Event event, Checker<? super T> checker, boolean negated) {
+	public boolean check(Event event, Predicate<? super T> checker, boolean negated) {
 		return SimpleExpression.check(getAll(event), checker, negated, getAnd());
 	}
 
 	@Override
-	public boolean check(Event event, Checker<? super T> checker) {
+	public boolean check(Event event, Predicate<? super T> checker) {
 		return SimpleExpression.check(getAll(event), checker, false, getAnd());
 	}
 

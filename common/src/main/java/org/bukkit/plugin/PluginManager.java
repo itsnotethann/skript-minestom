@@ -23,6 +23,11 @@ public interface PluginManager {
 
 	JavaPlugin loadPlugin(File file);
 
+	default void disablePlugin(Plugin plugin) {
+		plugin.onDisable();
+		plugin.setEnabled(false);
+	}
+
 	default Plugin getPlugin(String name) {
 		for (Plugin plugin : getPlugins()) {
 			if (plugin.getName().equalsIgnoreCase(name)) return plugin;

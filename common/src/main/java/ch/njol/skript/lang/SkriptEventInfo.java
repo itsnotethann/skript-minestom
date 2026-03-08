@@ -1,44 +1,38 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.lang;
 
+import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAPIException;
 import ch.njol.skript.SkriptConfig;
-import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
-import org.skriptlang.skript.lang.structure.StructureInfo;
 import ch.njol.skript.lang.SkriptEvent.ListeningBehavior;
+import ch.njol.skript.lang.SkriptEventInfo.ModernSkriptEventInfo;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.bukkit.registration.BukkitSyntaxInfos;
+import org.skriptlang.skript.docs.Origin;
+import org.skriptlang.skript.lang.structure.StructureInfo;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
-public final class SkriptEventInfo<E extends SkriptEvent> extends StructureInfo<E> {
+/**
+ * @deprecated Use {@link BukkitSyntaxInfos.Event} ({@link BukkitSyntaxInfos.Event#builder(Class, String)} instead.
+ */
+@Deprecated(since = "INSERT VERSION", forRemoval = true)
+public sealed class SkriptEventInfo<E extends SkriptEvent> extends StructureInfo<E> permits ModernSkriptEventInfo {
 
 	public Class<? extends Event>[] events;
 	public final String name;
-  
-	private ListeningBehavior listeningBehavior;
-  
-	@Nullable
-	private String[] description, examples, keywords, requiredPlugins;
 
-	@Nullable
-	private String since, documentationID;
+	private ListeningBehavior listeningBehavior;
+	private @Nullable String documentationID = null;
+
+	private String @Nullable [] since = null;
+	private String @Nullable [] description = null;
+	private String @Nullable [] examples = null;
+	private String @Nullable [] keywords = null;
+	private String @Nullable [] requiredPlugins = null;
 
 	private final String id;
 
@@ -51,13 +45,7 @@ public final class SkriptEventInfo<E extends SkriptEvent> extends StructureInfo<
 	 */
 	public SkriptEventInfo(String name, String[] patterns, Class<E> eventClass, String originClassPath, Class<? extends Event>[] events) {
 		super(patterns, eventClass, originClassPath);
-		for (int i = 0; i < events.length; i++) {
-			for (int j = i + 1; j < events.length; j++) {
-				if (events[i].isAssignableFrom(events[j]) || events[j].isAssignableFrom(events[i])) {
-					throw new SkriptAPIException("The event " + name + " (" + eventClass.getName() + ") registers with super/subclasses " + events[i].getName() + " and " + events[j].getName());
-				}
-			}
-		}
+		validateEvents(name, eventClass, events);
 
 		this.events = events;
 
@@ -73,7 +61,36 @@ public final class SkriptEventInfo<E extends SkriptEvent> extends StructureInfo<
 		// default listening behavior should be dependent on config setting
 		this.listeningBehavior = SkriptConfig.listenCancelledByDefault.value() ? ListeningBehavior.ANY : ListeningBehavior.UNCANCELLED;
 	}
-  
+
+	@ApiStatus.Internal
+	protected SkriptEventInfo(BukkitSyntaxInfos.Event<E> source) {
+		super(source);
+		//noinspection unchecked
+		this.events = source.events().toArray(new Class[0]);
+		this.name = source.name();
+		validateEvents(name, source.type(), events);
+		this.id = source.id();
+		if (source.documentationId() != null)
+			this.documentationID(source.documentationId());
+		this.listeningBehavior(source.listeningBehavior())
+			.since(source.since().toArray(new String[0]))
+			.description(source.description().toArray(new String[0]))
+			.examples(source.examples().toArray(new String[0]))
+			.keywords(source.keywords().toArray(new String[0]))
+			.requiredPlugins(source.requiredPlugins().toArray(new String[0]));
+	}
+
+	private static void validateEvents(String name, Class<? extends SkriptEvent> eventClass, Class<? extends Event>[] events) {
+		for (int i = 0; i < events.length; i++) {
+			for (int j = i + 1; j < events.length; j++) {
+				if (events[i].isAssignableFrom(events[j]) || events[j].isAssignableFrom(events[i])) {
+
+					throw new SkriptAPIException("The event " + name + " (" + eventClass.getName() + ") registers with super/subclasses " + events[i].getName() + " and " + events[j].getName());
+				}
+			}
+		}
+	}
+
 	/**
 	 * Sets the default listening behavior for this SkriptEvent. If omitted, the default behavior is to listen to uncancelled events.
 	 *
@@ -92,7 +109,7 @@ public final class SkriptEventInfo<E extends SkriptEvent> extends StructureInfo<
 
 	/**
 	 * Only used for Skript's documentation.
-	 * 
+	 *
 	 * @param description The description of this event
 	 * @return This SkriptEventInfo object
 	 */
@@ -103,7 +120,7 @@ public final class SkriptEventInfo<E extends SkriptEvent> extends StructureInfo<
 
 	/**
 	 * Only used for Skript's documentation.
-	 * 
+	 *
 	 * @param examples The examples for this event
 	 * @return This SkriptEventInfo object
 	 */
@@ -125,11 +142,21 @@ public final class SkriptEventInfo<E extends SkriptEvent> extends StructureInfo<
 
 	/**
 	 * Only used for Skript's documentation.
-	 * 
+	 *
 	 * @param since The version this event was added in
 	 * @return This SkriptEventInfo object
 	 */
 	public SkriptEventInfo<E> since(String since) {
+		return since(new String[]{since});
+	}
+
+	/**
+	 * Only used for Skript's documentation.
+	 *
+	 * @param since The version this event was added in
+	 * @return This SkriptEventInfo object
+	 */
+	public SkriptEventInfo<E> since(String... since) {
 		assert this.since == null;
 		this.since = since;
 		return this;
@@ -174,34 +201,128 @@ public final class SkriptEventInfo<E extends SkriptEvent> extends StructureInfo<
 	public ListeningBehavior getListeningBehavior() {
 		return listeningBehavior;
 	}
-  
-	@Nullable
-	public String[] getDescription() {
+
+	public String @Nullable [] getDescription() {
 		return description;
 	}
 
-	@Nullable
-	public String[] getExamples() {
+	public String @Nullable [] getExamples() {
 		return examples;
 	}
 
-	@Nullable
-	public String[] getKeywords() {
+	public String @Nullable [] getKeywords() {
 		return keywords;
 	}
 
-	@Nullable
-	public String getSince() {
+	public String @Nullable [] getSince() {
 		return since;
 	}
 
-	@Nullable
-	public String[] getRequiredPlugins() {
+	public String @Nullable [] getRequiredPlugins() {
 		return requiredPlugins;
 	}
 
-	@Nullable
-	public String getDocumentationID() {
+	public @Nullable String getDocumentationID() {
 		return documentationID;
 	}
+
+	/*
+	 * Registration API Compatibility
+	 */
+
+	/**
+	 * Internal wrapper class for providing compatibility with the new Registration API.
+	 * @deprecated This class exists solely for compatibility reasons.
+	 */
+	@ApiStatus.Internal
+	@Deprecated(since = "INSERT VERSION", forRemoval = true)
+	public static final class ModernSkriptEventInfo<E extends SkriptEvent>
+		extends SkriptEventInfo<E>
+		implements BukkitSyntaxInfos.Event<E> {
+
+		private final Origin origin;
+
+		public ModernSkriptEventInfo(String name, String[] patterns, Class<E> eventClass, String originClassPath, Class<? extends Event>[] events) {
+			super(name, patterns, eventClass, originClassPath, events);
+			this.origin = Skript.getSyntaxOrigin(eventClass);
+		}
+
+		@Override
+		public BukkitSyntaxInfos.Event.Builder<? extends BukkitSyntaxInfos.Event.Builder<?, E>, E> toBuilder() {
+			// add asterisk to prevent prepending "on" again
+			return BukkitSyntaxInfos.Event.builder(type(), "*" + name())
+				.origin(origin)
+				.addPatterns(patterns())
+				.priority(priority())
+				.listeningBehavior(listeningBehavior())
+				.addSince(since())
+				.documentationId(id())
+				.addDescription(description())
+				.addExamples(examples())
+				.addKeywords(keywords())
+				.addRequiredPlugins(requiredPlugins())
+				.addEvents(events());
+		}
+
+		@Override
+		public Origin origin() {
+			return origin;
+		}
+
+		@Override
+		public ListeningBehavior listeningBehavior() {
+			return getListeningBehavior();
+		}
+
+		@Override
+		public String name() {
+			return getName();
+		}
+
+		@Override
+		public String id() {
+			return getId();
+		}
+
+		@Override
+		public @Nullable String documentationId() {
+			return getDocumentationID();
+		}
+
+		@Override
+		public Collection<String> since() {
+			String[] since = getSince();
+			return since != null ? List.of(since) : List.of();
+		}
+
+		@Override
+		public Collection<String> description() {
+			String[] description = getDescription();
+			return description != null ? List.of(description) : List.of();
+		}
+
+		@Override
+		public Collection<String> examples() {
+			String[] examples = getExamples();
+			return examples != null ? List.of(examples) : List.of();
+		}
+
+		@Override
+		public Collection<String> keywords() {
+			String[] keywords = getKeywords();
+			return keywords != null ? List.of(keywords) : List.of();
+		}
+
+		@Override
+		public Collection<String> requiredPlugins() {
+			String[] requiredPlugins = getRequiredPlugins();
+			return requiredPlugins != null ? List.of(requiredPlugins) : List.of();
+		}
+
+		@Override
+		public Collection<Class<? extends Event>> events() {
+			return List.of(events);
+		}
+	}
+
 }

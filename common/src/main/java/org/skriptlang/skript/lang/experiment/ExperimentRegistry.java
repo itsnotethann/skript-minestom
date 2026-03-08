@@ -1,26 +1,8 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package org.skriptlang.skript.lang.experiment;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.skriptlang.skript.lang.script.Script;
 
@@ -31,12 +13,12 @@ import java.util.Set;
  * A manager for registering (and identifying) experimental feature flags.
  */
 /*
-* TODO
-* 	This is designed to be (replaced by|refactored into) a proper registry when the registries rework PR
-* 	is completed. The overall skeleton is designed to remain, so that there should be no breaking changes
-* 	for anything using it. I.e. you will still be able to use Skript#experiments() and obtain 'this' class
-* 	although these will just become helper methods for the proper registry behaviour.
-* */
+ * TODO
+ * 	This is designed to be (replaced by|refactored into) a proper registry when the registries rework PR
+ * 	is completed. The overall skeleton is designed to remain, so that there should be no breaking changes
+ * 	for anything using it. I.e. you will still be able to use Skript#experiments() and obtain 'this' class
+ * 	although these will just become helper methods for the proper registry behaviour.
+ * */
 public class ExperimentRegistry implements Experimented {
 
 	private final Skript skript;

@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -545,12 +546,12 @@ public class VariableString implements Expression<String> {
 	}
 
 	@Override
-	public boolean check(Event event, Checker<? super String> checker, boolean negated) {
+	public boolean check(Event event, Predicate<? super String> checker, boolean negated) {
 		return SimpleExpression.check(getAll(event), checker, negated, false);
 	}
 
 	@Override
-	public boolean check(Event event, Checker<? super String> checker) {
+	public boolean check(Event event, Predicate<? super String> checker) {
 		return SimpleExpression.check(getAll(event), checker, false, false);
 	}
 

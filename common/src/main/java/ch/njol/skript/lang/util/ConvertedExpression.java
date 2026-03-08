@@ -1,45 +1,23 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.lang.util;
 
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.classes.Changer.ChangeMode;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.KeyProviderExpression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Utils;
-import ch.njol.util.Checker;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.converter.Converter;
 import org.skriptlang.skript.lang.converter.ConverterInfo;
 import org.skriptlang.skript.lang.converter.Converters;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -50,24 +28,30 @@ import java.util.stream.Collectors;
  * <li>will never convert itself to another type, but rather request a new converted expression from the source expression.</li>
  * </ol>
  *
- * @author Peter Güttinger
+ * @see ConvertedKeyProviderExpression
  */
 public class ConvertedExpression<F, T> implements Expression<T> {
 
 	protected Expression<? extends F> source;
 	protected Class<T> to;
+	protected Class<T>[] toExact;
 	final Converter<? super F, ? extends T> converter;
 
 	/**
 	 * Converter information.
 	 */
 	private final Collection<ConverterInfo<? super F, ? extends T>> converterInfos;
+	private final Class<? extends T>[] returnTypes;
 
 	public ConvertedExpression(Expression<? extends F> source, Class<T> to, ConverterInfo<? super F, ? extends T> info) {
 		this.source = source;
 		this.to = to;
+		//noinspection unchecked
+		this.toExact = new Class[]{to};
 		this.converter = info.getConverter();
 		this.converterInfos = Collections.singleton(info);
+		//noinspection unchecked
+		this.returnTypes = new Class[]{info.getTo()};
 	}
 
 	/**
@@ -78,9 +62,25 @@ public class ConvertedExpression<F, T> implements Expression<T> {
 	 *  are valid for the converter being attempted
 	 */
 	public ConvertedExpression(Expression<? extends F> source, Class<T> to, Collection<ConverterInfo<? super F, ? extends T>> infos, boolean performFromCheck) {
+		//noinspection unchecked
+		this(source, new Class[]{to}, infos, performFromCheck);
+	}
+
+	/**
+	 * @param source The expression to use for obtaining values
+	 * @param toExact The exact types we are converting to
+	 * @param infos A collection of converters to attempt
+	 * @param performFromCheck Whether a safety check should be performed to ensure that objects being converted
+	 *  are valid for the converter being attempted
+	 */
+	public ConvertedExpression(Expression<? extends F> source, Class<T>[] toExact, Collection<ConverterInfo<? super F, ? extends T>> infos, boolean performFromCheck) {
 		this.source = source;
-		this.to = to;
+		//noinspection unchecked
+		this.to = (Class<T>) Utils.getSuperType(toExact);
+		this.toExact = toExact;
 		this.converterInfos = infos;
+		//noinspection unchecked
+		this.returnTypes = converterInfos.stream().map(ConverterInfo::getTo).distinct().toArray(Class[]::new);
 		this.converter = fromObject -> {
 			for (ConverterInfo<? super F, ? extends T> info : converterInfos) {
 				if (!performFromCheck || info.getFrom().isInstance(fromObject)) { // the converter is safe to attempt
@@ -94,10 +94,10 @@ public class ConvertedExpression<F, T> implements Expression<T> {
 	}
 
 	@SafeVarargs
-	@Nullable
-	public static <F, T> ConvertedExpression<F, T> newInstance(Expression<F> from, Class<T>... to) {
+	public static <F, T> @Nullable ConvertedExpression<F, T> newInstance(Expression<F> from, Class<T>... to) {
 		assert !CollectionUtils.containsSuperclass(to, from.getReturnType());
-// we might be able to cast some (or all) of the possible return types to T
+
+		// we might be able to cast some (or all) of the possible return types to T
 		// for possible return types that can't be directly cast, regular converters will be used
 		List<ConverterInfo<? extends F, ? extends T>> infos = new ArrayList<>();
 		for (Class<? extends F> type : from.possibleReturnTypes()) {
@@ -113,13 +113,23 @@ public class ConvertedExpression<F, T> implements Expression<T> {
 						infos.add(converter);
 				}
 			}
-			if (!infos.isEmpty()) { // there are converters for (at least some of) the return types
-				// a note: casting <? extends F> to <? super F> is wrong, but since the converter is used only for values
-				//         returned by the expression (which are instances of <? extends F>), this won't result in any CCEs
-				// noinspection rawtypes, unchecked
-				return new ConvertedExpression(from, Utils.getSuperType(infos.stream().map(ConverterInfo::getTo).toArray(Class[]::new)), infos, true);
-			}
 		}
+		if (!infos.isEmpty()) { // there are converters for (at least some of) the return types
+			// a note: casting <? extends F> to <? super F> is wrong, but since the converter is used only for values
+			//         returned by the expression (which are instances of <? extends F>), this won't result in any CCEs
+
+			// get list of exact types that can be converted to
+			Class<?>[] converterTypes = infos.stream()
+				.map(ConverterInfo::getTo)
+				.distinct()
+				.toArray(Class[]::new);
+
+			// noinspection rawtypes, unchecked
+			return from instanceof KeyProviderExpression<?> keyProvider
+				? new ConvertedKeyProviderExpression(keyProvider, converterTypes, infos, true)
+				: new ConvertedExpression(from, converterTypes, infos, true);
+		}
+
 		return null;
 	}
 
@@ -147,25 +157,27 @@ public class ConvertedExpression<F, T> implements Expression<T> {
 	}
 
 	@Override
+	public Class<? extends T>[] possibleReturnTypes() {
+		return toExact;
+	}
+
+	@Override
 	public boolean isSingle() {
 		return source.isSingle();
 	}
 
 	@Override
-	@Nullable
 	@SuppressWarnings("unchecked")
-	public <R> Expression<? extends R> getConvertedExpression(Class<R>... to) {
+	public <R> @Nullable Expression<? extends R> getConvertedExpression(Class<R>... to) {
 		if (CollectionUtils.containsSuperclass(to, this.to))
 			return (Expression<? extends R>) this;
 		return source.getConvertedExpression(to);
 	}
 
-	@Nullable
-	private ClassInfo<? super T> returnTypeInfo;
+	private @Nullable ClassInfo<? super T> returnTypeInfo;
 
 	@Override
-	@Nullable
-	public Class<?>[] acceptChange(ChangeMode mode) {
+	public Class<?> @Nullable [] acceptChange(ChangeMode mode) {
 		Class<?>[] validClasses = source.acceptChange(mode);
 		if (validClasses == null) {
 			ClassInfo<? super T> returnTypeInfo;
@@ -177,7 +189,7 @@ public class ConvertedExpression<F, T> implements Expression<T> {
 	}
 
 	@Override
-	public void change(Event event, @Nullable Object[] delta, ChangeMode mode) {
+	public void change(Event event, Object @Nullable [] delta, ChangeMode mode) {
 		ClassInfo<? super T> returnTypeInfo = this.returnTypeInfo;
 		if (returnTypeInfo != null) {
 			Changer<? super T> changer = returnTypeInfo.getChanger();
@@ -189,8 +201,7 @@ public class ConvertedExpression<F, T> implements Expression<T> {
 	}
 
 	@Override
-	@Nullable
-	public T getSingle(Event event) {
+	public @Nullable T getSingle(Event event) {
 		F value = source.getSingle(event);
 		if (value == null)
 			return null;
@@ -208,18 +219,18 @@ public class ConvertedExpression<F, T> implements Expression<T> {
 	}
 
 	@Override
-	public boolean check(Event event, Checker<? super T> checker, boolean negated) {
+	public boolean check(Event event, Predicate<? super T> checker, boolean negated) {
 		return negated ^ check(event, checker);
 	}
 
 	@Override
-	public boolean check(Event event, Checker<? super T> checker) {
-		return source.check(event, (Checker<F>) value -> {
+	public boolean check(Event event, Predicate<? super T> checker) {
+		return source.check(event, (Predicate<F>) value -> {
 			T convertedValue = converter.convert(value);
 			if (convertedValue == null) {
 				return false;
 			}
-			return checker.check(convertedValue);
+			return checker.test(convertedValue);
 		});
 	}
 
@@ -249,14 +260,12 @@ public class ConvertedExpression<F, T> implements Expression<T> {
 	}
 
 	@Override
-	@Nullable
-	public Iterator<T> iterator(Event event) {
+	public @Nullable Iterator<T> iterator(Event event) {
 		Iterator<? extends F> iterator = source.iterator(event);
 		if (iterator == null)
 			return null;
-		return new Iterator<T>() {
-			@Nullable
-			T next = null;
+		return new Iterator<>() {
+			@Nullable T next = null;
 
 			@Override
 			public boolean hasNext() {
@@ -287,22 +296,20 @@ public class ConvertedExpression<F, T> implements Expression<T> {
 	}
 
 	@Override
-	public Expression<?> getSource() {
+	public Expression<? extends F> getSource() {
 		return source;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public Expression<? extends T> simplify() {
-		Expression<? extends T> convertedExpression = source.simplify().getConvertedExpression(to);
+		Expression<? extends T> convertedExpression = source.simplify().getConvertedExpression(toExact);
 		if (convertedExpression != null)
 			return convertedExpression;
 		return this;
 	}
 
 	@Override
-	@Nullable
-	public Object[] beforeChange(Expression<?> changed, @Nullable Object[] delta) {
+	public Object @Nullable [] beforeChange(Expression<?> changed, Object @Nullable [] delta) {
 		return source.beforeChange(changed, delta); // Forward to source
 		// TODO this is not entirely safe, even though probably works well enough
 	}

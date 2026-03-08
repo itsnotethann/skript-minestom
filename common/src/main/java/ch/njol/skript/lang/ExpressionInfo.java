@@ -1,32 +1,17 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.lang;
 
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
 
 /**
  * Represents an expression's information, for use when creating new instances of expressions.
+ * @deprecated Use {@link SyntaxInfo.Expression} ({@link SyntaxInfo.Expression#builder(Class, Class)}) instead.
  */
+@Deprecated(since = "INSERT VERSION", forRemoval = true)
 public class ExpressionInfo<E extends Expression<T>, T> extends SyntaxElementInfo<E> {
 
-	@Nullable
-	public ExpressionType expressionType;
+	public @Nullable ExpressionType expressionType;
 	public Class<T> returnType;
 
 	public ExpressionInfo(String[] patterns, Class<T> returnType, Class<E> expressionClass, String originClassPath) throws IllegalArgumentException {
@@ -37,6 +22,13 @@ public class ExpressionInfo<E extends Expression<T>, T> extends SyntaxElementInf
 		super(patterns, expressionClass, originClassPath);
 		this.returnType = returnType;
 		this.expressionType = expressionType;
+	}
+
+	@ApiStatus.Internal
+	protected ExpressionInfo(SyntaxInfo.Expression<E, T> source) {
+		super(source);
+		this.returnType = source.returnType();
+		this.expressionType = ExpressionType.fromModern(source.priority());
 	}
 
 	/**
@@ -51,8 +43,7 @@ public class ExpressionInfo<E extends Expression<T>, T> extends SyntaxElementInf
 	 * Get the type of this expression.
 	 * @return The type of this Expression
 	 */
-	@Nullable
-	public ExpressionType getExpressionType() {
+	public @Nullable ExpressionType getExpressionType() {
 		return expressionType;
 	}
 

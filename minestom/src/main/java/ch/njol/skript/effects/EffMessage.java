@@ -127,7 +127,7 @@ public class EffMessage extends Effect {
 	private String onlyValid(String s) {
 		final int strlen = s.length();
 		int utflen = strlen;
-		if (utflen > 65535 || /* overflow */ utflen < strlen) return s.substring(0, 65535);
+		if (utflen > 65000 || /* overflow */ utflen < strlen) return s.substring(0, 65000);
 		return s;
 	}
 

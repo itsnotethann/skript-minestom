@@ -264,7 +264,7 @@ public class SkriptConfig {
 			}
 			mainConfig = mc;
 
-			String configVersion = mc.get(version.key);
+			String configVersion = mc.getValue(version.key);
 			if (configVersion == null || Skript.getVersion().compareTo(new Version(configVersion)) != 0) {
 				try {
 					final InputStream in = Skript.getInstance().getResource("config.sk");

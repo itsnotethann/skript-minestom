@@ -29,6 +29,7 @@ import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import ch.njol.skript.classes.PatternedParser;
 import ch.njol.skript.util.Utils;
 import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.Nullable;
@@ -54,6 +55,7 @@ import ch.njol.yggdrasil.Yggdrasil;
 import ch.njol.yggdrasil.YggdrasilInputStream;
 import ch.njol.yggdrasil.YggdrasilOutputStream;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.jetbrains.annotations.Unmodifiable;
 import org.skriptlang.skript.lang.converter.Converter;
 import org.skriptlang.skript.lang.converter.ConverterInfo;
 import org.skriptlang.skript.lang.converter.Converters;
@@ -71,7 +73,8 @@ public abstract class Classes {
 	private final static HashMap<Class<?>, ClassInfo<?>> exactClassInfos = new HashMap<>();
 	private final static HashMap<Class<?>, ClassInfo<?>> superClassInfos = new HashMap<>();
 	private final static HashMap<String, ClassInfo<?>> classInfosByCodeName = new HashMap<>();
-	
+	private final static Map<String, List<ClassInfo<?>>> registeredLiteralPatterns = new HashMap<>();
+
 	/**
 	 * @param info info about the class to register
 	 */
@@ -85,12 +88,17 @@ public abstract class Classes {
 			exactClassInfos.put(info.getC(), info);
 			classInfosByCodeName.put(info.getCodeName(), info);
 			tempClassInfos.add(info);
+			if (info.getParser() instanceof PatternedParser<?> patternedParser) {
+				String[] patterns = patternedParser.getPatterns();
+				for (String pattern : patterns) {
+					registeredLiteralPatterns.computeIfAbsent(pattern, list -> new ArrayList<>()).add(info);
+				}
+			}
 		} catch (RuntimeException e) {
-			throw e;
-//			if (SkriptConfig.apiSoftExceptions.value())
-//				Skript.warning("Ignored an exception due to user configuration: " + e.getMessage());
-//			else
-//				throw e;
+			if (SkriptConfig.apiSoftExceptions.value())
+				Skript.warning("Ignored an exception due to user configuration: " + e.getMessage());
+			else
+				throw e;
 		}
 	}
 	
@@ -231,7 +239,19 @@ public abstract class Classes {
 		if (Skript.isAcceptRegistrations())
 			throw new IllegalStateException("Cannot use classinfos until registration is over");
 	}
-	
+
+	/**
+	 * Get a {@link List} of the {@link ClassInfo}s the {@code pattern} can be referenced to.
+	 * @param pattern The {@link String} pattern.
+	 */
+	public static @Unmodifiable @Nullable List<ClassInfo<?>> getPatternInfos(String pattern) {
+		pattern = pattern.toLowerCase(Locale.ENGLISH);
+		List<ClassInfo<?>> infos = registeredLiteralPatterns.get(pattern);
+		if (infos != null)
+			return Collections.unmodifiableList(infos);
+		return null;
+	}
+
 	@SuppressWarnings("null")
 	public static List<ClassInfo<?>> getClassInfos() {
 		checkAllowClassInfoInteraction();

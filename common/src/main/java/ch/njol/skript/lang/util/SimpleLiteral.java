@@ -177,12 +177,12 @@ public class SimpleLiteral<T> implements Literal<T>, DefaultExpression<T> {
 	}
 
 	@Override
-	public boolean check(Event event, Checker<? super T> checker, boolean negated) {
+	public boolean check(Event event, Predicate<? super T> checker, boolean negated) {
 		return SimpleExpression.check(data, checker, negated, getAnd());
 	}
 
 	@Override
-	public boolean check(Event event, Checker<? super T> checker) {
+	public boolean check(Event event, Predicate<? super T> checker) {
 		return SimpleExpression.check(data, checker, false, getAnd());
 	}
 
