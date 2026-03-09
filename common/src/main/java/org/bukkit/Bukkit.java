@@ -51,6 +51,10 @@ public class Bukkit {
 		return servicesManager;
 	}
 
+	public static boolean getOnlineMode() {
+		return server.getOnlineMode();
+	}
+
 	public static boolean isPrimaryThread() {
 		return Thread.currentThread().equals(primaryThread);
 	}
