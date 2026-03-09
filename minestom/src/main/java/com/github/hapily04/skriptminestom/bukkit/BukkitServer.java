@@ -1,6 +1,7 @@
 package com.github.hapily04.skriptminestom.bukkit;
 
 import net.minestom.server.Auth;
+import net.minestom.server.Git;
 import net.minestom.server.MinecraftServer;
 import org.bukkit.Server;
 import org.bukkit.command.ConsoleCommandSender;
@@ -26,6 +27,16 @@ public class BukkitServer implements Server {
 	@Override
 	public boolean getOnlineMode() {
 		return MinecraftServer.process().auth().getClass().equals(Auth.Online.class);
+	}
+
+	@Override
+	public String getVersion() {
+		return MinecraftServer.VERSION_NAME;
+	}
+
+	@Override
+	public String getName() {
+		return "Skript-Minestom (" + Git.version() + ")";
 	}
 
 }

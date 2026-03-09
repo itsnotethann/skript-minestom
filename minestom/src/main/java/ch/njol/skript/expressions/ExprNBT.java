@@ -6,6 +6,7 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.SyntaxStringBuilder;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.util.Item;
 import ch.njol.skript.util.NBTCompound;
 import ch.njol.util.Kleenean;
@@ -14,8 +15,6 @@ import com.github.hapily04.skriptminestom.util.NBTUtils;
 import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.kyori.adventure.nbt.TagStringIO;
-import net.minestom.server.component.DataComponent;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.component.CustomData;
@@ -85,9 +84,10 @@ public class ExprNBT extends SimpleExpression<NBTCompound> {
 					try (FileInputStream input = new FileInputStream(f)) {
 						compounds[i] = new NBTCompound(BinaryTagIO.reader().read(input, BinaryTagIO.Compression.GZIP));
 					} catch (FileNotFoundException e) {
-						Skript.error("Couldn't find file at '" + s + "' while attempting to create an nbt compound.");
+						SkriptLogger.LOGGER.error("Couldn't find file at '{}' while attempting to create an nbt compound.", s);
 					} catch (IOException e) {
-						Skript.error("Couldn't parse file '" + s + "' as an nbt compound: " + e.getMessage());
+						SkriptLogger.LOGGER.error("Couldn't parse file '{}' as an nbt compound:", s);
+						e.printStackTrace();
 					}
 				}
 			}

@@ -55,6 +55,14 @@ public class Bukkit {
 		return server.getOnlineMode();
 	}
 
+	public static String getVersion() {
+		return server.getVersion();
+	}
+
+	public static String getName() {
+		return server.getName();
+	}
+
 	public static boolean isPrimaryThread() {
 		return Thread.currentThread().equals(primaryThread);
 	}

@@ -18,4 +18,8 @@ public interface Server {
 
 	boolean getOnlineMode();
 
+	String getVersion();
+
+	String getName();
+
 }
