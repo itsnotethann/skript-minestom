@@ -10,6 +10,7 @@ import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.coordinate.BlockVec;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.instance.batch.AbsoluteBlockBatch;
 import net.minestom.server.instance.block.Block;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
@@ -94,11 +95,13 @@ public class ExprBlockSphere extends SimpleExpression<BlockVec> {
 		if (delta[0] == null) return;
 		Block block = (Block) delta[0];
 		Iterator<BlockVec> it = iterator(event);
-		Block.Setter setter = instance.getSingle(event);
-		if (setter == null) return;
+		Instance instance = this.instance.getSingle(event);
+		if (instance == null) return;
+		AbsoluteBlockBatch batch = new AbsoluteBlockBatch();
 		while (it.hasNext()) {
-			setter.setBlock(it.next(), block);
+			batch.setBlock(it.next(), block);
 		}
+		batch.apply(instance, null);
 	}
 
 	@Override

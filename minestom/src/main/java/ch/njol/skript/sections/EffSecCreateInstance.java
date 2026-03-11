@@ -7,10 +7,13 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.*;
+import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import com.github.hapily04.skriptminestom.util.FileUtils;
 import com.github.hapily04.skriptminestom.util.MiniRegionFile;
+import it.unimi.dsi.fastutil.ints.IntArraySet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.hollowcube.polar.PolarChunk;
 import net.hollowcube.polar.PolarLoader;
 import net.minestom.server.MinecraftServer;
@@ -158,12 +161,12 @@ public class EffSecCreateInstance extends EffectSection {
 			if (dimension != null) {
 				DimensionType dimension = this.dimension.getSingle(event);
 				if (dimension == null) {
-					Skript.warning("Dimension provided, but its value is none. Creating base instance container.");
+					SkriptLogger.LOGGER.warn("Dimension provided, but its value is none. Creating base instance container.");
 					instance = MinecraftServer.getInstanceManager().createInstanceContainer();
 				} else {
 					RegistryKey<DimensionType> dimensionKey = MinecraftServer.getDimensionTypeRegistry().getKey(dimension);
 					if (dimensionKey == null) {
-						Skript.warning("Dimension provided, but it doesn't seem like it was registered? Creating base instance container.");
+						SkriptLogger.LOGGER.warn("Dimension provided, but it doesn't seem like it was registered? Creating base instance container.");
 						instance = MinecraftServer.getInstanceManager().createInstanceContainer();
 					} else instance = MinecraftServer.getInstanceManager().createInstanceContainer(dimensionKey);
 				}
@@ -187,10 +190,10 @@ public class EffSecCreateInstance extends EffectSection {
 						loader.setLoadLighting(!dynamicLighting);
 						container.setChunkLoader(loader);
 					} catch (IOException e) {
-						System.err.println("Runtime error while trying to set chunk loader to polar: " + e.getMessage());
+						SkriptLogger.LOGGER.error("Runtime error while trying to set chunk loader to polar: {}", e.getMessage());
 					}
 				}
-			} else System.out.println("loader is null");
+			}
 			if (generator != null) {
 				Object variables = Variables.copyLocalVariables(event);
 				container.setGenerator(unit -> {
@@ -239,14 +242,14 @@ public class EffSecCreateInstance extends EffectSection {
 	private void preLoadChunks(InstanceContainer container, File file, boolean strict) {
 		ChunkLoader loader = container.getChunkLoader();
 		boolean loadServerRenderDistance = true;
+		IntSet queuedChunks = new IntArraySet();
 		if (loader instanceof PolarLoader polarLoader) {
 			Collection<PolarChunk> chunks = polarLoader.world().chunks();
 			if (!chunks.isEmpty()) loadServerRenderDistance = false;
 			for (PolarChunk chunk : chunks) {
-				if (container.isChunkLoaded(chunk.x(), chunk.z())) continue; // small optimization
-				container.loadChunk(chunk.x(), chunk.z()).whenComplete((c, throwable) -> {
-					loadNearbyChunks(container, c);
-				});
+				int x = chunk.x();
+				int z = chunk.z();
+				addNearbyChunks(pack(x, z), queuedChunks);
 			}
 		} else if (loader instanceof AnvilLoader) {
 			if (!phonyAnvilLoader) {
@@ -254,7 +257,7 @@ public class EffSecCreateInstance extends EffectSection {
 					int loadedChunks = 0;
 					File regionFolder = new File(file, "region");
 					if (regionFolder.isDirectory()) {
-						File[] mcaFiles = regionFolder.listFiles((dir, name) -> name.endsWith(".mca"));
+						File[] mcaFiles = regionFolder.listFiles((_, name) -> name.endsWith(".mca"));
 						if (mcaFiles != null) {
 							for (File mcaFile : mcaFiles) {
 								String[] parts = mcaFile.getName().split("\\.");
@@ -267,9 +270,7 @@ public class EffSecCreateInstance extends EffectSection {
 										int chunkZ = regionZ * 32 + localZ;
 										if (!miniRegionFile.hasChunkData(chunkX, chunkZ)) continue;
 										loadedChunks++;
-										container.loadChunk(chunkX, chunkZ).whenComplete((chunk, throwable) -> {
-											loadNearbyChunks(container, chunk);
-										});
+										addNearbyChunks(pack(chunkX, chunkZ), queuedChunks);
 									}
 								}
 							}
@@ -289,11 +290,19 @@ public class EffSecCreateInstance extends EffectSection {
 			int chunkViewDistancePlus = chunkViewDistance+1;
 			for (int x = -chunkViewDistancePlus; x < chunkViewDistancePlus; x++) {
 				for (int z = -chunkViewDistancePlus; z < chunkViewDistancePlus; z++) {
-					if (container.isChunkLoaded(x, z)) continue;
-					loadRenderDistanceChunk(container, x, z, strict, chunkViewDistance);
-					loadNearbyChunks(container, x, z,
-						(instance, chunkX, chunkZ) -> loadRenderDistanceChunk(instance, chunkX, chunkZ, strict, chunkViewDistance));
+					addNearbyChunks(pack(x, z), queuedChunks);
 				}
+			}
+			for (int chunk : queuedChunks) {
+				int x = getChunkX(chunk);
+				int z = getChunkZ(chunk);
+				loadRenderDistanceChunk(container, x, z, strict, chunkViewDistance);
+			}
+		} else {
+			for (int chunk : queuedChunks) {
+				int x = getChunkX(chunk);
+				int z = getChunkZ(chunk);
+				container.loadChunk(x, z);
 			}
 		}
 		if (strict) {
@@ -302,10 +311,34 @@ public class EffSecCreateInstance extends EffectSection {
 		}
 	}
 
+	// dut_
+	private void addNearbyChunks(int coordinates, IntSet set) {
+		int originX = getChunkX(coordinates);
+		int originZ = getChunkZ(coordinates);
+		for (int x = -1; x < 2; x++) {
+			for (int z = -1; z < 2; z++) {
+				int newChunkX = originX+x;
+				int newChunkZ = originZ+z;
+				set.add(pack(newChunkX, newChunkZ));
+			}
+		}
+	}
+
+	private int pack(int x, int z) {
+		return (z << 16) | (x & 0xFFFF);
+	}
+
+	private int getChunkX(int packed) {
+		return (short) packed;
+	}
+
+	private int getChunkZ(int packed) {
+		return (short) (packed >>> 16);
+	}
+
 	private void loadRenderDistanceChunk(Instance container, int x, int z, boolean strict, int chunkViewDistance) {
 		if (container.isChunkLoaded(x, z)) return;
 		if (strict && (Math.abs(x) > chunkViewDistance || Math.abs(z) > chunkViewDistance)) { // loading outside chunks, shouldn't have extra blocks if we're about to generate
-			//container.loadChunk(x, z).join();
 			container.generateChunk(x, z, BLANK_GENERATOR);
 			return;
 		}
@@ -313,7 +346,7 @@ public class EffSecCreateInstance extends EffectSection {
 	}
 
 	/**
-	 * Loads chunks around a point in a square fashion, ensuring there's a border of empty chunks around the pasted schematic
+	 * Loads chunks around a point in a square fashion, ensuring there's a border of empty chunks
 	 *
 	 * @param instance the {@link Instance} to load the chunks in
 	 */
@@ -322,7 +355,7 @@ public class EffSecCreateInstance extends EffectSection {
 			for (int z = -1; z < 2; z++) {
 				int newChunkX = originX+x;
 				int newChunkZ = originZ+z;
-				if (instance.isChunkLoaded(newChunkX, newChunkZ)) continue;
+				//if (instance.isChunkLoaded(newChunkX, newChunkZ)) continue;
 				operation.loadChunk(instance, newChunkX, newChunkZ);
 			}
 		}
@@ -341,7 +374,7 @@ public class EffSecCreateInstance extends EffectSection {
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return "todo toString"; // todo finish toString
+		return "todo sec create instance toString"; // todo finish toString
 	}
 
 }

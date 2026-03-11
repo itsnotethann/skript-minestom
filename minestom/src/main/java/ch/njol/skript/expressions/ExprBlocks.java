@@ -12,6 +12,7 @@ import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.instance.batch.AbsoluteBlockBatch;
 import net.minestom.server.instance.block.Block;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
@@ -100,9 +101,10 @@ public class ExprBlocks extends SimpleExpression<BlockVec> {
 	@Override
 	@Nullable
 	protected BlockVec[] get(Event event) {
-		Instance instance = this.instance.getSingle(event);
 		if (pattern != 5 && instance == null) return new BlockVec[0];
 		if (this.direction != null && !from.isSingle()) {
+			assert this.instance != null;
+			Instance instance = this.instance.getSingle(event);
 			Direction direction = this.direction.getSingle(event);
 			if (direction == null)
 				return new BlockVec[0];
@@ -139,10 +141,13 @@ public class ExprBlocks extends SimpleExpression<BlockVec> {
 		if (delta[0] == null) return;
 		Block block = (Block) delta[0];
 		Iterator<BlockVec> it = iterator(event);
-		Block.Setter setter = chunk != null ? this.chunk.getSingle(event) : instance.getSingle(event);
+		Instance instance = chunk != null ? chunk.getOptionalSingle(event).map(Chunk::getInstance).orElse(null) : this.instance.getSingle(event);
+		if (instance == null) return;
+		AbsoluteBlockBatch batch = new AbsoluteBlockBatch();
 		while (it.hasNext()) {
-			setter.setBlock(it.next(), block);
+			batch.setBlock(it.next(), block);
 		}
+		batch.apply(instance, null);
 	}
 
 	@Override
