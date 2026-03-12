@@ -8,7 +8,6 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.lang.util.ConvertedExpression;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.util.Direction;
 import ch.njol.util.Kleenean;
@@ -16,7 +15,6 @@ import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.instance.Instance;
-import net.minestom.server.instance.batch.AbsoluteBlockBatch;
 import net.minestom.server.instance.block.Block;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
@@ -76,7 +74,7 @@ public class ExprBlock extends SimpleExpression<Block> {
 		Point[] points = pointExpr.getArray(event);
 		for (Point p : points) {
 			if (!instance.isChunkLoaded(p)) continue;
-			instance.setBlock(p, block);
+			instance.setBlock(p, block, false);
 		}
 	}
 

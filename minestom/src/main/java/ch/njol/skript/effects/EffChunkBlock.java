@@ -57,10 +57,10 @@ public class EffChunkBlock extends Effect implements EventRestrictedSyntax {
 		UnitModifier modifier = unit.modifier();
 		for (Point point : points) {
 			int x = startX + ((int) point.x());
+			int y = (int) point.y();
 			int z = startZ + ((int) point.z());
-			Point p = new BlockVec(x, (int) point.y(), z);
-			if (p.x() < startX || p.x() >= endX || p.z() < startZ || p.z() >= endZ) continue; // out of bounds
-			modifier.setBlock(x, (int) point.y(), z, block);
+			if (x < startX || x >= endX || z < startZ || z >= endZ) continue; // out of bounds
+			modifier.setBlock(x, y, z, block);
 		}
 	}
 
