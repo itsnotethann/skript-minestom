@@ -1,7 +1,5 @@
 package ch.njol.skript.expressions;
 
-import java.util.Locale;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -15,6 +13,8 @@ import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
+
+import java.util.Locale;
 
 @Name("Free / Max / Total Memory")
 @Description("The free, max or total memory of the server in Megabytes.")

@@ -13,13 +13,9 @@ import ch.njol.skript.util.NBTCompound;
 import ch.njol.util.Kleenean;
 import com.github.hapily04.skriptminestom.util.NBTUtils;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.kyori.adventure.nbt.TagStringIO;
 import net.minestom.server.item.ItemStack;
-import net.minestom.server.tag.Tag;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
-
-import java.io.IOException;
 
 @SuppressWarnings("NullableProblems")
 @Name("Item with NBT")

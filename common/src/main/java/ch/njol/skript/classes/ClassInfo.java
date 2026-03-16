@@ -29,6 +29,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.skriptlang.skript.lang.arithmetic.Arithmetics;
+import org.skriptlang.skript.lang.arithmetic.Operator;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -37,8 +39,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import org.skriptlang.skript.lang.arithmetic.Operator;
-import org.skriptlang.skript.lang.arithmetic.Arithmetics;
 
 /**
  * @author Peter Güttinger

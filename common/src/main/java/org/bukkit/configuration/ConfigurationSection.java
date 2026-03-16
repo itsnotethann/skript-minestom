@@ -1,12 +1,13 @@
 package org.bukkit.configuration;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents a section of a {@link Configuration}

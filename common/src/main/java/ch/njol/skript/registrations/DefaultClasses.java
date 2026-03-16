@@ -18,12 +18,9 @@
  */
 package ch.njol.skript.registrations;
 
-import org.eclipse.jdt.annotation.NonNull;
-
 import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.util.Color;
 import ch.njol.skript.util.Date;
-import ch.njol.skript.util.Timespan;
+import org.eclipse.jdt.annotation.NonNull;
 
 // When using these fields, be aware all ClassInfo's must be registered!
 public class DefaultClasses {

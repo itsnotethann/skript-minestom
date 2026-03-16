@@ -1,11 +1,9 @@
 package ch.njol.skript.events;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.util.Getter;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.trait.CancellableEvent;
 import net.minestom.server.instance.Instance;

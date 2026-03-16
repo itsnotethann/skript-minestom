@@ -18,18 +18,14 @@
  */
 package ch.njol.skript.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import org.skriptlang.skript.lang.converter.Converter;
+
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.skriptlang.skript.lang.converter.Converter;
 
 /**
  * @author Peter Güttinger

@@ -25,19 +25,13 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import org.bukkit.Bukkit;
 import org.bukkit.event.*;
-import org.bukkit.event.Event.Result;
 import org.bukkit.plugin.EventExecutor;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class SkriptEventHandler {

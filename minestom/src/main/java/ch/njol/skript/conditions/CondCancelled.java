@@ -11,7 +11,6 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import net.minestom.server.event.trait.CancellableEvent;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 

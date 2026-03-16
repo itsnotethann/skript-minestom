@@ -18,17 +18,16 @@
  */
 package ch.njol.skript.util;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
+import ch.njol.skript.Skript;
+import ch.njol.util.Closeable;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.eclipse.jdt.annotation.Nullable;
 
-import ch.njol.skript.Skript;
-import ch.njol.util.Closeable;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * @author Peter Güttinger

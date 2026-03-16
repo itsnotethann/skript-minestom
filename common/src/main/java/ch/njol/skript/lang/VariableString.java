@@ -32,15 +32,14 @@ import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.structures.StructVariables.DefaultVariables;
 import ch.njol.skript.util.StringMode;
 import ch.njol.skript.util.Utils;
-import ch.njol.util.Checker;
 import ch.njol.util.Kleenean;
 import ch.njol.util.StringUtils;
 import ch.njol.util.coll.CollectionUtils;
 import ch.njol.util.coll.iterator.SingleItemIterator;
 import com.google.common.collect.Lists;
 import org.bukkit.event.Event;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.script.Script;
 
 import java.util.ArrayList;

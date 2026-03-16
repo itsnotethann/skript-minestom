@@ -1,18 +1,14 @@
 package ch.njol.skript.conditions;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.LivingEntity;
-import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
 
 @Name("Is Alive/Dead")
 @Description("Checks if an entity is alive or dead.")

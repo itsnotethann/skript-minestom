@@ -2,7 +2,6 @@ package com.github.hapily04.skriptminestom.command;
 
 import com.github.hapily04.skriptminestom.luckperms.LuckPermsPlayer;
 import net.minestom.server.command.builder.Command;
-import org.jetbrains.annotations.NotNull;
 
 import static com.github.hapily04.skriptminestom.command.SkriptCommand.HELP_MESSAGE;
 

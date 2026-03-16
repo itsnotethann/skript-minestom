@@ -1,8 +1,10 @@
 package ch.njol.skript.effects.particle;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.lang.*;
-import ch.njol.skript.registrations.Classes;
+import ch.njol.skript.lang.Effect;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SyntaxStringBuilder;
 import ch.njol.skript.util.Direction;
 import ch.njol.util.Kleenean;
 import net.minestom.server.coordinate.Point;
@@ -14,7 +16,10 @@ import net.minestom.server.particle.Particle;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class EffParticle extends Effect {
 

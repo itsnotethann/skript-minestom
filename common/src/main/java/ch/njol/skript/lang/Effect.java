@@ -17,7 +17,7 @@ import java.util.Iterator;
  *
  * @see Skript#registerEffect(Class, String...)
  */
-public abstract class Effect extends Statement{
+public abstract class Effect extends Statement {
 
 	protected Effect() {}
 

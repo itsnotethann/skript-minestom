@@ -18,9 +18,9 @@
  */
 package ch.njol.util.coll.iterator;
 
-import java.util.Iterator;
-
 import org.eclipse.jdt.annotation.Nullable;
+
+import java.util.Iterator;
 
 /**
  * @author Peter Güttinger

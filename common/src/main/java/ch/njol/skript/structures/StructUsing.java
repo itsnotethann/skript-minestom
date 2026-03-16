@@ -28,7 +28,6 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnknownNullability;
 import org.skriptlang.skript.lang.entry.EntryContainer;
 import org.skriptlang.skript.lang.experiment.Experiment;
 import org.skriptlang.skript.lang.structure.Structure;

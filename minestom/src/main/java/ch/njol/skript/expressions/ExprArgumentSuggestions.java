@@ -2,7 +2,6 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
-import ch.njol.skript.events.wrapper.PlayerChatWrapper;
 import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -11,9 +10,7 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.sections.SecArgument;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
-import net.kyori.adventure.text.Component;
 import net.minestom.server.command.builder.suggestion.Suggestion;
-import net.minestom.server.command.builder.suggestion.SuggestionCallback;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;

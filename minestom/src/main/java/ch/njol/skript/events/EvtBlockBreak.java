@@ -2,7 +2,6 @@ package ch.njol.skript.events;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.events.wrapper.PlayerBlockBreakWrapper;
-import ch.njol.skript.events.wrapper.PlayerBlockPlaceWrapper;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser;

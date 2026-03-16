@@ -9,7 +9,6 @@ import ch.njol.skript.util.Item;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerHand;
-import net.minestom.server.event.item.PlayerBeginItemUseEvent;
 import net.minestom.server.event.player.*;
 import net.minestom.server.instance.block.Block;
 import org.bukkit.event.Event;

@@ -1,8 +1,6 @@
 package ch.njol.skript.expressions;
 
 
-import net.minestom.server.coordinate.Point;
-
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -11,6 +9,7 @@ import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
+import net.minestom.server.coordinate.Point;
 
 @Name("XYZ Component")
 @Description("Gets or changes the x, y or z component of a point.")

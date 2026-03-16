@@ -19,8 +19,6 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
-import org.skriptlang.skript.lang.converter.Converter;
-import org.skriptlang.skript.lang.converter.ConverterInfo;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -32,12 +30,14 @@ import ch.njol.skript.lang.Variable;
 import ch.njol.skript.lang.util.ConvertedExpression;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.registrations.Classes;
-import org.skriptlang.skript.lang.converter.Converters;
 import ch.njol.skript.sections.SecLoop;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.lang.converter.Converter;
+import org.skriptlang.skript.lang.converter.ConverterInfo;
+import org.skriptlang.skript.lang.converter.Converters;
 
 import java.lang.reflect.Array;
 import java.util.Map.Entry;

@@ -4,10 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
-import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.lang.SyntaxStringBuilder;
+import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import net.minestom.server.MinecraftServer;
@@ -30,13 +27,15 @@ import java.util.List;
 public class ExprEntities extends SimpleExpression<Entity> {
 
 	static {
-		Skript.registerExpression(ExprEntities.class, Entity.class, ExpressionType.COMBINED,
+		Skript.registerExpression(ExprEntities.class, Entity.class, ExpressionType.PATTERN_MATCHES_EVERYTHING,
 			"all entities [of type[s] %-entitytypes%] [in radius %-number% of %-points%] [(in|of|from) [instance[s]] %-instances%]",
 			"all %entitytypes% [in radius %-number% of %-points%] [(in|of|from) [instance[s]] %-instances%]");
 	}
 
 	@org.eclipse.jdt.annotation.Nullable
 	private Expression<EntityType> types;
+	@Nullable
+	private List<EntityType> knownTypes;
 	@org.eclipse.jdt.annotation.Nullable
 	private Expression<Number> radius;
 	@org.eclipse.jdt.annotation.Nullable
@@ -48,6 +47,7 @@ public class ExprEntities extends SimpleExpression<Entity> {
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
 		types = (Expression<EntityType>) expressions[0];
+		if (types instanceof Literal<EntityType> literal) knownTypes = List.of(literal.getArray());
 		radius = (Expression<Number>) expressions[1];
 		points = (Expression<Point>) expressions[2];
 		instances = (Expression<Instance>) expressions[3];
@@ -82,6 +82,7 @@ public class ExprEntities extends SimpleExpression<Entity> {
 
 	@Override
 	public Class<? extends Entity> getReturnType() {
+		if (knownTypes != null && knownTypes.size() == 1 && knownTypes.getFirst().equals(EntityType.PLAYER)) return Player.class;
 		return Entity.class;
 	}
 

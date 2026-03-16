@@ -18,12 +18,12 @@
  */
 package ch.njol.skript.variables;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * This is used to manage local variable type hints.

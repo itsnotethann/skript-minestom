@@ -2,8 +2,8 @@ package org.skriptlang.skript.lang.experiment;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.script.Script;
 
 import java.util.LinkedHashSet;

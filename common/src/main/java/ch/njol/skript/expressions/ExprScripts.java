@@ -9,22 +9,18 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
-import org.skriptlang.skript.lang.script.Script;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import org.bukkit.event.Event;
+import org.eclipse.jdt.annotation.Nullable;
+import org.skriptlang.skript.lang.script.Script;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import org.bukkit.event.Event;
-
-import org.eclipse.jdt.annotation.Nullable;
 
 @Name("All Scripts")
 @Description("Returns all of the scripts, or just the enabled or disabled ones.")

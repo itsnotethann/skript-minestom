@@ -2,11 +2,12 @@ package ch.njol.skript.sections;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
-import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.EffectSection;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.structures.command.StructCommand;
 import ch.njol.util.Kleenean;
-import net.minestom.server.MinecraftServer;
-import net.minestom.server.command.builder.Command;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 import org.skriptlang.skript.lang.entry.EntryContainer;

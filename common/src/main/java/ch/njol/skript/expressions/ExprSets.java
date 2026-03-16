@@ -1,14 +1,6 @@
 package ch.njol.skript.expressions;
 
 
-import java.util.Iterator;
-import java.util.function.Supplier;
-
-import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
-
-import com.google.common.collect.Lists;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.doc.Description;
@@ -22,6 +14,14 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.Kleenean;
+import com.google.common.collect.Lists;
+import org.bukkit.event.Event;
+import org.eclipse.jdt.annotation.Nullable;
+
+import java.lang.reflect.Array;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Supplier;
 
 @Name("Sets")
 @Description("Returns a list of all the values of a type. Useful for looping.")
@@ -62,8 +62,8 @@ public class ExprSets extends SimpleExpression<Object> {
 
 	@Override
 	protected Object[] get(Event event) {
-		Iterator<?> iterator = supplier.get();
-		return Lists.newArrayList(iterator).toArray(new Object[0]);
+		List<?> objects = Lists.newArrayList(supplier.get());
+		return objects.toArray((Object[]) Array.newInstance(classInfo.getC(), objects.size()));
 	}
 
 	@Override

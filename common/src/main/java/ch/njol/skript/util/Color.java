@@ -18,8 +18,6 @@
  */
 package ch.njol.skript.util;
 
-import org.eclipse.jdt.annotation.Nullable;
-
 import ch.njol.yggdrasil.YggdrasilSerializable.YggdrasilExtendedSerializable;
 
 public interface Color extends YggdrasilExtendedSerializable {

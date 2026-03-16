@@ -5,11 +5,9 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import ch.njol.skript.expressions.display.item.ExprDisplayContext;
 import ch.njol.util.coll.CollectionUtils;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Entity;
-import net.minestom.server.entity.metadata.display.ItemDisplayMeta;
 import net.minestom.server.entity.metadata.display.TextDisplayMeta;
 import org.bukkit.event.Event;
 

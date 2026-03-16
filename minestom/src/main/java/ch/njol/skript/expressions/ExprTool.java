@@ -8,13 +8,10 @@ import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.util.Item;
 import ch.njol.skript.util.Slot;
 import ch.njol.util.Kleenean;
-import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EquipmentSlot;
 import net.minestom.server.inventory.EquipmentHandler;
-import net.minestom.server.item.enchant.Enchantment;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 

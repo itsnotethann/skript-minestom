@@ -1,10 +1,9 @@
 package ch.njol.skript.config;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.Map.Entry;
-
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnknownNullability;
 
 /**
  * @author Peter Güttinger

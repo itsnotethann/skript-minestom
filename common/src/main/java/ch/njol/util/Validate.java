@@ -18,10 +18,10 @@
  */
 package ch.njol.util;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import java.util.Collection;
 import java.util.regex.Pattern;
-
-import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * @author Peter Güttinger

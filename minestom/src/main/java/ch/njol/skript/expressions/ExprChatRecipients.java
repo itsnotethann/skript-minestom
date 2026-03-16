@@ -11,7 +11,6 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
-import ch.njol.skript.util.Enchantment;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.MinecraftServer;
@@ -20,7 +19,6 @@ import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 @Name("Chat Recipients")

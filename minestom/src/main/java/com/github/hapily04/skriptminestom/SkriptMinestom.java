@@ -36,7 +36,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.luckperms.api.LuckPerms;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.ServerFlag;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.event.GlobalEventHandler;
@@ -45,11 +44,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
-import org.slf4j.Logger;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -133,7 +130,7 @@ public class SkriptMinestom {
 		Bukkit.getScheduler(); // initialize scheduler
 
 		PluginManager pluginManager = Bukkit.getPluginManager();
-		Plugin skript = pluginManager.loadPlugin(new File(Skript.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
+		Skript skript = (Skript) pluginManager.loadPlugin(new File(Skript.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
 		Skript.onRegistration(() -> {
 			MinestomClasses.register();
 			MinestomFunctions.register();
@@ -141,7 +138,9 @@ public class SkriptMinestom {
 		});
 		skript.setEnabled(true);
 		skript.onEnable(); // have to manually initialize, addons are initialized on their own
+		//ExprEntities.register(Skript.UNSAFE_instance().syntaxRegistry());
 		//Skript.getAddonInstance(true).UNSAFE_setLanguageFileDirectory("minestomlang"); // todo figure out how to do this if lang file is used
+		Skript.closeUnsafeSkript();
 
 		// init events
 		GlobalEventHandler geh = MinecraftServer.getGlobalEventHandler();

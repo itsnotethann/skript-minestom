@@ -1,13 +1,8 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
-import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
-import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
-import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;

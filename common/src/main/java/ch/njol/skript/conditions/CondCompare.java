@@ -6,14 +6,8 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.Condition;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionList;
-import ch.njol.skript.lang.Literal;
-import ch.njol.skript.lang.SimplifiedCondition;
+import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.lang.UnparsedLiteral;
-import ch.njol.skript.lang.VerboseAssert;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.log.ErrorQuality;
 import ch.njol.skript.log.ParseLogHandler;
@@ -50,7 +44,7 @@ public class CondCompare extends Condition implements VerboseAssert {
 		{"(1¦neither|) %objects% ((is|are)(|2¦(n't| not|4¦ neither)) ((less|smaller|lower) than|below)|\\<) %objects%", Relation.SMALLER},
 		{"(1¦neither|) %objects% ((is|are)(|2¦(n't| not|4¦ neither)) (less|smaller|lower|below) [than] or (equal to|the same as)|\\<=) %objects%", Relation.SMALLER_OR_EQUAL},
 		{"(1¦neither|) %objects% (2¦)((is|are) (not|4¦neither)|isn't|aren't|!=) [equal to] %objects%", Relation.EQUAL},
-		{"(1¦neither|) %objects% (is|are|=) [(equal to|the same as)] %objects%", Relation.EQUAL},
+		{"(1¦neither|) %objects% (is|are|=) [equal to|the same as] %objects%", Relation.EQUAL},
 		{"(1¦neither|) %objects% (is|are) between %objects% and %objects%", Relation.EQUAL},
 		{"(1¦neither|) %objects% (2¦)(is not|are not|isn't|aren't) between %objects% and %objects%", Relation.EQUAL},
 
@@ -59,7 +53,7 @@ public class CondCompare extends Condition implements VerboseAssert {
 		{"(1¦neither|) %objects@-1% (was|were)(|2¦(n't| not|4¦ neither)) ((less|smaller|lower) than|below) %objects%", Relation.SMALLER},
 		{"(1¦neither|) %objects@-1% (was|were)(|2¦(n't| not|4¦ neither)) (less|smaller|lower|below) [than] or (equal to|the same as) %objects%", Relation.SMALLER_OR_EQUAL},
 		{"(1¦neither|) %objects@-1% (2¦)((was|were) (not|4¦neither)|wasn't|weren't) [equal to] %objects%", Relation.EQUAL},
-		{"(1¦neither|) %objects@-1% (was|were) [(equal to|the same as)] %objects%", Relation.EQUAL},
+		{"(1¦neither|) %objects@-1% (was|were) [equal to|the same as] %objects%", Relation.EQUAL},
 		{"(1¦neither|) %objects@-1% (was|were) between %objects% and %objects%", Relation.EQUAL},
 		{"(1¦neither|) %objects@-1% (2¦)(was not|were not|wasn't|weren't) between %objects% and %objects%", Relation.EQUAL},
 

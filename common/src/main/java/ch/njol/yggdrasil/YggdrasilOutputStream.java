@@ -29,14 +29,7 @@ import java.io.NotSerializableException;
 import java.lang.reflect.Array;
 import java.util.IdentityHashMap;
 
-import static ch.njol.yggdrasil.Tag.T_ARRAY;
-import static ch.njol.yggdrasil.Tag.T_CLASS;
-import static ch.njol.yggdrasil.Tag.T_ENUM;
-import static ch.njol.yggdrasil.Tag.T_NULL;
-import static ch.njol.yggdrasil.Tag.T_OBJECT;
-import static ch.njol.yggdrasil.Tag.T_REFERENCE;
-import static ch.njol.yggdrasil.Tag.T_STRING;
-import static ch.njol.yggdrasil.Tag.getType;
+import static ch.njol.yggdrasil.Tag.*;
 
 public abstract class YggdrasilOutputStream implements Flushable, Closeable {
 	

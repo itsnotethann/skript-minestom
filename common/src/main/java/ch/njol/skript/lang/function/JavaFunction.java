@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.skriptlang.skript.common.function.DefaultFunction;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

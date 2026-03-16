@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SyntaxStringBuilder;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import net.kyori.adventure.key.Key;
@@ -51,7 +52,7 @@ public class ExprSound extends SimpleExpression<Sound> {
 		for (String id : ids) {
 			id = id.toLowerCase(Locale.ENGLISH);
 			if (!id.contains(":")) id = "minecraft:" + id;
-			if (Key.parseableNamespace(id)) continue;
+			if (!Key.parseable(id)) continue;
 			Number seed = this.seed == null ? null : this.seed.getSingle(event);
 			Sound.Source source = category == null ? null : category.getSingle(event);
 			Number volume = this.volume == null ? null : this.volume.getSingle(event);
@@ -79,7 +80,13 @@ public class ExprSound extends SimpleExpression<Sound> {
 
 	@Override
 	public String toString(@org.eclipse.jdt.annotation.Nullable Event event, boolean debug) {
-		return "";
+		SyntaxStringBuilder sb = new SyntaxStringBuilder(event, debug);
+		sb.append("sound", ids);
+		if (seed != null) sb.append("with seed", seed);
+		if (category != null) sb.append("in", category);
+		if (volume != null) sb.append("at volume", volume);
+		if (pitch != null) sb.append("with pitch", pitch);
+		return sb.toString();
 	}
 
 }

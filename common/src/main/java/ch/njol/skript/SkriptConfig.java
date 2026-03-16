@@ -18,11 +18,7 @@
  */
 package ch.njol.skript;
 
-import ch.njol.skript.config.Config;
-import ch.njol.skript.config.EnumParser;
-import ch.njol.skript.config.Option;
-import ch.njol.skript.config.OptionSection;
-import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.config.*;
 import ch.njol.skript.lang.function.Function;
 import ch.njol.skript.localization.Language;
 import ch.njol.skript.log.SkriptLogger;

@@ -1,7 +1,5 @@
 package ch.njol.skript.expressions;
 
-import java.util.Arrays;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -18,6 +16,8 @@ import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.Instance;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
 
 @Name("Chunk")
 @Description("Returns the <a href='#chunk'>chunk</a> of a block, location or entity is in, or a list of the loaded chunks of a world.")

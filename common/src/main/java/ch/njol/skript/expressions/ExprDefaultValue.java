@@ -13,7 +13,6 @@ import ch.njol.skript.lang.simplification.SimplifiedLiteral;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.util.LiteralUtils;
 import ch.njol.skript.util.Utils;
-import ch.njol.util.Checker;
 import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
 

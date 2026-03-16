@@ -44,8 +44,8 @@ import org.skriptlang.skript.lang.arithmetic.Operator;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 
 @Name("Arithmetic")
 @Description("Arithmetic expressions, e.g. 1 + 2, (health of player - 2) / 3, etc.")

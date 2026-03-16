@@ -1,6 +1,5 @@
 package org.bukkit.plugin;
 
-import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 /**

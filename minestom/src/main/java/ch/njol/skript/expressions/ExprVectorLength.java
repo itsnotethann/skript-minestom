@@ -1,13 +1,12 @@
 package ch.njol.skript.expressions;
 
 
-import net.minestom.server.coordinate.Vec;
-
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import net.minestom.server.coordinate.Vec;
 
 @Name("Vectors - Length")
 @Description("Gets or sets the length of a vector.")

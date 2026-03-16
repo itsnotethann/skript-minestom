@@ -13,7 +13,10 @@ import net.kyori.adventure.nbt.CompoundBinaryTag;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class EffSaveNBT extends Effect {
 

@@ -9,7 +9,6 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
-import com.github.hapily04.skriptminestom.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.scoreboard.Sidebar;
 import org.bukkit.event.Event;

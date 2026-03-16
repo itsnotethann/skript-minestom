@@ -18,9 +18,8 @@
  */
 package ch.njol.skript.expressions.arithmetic;
 
-import org.bukkit.event.Event;
-
 import ch.njol.skript.lang.Expression;
+import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 import org.skriptlang.skript.lang.arithmetic.Arithmetics;
 

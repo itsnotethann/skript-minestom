@@ -18,11 +18,6 @@
  */
 package ch.njol.skript.expressions.base;
 
-import java.lang.reflect.Array;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAPIException;
 import ch.njol.skript.classes.Changer;
@@ -39,7 +34,6 @@ import ch.njol.skript.log.ParseLogHandler;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.util.Getter;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
@@ -49,6 +43,11 @@ import org.skriptlang.skript.lang.converter.Converter;
 import org.skriptlang.skript.registration.SyntaxInfo;
 import org.skriptlang.skript.registration.SyntaxRegistry;
 import org.skriptlang.skript.util.Priority;
+
+import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A useful class for creating default expressions. It simply returns the event value of the given type.

@@ -1,15 +1,13 @@
 package ch.njol.skript.util;
 
-import org.bukkit.Bukkit;
-import org.bukkit.event.Event;
-import org.jetbrains.annotations.Nullable;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.effects.Delay;
 import ch.njol.skript.lang.Effect;
-import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.variables.Variables;
+import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Effects that extend this class are ran asynchronously. Next trigger item will be ran

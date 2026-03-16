@@ -1,26 +1,7 @@
 package ch.njol.skript.expressions;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import ch.njol.skript.util.Item;
-import net.kyori.adventure.text.Component;
-import net.minestom.server.component.DataComponents;
-import net.minestom.server.item.ItemStack;
-import net.minestom.server.item.Material;
-import org.bukkit.Bukkit;
-import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
-
 import ch.njol.skript.Skript;
-import ch.njol.skript.SkriptConfig;
-import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.classes.Changer.ChangeMode;
-import ch.njol.skript.classes.Changer.ChangerUtils;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -29,10 +10,20 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.util.Item;
 import ch.njol.util.Kleenean;
 import ch.njol.util.Math2;
-import ch.njol.util.StringUtils;
 import ch.njol.util.coll.CollectionUtils;
+import net.kyori.adventure.text.Component;
+import net.minestom.server.component.DataComponents;
+import net.minestom.server.item.ItemStack;
+import net.minestom.server.item.Material;
+import org.bukkit.event.Event;
+import org.eclipse.jdt.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author joeuguce99

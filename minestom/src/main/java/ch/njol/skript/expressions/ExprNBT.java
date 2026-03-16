@@ -23,7 +23,10 @@ import net.minestom.server.tag.Taggable;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class ExprNBT extends SimpleExpression<NBTCompound> {
 

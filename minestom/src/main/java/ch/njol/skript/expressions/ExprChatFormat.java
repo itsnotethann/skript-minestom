@@ -14,7 +14,6 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import net.kyori.adventure.text.Component;
-import net.minestom.server.entity.Entity;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 

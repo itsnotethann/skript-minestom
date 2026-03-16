@@ -6,8 +6,6 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
-import com.github.hapily04.skriptminestom.util.ComponentUtils;
-import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Player;
 import net.minestom.server.scoreboard.Sidebar;
 import net.minestom.server.tag.Tag;

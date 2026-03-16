@@ -18,20 +18,6 @@
  */
 package ch.njol.skript.effects;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.logging.Level;
-
-import org.bukkit.util.LoggerUtils;
-import org.skriptlang.skript.lang.script.Script;
-import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.doc.Description;
@@ -46,6 +32,15 @@ import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.util.ExceptionUtils;
 import ch.njol.util.Closeable;
 import ch.njol.util.Kleenean;
+import org.bukkit.event.Event;
+import org.bukkit.util.LoggerUtils;
+import org.eclipse.jdt.annotation.Nullable;
+import org.skriptlang.skript.lang.script.Script;
+
+import java.io.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.logging.Level;
 
 @Name("Log")
 @Description({"Writes text into a .log file. Skript will write these files to /plugins/Skript/logs.",

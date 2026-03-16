@@ -11,7 +11,6 @@ import org.skriptlang.skript.lang.experiment.Experiment;
 import org.skriptlang.skript.lang.experiment.ExperimentRegistry;
 import org.skriptlang.skript.lang.experiment.LifeCycle;
 
-import java.util.Collection;
 import java.util.List;
 
 /**

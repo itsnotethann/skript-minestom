@@ -3,7 +3,6 @@ package ch.njol.skript.doc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Collection;
 import java.util.List;
 
 /**

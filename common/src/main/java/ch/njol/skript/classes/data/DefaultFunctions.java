@@ -25,13 +25,11 @@ import ch.njol.skript.lang.function.SimpleJavaFunction;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.registrations.DefaultClasses;
-import ch.njol.skript.util.Color;
+import ch.njol.skript.util.Contract;
 import ch.njol.skript.util.Date;
 import ch.njol.util.Math2;
 import ch.njol.util.StringUtils;
-import ch.njol.util.coll.CollectionUtils;
 import org.eclipse.jdt.annotation.Nullable;
-import ch.njol.skript.util.Contract;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

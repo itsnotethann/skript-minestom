@@ -18,27 +18,6 @@
  */
 package ch.njol.skript.structures;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import com.google.common.collect.Queues;
-import org.bukkit.event.Event;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
-import org.skriptlang.skript.lang.converter.Converters;
-import org.skriptlang.skript.lang.entry.EntryContainer;
-import org.skriptlang.skript.lang.script.Script;
-import org.skriptlang.skript.lang.script.ScriptData;
-import org.skriptlang.skript.lang.structure.Structure;
-
-import com.google.common.collect.ImmutableList;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.config.EntryNode;
@@ -59,6 +38,18 @@ import ch.njol.skript.variables.Variables;
 import ch.njol.util.NonNullPair;
 import ch.njol.util.StringUtils;
 import ch.njol.util.coll.CollectionUtils;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Queues;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
+import org.skriptlang.skript.lang.converter.Converters;
+import org.skriptlang.skript.lang.entry.EntryContainer;
+import org.skriptlang.skript.lang.script.Script;
+import org.skriptlang.skript.lang.script.ScriptData;
+import org.skriptlang.skript.lang.structure.Structure;
+
+import java.util.*;
 
 @Name("Variables")
 @Description({

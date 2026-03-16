@@ -4,12 +4,10 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import ch.njol.skript.events.wrapper.EventWrapper;
 import ch.njol.skript.events.wrapper.PlayerSpawnWrapper;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser;
-import net.minestom.server.event.player.PlayerSpawnEvent;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
@@ -30,10 +28,9 @@ public class EvtFirstPlayerSpawn extends SkriptEvent {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean check(@NotNull Event event) {
-		return ((EventWrapper<PlayerSpawnEvent>) event).getEvent().isFirstSpawn();
+		return ((PlayerSpawnWrapper) event).getEvent().isFirstSpawn();
 	}
 
 	@Override

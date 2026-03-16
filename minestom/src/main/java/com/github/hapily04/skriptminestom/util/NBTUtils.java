@@ -3,7 +3,6 @@ package com.github.hapily04.skriptminestom.util;
 import ch.njol.skript.util.NBTCompound;
 import net.kyori.adventure.nbt.*;
 import net.minestom.server.component.DataComponent;
-import net.minestom.server.component.DataComponentMap;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.tag.Tag;

@@ -6,7 +6,6 @@ import ch.njol.util.coll.CollectionUtils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
-import net.minestom.server.scoreboard.TeamBuilder;
 import org.bukkit.event.Event;
 
 public class ExprGlowColorOverride extends SimplePropertyExpression<Entity, NamedTextColor> {

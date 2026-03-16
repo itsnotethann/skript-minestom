@@ -6,14 +6,10 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
-import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
-
-import static com.github.hapily04.skriptminestom.util.NumberUtils.quatFromVec;
-import static com.github.hapily04.skriptminestom.util.NumberUtils.vecFromQuat;
 
 public class ExprDisplayBrightness extends SimplePropertyExpression<Entity, Integer> {
 

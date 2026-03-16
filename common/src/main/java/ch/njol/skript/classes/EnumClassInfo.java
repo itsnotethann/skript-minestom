@@ -1,21 +1,3 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.classes;
 
 import ch.njol.skript.expressions.base.EventValueExpression;
@@ -35,9 +17,17 @@ public class EnumClassInfo<T extends Enum<T>> extends ClassInfo<T> {
 	/**
 	 * @param c The class
 	 * @param codeName The name used in patterns
+	 */
+	public EnumClassInfo(Class<T> c, String codeName) {
+		this(c, codeName, null);
+	}
+
+	/**
+	 * @param c The class
+	 * @param codeName The name used in patterns
 	 * @param languageNode The language node of the type
 	 */
-	public EnumClassInfo(Class<T> c, String codeName, String languageNode) {
+	public EnumClassInfo(Class<T> c, String codeName, @Nullable String languageNode) {
 		this(c, codeName, languageNode, new EventValueExpression<>(c));
 	}
 
@@ -47,13 +37,13 @@ public class EnumClassInfo<T extends Enum<T>> extends ClassInfo<T> {
 	 * @param languageNode The language node of the type
 	 * @param defaultExpression The default expression of the type
 	 */
-	public EnumClassInfo(Class<T> c, String codeName, String languageNode, DefaultExpression<T> defaultExpression) {
+	public EnumClassInfo(Class<T> c, String codeName, @Nullable String languageNode, DefaultExpression<T> defaultExpression) {
 		super(c, codeName);
-		EnumUtils<T> enumUtils = new EnumUtils<>(c, languageNode);
+		EnumUtils<T> enumUtils = languageNode != null ? new EnumUtils<>(c, languageNode) : new EnumUtils<>(c);
 		usage(enumUtils.getAllNames())
 			.serializer(new EnumSerializer<>(c))
 			.defaultExpression(defaultExpression)
-			.parser(new Parser<T>() {
+			.parser(new Parser<>() {
 				@Override
 				@Nullable
 				public T parse(String s, ParseContext context) {

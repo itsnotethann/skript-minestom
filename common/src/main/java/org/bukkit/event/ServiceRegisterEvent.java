@@ -1,6 +1,5 @@
 package org.bukkit.event;
 
-import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 

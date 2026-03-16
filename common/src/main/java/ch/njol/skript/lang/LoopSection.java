@@ -20,9 +20,7 @@ package ch.njol.skript.lang;
 
 import org.bukkit.event.Event;
 
-import java.util.Collections;
 import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

@@ -6,7 +6,6 @@ import ch.njol.skript.effects.particle.*;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.lang.util.SimpleLiteral;
-import ch.njol.skript.localization.Noun;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.*;
 import ch.njol.skript.variables.Variables;
@@ -15,9 +14,7 @@ import ch.njol.yggdrasil.Fields;
 import com.github.hapily04.skriptminestom.util.NBTUtils;
 import com.github.hapily04.skriptminestom.util.NumberUtils;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.kyori.adventure.nbt.TagStringIO;
 import net.kyori.adventure.resource.ResourcePackStatus;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -37,14 +34,10 @@ import net.minestom.server.coordinate.BlockVec;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
-import net.minestom.server.dialog.Dialog;
-import net.minestom.server.dialog.DialogAction;
-import net.minestom.server.dialog.DialogInput;
 import net.minestom.server.entity.*;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import net.minestom.server.entity.metadata.display.ItemDisplayMeta;
 import net.minestom.server.entity.metadata.display.TextDisplayMeta;
-import net.minestom.server.event.player.PlayerCustomClickEvent;
 import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
@@ -61,7 +54,16 @@ import net.minestom.server.particle.Particle;
 import net.minestom.server.ping.ServerListPingType;
 import net.minestom.server.registry.RegistryKey;
 import net.minestom.server.scoreboard.Sidebar;
+import net.minestom.server.sound.Music;
+import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.tag.Taggable;
+import net.minestom.server.world.DimensionType;
+import net.minestom.server.world.MoonPhase;
+import net.minestom.server.world.attribute.AmbientParticle;
+import net.minestom.server.world.attribute.AmbientSounds;
+import net.minestom.server.world.attribute.BackgroundMusic;
+import net.minestom.server.world.attribute.BedRule;
+import net.minestom.server.world.biome.Biome;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
@@ -72,18 +74,16 @@ import org.skriptlang.skript.lang.comparator.Relation;
 import org.skriptlang.skript.lang.converter.Converters;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.StreamCorruptedException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
+import static ch.njol.skript.expressions.ExprAmbientSounds.getSoundEvent;
 import static com.github.hapily04.skriptminestom.util.MessageUtils.LEGACY_SERIALIZER;
 import static com.github.hapily04.skriptminestom.util.NumberUtils.timespanFrom;
 
+@SuppressWarnings("unchecked")
 public class MinestomClasses {
 
 	// TODO Use lang files and enumclassinfo
@@ -135,7 +135,7 @@ public class MinestomClasses {
 			.name("Console Sender")
 			.description("The console.")
 			.defaultExpression(new EventValueExpression<>(ConsoleSender.class))
-			.parser(new Parser<ConsoleSender>() {
+			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
 					return false;
@@ -200,22 +200,7 @@ public class MinestomClasses {
 			.user("taggables?")
 			.name("Taggable")
 			.description("An object that can hold tags (entities, instances, etc.)")
-			.parser(new Parser<>() {
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return false;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull Taggable o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull Taggable o) {
-					return o.toString();
-				} // todo better toString maybe or maybe not because this shouldn't get called
-			}));
+			.defaultExpression(new EventValueExpression<>(Taggable.class)));
 		Classes.registerClass(new ClassInfo<>(Entity.class, "entity")
 			.user("entit(y|ies)")
 			.name("Entity")
@@ -286,7 +271,7 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull Pos o) {
-					return "position: x" + o.x() + " y: " + o.y() + " z: " + o.z() + " yaw: " + o.yaw() + " pitch: " + o.pitch();
+					return "position x: " + o.x() + " y: " + o.y() + " z: " + o.z() + " yaw: " + o.yaw() + " pitch: " + o.pitch();
 				}
 			})
 			.serializer(new Serializer<>() {
@@ -344,7 +329,7 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull Vec o) {
-					return "vector: x: " + o.x() + " y: " + o.y() + " z: " + o.z();
+					return "vector x: " + o.x() + " y: " + o.y() + " z: " + o.z();
 				}
 			})
 			.serializer(new Serializer<>() {
@@ -398,7 +383,7 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull Point o) {
-					return "point: x" + o.x() + " y: " + o.y() + " z: " + o.z();
+					return "point x: " + o.x() + " y: " + o.y() + " z: " + o.z();
 				}
 			})); // don't think a serializer is needed as it should go to blockvec/vector/position
 		Classes.registerClass(new ClassInfo<>(BlockVec.class, "blockvector")
@@ -491,7 +476,7 @@ public class MinestomClasses {
 			.name("Chunk")
 			.description("A block container")
 			.defaultExpression(new EventValueExpression<>(Chunk.class))
-			.parser(new Parser<Chunk>() {
+			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
 					return false;
@@ -504,7 +489,55 @@ public class MinestomClasses {
 
 				@Override
 				public String toVariableNameString(Chunk o) {
-					return "chunk[" + o.getChunkX() + "," + o.getChunkZ() + "]";
+					return "chunk x: " + o.getChunkX() + " z: " + o.getChunkZ();
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(DimensionType.class, "dimensiontype")
+			.user("dimension ?types?")
+			.name("Dimension Type")
+			.description("A dimension type with several values.")
+			.defaultExpression(new EventValueExpression<>(DimensionType.class))
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public String toString(DimensionType o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public String toVariableNameString(DimensionType o) {
+					Key key = null;
+					RegistryKey<DimensionType> registryKey = MinecraftServer.getDimensionTypeRegistry().getKey(o);
+					if (registryKey != null) key = registryKey.key();
+					return "dimension type" + (key != null ? " under namespace: " + key.asString() : "");
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(Biome.class, "biome")
+			.user("biomes?")
+			.name("Biome")
+			.description("A biome with several values.")
+			.defaultExpression(new EventValueExpression<>(Biome.class))
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public String toString(Biome o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public String toVariableNameString(Biome o) {
+					Key key = null;
+					RegistryKey<Biome> registryKey = MinecraftServer.getBiomeRegistry().getKey(o);
+					if (registryKey != null) key = registryKey.key();
+					return "biome" + (key != null ? " under namespace: " + key.asString() : "");
 				}
 			}));
 		Classes.registerClass(new ClassInfo<>(Block.class, "block")
@@ -612,103 +645,22 @@ public class MinestomClasses {
 				}
 			})
 			.supplier(Block.values().toArray(new Block[0])));
-		Classes.registerClass(new ClassInfo<>(GameMode.class, "gamemode")
+		Classes.registerClass(new EnumClassInfo<>(GameMode.class, "gamemode")
 			.user("game ?modes?")
 			.name("Game Mode")
 			.description("Represents a Minecraft game mode. Possible values: survival, creative, adventure, spectator.")
 			.examples("set player's game mode to creative")
-			.defaultExpression(new EventValueExpression<>(GameMode.class))
-			.parser(new Parser<>() {
-				@Nullable
-				public GameMode parse(@NotNull String s, @NotNull ParseContext context) {
-					s = s.toUpperCase(Locale.ENGLISH);
-					for (GameMode gameMode : GameMode.values()) {
-						if (gameMode.name().equals(s)) return gameMode;
-					}
-					return null;
-				}
-
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return true;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull GameMode o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull GameMode o) {
-					return typeFormatted(o.name());
-				}
-			})
-			.serializer(new EnumSerializer<>(GameMode.class))
-			.supplier(GameMode.values()));
-		Classes.registerClass(new ClassInfo<>(InventoryType.class, "inventorytype")
+			.defaultExpression(new EventValueExpression<>(GameMode.class)));
+		Classes.registerClass(new EnumClassInfo<>(InventoryType.class, "inventorytype")
 			.user("inventory ?types?")
 			.name("Inventory Type")
-			.description("Inventory type todo convert")
-			.defaultExpression(new EventValueExpression<>(InventoryType.class))
-			.parser(new Parser<>() {
-				@Nullable
-				public InventoryType parse(@NotNull String s, @NotNull ParseContext context) {
-					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
-					for (InventoryType type : InventoryType.values()) {
-						if (type.name().equals(s)) return type;
-					}
-					return null;
-				}
-
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return true;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull InventoryType o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull InventoryType o) {
-					return typeFormatted(o.name());
-				}
-			})
-			.serializer(new EnumSerializer<>(InventoryType.class))
-			.supplier(InventoryType.values()));
-		Classes.registerClass(new ClassInfo<>(ClickType.class, "clicktype")
+			.description("Inventory type")
+			.defaultExpression(new EventValueExpression<>(InventoryType.class)));
+		Classes.registerClass(new EnumClassInfo<>(ClickType.class, "clicktype")
 			.user("click ?types?")
 			.name("Click Type")
-			.description("Click type todo convert")
-			.defaultExpression(new EventValueExpression<>(ClickType.class))
-			.parser(new Parser<>() {
-				@Nullable
-				public ClickType parse(@NotNull String s, @NotNull ParseContext context) {
-					s = s.toUpperCase(Locale.ENGLISH);
-					for (ClickType type : ClickType.values()) {
-						if (type.name().equals(s)) return type;
-					}
-					return null;
-				}
-
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return true;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull ClickType o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull ClickType o) {
-					return typeFormatted(o.name());
-				}
-			})
-			.serializer(new EnumSerializer<>(ClickType.class))
-			.supplier(ClickType.values()));
+			.description("Click type")
+			.defaultExpression(new EventValueExpression<>(ClickType.class)));
 		Classes.registerClass(new ClassInfo<>(Component.class, "component")
 			.user("components?")
 			.name("Component")
@@ -731,7 +683,7 @@ public class MinestomClasses {
 					return LEGACY_SERIALIZER.serialize(o);
 				}
 			})
-			.serializer(new Serializer<Component>() {
+			.serializer(new Serializer<>() {
 				@Override
 				public Fields serialize(Component o) throws NotSerializableException {
 					Fields fields = new Fields();
@@ -802,7 +754,7 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull ComponentLike o) {
-					return o.toString();
+					return Classes.toString(o.asComponent());
 				}
 			}));
 		Classes.registerClass(new ClassInfo<>(SuggestionEntry.class, "suggestionentry")
@@ -826,38 +778,11 @@ public class MinestomClasses {
 					return "suggestion entry: " + o.getEntry() + " tooltip: " + Classes.toString(o.getTooltip());
 				}
 			}));
-		Classes.registerClass(new ClassInfo<>(ResourcePackStatus.class, "resourcepackstatus")
+		Classes.registerClass(new EnumClassInfo<>(ResourcePackStatus.class, "resourcepackstatus")
 			.user("resource ?pack ?status(es)?")
 			.name("Resource Pack Status")
 			.description("The status of a resource pack that was sent.")
-			.defaultExpression(new EventValueExpression<>(ResourcePackStatus.class))
-			.parser(new Parser<>() {
-				@Nullable
-				public ResourcePackStatus parse(@NotNull String s, @NotNull ParseContext context) {
-					s = s.toUpperCase(Locale.ENGLISH);
-					s = s.replace(' ', '_');
-					for (ResourcePackStatus status : ResourcePackStatus.values()) {
-						if (status.name().equals(s)) return status;
-					}
-					return null;
-				}
-
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return true;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull ResourcePackStatus o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull ResourcePackStatus o) {
-					return typeFormatted(o.name());
-				}
-			})
-			.serializer(new EnumSerializer<>(ResourcePackStatus.class)));
+			.defaultExpression(new EventValueExpression<>(ResourcePackStatus.class)));
 		Classes.registerClass(new ClassInfo<>(AbstractInventory.class, "inventory")
 			.user("inventor(y|ies)")
 			.name("Inventory")
@@ -901,47 +826,6 @@ public class MinestomClasses {
 					}
 				}
 			}));
-		/*Classes.registerClass(new ClassInfo<>(ItemStack.class, "itemstack")
-			.user("item ?stacks?")
-			.name("Item Stack")
-			.description("An item.")
-			.defaultExpression(new EventValueExpression<>(ItemStack.class))
-			.serializer(new Serializer<>() {
-				@Override
-				public @NotNull Fields serialize(@NotNull ItemStack o) {
-					Fields fields = new Fields();
-					try {
-						fields.putPrimitive("item-nbt", TagStringIO.tagStringIO().asString(o.toItemNBT()));
-					} catch (IOException e) {
-						System.err.println("Error while trying to serialize itemstack: " + e.getMessage());
-					}
-					return fields;
-				}
-
-				@Override
-				public void deserialize(@NotNull ItemStack o, @NotNull Fields f) {
-					assert false;
-				}
-
-				@Override
-				protected @NotNull ItemStack deserialize(@NotNull Fields f) throws StreamCorruptedException {
-					try {
-						return new Item(ItemStack.fromItemNBT(TagStringIO.tagStringIO().asCompound((String) f.getPrimitive("item-nbt"))));
-					} catch (IOException e) {
-						throw new StreamCorruptedException("Error occurred whilst trying to deserialize an itemstack.");
-					}
-				}
-
-				@Override
-				public boolean mustSyncDeserialization() {
-					return false;
-				}
-
-				@Override
-				protected boolean canBeInstantiated() {
-					return false;
-				}
-			}));*/
 		Classes.registerClass(new ClassInfo<>(Item.class, "item")
 			.user("items?")
 			.name("Item")
@@ -1102,38 +986,12 @@ public class MinestomClasses {
 				}
 			})
 			.supplier(EntityType.values().toArray(new EntityType[0])));
-		Classes.registerClass(new ClassInfo<>(EquipmentSlot.class, "equipmentslot")
+		Classes.registerClass(new EnumClassInfo<>(EquipmentSlot.class, "equipmentslot")
 			.user("equipment ?slots?")
 			.name("Equipment Slot")
 			.description("An equipment slot for an entity. Possible values: main_hand, off_hand, boots, leggings, chestplate, helmet.")
 			.examples("set helmet of player to diamond helmet")
-			.defaultExpression(new EventValueExpression<>(EquipmentSlot.class))
-			.parser(new Parser<>() {
-				@Nullable
-				public EquipmentSlot parse(@NotNull String s, @NotNull ParseContext context) {
-					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
-					for (EquipmentSlot slo : EquipmentSlot.values()) {
-						if (slo.name().equals(s)) return slo;
-					}
-					return null;
-				}
-
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return true;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull EquipmentSlot o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull EquipmentSlot o) {
-					return typeFormatted(o.name()) + " slot";
-				}
-			})
-			.serializer(new EnumSerializer<>(EquipmentSlot.class)));
+			.defaultExpression(new EventValueExpression<>(EquipmentSlot.class)));
 		Classes.registerClass(new ClassInfo<>(Sidebar.class, "scoreboard")
 			.user("score ?boards?")
 			.name("Scoreboard")
@@ -1155,27 +1013,6 @@ public class MinestomClasses {
 					return "scoreboard titled \"" + LegacyComponentSerializer.legacyAmpersand().serialize(o.getTitle()) + "\"";
 				}
 			}));
-		/*Classes.registerClass(new ClassInfo<>(Material.class, "material")
-			.user("materials?")
-			.name("Material")
-			.description("A material. Only used for ExprName, see type \"Item\"")
-			.defaultExpression(new EventValueExpression<>(Material.class))
-			.parser(new Parser<>() {
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return false;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull Material o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull Material o) {
-					return keyToString(o.key());
-				}
-			}));*/
 		Classes.registerClass(new ClassInfo<>(Enchantment.class, "enchantment")
 			.user("enchantments?")
 			.name("Enchantment")
@@ -1309,69 +1146,437 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull Sound o) {
-					return o.toString();
+					return "sound id: " + o.name().asString().toLowerCase(Locale.ENGLISH) + " category: " + Classes.toString(o.source()) +
+						" seed: " + o.seed().orElse(0) + " volume: " + o.volume() + " pitch: " + o.pitch();
 				}
-			})); // todo serializer
-		Classes.registerClass(new ClassInfo<>(Sound.Source.class, "soundcategory")
+			})
+			.serializer(new Serializer<>() {
+				@Override
+				public @NotNull Fields serialize(@NotNull Sound o) {
+					Fields fields = new Fields();
+					fields.putObject("name", o.name().asString());
+					fields.putObject("source", o.source().toString());
+					fields.putPrimitive("seed", o.seed().orElse(0));
+					fields.putPrimitive("volume", o.volume());
+					fields.putPrimitive("pitch", o.pitch());
+					return fields;
+				}
+
+				@Override
+				public void deserialize(@NotNull Sound o, @NotNull Fields f) {
+					assert false;
+				}
+
+				@Override
+				protected @NotNull Sound deserialize(@NotNull Fields f) throws StreamCorruptedException {
+					String name = f.getObject("name", String.class);
+					Sound.Source source = Sound.Source.valueOf(f.getObject("source", String.class));
+					long seed = f.getPrimitive("seed", long.class);
+					float volume = f.getPrimitive("volume", float.class);
+					float pitch = f.getPrimitive("pitch", float.class);
+					assert name != null;
+					return Sound.sound()
+						.type(Key.key(name))
+						.source(source)
+						.seed(seed)
+						.volume(volume)
+						.pitch(pitch)
+						.build();
+				}
+
+				@Override
+				public boolean mustSyncDeserialization() {
+					return false;
+				}
+
+				@Override
+				protected boolean canBeInstantiated() {
+					return false;
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(AmbientSounds.class, "ambientsound")
+			.user("ambient ?sounds?")
+			.name("Ambient Sounds")
+			.description("An ambient sound with an id, mood, and additions.")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull AmbientSounds o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull AmbientSounds o) {
+					StringBuilder sb = new StringBuilder("ambient sounds");
+					SoundEvent loop = o.loop();
+					if (loop != null) {
+						sb.append(" loop: ");
+						sb.append(loop.name().toLowerCase(Locale.ENGLISH));
+					}
+					AmbientSounds.Mood mood = o.mood();
+					if (mood != null){
+						sb.append(" mood: ");
+						sb.append(Classes.toString(mood));
+					}
+					List<AmbientSounds.Additions> additions = o.additions();
+					if (!additions.isEmpty()) {
+						int endIndex = additions.size()-1;
+						sb.append(" additions: ");
+						for (AmbientSounds.Additions addition : additions) {
+							sb.append(Classes.toString(addition));
+							if (additions.indexOf(addition) != endIndex) sb.append(", ");
+						}
+					}
+					return sb.toString();
+				}
+			})
+			.serializer(new Serializer<>() {
+				@Override
+				public @NotNull Fields serialize(@NotNull AmbientSounds o) {
+					Fields fields = new Fields();
+					SoundEvent loop = o.loop();
+					if (loop != null) fields.putObject("loop", loop.key().asString());
+					AmbientSounds.Mood mood = o.mood();
+					if (mood != null) fields.putObject("mood", mood);
+					List<AmbientSounds.Additions> additions = o.additions();
+					if (!additions.isEmpty()) fields.putObject("additions", additions);
+					return fields;
+				}
+
+				@Override
+				public void deserialize(@NotNull AmbientSounds o, @NotNull Fields f) {
+					assert false;
+				}
+
+				@Override
+				protected @NotNull AmbientSounds deserialize(@NotNull Fields f) throws StreamCorruptedException {
+					SoundEvent loop = null;
+					if (f.hasField("loop")) {
+						String l = f.getObject("loop", String.class);
+						loop = getSoundEvent(l);
+					}
+					AmbientSounds.Mood mood = null;
+					if (f.hasField("mood")) mood = f.getObject("mood", AmbientSounds.Mood.class);
+					List<AmbientSounds.Additions> additions = new ArrayList<>();
+					if (f.hasField("additions")) additions = f.getObject("additions", List.class);
+					assert additions != null;
+					return new AmbientSounds(loop, mood, additions);
+				}
+
+				@Override
+				public boolean mustSyncDeserialization() {
+					return false;
+				}
+
+				@Override
+				protected boolean canBeInstantiated() {
+					return false;
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(AmbientSounds.Mood.class, "mood")
+			.user("moods?")
+			.name("Mood")
+			.description("The mood for ambient sounds.")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull AmbientSounds.Mood o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull AmbientSounds.Mood o) {
+					return "mood sound: " + o.sound().name() + " delay: " + Classes.toString(timespanFrom(o.tickDelay()))
+						+ " block search extent: " + o.blockSearchExtent() + " offset: " + o.offset();
+				}
+			})
+			.serializer(new Serializer<>() {
+				@Override
+				public @NotNull Fields serialize(@NotNull AmbientSounds.Mood o) {
+					Fields fields = new Fields();
+					fields.putObject("sound", o.sound().key().asString());
+					fields.putPrimitive("delay", o.tickDelay());
+					fields.putPrimitive("block-search-extent", o.blockSearchExtent());
+					fields.putPrimitive("offset", o.offset());
+					return fields;
+				}
+
+				@Override
+				public void deserialize(@NotNull AmbientSounds.Mood o, @NotNull Fields f) {
+					assert false;
+				}
+
+				@Override
+				protected @NotNull AmbientSounds.Mood deserialize(@NotNull Fields f) throws StreamCorruptedException {
+					SoundEvent sound = getSoundEvent(f.getObject("sound", String.class));
+					int delay = f.getPrimitive("delay", int.class);
+					int blockSearchExtent = f.getPrimitive("block-search-extent", int.class);
+					double offset = f.getPrimitive("offset", double.class);
+					assert sound != null;
+					return new AmbientSounds.Mood(sound, delay, blockSearchExtent, offset);
+				}
+
+				@Override
+				public boolean mustSyncDeserialization() {
+					return false;
+				}
+
+				@Override
+				protected boolean canBeInstantiated() {
+					return false;
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(AmbientSounds.Additions.class, "addition")
+			.user("additions?")
+			.name("Additions")
+			.description("The additions for ambient sounds.")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull AmbientSounds.Additions o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull AmbientSounds.Additions o) {
+					return "additions sound: " + o.sound().name() + " tick chance: " + o.tickChance();
+				}
+			})
+			.serializer(new Serializer<>() {
+				@Override
+				public @NotNull Fields serialize(@NotNull AmbientSounds.Additions o) {
+					Fields fields = new Fields();
+					fields.putObject("sound", o.sound().key().asString());
+					fields.putPrimitive("tick-chance", o.tickChance());
+					return fields;
+				}
+
+				@Override
+				public void deserialize(@NotNull AmbientSounds.Additions o, @NotNull Fields f) {
+					assert false;
+				}
+
+				@Override
+				protected @NotNull AmbientSounds.Additions deserialize(@NotNull Fields f) throws StreamCorruptedException {
+					SoundEvent sound = getSoundEvent(f.getObject("sound", String.class));
+					double tickChance = f.getPrimitive("tick-chance", double.class);
+					assert sound != null;
+					return new AmbientSounds.Additions(sound, tickChance);
+				}
+
+				@Override
+				public boolean mustSyncDeserialization() {
+					return false;
+				}
+
+				@Override
+				protected boolean canBeInstantiated() {
+					return false;
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(BackgroundMusic.class, "backgroundmusic")
+			.user("background ?musics?")
+			.name("Background Music")
+			.description("The background music.")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull BackgroundMusic o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull BackgroundMusic o) {
+					return "background music music: " + Classes.toString(o.music()) + " creative: " + Classes.toString(o.creativeMusic())
+						+ " underwater: " + Classes.toString(o.underwaterMusic());
+				}
+			})
+			.serializer(new Serializer<>() {
+				@Override
+				public @NotNull Fields serialize(@NotNull BackgroundMusic o) {
+					Fields fields = new Fields();
+					fields.putObject("music", o.music());
+					fields.putObject("creative", o.creativeMusic());
+					fields.putObject("underwater", o.underwaterMusic());
+					return fields;
+				}
+
+				@Override
+				public void deserialize(@NotNull BackgroundMusic o, @NotNull Fields f) {
+					assert false;
+				}
+
+				@Override
+				protected @NotNull BackgroundMusic deserialize(@NotNull Fields f) throws StreamCorruptedException {
+					Music music = null;
+					if (f.hasField("music")) music = f.getObject("music", Music.class);
+					Music creative = null;
+					if (f.hasField("creative")) creative = f.getObject("creative", Music.class);
+					Music underwater = null;
+					if (f.hasField("underwater")) underwater = f.getObject("underwater", Music.class);
+					return new BackgroundMusic(music, creative, underwater);
+				}
+
+				@Override
+				public boolean mustSyncDeserialization() {
+					return false;
+				}
+
+				@Override
+				protected boolean canBeInstantiated() {
+					return false;
+				}
+			}));
+		Classes.registerClass(new ClassInfo<>(Music.class, "music")
+			.user("musics?")
+			.name("Music")
+			.description("The regular/creative/underwater background music.")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull Music o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull Music o) {
+					return "music id: " + o.sound().key().asString() + " min delay: " + Classes.toString(timespanFrom(o.minDelay()))
+						+ " max delay: " + Classes.toString(timespanFrom(o.maxDelay())) + " replaces current music: " + o.replaceCurrentMusic();
+				}
+			})
+			.serializer(new Serializer<>() {
+				@Override
+				public @NotNull Fields serialize(@NotNull Music o) {
+					Fields fields = new Fields();
+					fields.putObject("sound", o.sound().key().asString());
+					fields.putPrimitive("min-delay", o.minDelay());
+					fields.putPrimitive("max-delay", o.maxDelay());
+					fields.putPrimitive("replaces", o.replaceCurrentMusic());
+					return fields;
+				}
+
+				@Override
+				public void deserialize(@NotNull Music o, @NotNull Fields f) {
+					assert false;
+				}
+
+				@Override
+				protected @NotNull Music deserialize(@NotNull Fields f) throws StreamCorruptedException {
+					SoundEvent sound = getSoundEvent(f.getObject("sound", String.class));
+					int minDelay = f.getPrimitive("min-delay", int.class);
+					int maxDelay = f.getPrimitive("max-delay", int.class);
+					boolean replaces = f.getPrimitive("replaces", boolean.class);
+					assert sound != null;
+					return new Music(sound, minDelay, maxDelay, replaces);
+				}
+
+				@Override
+				public boolean mustSyncDeserialization() {
+					return false;
+				}
+
+				@Override
+				protected boolean canBeInstantiated() {
+					return false;
+				}
+			}));
+		Classes.registerClass(new EnumClassInfo<>(EntityActivity.class, "entityactivity")
+			.user("entity activit(y|ies)")
+			.name("Entity Activity")
+			.defaultExpression(new EventValueExpression<>(EntityActivity.class)));
+		Classes.registerClass(new EnumClassInfo<>(MoonPhase.class, "moonphase").user("moon ?phases?"));
+		Classes.registerClass(new ClassInfo<>(BedRule.class, "bedrule")
+			.user("bed ?rules?")
+			.name("Bed Rule")
+			.description("The bed rule environment attribute.")
+			.parser(new Parser<>() {
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull BedRule o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull BedRule o) {
+					return "bed rule can sleep: " + Classes.toString(o.canSleep()) + " can set spawn: " +
+						Classes.toString(o.canSetSpawn()) + " explodes: " + o.explodes() + " error message: " + Classes.toString(o.errorMessage());
+				}
+			})
+			.serializer(new Serializer<>() {
+				@Override
+				public @NotNull Fields serialize(@NotNull BedRule o) {
+					Fields fields = new Fields();
+					fields.putObject("sleep", o.canSleep());
+					fields.putObject("spawn", o.canSetSpawn());
+					fields.putPrimitive("explodes", o.explodes());
+					fields.putObject("error-message", o.errorMessage());
+					return fields;
+				}
+
+				@Override
+				public void deserialize(@NotNull BedRule o, @NotNull Fields f) {
+					assert false;
+				}
+
+				@Override
+				protected @NotNull BedRule deserialize(@NotNull Fields f) throws StreamCorruptedException {
+					BedRule.Rule sleep = f.getObject("sleep", BedRule.Rule.class);
+					BedRule.Rule spawn = f.getObject("spawn", BedRule.Rule.class);
+					boolean explodes = f.getPrimitive("explodes", boolean.class);
+					Component errorMessage = f.getObject("error-message", Component.class);
+					assert sleep != null;
+					assert spawn != null;
+					return new BedRule(sleep, spawn, explodes, errorMessage);
+				}
+
+				@Override
+				public boolean mustSyncDeserialization() {
+					return false;
+				}
+
+				@Override
+				protected boolean canBeInstantiated() {
+					return false;
+				}
+			}));
+		Classes.registerClass(new EnumClassInfo<>(BedRule.Rule.class, "bedrulerule")
+			.user("bed ?rule ?rules?")
+			.name("Bed Rule Rule")
+			.defaultExpression(new EventValueExpression<>(BedRule.Rule.class)));
+		Classes.registerClass(new EnumClassInfo<>(Sound.Source.class, "soundcategory")
 			.user("sound ?categor(y|ies)")
 			.name("Sound Category")
 			.description("A sound category e.g. master")
-			.parser(new Parser<>() {
-				public Sound.@Nullable Source parse(@NotNull String s, @NotNull ParseContext context) {
-					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
-					for (Sound.Source source : Sound.Source.values()) {
-						if (source.name().equals(s)) return source;
-					}
-					return null;
-				}
-
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return true;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull Sound.Source o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull Sound.Source o) {
-					return typeFormatted(o.name());
-				}
-			})
-			.serializer(new EnumSerializer<>(Sound.Source.class))
-			.supplier(Sound.Source.values()));
-		Classes.registerClass(new ClassInfo<>(AbstractDisplayMeta.BillboardConstraints.class, "billboardconstraint")
+			.defaultExpression(new EventValueExpression<>(Sound.Source.class)));
+		Classes.registerClass(new EnumClassInfo<>(AbstractDisplayMeta.BillboardConstraints.class, "billboardconstraint")
 			.user("bill ?board ?constraints?")
 			.name("Billboard Constraints")
 			.description("Billboard constraint e.g. FIXED")
-			.parser(new Parser<>() {
-				public AbstractDisplayMeta.BillboardConstraints parse(@NotNull String s, @NotNull ParseContext context) {
-					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
-					for (AbstractDisplayMeta.BillboardConstraints constraint : AbstractDisplayMeta.BillboardConstraints.values()) {
-						if (constraint.name().equals(s)) return constraint;
-					}
-					return null;
-				}
-
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return true;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull AbstractDisplayMeta.BillboardConstraints o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull AbstractDisplayMeta.BillboardConstraints o) {
-					return typeFormatted(o.name());
-				}
-			})
-			.serializer(new EnumSerializer<>(AbstractDisplayMeta.BillboardConstraints.class))
-			.supplier(AbstractDisplayMeta.BillboardConstraints.values()));
+			.defaultExpression(new EventValueExpression<>(AbstractDisplayMeta.BillboardConstraints.class)));
 		Classes.registerClass(new ClassInfo<>(NamedTextColor.class, "namedtextcolor")
 			.user("named ?text ?colors?")
 			.name("Named Text Color")
@@ -1400,7 +1605,36 @@ public class MinestomClasses {
 					return typeFormatted(o.toString());
 				}
 			})
-			//.serializer(new EnumSerializer<>(AbstractDisplayMeta.BillboardConstraints.class)) todo too lazy to create serializer
+			.serializer(new Serializer<>() {
+				@Override
+				public Fields serialize(NamedTextColor o) throws NotSerializableException {
+					Fields f = new Fields();
+					f.putPrimitive("color", o.value());
+					return f;
+				}
+
+				@Override
+				public void deserialize(NamedTextColor o, Fields f) throws StreamCorruptedException, NotSerializableException {
+					assert false;
+				}
+
+				@SuppressWarnings("DataFlowIssue")
+				@Override
+				protected @NonNull NamedTextColor deserialize(@NotNull Fields f) throws StreamCorruptedException {
+					int color = f.getPrimitive("color", int.class);;
+					return NamedTextColor.namedColor(color);
+				}
+
+				@Override
+				public boolean mustSyncDeserialization() {
+					return false;
+				}
+
+				@Override
+				protected boolean canBeInstantiated() {
+					return false;
+				}
+			})
 			.supplier(NamedTextColor.NAMES.values().toArray(new NamedTextColor[0])));
 		Classes.registerClass(new ClassInfo<>(Color.class, "color")
 			.user("colors?")
@@ -1444,155 +1678,31 @@ public class MinestomClasses {
 					return "alpha color r: " + o.red() + " g: " + o.green() + " b: " + o.blue() + " alpha: " + o.alpha();
 				}
 			}));
-		Classes.registerClass(new ClassInfo<>(ItemDisplayMeta.DisplayContext.class, "displaycontext")
+		Classes.registerClass(new EnumClassInfo<>(ItemDisplayMeta.DisplayContext.class, "displaycontext")
 			.user("display ?contexts?")
 			.name("Item Display Context")
 			.description("The context in which an item display is rendered (e.g. GUI)")
-			.parser(new Parser<>() {
-				public ItemDisplayMeta.DisplayContext parse(@NotNull String s, @NotNull ParseContext context) {
-					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
-					for (ItemDisplayMeta.DisplayContext ctx : ItemDisplayMeta.DisplayContext.values()) {
-						if (ctx.name().equals(s)) return ctx;
-					}
-					return null;
-				}
-
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return true;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull ItemDisplayMeta.DisplayContext o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull ItemDisplayMeta.DisplayContext o) {
-					return typeFormatted(o.name());
-				}
-			})
-			.serializer(new EnumSerializer<>(ItemDisplayMeta.DisplayContext.class))
-			.supplier(ItemDisplayMeta.DisplayContext.values()));
-		Classes.registerClass(new ClassInfo<>(TextDisplayMeta.Alignment.class, "textalignment")
+			.defaultExpression(new EventValueExpression<>(ItemDisplayMeta.DisplayContext.class)));
+		Classes.registerClass(new EnumClassInfo<>(TextDisplayMeta.Alignment.class, "textalignment")
 			.user("textalignments?")
 			.name("Text Alignment")
 			.description("The text alignment of a text display (center, left, or right)")
-			.parser(new Parser<>() {
-				public TextDisplayMeta.Alignment parse(@NotNull String s, @NotNull ParseContext context) {
-					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
-					for (TextDisplayMeta.Alignment alignment : TextDisplayMeta.Alignment.values()) {
-						if (alignment.name().equals(s)) return alignment;
-					}
-					return null;
-				}
-
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return true;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull TextDisplayMeta.Alignment o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull TextDisplayMeta.Alignment o) {
-					return typeFormatted(o.name());
-				}
-			})
-			.serializer(new EnumSerializer<>(TextDisplayMeta.Alignment.class))
-			.supplier(TextDisplayMeta.Alignment.values()));
-		Classes.registerClass(new ClassInfo<>(EntityAnimationPacket.Animation.class, "animation")
+			.defaultExpression(new EventValueExpression<>(TextDisplayMeta.Alignment.class)));
+		Classes.registerClass(new EnumClassInfo<>(EntityAnimationPacket.Animation.class, "animation")
 			.user("animations?")
 			.name("Entity Animation")
 			.description("An animation that an entity can play (main hand swing, leave bed, etc.)")
-			.parser(new Parser<>() {
-				public EntityAnimationPacket.Animation parse(@NotNull String s, @NotNull ParseContext context) {
-					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
-					for (EntityAnimationPacket.Animation animation : EntityAnimationPacket.Animation.values()) {
-						if (animation.name().equals(s)) return animation;
-					}
-					return null;
-				}
-
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return true;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull EntityAnimationPacket.Animation o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull EntityAnimationPacket.Animation o) {
-					return typeFormatted(o.name());
-				}
-			})
-			.serializer(new EnumSerializer<>(EntityAnimationPacket.Animation.class))
-			.supplier(EntityAnimationPacket.Animation.values()));
-		Classes.registerClass(new ClassInfo<>(NBTUtils.TagType.class, "tagtype")
+			.defaultExpression(new EventValueExpression<>(EntityAnimationPacket.Animation.class)));
+		Classes.registerClass(new EnumClassInfo<>(NBTUtils.TagType.class, "tagtype")
 			.user("tag ?types?")
 			.name("NBT Tag Type")
 			.description("The tag type of an nbt tag (e.g. int array)")
-			.parser(new Parser<>() {
-				public NBTUtils.TagType parse(@NotNull String s, @NotNull ParseContext context) {
-					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
-					for (NBTUtils.TagType tagType : NBTUtils.TagType.values()) {
-						if (tagType.name().equals(s)) return tagType;
-					}
-					return null;
-				}
-
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return true;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull NBTUtils.TagType o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull NBTUtils.TagType o) {
-					return typeFormatted(o.name());
-				}
-			})
-			.supplier(NBTUtils.TagType.values()));
-		Classes.registerClass(new ClassInfo<>(ServerListPingType.class, "pingtype")
+			.defaultExpression(new EventValueExpression<>(NBTUtils.TagType.class)));
+		Classes.registerClass(new EnumClassInfo<>(ServerListPingType.class, "pingtype")
 			.user("ping ?types?")
 			.name("Server List Ping Type")
 			.description("The ping type of a ServerListPing event")
-			.defaultExpression(new EventValueExpression<>(ServerListPingType.class))
-			.parser(new Parser<>() {
-				public ServerListPingType parse(@NotNull String s, @NotNull ParseContext context) {
-					s = s.toUpperCase(Locale.ENGLISH).replace(' ', '_');
-					for (ServerListPingType tagType : ServerListPingType.values()) {
-						if (tagType.name().equals(s)) return tagType;
-					}
-					return null;
-				}
-
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return true;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull ServerListPingType o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull ServerListPingType o) {
-					return typeFormatted(o.name());
-				}
-			})
-			.supplier(ServerListPingType.values()));
+			.defaultExpression(new EventValueExpression<>(ServerListPingType.class)));
 		Classes.registerClass(new ClassInfo<>(BufferedImage.class, "bufferedimage")
 			.user("buffered ?images?")
 			.name("Buffered Image")
@@ -1641,6 +1751,27 @@ public class MinestomClasses {
 				}
 			})
 			.supplier(Particle.values().toArray(new Particle[0])));
+		Classes.registerClass(new ClassInfo<>(AmbientParticle.class, "ambientparticle")
+			.user("ambient ?particles?")
+			.name("Ambient Particle")
+			.description("Particle (e.g. dust) with a probability of spawning")
+			.parser(new Parser<>() {
+
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull AmbientParticle o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull AmbientParticle o) {
+					return "ambient particle particle: " + Classes.toString(o.particle()) + " probability: " + o.probability();
+				}
+			}));
 		Classes.registerClass(new ClassInfo<>(DustOption.class, "dustoption")
 			.user("dust ?options?")
 			.name("Dust Option")
@@ -1658,7 +1789,7 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull DustOption o) {
-					return "dust options color: " + Classes.toString(o.getColor()) + " scale: " + o.getScale();
+					return "dust options color: " + Classes.toString(o.color()) + " scale: " + o.scale();
 				}
 			}));
 		Classes.registerClass(new ClassInfo<>(DustTransition.class, "dusttransition")
@@ -1678,8 +1809,8 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull DustTransition o) {
-					return "dust transition original color: " + Classes.toString(o.getColor()) + " to color: " + Classes.toString(o.getTransitionColor())
-						+ " scale: " + o.getScale();
+					return "dust transition original color: " + Classes.toString(o.color()) + " to color: " + Classes.toString(o.transitionColor())
+						+ " scale: " + o.scale();
 				}
 			}));
 		Classes.registerClass(new ClassInfo<>(EffectData.class, "effectdata")
@@ -1699,7 +1830,7 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull EffectData o) {
-					return "effect data options color: " + Classes.toString(o.getColor()) + " power: " + o.getPower();
+					return "effect data options color: " + Classes.toString(o.color()) + " power: " + o.power();
 				}
 			}));
 		Classes.registerClass(new ClassInfo<>(TrailData.class, "traildata")
@@ -1719,8 +1850,8 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull TrailData o) {
-					return "trail data options target: " + Classes.toString(o.getTarget()) + " color: " + Classes.toString(o.getColor())
-						+ " duration: " + Classes.toString(timespanFrom(o.getDuration()));
+					return "trail data options target: " + Classes.toString(o.target()) + " color: " + Classes.toString(o.color())
+						+ " duration: " + Classes.toString(timespanFrom(o.duration()));
 				}
 			}));
 		Classes.registerClass(new ClassInfo<>(VibrationData.class, "vibrationdata")
@@ -1740,9 +1871,9 @@ public class MinestomClasses {
 
 				@Override
 				public @NotNull String toVariableNameString(@NotNull VibrationData o) {
-					return "vibration data options type: " + o.getSourceType().name().toLowerCase(Locale.ENGLISH) + " block: " + Classes.toString(o.getSourceBlock())
-						+ " entity id: " + o.getSourceEntityId() + " entity eye height: " + o.getSourceEntityEyeHeight()
-						+ " travel time: " + Classes.toString(timespanFrom(o.getTravelTicks()));
+					return "vibration data options type: " + o.sourceType().name().toLowerCase(Locale.ENGLISH) + " block: " + Classes.toString(o.sourceBlock())
+						+ " entity id: " + o.sourceEntityId() + " entity eye height: " + o.sourceEntityEyeHeight()
+						+ " travel time: " + Classes.toString(timespanFrom(o.travelTicks()));
 				}
 			}));
 		Classes.registerClass(new ClassInfo<>(RGBLike.class, "rgblike")
@@ -1785,7 +1916,39 @@ public class MinestomClasses {
 				public @NotNull String toVariableNameString(@NotNull PlayerSkin o) {
 					return "skin textures: " + o.textures() + " signature: " + o.signature();
 				}
+			})
+			.serializer(new Serializer<>() {
+				@Override
+				public Fields serialize(PlayerSkin o) throws NotSerializableException {
+					Fields f = new Fields();
+					f.putObject("textures", o.textures());
+					f.putObject("signature", o.signature());
+					return f;
+				}
+
+				@Override
+				public void deserialize(PlayerSkin o, Fields f) throws StreamCorruptedException, NotSerializableException {
+					assert false;
+				}
+
+				@Override
+				protected PlayerSkin deserialize(Fields fields) throws StreamCorruptedException, NotSerializableException {
+					String textures = fields.getObject("textures", String.class);
+					String signature = fields.getObject("signature", String.class);
+					return new PlayerSkin(textures, signature);
+				}
+
+				@Override
+				public boolean mustSyncDeserialization() {
+					return false;
+				}
+
+				@Override
+				protected boolean canBeInstantiated() {
+					return false;
+				}
 			}));
+		// no serializer for nbtcompound because they should be saving it to a file
 		Classes.registerClass(new ClassInfo<>(NBTCompound.class, "nbtcompound")
 			.user("nbt ?compounds?")
 			.name("NBT Compound")
@@ -1850,75 +2013,18 @@ public class MinestomClasses {
 		 */
 		Converters.registerConverter(String.class, Component.class, Component::text);
 		Converters.registerConverter(Component.class, String.class, LEGACY_SERIALIZER::serialize);
-		Converters.registerConverter(CommandSender.class, Player.class, from -> {
-			if (from instanceof Player player) return player;
-			return null;
-		});
-		Converters.registerConverter(CommandSender.class, ConsoleSender.class, from -> {
-			if (from instanceof ConsoleSender sender) return sender;
-			return null;
-		});
 		Converters.registerConverter(Entity.class, EntityType.class, Entity::getEntityType);
-		Converters.registerConverter(Entity.class, LivingEntity.class, from -> {
-			if (from instanceof LivingEntity livingEntity) return livingEntity;
-			return null;
-		});
-		Converters.registerConverter(EquipmentHandler.class, LivingEntity.class, from -> {
-			if (from instanceof LivingEntity livingEntity) return livingEntity;
-			return null;
-		});
-		Converters.registerConverter(Entity.class, EntityCreature.class, from -> {
-			if (from instanceof EntityCreature entityCreature) return entityCreature;
-			return null;
-		});
-		Converters.registerConverter(Entity.class, Player.class, from -> {
-			if (from instanceof Player player) return player;
-			return null;
-		});
 		Converters.registerConverter(Entity.class, Pos.class, Entity::getPosition);
-		Converters.registerConverter(Point.class, Pos.class, from -> {
-			if (from instanceof Pos pos) return pos;
-			return null;
-		});
-		Converters.registerConverter(Point.class, Vec.class, from -> {
-			if (from instanceof Vec vec) return vec;
-			return null;
-		});
-		Converters.registerConverter(Point.class, BlockVec.class, from -> {
-			if (from instanceof BlockVec blockVec) return blockVec;
-			return null;
-		});
-		Converters.registerConverter(Instance.class, InstanceContainer.class, from -> {
-			if (from instanceof InstanceContainer container) return container;
-			return null;
-		});
-		Converters.registerConverter(Instance.class, SharedInstance.class, from -> {
-			if (from instanceof SharedInstance shared) return shared;
-			return null;
-		});
 		Converters.registerConverter(Player.class, AbstractInventory.class, Player::getInventory);
-		Converters.registerConverter(Item.class, Slot.class, from -> {
-			if (from instanceof Slot slot) return slot;
-			return null;
-		});
-		Converters.registerConverter(Slot.class, Item.class, from -> new Item(from.getItem()));
 		Converters.registerConverter(Vec.class, Direction.class, Direction::new);
 		Converters.registerConverter(Direction.class, Vec.class, Direction::getDirection);
 		Converters.registerConverter(Player.class, PlayerSkin.class, Player::getSkin);
-		Converters.registerConverter(RGBLike.class, NamedTextColor.class, from -> {
-			if (from instanceof NamedTextColor color) return color;
-			return null;
-		});
 		Converters.registerConverter(RGBLike.class, Color.class, from -> {
 			if (from instanceof Color color) return color;
 			return new Color(from.red(), from.green(), from.blue());
 		});
 		Converters.registerConverter(Color.class, AlphaColor.class, from -> from.withAlpha(255));
 		Converters.registerConverter(Item.class, Block.class, from -> from.getItem().material().block());
-		Converters.registerConverter(ComponentLike.class, Component.class, from -> {
-			if (from instanceof Component c) return c;
-			return null;
-		});
 
 		/*
 		 *	Comparators

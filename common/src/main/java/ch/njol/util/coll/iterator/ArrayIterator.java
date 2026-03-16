@@ -18,11 +18,10 @@
  */
 package ch.njol.util.coll.iterator;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
 import com.google.common.collect.PeekingIterator;
 import org.eclipse.jdt.annotation.Nullable;
+
+import java.util.NoSuchElementException;
 
 /**
  * A simple iterator to iterate over an array.

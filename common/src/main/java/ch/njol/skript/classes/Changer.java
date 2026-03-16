@@ -1,11 +1,10 @@
 package ch.njol.skript.classes;
 
+import ch.njol.skript.classes.data.DefaultChangers;
+import ch.njol.skript.lang.Expression;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import ch.njol.skript.classes.data.DefaultChangers;
-import ch.njol.skript.lang.Expression;
 
 /**
  * An interface to declare changeable values. All Expressions implement something similar like this by default, but refuse any change if {@link Expression#acceptChange(ChangeMode)}

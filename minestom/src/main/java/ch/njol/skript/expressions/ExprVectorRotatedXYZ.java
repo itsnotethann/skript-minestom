@@ -11,8 +11,6 @@ import net.minestom.server.coordinate.Vec;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
-
 public class ExprVectorRotatedXYZ extends SimpleExpression<Vec> {
 
 	static {

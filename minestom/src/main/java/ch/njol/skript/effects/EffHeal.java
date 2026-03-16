@@ -9,7 +9,6 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import net.minestom.server.entity.LivingEntity;
-import net.minestom.server.entity.attribute.Attribute;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 

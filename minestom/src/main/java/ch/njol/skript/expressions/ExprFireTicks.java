@@ -7,7 +7,6 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.LivingEntity;
-import net.minestom.server.entity.attribute.Attribute;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 

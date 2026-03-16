@@ -23,13 +23,8 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.Effect;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SectionExitHandler;
-import ch.njol.skript.lang.LoopSection;
+import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.lang.TriggerItem;
-import ch.njol.skript.lang.TriggerSection;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.log.ErrorQuality;
 import ch.njol.skript.sections.SecConditional;
@@ -56,7 +51,7 @@ public class EffExit extends Effect { // TODO [code style] warn user about code 
 	static {
 		Skript.registerEffect(EffExit.class,
 			"(exit|stop) [trigger]",
-			"(exit|stop) [(1|a|the|this)] (section|1:loop|2:conditional)",
+			"(exit|stop) [1|a|the|this] (section|1:loop|2:conditional)",
 			"(exit|stop) <\\d+> (section|1:loop|2:conditional)s",
 			"(exit|stop) all (section|1:loop|2:conditional)s");
 	}

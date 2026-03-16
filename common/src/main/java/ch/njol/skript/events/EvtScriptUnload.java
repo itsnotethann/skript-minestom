@@ -1,7 +1,6 @@
 package ch.njol.skript.events;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.events.custom.ScriptLoadEvent;
 import ch.njol.skript.events.custom.ScriptUnloadEvent;
 import ch.njol.skript.lang.util.SimpleEvent;
 

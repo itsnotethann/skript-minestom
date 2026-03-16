@@ -2,10 +2,6 @@ package ch.njol.skript.conditions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptConfig;
-import ch.njol.skript.util.Item;
-import net.minestom.server.inventory.AbstractInventory;
-import net.minestom.server.item.ItemStack;
-import org.skriptlang.skript.lang.comparator.Relation;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -14,11 +10,15 @@ import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
-import org.skriptlang.skript.lang.comparator.Comparators;
+import ch.njol.skript.util.Item;
 import ch.njol.util.Kleenean;
 import ch.njol.util.StringUtils;
+import net.minestom.server.inventory.AbstractInventory;
+import net.minestom.server.item.ItemStack;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
+import org.skriptlang.skript.lang.comparator.Comparators;
+import org.skriptlang.skript.lang.comparator.Relation;
 
 import java.util.Arrays;
 import java.util.Objects;

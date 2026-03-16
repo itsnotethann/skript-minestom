@@ -7,9 +7,6 @@ import ch.njol.skript.lang.util.SimpleEvent;
 public class SimpleEvents {
 
 	static {
-		Skript.registerEvent("Player Configuration", SimpleEvent.class, AsyncPlayerConfigurationWrapper.class, "[player] config[ur(e|ation)]")
-			.description("Called when a player is configuring to the server.")
-			.examples("on player config:");
 		Skript.registerEvent("Player Connect", SimpleEvent.class, CustomConnectWrapper.class, "[player] connect[ing]")
 			.description("Called when a player is connecting to the server.")
 			.examples("on player connect:");

@@ -1,22 +1,20 @@
 package ch.njol.skript.effects;
 
-import ch.njol.skript.events.wrapper.EventWrapper;
-import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
-
-import net.minestom.server.event.trait.CancellableEvent;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
+import ch.njol.skript.events.wrapper.EventWrapper;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.log.ErrorQuality;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.Kleenean;
+import net.minestom.server.event.trait.CancellableEvent;
+import org.bukkit.event.Event;
+import org.eclipse.jdt.annotation.Nullable;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

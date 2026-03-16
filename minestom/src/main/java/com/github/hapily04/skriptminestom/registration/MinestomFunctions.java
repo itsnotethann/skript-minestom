@@ -1,6 +1,6 @@
 package com.github.hapily04.skriptminestom.registration;
 
-import ch.njol.skript.classes.ClassInfo;
+import ch.njol.skript.Skript;
 import ch.njol.skript.effects.particle.*;
 import ch.njol.skript.lang.function.*;
 import ch.njol.skript.lang.util.SimpleLiteral;
@@ -11,7 +11,6 @@ import ch.njol.util.coll.CollectionUtils;
 import com.github.hapily04.skriptminestom.util.NumberUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.util.RGBLike;
@@ -24,15 +23,19 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
-import net.minestom.server.item.ItemStack;
 import net.minestom.server.network.ConnectionManager;
 import net.minestom.server.particle.Particle;
+import net.minestom.server.sound.Music;
+import net.minestom.server.sound.SoundEvent;
+import net.minestom.server.world.attribute.AmbientParticle;
+import net.minestom.server.world.attribute.AmbientSounds;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.skriptlang.skript.common.function.DefaultFunction;
 
-import java.util.Arrays;
 import java.util.UUID;
 
+import static ch.njol.skript.expressions.ExprAmbientSounds.getSoundEvent;
 import static ch.njol.skript.expressions.ExprSkinFrom.UUID_REGEX;
 import static com.github.hapily04.skriptminestom.util.MessageUtils.BASIC_MINI_MESSAGE;
 
@@ -235,6 +238,63 @@ public class MinestomFunctions {
 				return new Player[]{findPlayer(input, strict)};
 			}
 		}).description("Find an online player from their username or UUID.").examples("send \"test\" to player(\"bob\")");
+		Functions.register(DefaultFunction.builder(Skript.getAddonInstance(), "mood", AmbientSounds.Mood.class)
+			.parameter("sound-id", String.class)
+			.parameter("delay", Timespan.class)
+			.parameter("block-search-extent", Integer.class)
+			.parameter("offset", Number.class)
+			.build(args -> {
+				String soundId = args.get("sound-id");
+				SoundEvent sound = getSoundEvent(soundId);
+				if (sound == null) return null;
+				Timespan delay = args.get("delay");
+				if (delay == null) return null;
+				int tickDelay = Math.toIntExact(NumberUtils.ticksFrom(delay));
+				Integer blockSearchExtent = args.get("block-search-extent");
+				if (blockSearchExtent == null) return null;
+				Number offset = args.get("offset");
+				if (offset == null) return null;
+				return new AmbientSounds.Mood(sound, tickDelay, blockSearchExtent, offset.doubleValue());
+			}));
+		Functions.register(DefaultFunction.builder(Skript.getAddonInstance(), "additions", AmbientSounds.Additions.class)
+			.parameter("sound-id", String.class)
+			.parameter("tick-chance", Number.class)
+			.build(args -> {
+				String soundId = args.get("sound-id");
+				SoundEvent sound = getSoundEvent(soundId);
+				if (sound == null) return null;
+				Number tickChance = args.get("tick-chance");
+				if (tickChance == null) return null;
+				return new AmbientSounds.Additions(sound, tickChance.doubleValue());
+			}));
+		Functions.register(DefaultFunction.builder(Skript.getAddonInstance(), "music", Music.class)
+			.parameter("sound-id", String.class)
+			.parameter("min-delay", Timespan.class)
+			.parameter("max-delay", Timespan.class)
+			.parameter("replaces-current-music", Boolean.class)
+			.build(args -> {
+				String soundId = args.get("sound-id");
+				SoundEvent sound = getSoundEvent(soundId);
+				if (sound == null) return null;
+				Timespan minDelay = args.get("min-delay");
+				if (minDelay == null) return null;
+				Timespan maxDelay = args.get("max-delay");
+				if (maxDelay == null) return null;
+				Boolean replacesCurrentMusic = args.get("replaces-current-music");
+				if (replacesCurrentMusic == null) return null;
+				return new Music(sound, Math.toIntExact(NumberUtils.ticksFrom(minDelay)),
+					Math.toIntExact(NumberUtils.ticksFrom(maxDelay)), replacesCurrentMusic);
+			}));
+		Functions.register(DefaultFunction.builder(Skript.getAddonInstance(), "ambientParticle", AmbientParticle.class)
+			.parameter("particle", Particle.class)
+			.parameter("probability", Number.class)
+			.build(args -> {
+				Particle particle = args.get("particle");
+				if (particle == null) return null;
+				Number probability = args.get("probability");
+				if (probability == null) return null;
+				return new AmbientParticle(particle, probability.floatValue());
+			}));
 	}
 
 	static Player findPlayer(String input, boolean strict) {

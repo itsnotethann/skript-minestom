@@ -1,9 +1,11 @@
 package ch.njol.skript.util;
 
 import net.minestom.server.entity.EquipmentSlot;
+import net.minestom.server.entity.Player;
 import net.minestom.server.inventory.AbstractInventory;
 import net.minestom.server.inventory.EquipmentHandler;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.utils.inventory.PlayerInventoryUtils;
 
 import java.util.function.UnaryOperator;
 
@@ -32,11 +34,17 @@ public class Slot extends Item {
 		if (notifyContainer && preModificationItem.equals(containerSlotItem)) updater.update(getItem());
 	}
 
+	public int getIndex() {
+		return updater.getSlot();
+	}
+
 	public interface Updater {
 
 		void update(ItemStack item);
 
 		ItemStack getCurrentItem();
+
+		int getSlot();
 
 	}
 
@@ -50,7 +58,6 @@ public class Slot extends Item {
 			this.slot = slot;
 		}
 
-
 		@Override
 		public void update(ItemStack item) {
 			container.setItemStack(slot, item);
@@ -59,6 +66,11 @@ public class Slot extends Item {
 		@Override
 		public ItemStack getCurrentItem() {
 			return container.getItemStack(slot);
+		}
+
+		@Override
+		public int getSlot() {
+			return slot;
 		}
 
 	}
@@ -81,6 +93,23 @@ public class Slot extends Item {
 		@Override
 		public ItemStack getCurrentItem() {
 			return container.getEquipment(slot);
+		}
+
+		@Override
+		public int getSlot() {
+			return switch (slot) {
+				case HELMET, CHESTPLATE, LEGGINGS, BOOTS -> slot.armorSlot();
+				case OFF_HAND, MAIN_HAND -> getPlayerSlot();
+				default -> -1;
+			};
+		}
+
+		private int getPlayerSlot() {
+			if (container instanceof Player player) {
+				if (slot == EquipmentSlot.OFF_HAND) return PlayerInventoryUtils.OFFHAND_SLOT;
+				if (slot == EquipmentSlot.MAIN_HAND) return player.getHeldSlot();
+			}
+			return -1;
 		}
 
 	}

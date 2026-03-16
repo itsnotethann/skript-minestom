@@ -18,17 +18,14 @@
  */
 package ch.njol.skript;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
-import java.util.concurrent.CompletableFuture;
-
 import ch.njol.skript.localization.ArgsMessage;
 import ch.njol.skript.localization.Message;
 import ch.njol.skript.update.ReleaseManifest;
-import ch.njol.skript.update.ReleaseStatus;
-import ch.njol.skript.update.UpdateManifest;
 import ch.njol.skript.update.Updater;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Scanner;
 
 /**
  * Skript's update checker.

@@ -39,8 +39,8 @@ public class EffReplace extends Effect {
 
 	static {
 		Skript.registerEffect(EffReplace.class,
-			"replace [(all|every)|first:[the] first] %strings% in %strings% with %string% [case:with case sensitivity]",
-			"replace [(all|every)|first:[the] first] %strings% with %string% in %strings% [case:with case sensitivity]",
+			"replace [all|every|first:[the] first] %strings% in %strings% with %string% [case:with case sensitivity]",
+			"replace [all|every|first:[the] first] %strings% with %string% in %strings% [case:with case sensitivity]",
 			"(replace [with|using] regex|regex replace) %strings% in %strings% with %string%",
 			"(replace [with|using] regex|regex replace) %strings% with %string% in %strings%");
 	}

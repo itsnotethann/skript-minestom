@@ -28,9 +28,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ch.njol.yggdrasil.Tag.T_NULL;
-import static ch.njol.yggdrasil.Tag.T_REFERENCE;
-import static ch.njol.yggdrasil.Tag.getType;
+import static ch.njol.yggdrasil.Tag.*;
 
 public abstract class YggdrasilInputStream implements Closeable {
 	

@@ -26,17 +26,23 @@ import net.minestom.server.instance.generator.GenerationUnit;
 import net.minestom.server.instance.generator.Generator;
 import net.minestom.server.registry.RegistryKey;
 import net.minestom.server.world.DimensionType;
+import net.minestom.server.world.biome.Biome;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.eclipse.jdt.annotation.Nullable;
 import org.skriptlang.skript.lang.entry.EntryContainer;
 import org.skriptlang.skript.lang.entry.EntryValidator;
+import org.skriptlang.skript.lang.entry.util.ExpressionEntryData;
 import org.skriptlang.skript.lang.entry.util.LiteralEntryData;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Name("Create Instance")
 @Description("Creates a new instance container or a shared instance.")
@@ -62,9 +68,10 @@ public class EffSecCreateInstance extends EffectSection {
 			.addEntryData(new LiteralEntryData<>("dynamic lighting", null, true, Boolean.class))
 			.addEntry("file", null, true)
 			.addEntry("loader", null, true)
-			//.addEntryData(new ExpressionEntryData<>("dimension", null, true, DimensionType.class))
-			.addSection("generator", true)
+			.addEntryData(new ExpressionEntryData<>("dimension", null, true, DimensionType.class))
+			.addEntryData(new ExpressionEntryData<>("preload biome", null, true, Biome.class))
 			.addEntry("preload option", null, true)
+			.addSection("generator", true)
 			.build();
 		Skript.registerSection(EffSecCreateInstance.class,
 			"create instance [container] (and store it|stored) in %objects%",
@@ -89,6 +96,8 @@ public class EffSecCreateInstance extends EffectSection {
 	private String loader;
 	@Nullable
 	private Expression<DimensionType> dimension;
+	@Nullable
+	private Expression<Biome> biome;
 	@Nullable
 	private String preloadOption;
 	@Nullable
@@ -131,7 +140,8 @@ public class EffSecCreateInstance extends EffectSection {
 				this.loader = loader;
 			}
 
-			this.dimension = container.getOptional("dimension", Expression.class, false);
+			dimension = container.getOptional("dimension", Expression.class, false);
+			biome = container.getOptional("preload biome", Expression.class, false);
 
 			String preloadOption = container.getOptional("preload option", String.class, false);
 			if (preloadOption != null) {
@@ -157,6 +167,8 @@ public class EffSecCreateInstance extends EffectSection {
 	@Override
 	protected @Nullable TriggerItem walk(Event event) {
 		Instance instance;
+		Biome b = this.biome == null ? null : this.biome.getSingle(event);
+		RegistryKey<Biome> biome = b != null ? MinecraftServer.getBiomeRegistry().getKey(b) : null;
 		if (matchedPattern == 0) {
 			if (dimension != null) {
 				DimensionType dimension = this.dimension.getSingle(event);
@@ -201,11 +213,11 @@ public class EffSecCreateInstance extends EffectSection {
 					Variables.withLocalVariables(variables, generateEvent, () -> TriggerItem.walk(generator, generateEvent));
 				});
 			}
-			if (preloadOption != null) preLoadChunks(container, worldFile, preloadOption.equals("strict"));
+			if (preloadOption != null) preLoadChunks(container, worldFile, preloadOption.equals("strict"), biome);
 		} else {
 			assert originalInstance != null; // it won't be null because it's in the pattern
 			InstanceContainer instanceContainer = originalInstance.getSingle(event);
-			if (instanceContainer == null) return null;
+			if (instanceContainer == null) return super.walk(event, false);
 			instance = MinecraftServer.getInstanceManager().createSharedInstance(instanceContainer);
 			instance.enableAutoChunkLoad(instanceContainer.hasEnabledAutoChunkLoad());
 		}
@@ -239,7 +251,23 @@ public class EffSecCreateInstance extends EffectSection {
 
 	}
 
-	private void preLoadChunks(InstanceContainer container, File file, boolean strict) {
+	private void fillChunkWithBiome(Instance instance, Chunk chunk, RegistryKey<Biome> biome) {
+		if (biome == null) return;
+		DimensionType dt = instance.getCachedDimensionType();
+		int minY = dt.minY();
+		int maxY = dt.maxY();
+		int startX = chunk.getChunkX() << 4;
+		int startZ = chunk.getChunkZ() << 4;
+		for (int x = startX; x < startX + 16; x++) {
+			for (int z = startZ; z < startZ + 16; z++) {
+				for (int y = minY; y < maxY; y++) {
+					chunk.setBiome(x, y, z, biome);
+				}
+			}
+		}
+	}
+
+	private void preLoadChunks(InstanceContainer container, File file, boolean strict, RegistryKey<Biome> biome) {
 		ChunkLoader loader = container.getChunkLoader();
 		boolean loadServerRenderDistance = true;
 		IntSet queuedChunks = new IntArraySet();
@@ -302,7 +330,11 @@ public class EffSecCreateInstance extends EffectSection {
 			for (int chunk : queuedChunks) {
 				int x = getChunkX(chunk);
 				int z = getChunkZ(chunk);
-				container.loadChunk(x, z);
+				CompletableFuture<Chunk> future = container.loadChunk(x, z);
+				if (biome != null) future.whenComplete((chunk1, throwable) -> {
+					if (throwable != null) return;
+					fillChunkWithBiome(container, chunk1, biome);
+				});
 			}
 		}
 		if (strict) {
@@ -355,7 +387,6 @@ public class EffSecCreateInstance extends EffectSection {
 			for (int z = -1; z < 2; z++) {
 				int newChunkX = originX+x;
 				int newChunkZ = originZ+z;
-				//if (instance.isChunkLoaded(newChunkX, newChunkZ)) continue;
 				operation.loadChunk(instance, newChunkX, newChunkZ);
 			}
 		}

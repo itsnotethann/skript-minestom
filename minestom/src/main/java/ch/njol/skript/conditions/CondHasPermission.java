@@ -1,22 +1,21 @@
 package ch.njol.skript.conditions;
 
-import ch.njol.skript.doc.Examples;
-import com.github.hapily04.skriptminestom.luckperms.LuckPermsPlayer;
-import net.minestom.server.command.CommandSender;
-import net.minestom.server.command.ConsoleSender;
-import org.bukkit.event.Event;
-import org.jetbrains.annotations.Nullable;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.conditions.base.PropertyCondition.PropertyType;
 import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
+import com.github.hapily04.skriptminestom.luckperms.LuckPermsPlayer;
+import net.minestom.server.command.CommandSender;
+import net.minestom.server.command.ConsoleSender;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Peter Güttinger

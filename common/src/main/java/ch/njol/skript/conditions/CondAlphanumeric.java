@@ -1,9 +1,5 @@
 package ch.njol.skript.conditions;
 
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -13,6 +9,9 @@ import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.event.Event;
+import org.eclipse.jdt.annotation.Nullable;
 
 @Name("Alphanumeric")
 @Description({"Checks if the given string is alphanumeric."})

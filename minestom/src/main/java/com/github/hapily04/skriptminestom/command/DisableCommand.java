@@ -2,17 +2,11 @@ package com.github.hapily04.skriptminestom.command;
 
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
-import ch.njol.skript.log.RedirectingLogHandler;
-import ch.njol.skript.log.TimingLogHandler;
-import ch.njol.util.OpenCloseable;
 import com.github.hapily04.skriptminestom.luckperms.LuckPermsPlayer;
 import net.kyori.adventure.text.Component;
-import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.arguments.ArgumentStringArray;
-import net.minestom.server.command.builder.suggestion.SuggestionEntry;
-import org.jetbrains.annotations.NotNull;
 import org.skriptlang.skript.lang.script.Script;
 
 import java.io.File;

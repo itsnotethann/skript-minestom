@@ -18,12 +18,9 @@
  */
 package ch.njol.skript.update;
 
-import java.util.concurrent.CompletableFuture;
-
 import org.eclipse.jdt.annotation.Nullable;
 
-import ch.njol.skript.Skript;
-import ch.njol.skript.util.Task;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Extensible updater system. Note: starts disabled, must be enabled using

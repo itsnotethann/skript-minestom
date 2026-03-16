@@ -8,7 +8,6 @@ import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Item;
 import ch.njol.util.coll.CollectionUtils;
-import com.github.hapily04.skriptminestom.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.entity.Entity;
@@ -17,7 +16,6 @@ import net.minestom.server.inventory.AbstractInventory;
 import net.minestom.server.inventory.Inventory;
 import net.minestom.server.inventory.PlayerInventory;
 import net.minestom.server.item.ItemStack;
-import net.minestom.server.scoreboard.Sidebar;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 

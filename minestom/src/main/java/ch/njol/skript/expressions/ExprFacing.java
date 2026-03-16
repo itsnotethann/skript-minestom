@@ -10,7 +10,6 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.BlockFace;
 import ch.njol.skript.util.Direction;
-import ch.njol.skript.util.VectorMath;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.coordinate.Vec;

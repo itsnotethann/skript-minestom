@@ -9,11 +9,8 @@ import ch.njol.skript.lang.SyntaxStringBuilder;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.util.AABB;
 import ch.njol.util.Kleenean;
-import net.minestom.server.collision.BoundingBox;
 import net.minestom.server.coordinate.Point;
-import net.minestom.server.entity.Entity;
 import net.minestom.server.instance.Chunk;
-import net.minestom.server.instance.Instance;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 

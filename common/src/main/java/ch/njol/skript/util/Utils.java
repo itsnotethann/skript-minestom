@@ -18,28 +18,24 @@
  */
 package ch.njol.skript.util;
 
+import ch.njol.skript.registrations.Classes;
+import ch.njol.util.Checker;
+import ch.njol.util.NonNullPair;
+import ch.njol.util.Pair;
+import ch.njol.util.coll.CollectionUtils;
+import com.google.common.base.Preconditions;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.skriptlang.skript.util.ClassLoader;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.google.common.base.Preconditions;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.eclipse.jdt.annotation.Nullable;
-
-import ch.njol.skript.registrations.Classes;
-import ch.njol.util.Callback;
-import ch.njol.util.Checker;
-import ch.njol.util.NonNullPair;
-import ch.njol.util.Pair;
-import ch.njol.util.StringUtils;
-import ch.njol.util.coll.CollectionUtils;
-import org.jetbrains.annotations.NotNull;
-import org.skriptlang.skript.util.ClassLoader;
 
 /**
  * Utility class.

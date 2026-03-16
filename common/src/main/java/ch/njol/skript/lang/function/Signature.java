@@ -3,8 +3,8 @@ package ch.njol.skript.lang.function;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.registrations.Classes;
-import ch.njol.skript.util.Utils;
 import ch.njol.skript.util.Contract;
+import ch.njol.skript.util.Utils;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.common.function.Parameter.Modifier;
 

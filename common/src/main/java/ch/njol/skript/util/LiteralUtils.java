@@ -18,13 +18,13 @@
  */
 package ch.njol.skript.util;
 
-import java.util.stream.Stream;
-
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionList;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.UnparsedLiteral;
 import ch.njol.skript.registrations.Classes;
+
+import java.util.stream.Stream;
 
 /**
  * A class that contains methods based around

@@ -13,7 +13,6 @@ import ch.njol.skript.util.Direction;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.coordinate.Point;
-import net.minestom.server.coordinate.Pos;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import org.bukkit.event.Event;
@@ -39,7 +38,7 @@ public class ExprBlock extends SimpleExpression<Block> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-		pointExpr = Direction.combine((Expression<? extends Direction>) expressions[0], (Expression<? extends Pos>) expressions[1]);
+		pointExpr = Direction.combine((Expression<? extends Direction>) expressions[0], (Expression<? extends Point>) expressions[1]);
 		instanceExpr = (Expression<Instance>) expressions[2];
 		return true;
 	}
@@ -50,8 +49,8 @@ public class ExprBlock extends SimpleExpression<Block> {
 		Point[] points = pointExpr.getArray(event);
 		List<Block> blocks = new ArrayList<>();
 		for (Instance instance : instances) {
-			for (int i = 0; i < points.length; i++) {
-				blocks.add(instance.getBlock(points[i]));
+			for (Point point : points) {
+				blocks.add(instance.getBlock(point));
 			}
 		}
 		return blocks.toArray(new Block[0]);
@@ -90,7 +89,7 @@ public class ExprBlock extends SimpleExpression<Block> {
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return "block at " + pointExpr.toString(event, debug) + " in instance " + instanceExpr.toString(event, debug);
+		return "block " + pointExpr.toString(event, debug) + " in instance " + instanceExpr.toString(event, debug);
 	}
 
 }

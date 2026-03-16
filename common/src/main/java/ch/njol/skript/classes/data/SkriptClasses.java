@@ -18,15 +18,8 @@
  */
 package ch.njol.skript.classes.data;
 
-import java.io.StreamCorruptedException;
-import java.util.Iterator;
-import java.util.Locale;
-
-import org.eclipse.jdt.annotation.Nullable;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.classes.EnumSerializer;
 import ch.njol.skript.classes.Parser;
 import ch.njol.skript.classes.Serializer;
 import ch.njol.skript.classes.YggdrasilSerializer;
@@ -40,6 +33,10 @@ import ch.njol.skript.util.Time;
 import ch.njol.skript.util.Timeperiod;
 import ch.njol.skript.util.Timespan;
 import ch.njol.yggdrasil.Fields;
+import org.eclipse.jdt.annotation.Nullable;
+
+import java.io.StreamCorruptedException;
+import java.util.Iterator;
 
 /**
  * @author Peter Güttinger

@@ -18,12 +18,12 @@
  */
 package ch.njol.util.coll;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * @author Peter Güttinger

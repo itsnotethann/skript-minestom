@@ -21,7 +21,6 @@ package ch.njol.skript.lang.util;
 import ch.njol.skript.SkriptAPIException;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.registrations.Classes;
-import ch.njol.util.Checker;
 import ch.njol.util.coll.CollectionUtils;
 import ch.njol.util.coll.iterator.ArrayIterator;
 import org.bukkit.event.Event;

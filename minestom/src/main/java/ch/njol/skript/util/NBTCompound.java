@@ -1,6 +1,5 @@
 package ch.njol.skript.util;
 
-import ch.njol.skript.expressions.ExprNBT;
 import com.github.hapily04.skriptminestom.util.NBTUtils;
 import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
@@ -11,7 +10,6 @@ import net.minestom.server.tag.Taggable;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static ch.njol.skript.expressions.ExprNBT.NBT_TAG;

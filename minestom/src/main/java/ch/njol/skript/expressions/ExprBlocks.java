@@ -1,12 +1,22 @@
 package ch.njol.skript.expressions;
 
-import java.util.Iterator;
-
+import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.ExpressionType;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
+import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.util.AABB;
 import ch.njol.skript.util.BlockLineIterator;
+import ch.njol.skript.util.Direction;
+import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
+import ch.njol.util.coll.iterator.ArrayIterator;
+import com.google.common.collect.Lists;
 import net.minestom.server.coordinate.BlockVec;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Vec;
@@ -17,19 +27,7 @@ import net.minestom.server.instance.block.Block;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.collect.Lists;
-
-import ch.njol.skript.Skript;
-import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Name;
-import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
-import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.lang.util.SimpleExpression;
-import ch.njol.skript.util.Direction;
-import ch.njol.util.Kleenean;
-import ch.njol.util.coll.iterator.ArrayIterator;
+import java.util.Iterator;
 
 @Name("Blocks")
 @Description({"Blocks relative to other blocks or between other blocks.",

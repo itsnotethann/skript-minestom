@@ -34,8 +34,6 @@ import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 @Name("While Loop")
 @Description("While Loop sections are loops that will just keep repeating as long as a condition is met.")

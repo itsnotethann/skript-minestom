@@ -8,7 +8,6 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.NBTCompound;
 import ch.njol.util.Kleenean;
 import com.github.hapily04.skriptminestom.util.NBTUtils;
-import net.minestom.server.tag.Tag;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 

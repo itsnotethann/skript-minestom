@@ -7,7 +7,6 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.util.Getter;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import ch.njol.util.Validate;

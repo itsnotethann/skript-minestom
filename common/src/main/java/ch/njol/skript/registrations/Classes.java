@@ -18,27 +18,12 @@
  */
 package ch.njol.skript.registrations;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.NotSerializableException;
-import java.io.SequenceInputStream;
-import java.lang.reflect.Array;
-import java.nio.charset.Charset;
-import java.util.*;
-import java.util.regex.Pattern;
-
-import ch.njol.skript.classes.PatternedParser;
-import ch.njol.skript.util.Utils;
-import org.bukkit.Bukkit;
-import org.eclipse.jdt.annotation.Nullable;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAPIException;
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.Parser;
+import ch.njol.skript.classes.PatternedParser;
 import ch.njol.skript.classes.Serializer;
 import ch.njol.skript.lang.DefaultExpression;
 import ch.njol.skript.lang.ParseContext;
@@ -46,6 +31,7 @@ import ch.njol.skript.localization.Language;
 import ch.njol.skript.log.ParseLogHandler;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.util.StringMode;
+import ch.njol.skript.util.Utils;
 import ch.njol.skript.variables.SerializedVariable;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
@@ -55,10 +41,18 @@ import ch.njol.yggdrasil.Yggdrasil;
 import ch.njol.yggdrasil.YggdrasilInputStream;
 import ch.njol.yggdrasil.YggdrasilOutputStream;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.bukkit.Bukkit;
+import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.skriptlang.skript.lang.converter.Converter;
 import org.skriptlang.skript.lang.converter.ConverterInfo;
 import org.skriptlang.skript.lang.converter.Converters;
+
+import java.io.*;
+import java.lang.reflect.Array;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author Peter Güttinger

@@ -10,16 +10,12 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.sections.EffSecCreateInstance;
 import ch.njol.util.Kleenean;
-import net.minestom.server.coordinate.BlockVec;
-import net.minestom.server.coordinate.CoordConversion;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.generator.GenerationUnit;
 import net.minestom.server.instance.generator.UnitModifier;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
-
-import static net.minestom.server.coordinate.CoordConversion.*;
 
 @SuppressWarnings("NotNullFieldNotInitialized")
 @Name("Set/Assign Chunk Block")

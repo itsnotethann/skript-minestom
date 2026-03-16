@@ -1,19 +1,14 @@
 package ch.njol.skript.events.click;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
 import ch.njol.skript.Skript;
+import ch.njol.skript.effects.EffCancelEvent;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerHand;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.trait.CancellableEvent;
 import org.bukkit.Bukkit;
 
-import ch.njol.skript.effects.EffCancelEvent;
+import java.util.*;
 
 /**
  * Tracks click events to remove extraneous events for one player click.

@@ -1,7 +1,6 @@
 package ch.njol.skript.log;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minestom.server.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 

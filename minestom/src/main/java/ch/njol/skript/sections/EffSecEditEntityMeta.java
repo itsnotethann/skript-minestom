@@ -11,8 +11,6 @@ import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.metadata.EntityMeta;
-import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
-import net.minestom.server.entity.metadata.display.TextDisplayMeta;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.eclipse.jdt.annotation.Nullable;

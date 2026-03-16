@@ -5,17 +5,11 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import ch.njol.skript.util.Enchantment;
-import ch.njol.skript.util.Item;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.attribute.Attribute;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Arrays;
-
-import static com.github.hapily04.skriptminestom.registration.MinestomClasses.ITEM_CHANGER;
 
 @Name("Health")
 @Description("The health of a living entity.")

@@ -18,11 +18,6 @@
  */
 package ch.njol.skript.log;
 
-import java.util.logging.Filter;
-
-import ch.njol.skript.Skript;
-import ch.njol.util.LoggerFilter;
-
 /**
  * REM: Don't even think about supporting CraftBukkit's new logging library "log4j".
  * It's probably the worst piece of shi..oftware I have ever seen used.

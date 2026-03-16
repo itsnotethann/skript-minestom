@@ -17,7 +17,6 @@ import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 @Name("Indices of List")
 @Description({

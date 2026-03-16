@@ -24,6 +24,7 @@ import ch.njol.skript.localization.Noun;
 import ch.njol.util.NonNullPair;
 import ch.njol.util.StringUtils;
 import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -36,7 +37,7 @@ import java.util.Locale;
 public final class EnumUtils<E extends Enum<E>> {
 	
 	private final Class<E> enumClass;
-	private final String languageNode;
+	private final @UnknownNullability String languageNode;
 
 	@SuppressWarnings("NotNullFieldNotInitialized") // initialized in constructor's refresh() call
 	private String[] names;
@@ -45,13 +46,18 @@ public final class EnumUtils<E extends Enum<E>> {
 	public EnumUtils(Class<E> enumClass, String languageNode) {
 		assert enumClass.isEnum() : enumClass;
 		assert !languageNode.isEmpty() && !languageNode.endsWith(".") : languageNode;
-		
 		this.enumClass = enumClass;
 		this.languageNode = languageNode;
 
 		refresh();
 		
 		Language.addListener(this::refresh);
+	}
+
+	public EnumUtils(Class<E> enumClass) {
+		this.enumClass = enumClass;
+		this.languageNode = null;
+		refresh();
 	}
 	
 	/**
@@ -61,6 +67,15 @@ public final class EnumUtils<E extends Enum<E>> {
 		E[] constants = enumClass.getEnumConstants();
 		names = new String[constants.length];
 		parseMap.clear();
+		if (languageNode == null) {
+			for (int i = 0; i < constants.length; i++) {
+				E constant = constants[i];
+				String name = constant.name().toLowerCase(Locale.ENGLISH).replace('_', ' ');
+				names[i] = name;
+				parseMap.put(name, constant);
+			}
+			return;
+		}
 		for (E constant : constants) {
 			String key = languageNode + "." + constant.name();
 			int ordinal = constant.ordinal();
@@ -97,7 +112,7 @@ public final class EnumUtils<E extends Enum<E>> {
 	 */
 	@Nullable
 	public E parse(String input) {
-		return parseMap.get(input.toLowerCase(Locale.ENGLISH));
+		return parseMap.get(input.toLowerCase(Locale.ENGLISH).replace('_', ' '));
 	}
 
 	/**
@@ -108,7 +123,7 @@ public final class EnumUtils<E extends Enum<E>> {
 	 */
 	public String toString(E enumerator, int flags) {
 		String s = names[enumerator.ordinal()];
-		return s != null ? s : enumerator.name();
+		return s != null ? s : enumerator.name().toLowerCase(Locale.ENGLISH).replace('_', ' ');
 	}
 
 	/**

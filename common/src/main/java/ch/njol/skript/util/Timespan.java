@@ -32,15 +32,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.temporal.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.time.temporal.ChronoUnit.*;
+import static java.time.temporal.ChronoUnit.MILLIS;
 
 public class Timespan implements YggdrasilSerializable, Comparable<Timespan>, TemporalAmount { // REMIND unit
 

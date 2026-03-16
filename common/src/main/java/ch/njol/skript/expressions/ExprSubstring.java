@@ -1,23 +1,18 @@
 package ch.njol.skript.expressions;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Examples;
-import ch.njol.skript.doc.Keywords;
-import ch.njol.skript.doc.Name;
-import ch.njol.skript.doc.Since;
-import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
-
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.*;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.util.Kleenean;
+import org.bukkit.event.Event;
+import org.eclipse.jdt.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Peter Güttinger
@@ -36,7 +31,7 @@ public class ExprSubstring extends SimpleExpression<String> {
 		Skript.registerExpression(ExprSubstring.class, String.class, ExpressionType.COMBINED,
 			"[the] (part|sub[ ](text|string)) of %strings% (between|from) (ind(ex|ices)|character[s]|) %number% (and|to) (index|character|) %number%",
 			"[the] (1¦first|2¦last) [%-number%] character[s] of %strings%", "[the] %number% (1¦first|2¦last) characters of %strings%",
-			"[the] character[s] at [(index|position|indexes|indices|positions)] %numbers% (in|of) %strings%");
+			"[the] character[s] at [index|position|indexes|indices|positions] %numbers% (in|of) %strings%");
 	}
 
 	@SuppressWarnings("null")

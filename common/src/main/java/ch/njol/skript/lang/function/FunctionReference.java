@@ -28,12 +28,12 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.log.RetainingLogHandler;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.registrations.Classes;
-import org.skriptlang.skript.lang.converter.Converters;
+import ch.njol.skript.util.Contract;
 import ch.njol.skript.util.LiteralUtils;
 import ch.njol.util.StringUtils;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
-import ch.njol.skript.util.Contract;
+import org.skriptlang.skript.lang.converter.Converters;
 
 import java.util.ArrayList;
 import java.util.Arrays;

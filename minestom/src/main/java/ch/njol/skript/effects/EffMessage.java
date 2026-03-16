@@ -18,30 +18,25 @@
  */
 package ch.njol.skript.effects;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import ch.njol.skript.registrations.Classes;
-import ch.njol.skript.util.LiteralUtils;
-import ch.njol.util.coll.CollectionUtils;
-import net.kyori.adventure.text.Component;
-import net.minestom.server.MinecraftServer;
-import net.minestom.server.command.CommandSender;
-import org.bukkit.event.Event;
-
 import ch.njol.skript.Skript;
-import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Examples;
-import ch.njol.skript.doc.Name;
-import ch.njol.skript.doc.RequiredPlugins;
-import ch.njol.skript.doc.Since;
+import ch.njol.skript.doc.*;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionList;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.VariableString;
+import ch.njol.skript.registrations.Classes;
+import ch.njol.skript.util.LiteralUtils;
 import ch.njol.util.Kleenean;
+import ch.njol.util.coll.CollectionUtils;
+import net.kyori.adventure.text.Component;
+import net.minestom.server.MinecraftServer;
+import net.minestom.server.command.CommandSender;
+import org.bukkit.event.Event;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Name("Message")
 @Description({"Sends a message to the given player. Only styles written",

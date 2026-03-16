@@ -20,8 +20,8 @@ import org.eclipse.jdt.annotation.Nullable;
 public class ExprItemWithEnchant extends SimpleExpression<Item> {
 
 	static {
-		Skript.registerExpression(ExprItemWithEnchant.class, Item.class, ExpressionType.COMBINED,
-			"%item% (of|with) [enchant[(s|ment[s])]] %enchantments%");
+		Skript.registerExpression(ExprItemWithEnchant.class, Item.class, ExpressionType.PATTERN_MATCHES_EVERYTHING,
+			"%item% (of|with) [enchant[ment][s]] %enchantments%");
 	}
 
 	private Expression<Item> item;

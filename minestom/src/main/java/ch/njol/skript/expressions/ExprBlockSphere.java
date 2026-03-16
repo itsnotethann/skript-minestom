@@ -1,12 +1,20 @@
 package ch.njol.skript.expressions;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
+import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.ExpressionType;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
+import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.util.BlockSphereIterator;
+import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
+import ch.njol.util.coll.iterator.EmptyIterator;
+import ch.njol.util.coll.iterator.IteratorIterable;
 import net.minestom.server.coordinate.BlockVec;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.instance.Instance;
@@ -15,17 +23,8 @@ import net.minestom.server.instance.block.Block;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
-import ch.njol.skript.Skript;
-import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Name;
-import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
-import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.lang.util.SimpleExpression;
-import ch.njol.util.Kleenean;
-import ch.njol.util.coll.iterator.EmptyIterator;
-import ch.njol.util.coll.iterator.IteratorIterable;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * @author Peter Güttinger

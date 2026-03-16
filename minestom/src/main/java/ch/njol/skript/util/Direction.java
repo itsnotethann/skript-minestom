@@ -350,13 +350,13 @@ public class Direction implements YggdrasilRobustSerializable {
 	}
 
 	public static Expression<Point> combine(final Expression<? extends Direction> dirs, final Expression<? extends Point> locs) {
-		return new SimpleExpression<Point>() {
+		return new SimpleExpression<>() {
 			@SuppressWarnings("null")
 			@Override
 			protected Point[] get(final Event e) {
 				final Direction[] ds = dirs.getArray(e);
 				final Point[] ls = locs.getArray(e);
-				final Point[] r = ls; //ds.length == 1 ? ls : new Pos[ds.length * ls.length];
+				final Point[] r = Arrays.copyOf(ls, ls.length, Point[].class); //ds.length == 1 ? ls : new Pos[ds.length * ls.length];
 				for (int i = 0; i < ds.length; i++) {
 					for (int j = 0; j < ls.length; j++) {
 //						r[i + j * ds.length] = ds[i].getRelative(ls[j]);
@@ -371,7 +371,7 @@ public class Direction implements YggdrasilRobustSerializable {
 			public Point[] getAll(final Event e) {
 				final Direction[] ds = dirs.getAll(e);
 				final Point[] ls = locs.getAll(e);
-				final Point[] r = ls; //ds.length == 1 ? ls : new Pos[ds.length * ls.length];
+				final Point[] r = Arrays.copyOf(ls, ls.length, Point[].class); //ds.length == 1 ? ls : new Pos[ds.length * ls.length];
 				for (int i = 0; i < ds.length; i++) {
 					for (int j = 0; j < ls.length; j++) {
 //						r[i + j * ds.length] = ds[i].getRelative(ls[j]);
