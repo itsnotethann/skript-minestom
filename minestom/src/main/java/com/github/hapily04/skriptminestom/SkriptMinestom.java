@@ -1,6 +1,7 @@
 package com.github.hapily04.skriptminestom;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.events.EffectCommandEvent;
 import ch.njol.skript.events.minestom.CustomConnectEvent;
@@ -204,8 +205,13 @@ public class SkriptMinestom {
 				p.kick(kickComponent);
 			}
 			spark.shutdown();
-			Plugin skript = Bukkit.getPluginManager().getPlugin("Skript");
-			if (skript != null) skript.onDisable();
+			PluginManager pluginManager = Bukkit.getPluginManager();
+			Plugin skript = pluginManager.getPlugin("Skript");
+
+			if (skript != null) pluginManager.disablePlugin(skript);
+			for (SkriptAddon addon : Skript.getAddons()) {
+				pluginManager.disablePlugin(addon.plugin);
+			}
 			LuckPermsMinestom.disable();
 			MinestomTerminal.stop();
 			System.exit(0); // sometimes server hangs so manually stop

@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public interface Server {
 
@@ -21,5 +22,7 @@ public interface Server {
 	String getVersion();
 
 	String getName();
+
+	Player getPlayer(UUID uuid);
 
 }

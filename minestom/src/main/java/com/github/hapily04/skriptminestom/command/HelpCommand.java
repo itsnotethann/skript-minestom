@@ -9,8 +9,8 @@ public class HelpCommand extends Command {
 
 	public HelpCommand() {
 		super("help");
-		setCondition((sender, commandString) -> LuckPermsPlayer.hasPermission(sender, "skript.skript"));
-		setDefaultExecutor((sender, context) -> sender.sendMessage(HELP_MESSAGE));
+		setCondition((sender, _) -> LuckPermsPlayer.hasPermission(sender, "skript.skript"));
+		setDefaultExecutor((sender, _) -> sender.sendMessage(HELP_MESSAGE));
 	}
 
 }

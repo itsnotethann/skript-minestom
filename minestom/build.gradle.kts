@@ -41,6 +41,22 @@ tasks.withType<JavaCompile>().configureEach {
 	options.release.set(25)
 }
 
+val generateSources by tasks.registering(Copy::class) {
+	from("src/main/java-templates")
+	into(layout.buildDirectory.dir("generated/sources/java"))
+
+	expand("version" to project.version)
+	rename { it.removeSuffix(".peb") }
+}
+
+sourceSets.main {
+	java.srcDir(layout.buildDirectory.dir("generated/sources/java"))
+}
+
+tasks.compileJava {
+	dependsOn(generateSources)
+}
+
 application {
 	mainClass = "com.github.hapily04.skriptminestom.SkriptMinestom"
 }

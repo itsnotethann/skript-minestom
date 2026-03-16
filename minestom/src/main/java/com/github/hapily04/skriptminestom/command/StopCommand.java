@@ -8,10 +8,8 @@ public class StopCommand extends Command {
 
     public StopCommand() {
         super("stop");
-        setCondition((sender, commandString) -> LuckPermsPlayer.hasPermission(sender, "skript.stop"));
-        setDefaultExecutor((sender, context) -> {
-            MinecraftServer.stopCleanly();
-        });
+        setCondition((sender, _) -> LuckPermsPlayer.hasPermission(sender, "skript.stop"));
+        setDefaultExecutor((_, _) -> MinecraftServer.stopCleanly());
     }
 
 }

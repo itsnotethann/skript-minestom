@@ -1,5 +1,6 @@
 package org.bukkit;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.SimplePluginManager;
@@ -11,6 +12,9 @@ import org.bukkit.scheduler.Ticker;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.UUID;
 
 public class Bukkit {
 	private static final Thread primaryThread = Thread.currentThread();
@@ -61,6 +65,14 @@ public class Bukkit {
 
 	public static String getName() {
 		return server.getName();
+	}
+
+	public static Collection<Player> getOnlinePlayers() {
+		return server.getOnlinePlayers();
+	}
+
+	public static Player getPlayer(UUID uuid) {
+		return server.getPlayer(uuid);
 	}
 
 	public static boolean isPrimaryThread() {

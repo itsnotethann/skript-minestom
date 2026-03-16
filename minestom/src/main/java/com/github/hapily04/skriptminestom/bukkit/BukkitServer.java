@@ -8,11 +8,11 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public class BukkitServer implements Server {
 
 	private static final ConsoleCommandSenderImpl CONSOLE_SENDER = new ConsoleCommandSenderImpl();
-	private static final Player DUMMY_PLAYER = new Player();
 
 	@Override
 	public ConsoleCommandSender getConsoleSender() {
@@ -21,7 +21,7 @@ public class BukkitServer implements Server {
 
 	@Override
 	public Collection<Player> getOnlinePlayers() {
-		return MinecraftServer.getConnectionManager().getOnlinePlayers().stream().map(_ -> DUMMY_PLAYER).toList();
+		return MinecraftServer.getConnectionManager().getOnlinePlayers().stream().map(p -> new Player(p.getUsername(), p.getUuid())).toList();
 	}
 
 	@Override
@@ -37,6 +37,13 @@ public class BukkitServer implements Server {
 	@Override
 	public String getName() {
 		return "Skript-Minestom (" + Git.version() + ")";
+	}
+
+	@Override
+	public Player getPlayer(UUID uuid) {
+		net.minestom.server.entity.Player player = MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(uuid);
+		if (player == null) return null;
+		return new Player(player.getUsername(), player.getUuid());
 	}
 
 }
