@@ -78,6 +78,7 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.StreamCorruptedException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ch.njol.skript.expressions.ExprAmbientSounds.getSoundEvent;
 import static com.github.hapily04.skriptminestom.util.MessageUtils.LEGACY_SERIALIZER;
@@ -85,8 +86,6 @@ import static com.github.hapily04.skriptminestom.util.NumberUtils.timespanFrom;
 
 @SuppressWarnings("unchecked")
 public class MinestomClasses {
-
-	// TODO Use lang files and enumclassinfo
 
 	public static final Changer<Item> ITEM_CHANGER = new Changer<>() {
 		@Override
@@ -544,6 +543,8 @@ public class MinestomClasses {
 			.user("blocks?")
 			.name("Block")
 			.description("A block with a type, properties (blockdata), nbt, and handler.")
+			.usage("<block_namespace>[<properties>]")
+			.examples("stone button[powered=true]")
 			.defaultExpression(new EventValueExpression<>(Block.class))
 			.parser(new Parser<>() {
 				@Nullable
@@ -830,7 +831,8 @@ public class MinestomClasses {
 			.user("items?")
 			.name("Item")
 			.description("An item with its amount, enchantments and other data.")
-			.examples("give player stone")
+			.examples("give player 2 stone sword")
+			.usage("[<number>] <item namespace>")
 			.defaultExpression(new EventValueExpression<>(Item.class))
 			.parser(new Parser<>() {
 				@SuppressWarnings("PatternValidation")
@@ -927,6 +929,7 @@ public class MinestomClasses {
 			.name("Entity Type")
 			.description("The type of an entity (zombie, player, skeleton, etc.)")
 			.examples("spawn zombie at player")
+			.usage(EntityType.values().stream().map(type -> type.key().value()).collect(Collectors.joining(", ")))
 			.defaultExpression(new EventValueExpression<>(EntityType.class))
 			.parser(new Parser<>() {
 				@Nullable
@@ -1018,6 +1021,7 @@ public class MinestomClasses {
 			.name("Enchantment")
 			.description("An enchantment for an item, including its level.")
 			.examples("enchant player's tool with sharpness 5")
+			.usage("<enchantment namespace> [<level>]")
 			.defaultExpression(new EventValueExpression<>(Enchantment.class))
 			.parser(new Parser<>() {
 				@Nullable
@@ -1581,6 +1585,7 @@ public class MinestomClasses {
 			.user("named ?text ?colors?")
 			.name("Named Text Color")
 			.description("Team colors (dark red, dark aqua, etc.)")
+			.usage(String.join(", ", NamedTextColor.NAMES.keys()))
 			.parser(new Parser<>() {
 				public NamedTextColor parse(@NotNull String s, @NotNull ParseContext context) {
 					s = s.toLowerCase(Locale.ENGLISH).replace(' ', '_');
@@ -1727,6 +1732,7 @@ public class MinestomClasses {
 			.user("particles?")
 			.name("Particle")
 			.description("Particle (e.g. dust)")
+			.usage(Particle.values().stream().map(particle -> particle.key().value()).collect(Collectors.joining(", ")))
 			.parser(new Parser<>() {
 				public Particle parse(@NotNull String s, @NotNull ParseContext context) {
 					s = s.toLowerCase(Locale.ENGLISH).replace(' ', '_');
