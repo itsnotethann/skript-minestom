@@ -61,11 +61,19 @@ application {
 	mainClass = "com.github.hapily04.skriptminestom.SkriptMinestom"
 }
 
-java {
-	withSourcesJar()
-}
-
 publishing {
+	publications {
+		create<MavenPublication>("minestomPublish") {
+			groupId = project.group.toString()
+			artifactId = "skript-minestom"
+			version = project.version.toString()
+
+			artifact(tasks.shadowJar) {
+				classifier = "" // no -all
+			}
+		}
+	}
+
 	repositories {
 		maven {
 			url = uri("https://maven.hapily.me/snapshots")

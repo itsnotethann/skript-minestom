@@ -72,19 +72,7 @@ public abstract class JavaPlugin extends PluginBase {
 
 	public Logger getLogger() {
 		if (logger == null) {
-			logger = Logger.getLogger(getName());
-			logger.addHandler(new Handler() {
-				@Override
-				public void publish(LogRecord record) {
-					LoggerUtils.log(trueLogger, record.getLevel(), record.getMessage());
-				}
-
-				@Override
-				public void flush() {}
-
-				@Override
-				public void close() {}
-			});
+			logger = Bukkit.generateBadLogger(getName(), trueLogger);
 		}
 		return logger;
 	}

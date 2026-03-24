@@ -48,11 +48,11 @@ import java.util.concurrent.CompletableFuture;
 @Description("Creates a new instance container or a shared instance.")
 @Examples({
 	"create instance and store it in {_instance}:",
-	"    file: \"worlds/lobby\"",
-	"    loader: \"anvil\"",
+	"    file: worlds/lobby",
+	"    loader: anvil",
 	"    generator:",
 	"        fill chunk with stone",
-	"    preload option: \"normal\""
+	"    preload: normal"
 })
 public class EffSecCreateInstance extends EffectSection {
 

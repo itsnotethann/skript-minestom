@@ -9,17 +9,21 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitSchedulerImpl;
 import org.bukkit.scheduler.DefaultTicker;
 import org.bukkit.scheduler.Ticker;
+import org.bukkit.util.LoggerUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.UUID;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 public class Bukkit {
 	private static final Thread primaryThread = Thread.currentThread();
 	private static final PluginManager pluginManager = new SimplePluginManager();
-	private static final Logger logger = LoggerFactory.getLogger(Bukkit.class);
+	private static final Logger trueLogger = LoggerFactory.getLogger(Bukkit.class);
+	private static final java.util.logging.Logger logger = generateBadLogger("Bukkit", trueLogger);
 	private static BukkitScheduler scheduler = null;
 	private static ServicesManager servicesManager = null;
 	private static Ticker ticker = new DefaultTicker();
@@ -38,8 +42,12 @@ public class Bukkit {
 		Bukkit.server = server;
 	}
 
-	public static Logger getLogger() {
+	public static java.util.logging.Logger getLogger() {
 		return logger;
+	}
+
+	public static Logger getBetterLogger() {
+		return trueLogger;
 	}
 
 	public static @NotNull BukkitScheduler getScheduler() {
@@ -90,4 +98,23 @@ public class Bukkit {
 	public static void setTicker(Ticker ticker) {
 		Bukkit.ticker = ticker;
 	}
+
+	public static java.util.logging.Logger generateBadLogger(@NotNull String name, Logger trueLogger) {
+		java.util.logging.Logger logger = java.util.logging.Logger.getLogger(name);
+		logger.addHandler(new Handler() {
+			@Override
+			public void publish(LogRecord record) {
+				LoggerUtils.log(trueLogger, record.getLevel(), ChatColor.stripColor(record.getMessage()));
+			}
+
+			@Override
+			public void flush() {}
+
+			@Override
+			public void close() {}
+		});
+		logger.setUseParentHandlers(false);
+		return logger;
+	}
+
 }

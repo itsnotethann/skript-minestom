@@ -8,6 +8,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class SimplePluginManager implements PluginManager {
 
 	public void callEvent(Event event) {
 		HandlerList handlerList = event.getHandlers();
-		List<RegisteredListener> handlers = handlerList.getRegisteredListeners();
+		List<RegisteredListener> handlers = new ArrayList<>(handlerList.getRegisteredListeners());
 
 		handlers.sort((a, b) -> {
 			int priorityA = a.getPriority().ordinal();
@@ -88,7 +89,7 @@ public class SimplePluginManager implements PluginManager {
 				plugins.put(description.getName(), plugin);
 				return plugin;
 			} catch (ClassNotFoundException | NoSuchMethodException exception) {
-				Bukkit.getLogger().warn("Found plugin '{}' with an invalid main class.", description.getName());
+				Bukkit.getBetterLogger().warn("Found plugin '{}' with an invalid main class.", description.getName());
 			}
 		} catch (MalformedURLException | ReflectiveOperationException exception) {
 			exception.printStackTrace();

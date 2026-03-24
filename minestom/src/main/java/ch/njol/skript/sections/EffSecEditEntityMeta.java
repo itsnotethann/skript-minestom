@@ -28,8 +28,8 @@ import java.util.List;
 public class EffSecEditEntityMeta extends Section {
 
 	static {
-		Skript.registerSection(EffSecEditEntityMeta.class, "(modify|edit) [entity[ ]]meta of %entities%",
-			"(modify|edit) %entities%'[s] [entity[ ]]meta");
+		Skript.registerSection(EffSecEditEntityMeta.class, "(modify|edit) [entity] meta[data] of %entities%",
+			"(modify|edit) %entities%'[s] [entity] meta[data]");
 		EventValues.registerEventValue(EditEntityMetaEvent.class, Entity.class, EditEntityMetaEvent::getEntity);
 	}
 

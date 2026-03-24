@@ -46,7 +46,7 @@ public abstract class SkriptLogger {
 	public final static Level DEBUG = Level.INFO; // CraftBukkit 1.7+ uses the worst logging library I've ever encountered
 
 	@SuppressWarnings("null")
-	public final static Logger LOGGER = Bukkit.getLogger();
+	public final static Logger LOGGER = Bukkit.getBetterLogger();
 	
 	private static HandlerList getHandlers() {
 		return ParserInstance.get().getHandlers();

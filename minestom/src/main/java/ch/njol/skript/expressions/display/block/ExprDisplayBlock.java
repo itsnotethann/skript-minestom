@@ -14,10 +14,10 @@ import org.bukkit.event.Event;
 @Name("Display Block")
 @Description("The block displayed by a block display entity.")
 @Examples("set display block of targeted entity to stone")
-public class ExprBlock extends SimplePropertyExpression<Entity, Block> {
+public class ExprDisplayBlock extends SimplePropertyExpression<Entity, Block> {
 
 	static {
-		register(ExprBlock.class, Block.class, "display block", "entities");
+		register(ExprDisplayBlock.class, Block.class, "display block", "entities");
 	}
 
 	@Override

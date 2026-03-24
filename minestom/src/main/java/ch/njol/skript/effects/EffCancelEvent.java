@@ -13,6 +13,7 @@ import ch.njol.skript.log.ErrorQuality;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.Kleenean;
 import net.minestom.server.event.trait.CancellableEvent;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -47,10 +48,8 @@ public class EffCancelEvent extends Effect {
 		final Class<? extends Event>[] es = getParser().getCurrentEvents();
 		if (es == null)
 			return false;
-		// chatgpt
 		for (final Class<? extends Event> e : es) {
-			Class<? extends net.minestom.server.event.Event> minestomEventClass = getMinestomEventType(e);
-			if (minestomEventClass == null || !CancellableEvent.class.isAssignableFrom(minestomEventClass)) {
+			if (!isCancellable(e)) {
 				Skript.error(Utils.A(getParser().getCurrentEventName()) + " event cannot be cancelled", ErrorQuality.SEMANTIC_ERROR);
 				return false;
 			}
@@ -68,6 +67,12 @@ public class EffCancelEvent extends Effect {
 	@Override
 	public String toString(final @Nullable Event e, final boolean debug) {
 		return (cancel ? "" : "un") + "cancel event";
+	}
+
+	public static boolean isCancellable(Class<? extends Event> event) {
+		if (Cancellable.class.isAssignableFrom(event)) return true;
+		Class<? extends net.minestom.server.event.Event> minestomEventClass = getMinestomEventType(event);
+		return minestomEventClass != null && CancellableEvent.class.isAssignableFrom(minestomEventClass);
 	}
 
 	// chatgpt
