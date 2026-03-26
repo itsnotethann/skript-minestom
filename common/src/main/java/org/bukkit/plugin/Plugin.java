@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 public interface Plugin extends TabExecutor {
 	File getDataFolder();
@@ -14,6 +15,7 @@ public interface Plugin extends TabExecutor {
 	void setEnabled(boolean enabled);
 	boolean isEnabled();
 	String getName();
+	Logger getLogger();
 	@NotNull FileConfiguration getConfig();
 	void reloadConfig();
 	void saveConfig();

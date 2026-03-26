@@ -70,6 +70,7 @@ public abstract class JavaPlugin extends PluginBase {
 		return file;
 	}
 
+	@Override
 	public Logger getLogger() {
 		if (logger == null) {
 			logger = Bukkit.generateBadLogger(getName(), trueLogger);
