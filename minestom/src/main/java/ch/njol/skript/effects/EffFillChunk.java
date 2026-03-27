@@ -28,7 +28,7 @@ public class EffFillChunk extends Effect implements EventRestrictedSyntax {
 
 	static {
 		Skript.registerEffect(EffFillChunk.class,
-			"fill [generat(or|ion)] chunk [(biome|blocks)] [1:between ((y|height[s]) [level[s]]) %-integer% and %-integer%] with %block/biome%");
+			"fill [generat(or|ion)] chunk [(biome|blocks)] [1:between (y|height[s]) [level[s]] %-integer% and %-integer%] with %block/biome%");
 	}
 
 	private Expression<Integer> minHeight;

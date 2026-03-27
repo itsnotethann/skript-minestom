@@ -228,8 +228,6 @@ public class EffSecCreateInstance extends EffectSection {
 
 	public static class TerrainGenerateEvent extends Event {
 
-		private static final HandlerList HANDLERS = new HandlerList();
-
 		private final GenerationUnit unit;
 
 		public TerrainGenerateEvent(GenerationUnit unit) {
@@ -242,11 +240,7 @@ public class EffSecCreateInstance extends EffectSection {
 
 		@Override
 		public HandlerList getHandlers() {
-			return HANDLERS;
-		}
-
-		public static HandlerList getHandlerList() {
-			return HANDLERS;
+			return null;
 		}
 
 	}
