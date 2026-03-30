@@ -158,7 +158,7 @@ public class MinestomClasses {
 			.parser(new Parser<>() {
 				@Nullable
 				public Player parse(@NotNull String s, @NotNull ParseContext context) {
-					return MinestomFunctions.findPlayer(s, false);
+					return MinestomFunctions.findPlayer(s, true);
 				}
 
 				@Override

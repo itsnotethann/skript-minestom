@@ -20,7 +20,7 @@ import java.util.function.Function;
 public class MarkerRegistration {
 
 	public static void register() {
-		registerEventValue(EntityInstanceEventMarker.class, Instance.class, EntityInstanceEvent.class, EntityInstanceEvent::getInstance);
+		registerEventValue(InstanceEventMarker.class, Instance.class, InstanceEvent.class, InstanceEvent::getInstance);
 		registerEventValue(EntityEventMarker.class, Entity.class, EntityEvent.class, EntityEvent::getEntity);
 		registerEventValue(PlayerEventMarker.class, Player.class, PlayerEvent.class, PlayerEvent::getPlayer);
 		registerEventValue(ItemEventMarker.class, Item.class, ItemEvent.class, itemEvent -> new Item(itemEvent.getItemStack()));

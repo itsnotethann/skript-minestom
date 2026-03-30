@@ -83,7 +83,6 @@ public class EvtClick extends SkriptEvent {
 		return switch (event) {
 			case PlayerBlockInteractWrapper wr -> {
 				if (click == LEFT) yield false;
-				if (o == null && click != ANY) yield false;
 				PlayerBlockInteractEvent e = wr.getEvent();
 				Player player = e.getPlayer();
 				PlayerHand hand = e.getHand();
@@ -92,7 +91,6 @@ public class EvtClick extends SkriptEvent {
 			}
 			case PlayerEntityInteractWrapper wr -> {
 				if (click == LEFT) yield false;
-				if (o == null && click != ANY) yield false;
 				PlayerEntityInteractEvent e = wr.getEvent();
 				Player player = e.getPlayer();
 				PlayerHand hand = e.getHand();
@@ -143,6 +141,7 @@ public class EvtClick extends SkriptEvent {
 	public boolean verifyEvent(Object blockOrEntity, Object eventObject, Player player, PlayerHand playerHand) {
 		boolean passesEventObject = true;
 		if (blockOrEntity != null) passesEventObject = blockOrEntity.equals(eventObject);
+		System.out.println("returning: " + (passesEventObject && verifyItem(player, playerHand)));
 		return passesEventObject && verifyItem(player, playerHand);
 	}
 

@@ -36,7 +36,10 @@ public class SimpleEvents {
 			.examples("on inventory close:");
 		Skript.registerEvent("Server List Ping", SimpleEvent.class, ServerListPingWrapper.class, "server[ ]list ping")
 			.description("Called when the client pings this server from their server list.")
-			.examples("server list ping:");
+			.examples("on server list ping:");
+		Skript.registerEvent("Player Load", SimpleEvent.class, PlayerLoadedWrapper.class, "player load[ed]")
+			.description("Called when the client says it has finished loading into the world.")
+			.examples("on player load");
 	}
 
 }
