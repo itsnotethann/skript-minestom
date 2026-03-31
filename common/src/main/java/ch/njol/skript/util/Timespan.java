@@ -28,6 +28,7 @@ import ch.njol.util.coll.CollectionUtils;
 import ch.njol.yggdrasil.YggdrasilSerializable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
@@ -366,6 +367,15 @@ public class Timespan implements YggdrasilSerializable, Comparable<Timespan>, Te
 
 	public static Timespan fromDuration(Duration duration) {
 		return new Timespan(duration.toMillis());
+	}
+
+	/**
+	 * Creates a {@link Timespan} that represents an infinite duration.
+	 * @return A new Timespan object representing an infinite duration.
+	 */
+	@Contract(value = " -> new", pure = true)
+	public static Timespan infinite() {
+		return new Timespan(Long.MAX_VALUE);
 	}
 
 	@Override

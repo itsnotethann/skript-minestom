@@ -14,6 +14,8 @@ import net.minestom.server.instance.block.Block;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+import java.util.Map;
+
 public class EvtClick extends SkriptEvent {
 
 	/**
@@ -138,13 +140,26 @@ public class EvtClick extends SkriptEvent {
 			(tools != null ? " holding " + tools.toString(event, debug) : "");
 	}
 
-	public boolean verifyEvent(Object blockOrEntity, Object eventObject, Player player, PlayerHand playerHand) {
+	private boolean verifyEvent(Object blockOrEntity, Object eventObject, Player player, PlayerHand playerHand) {
 		boolean passesEventObject = true;
-		if (blockOrEntity != null) passesEventObject = blockOrEntity.equals(eventObject);
+		if (blockOrEntity != null) {
+			if (blockOrEntity instanceof Block block1 && eventObject instanceof Block block2) passesEventObject = verifyBlock(block1, block2);
+			else passesEventObject = blockOrEntity.equals(eventObject);
+		}
 		return passesEventObject && verifyItem(player, playerHand);
 	}
 
-	public boolean verifyItem(Player player, PlayerHand hand) {
+	private boolean verifyBlock(Block blockToCheck, Block eventBlock) {
+		if (eventBlock.equals(eventBlock.defaultState())) return blockToCheck.compare(eventBlock);
+		Map<String, String> eventBlockProperties = eventBlock.properties();
+		Map<String, String> blockToCheckProperties = blockToCheck.properties();
+		for (String s : eventBlockProperties.keySet()) {
+			if (!blockToCheckProperties.containsKey(s) || !eventBlockProperties.get(s).equals(blockToCheckProperties.get(s))) return false;
+		}
+		return true;
+	}
+
+	private boolean verifyItem(Player player, PlayerHand hand) {
 		if (tools == null) return true;
 		return tools.getSingle().getItem().material().equals(player.getItemInHand(hand).material());
 	}
