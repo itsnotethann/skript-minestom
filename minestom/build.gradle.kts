@@ -25,7 +25,7 @@ dependencies {
 	implementation("dev.hollowcube:polar:1.15.0")
 	implementation("it.unimi.dsi:fastutil:8.5.18") // fix polar error
 	implementation("dev.lu15:luckperms-minestom:5.5-SNAPSHOT")
-	implementation("com.h2database:h2:2.2.224") // fix luckperms cause it's lowkey being  stupid
+	implementation("com.h2database:h2:2.2.224") // fix luckperms cause it's lowkey being stupid
 	implementation("dev.lu15:spark-minestom:1.10-SNAPSHOT")
 	implementation("org.spongepowered:configurate-hocon:3.7.2") // configuration using hocon
 	implementation("org.jline:jline:3.28.0") // part of terminal implementation

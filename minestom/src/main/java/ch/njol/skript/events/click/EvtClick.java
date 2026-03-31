@@ -141,7 +141,6 @@ public class EvtClick extends SkriptEvent {
 	public boolean verifyEvent(Object blockOrEntity, Object eventObject, Player player, PlayerHand playerHand) {
 		boolean passesEventObject = true;
 		if (blockOrEntity != null) passesEventObject = blockOrEntity.equals(eventObject);
-		System.out.println("returning: " + (passesEventObject && verifyItem(player, playerHand)));
 		return passesEventObject && verifyItem(player, playerHand);
 	}
 
