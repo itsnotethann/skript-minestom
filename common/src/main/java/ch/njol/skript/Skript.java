@@ -53,6 +53,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 import org.jetbrains.annotations.Unmodifiable;
+import org.skriptlang.skript.bukkit.lang.eventvalue.EventValueRegistry;
 import org.skriptlang.skript.bukkit.registration.BukkitSyntaxInfos;
 import org.skriptlang.skript.docs.Origin;
 import org.skriptlang.skript.lang.comparator.Comparator;
@@ -367,6 +368,11 @@ public final class Skript extends JavaPlugin implements Listener {
 
 		// Load classes which are always safe to use
 		new JavaClasses(); // These may be needed in configuration
+
+		EventValueRegistry eventValueRegistry = EventValueRegistry.empty(this);
+		skript.storeRegistry(EventValueRegistry.class, eventValueRegistry);
+		//noinspection removal
+		EventValues.setEventValueRegistry(eventValueRegistry);
 
 		// And then not-so-safe classes
 		Throwable classLoadError = null;
