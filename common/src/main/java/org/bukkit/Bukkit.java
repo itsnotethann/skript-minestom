@@ -1,5 +1,6 @@
 package org.bukkit;
 
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicesManager;
@@ -81,6 +82,10 @@ public class Bukkit {
 
 	public static Player getPlayer(UUID uuid) {
 		return server.getPlayer(uuid);
+	}
+
+	public static ConsoleCommandSender getConsoleSender() {
+		return server.getConsoleSender();
 	}
 
 	public static boolean isPrimaryThread() {

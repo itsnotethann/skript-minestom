@@ -180,6 +180,14 @@ public final class Skript extends JavaPlugin implements Listener {
 	@Deprecated(forRemoval = true) // TODO this field will be replaced by a proper registry later
 	private static @UnknownNullability ExperimentRegistry experimentRegistry;
 
+	/**
+	 * Check minecraft version and assign it to minecraftVersion field
+	 * This method is created to update MC version before onEnable method
+	 */
+	public static void updateMinecraftVersion() {
+		minecraftVersion = new Version(Bukkit.getVersion());
+	}
+
 	public static Version getVersion() {
 		final Version v = version;
 		if (v == null)
@@ -262,6 +270,7 @@ public final class Skript extends JavaPlugin implements Listener {
 
 	@Override
 	public void onEnable() {
+		updateMinecraftVersion();
 		Bukkit.getPluginManager().registerEvents(this, this);
 		if (disabled) {
 			Skript.error(m_invalid_reload.toString());

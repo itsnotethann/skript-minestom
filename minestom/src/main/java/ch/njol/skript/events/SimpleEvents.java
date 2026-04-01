@@ -3,6 +3,8 @@ package ch.njol.skript.events;
 import ch.njol.skript.Skript;
 import ch.njol.skript.events.wrapper.*;
 import ch.njol.skript.lang.util.SimpleEvent;
+import net.minestom.server.event.player.PlayerStartFlyingEvent;
+import org.skriptlang.skript.util.event.EventRegistry;
 
 public class SimpleEvents {
 
@@ -13,12 +15,6 @@ public class SimpleEvents {
 		Skript.registerEvent("Player Leave", SimpleEvent.class, PlayerDisconnectWrapper.class, "[player] (quit[ting]|disconnect[ing]|log[ ]out|logging out|leav(e|ing))")
 			.description("Called when a player leaves the server.")
 			.examples("on player quit:");
-		Skript.registerEvent("Player Start Sneaking", SimpleEvent.class, PlayerStartSneakingWrapper.class, "[player] [start] sneak[ing]")
-			.description("Called when a player starts sneaking.")
-			.examples("on player start sneaking:");
-		Skript.registerEvent("Player Stop Sneaking", SimpleEvent.class, PlayerStopSneakingWrapper.class, "[player] (stop |un)sneak[ing]")
-			.description("Called when a player stops sneaking.")
-			.examples("on player stop sneaking:");
 		Skript.registerEvent("Player Chat", SimpleEvent.class, PlayerChatWrapper.class, "[player] chat")
 			.description("Called when a player chats.")
 			.examples("on chat:");
@@ -40,6 +36,48 @@ public class SimpleEvents {
 		Skript.registerEvent("Player Load", SimpleEvent.class, PlayerLoadedWrapper.class, "player load[ed]")
 			.description("Called when the client says it has finished loading into the world.")
 			.examples("on player load");
+		Skript.registerEvent("Player Command", SimpleEvent.class, PlayerCommandWrapper.class, "[player] [execute|run] command")
+			.description("Called when a player attempts to run a command.")
+			.examples("on command:");
+		Skript.registerEvent("Tool/Held Slot Change", SimpleEvent.class, PlayerChangeHeldSlotWrapper.class, "[player['s]] (tool|item held|held item) chang(e|ing)")
+			.description("Called when a player changes their held item slot.")
+			.examples("""
+				on held item change:
+					broadcast "%event-slot%" # broadcasts the currently held slot
+					broadcast "%future event-slot%" # broadcasts the held slot they're changing to""");
+		Skript.registerEvent("Player GameMode Change", SimpleEvent.class, PlayerGameModeChangeWrapper.class, "game[ ]mode change")
+			.description("Called when a player's gamemode is about to be changed.")
+			.examples("on gamemode change:");
+		Skript.registerEvent("Player GameMode Request", SimpleEvent.class, PlayerGameModeRequestWrapper.class, "game[ ]mode [change] request")
+			.description("Called when a player requests to change their gamemode (F3 + F4 Menu).")
+			.examples("""
+				on gamemode request:
+					player's permission level >= 2
+					set player's gamemode to event-gamemode""");
+		Skript.registerEvent("Stab Attack", SimpleEvent.class, PlayerStabWrapper.class, "[player] stab[bing] [attack]")
+			.description("Called when a player attempts to use a piercing item.")
+			.examples("on stab attack:");
+		Skript.registerEvent("Spectate", SimpleEvent.class, PlayerStabWrapper.class, "[player] [start] spectat(e|ing)")
+			.description("Called when a player starts spectating an entity.")
+			.examples("""
+				on spectate:
+					broadcast "%event-target%\"""");
+		Skript.registerEvent("Player Respawn", SimpleEvent.class, PlayerRespawnWrapper.class, "[player] respawn")
+			.description("Called when a player is about to respawn.")
+			.examples("""
+				on respawn:
+					set event-respawn-point to position(0, 42, 0)""");
+		Skript.registerEvent("Player Pick Entity", SimpleEvent.class, PlayerPickEntityWrapper.class, "[player] pick entity")
+			.description("Called when a player middle clicks on an entity.")
+			.examples("""
+				on player pick entity:
+					broadcast "%event-target%"
+					broadcast "%event-data-inclusion%" # whether data should be included from the picked entity (ctrl + middle click)""");
+		Skript.registerEvent("Player Pick Block", SimpleEvent.class, PlayerPickBlockWrapper.class, "[player] pick block")
+			.description("Called when a player middle clicks on a block")
+			.examples("""
+				on player pick block:
+					broadcast "%event-data-inclusion%" # whether data should be included from the picked block (ctrl + middle click)""");
 	}
 
 }

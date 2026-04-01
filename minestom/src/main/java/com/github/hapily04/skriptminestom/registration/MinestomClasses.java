@@ -652,6 +652,11 @@ public class MinestomClasses {
 			.description("Represents a Minecraft game mode. Possible values: survival, creative, adventure, spectator.")
 			.examples("set player's game mode to creative")
 			.defaultExpression(new EventValueExpression<>(GameMode.class)));
+		Classes.registerClass(new EnumClassInfo<>(PlayerHand.class, "playerhand")
+			.user("player ?hands?")
+			.name("Player Hand")
+			.description("Represents a player's hand. Possible values: main, off.")
+			.defaultExpression(new EventValueExpression<>(PlayerHand.class)));
 		Classes.registerClass(new EnumClassInfo<>(InventoryType.class, "inventorytype")
 			.user("inventory ?types?")
 			.name("Inventory Type")
