@@ -23,7 +23,6 @@ import java.util.List;
  * <br>
  * Or an unmodifiable view using {@code Skript.instance().registry(EventValueRegistry.class)}.
  */
-@Deprecated(since = "INSERT VERSION", forRemoval = true)
 public class EventValues {
 
 	private EventValues() {}
@@ -67,6 +66,10 @@ public class EventValues {
 		return (List) registry.elements(EventValue.Time.of(time)).stream()
 			.map(EventValueInfo::fromModern)
 			.toList();
+	}
+
+	public static void registerEventValue(EventValue<?, ?> eventValue) {
+		registry.register(eventValue);
 	}
 
 	/**
@@ -133,6 +136,10 @@ public class EventValues {
 		if (converter instanceof EventConverter<E,T> eventConverter)
 			builder.registerChanger(ChangeMode.SET, eventConverter::set);
 		registry.register(builder.build());
+	}
+
+	public static <E extends Event, T> void registerEventValueMarker(Class<E> marker, Class<T> type, Converter<E, T> converter, int time) {
+		registerEventValue(marker, type, converter, time, null, (Class<? extends E>[]) null);
 	}
 
 	/**
