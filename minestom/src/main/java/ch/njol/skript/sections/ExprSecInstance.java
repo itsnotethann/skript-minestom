@@ -64,11 +64,7 @@ public class ExprSecInstance extends SectionExpression<Instance> {
 		for (Entity e : entities.getArray(event)) {
 			if (e.getInstance().equals(instance)) continue;
 			if (runWhenComplete == null) {
-				System.out.println("running setInstance on " + Thread.currentThread());
-				System.out.println(e.acquirable().assignedThread());
-				System.out.println("actually running on " + Thread.currentThread());
 				e.setInstance(instance);
-				System.out.println("after");
 				//e.setInstance(instance);
 				//System.out.println("after");
 				//e.acquirable().sync(entity -> entity.setInstance(instance));
@@ -76,7 +72,7 @@ public class ExprSecInstance extends SectionExpression<Instance> {
 			else e.setInstance(instance).whenComplete((unused, throwable) -> {
 				if (throwable != null) return;
 				Event spawnEvent = new EntitySpawnWrapper(new EntitySpawnEvent(e, instance));
-				//Variables.withLocalVariables(variables, spawnEvent, () -> TriggerItem.walk(runWhenComplete, spawnEvent));
+				Variables.withLocalVariables(variables, spawnEvent, () -> TriggerItem.walk(runWhenComplete, spawnEvent));
 			});
 		}
 	}

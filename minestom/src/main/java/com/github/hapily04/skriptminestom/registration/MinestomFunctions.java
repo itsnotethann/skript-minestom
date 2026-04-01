@@ -18,6 +18,7 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.color.AlphaColor;
 import net.minestom.server.color.Color;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
+import net.minestom.server.coordinate.BlockVec;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
@@ -80,6 +81,16 @@ public class MinestomFunctions {
 				return new Vec[]{new Vec(x.doubleValue(), y.doubleValue(), z.doubleValue())};
 			}
 		}).description("Creates a vector with the given x, y and z.").examples("set {_vec} to vector(1, 0, 0)");
+		Functions.register(DefaultFunction.builder(Skript.getAddonInstance(), "blockvector", BlockVec.class)
+			.parameter("x", Integer.class)
+			.parameter("y", Integer.class)
+			.parameter("z", Integer.class)
+			.build(args -> {
+				int x = args.get("x");
+				int y = args.get("y");
+				int z = args.get("z");
+				return new BlockVec(x, y ,z);
+			}));
 		Functions.registerFunction(new JavaFunction<>("mm", new Parameter[]{
 			new Parameter<>("input", DefaultClasses.STRING, true, null),
 			new Parameter<>("resolvers", Classes.getExactClassInfo(TagResolver.class), false, new SimpleLiteral<>(new TagResolver[0], TagResolver.class, true))
