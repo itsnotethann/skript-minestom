@@ -15,7 +15,7 @@ public class PlayerPickEntityWrapper extends EventWrapper<PlayerPickEntityEvent>
 			.getter(from -> from.event.getTarget())
 			.build());
 		EventValues.registerEventValue(EventValue.builder(PlayerPickEntityWrapper.class, Boolean.class)
-			.patterns("data-inclusion")
+			.patterns("includes-data")
 			.getter(from -> from.event.isIncludeData())
 			.build());
 	}

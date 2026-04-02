@@ -10,7 +10,7 @@ public class PlayerPickBlockWrapper extends EventWrapper<PlayerPickBlockEvent> i
 
 	static {
 		EventValues.registerEventValue(EventValue.builder(PlayerPickBlockWrapper.class, Boolean.class)
-			.patterns("data-inclusion")
+			.patterns("includes-data")
 			.getter(from -> from.event.isIncludeData())
 			.build());
 	}

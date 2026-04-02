@@ -72,12 +72,12 @@ public class SimpleEvents {
 			.examples("""
 				on player pick entity:
 					broadcast "%event-target%"
-					broadcast "%event-data-inclusion%" # whether data should be included from the picked entity (ctrl + middle click)""");
+					broadcast "%event-includes-data%" # whether data should be included from the picked entity (ctrl + middle click)""");
 		Skript.registerEvent("Player Pick Block", SimpleEvent.class, PlayerPickBlockWrapper.class, "[player] pick block")
 			.description("Called when a player middle clicks on a block")
 			.examples("""
 				on player pick block:
-					broadcast "%event-data-inclusion%" # whether data should be included from the picked block (ctrl + middle click)""");
+					broadcast "%event-includes-data%" # whether data should be included from the picked block (ctrl + middle click)""");
 	}
 
 }
