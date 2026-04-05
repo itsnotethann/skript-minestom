@@ -30,7 +30,7 @@ dependencies {
 	implementation("org.spongepowered:configurate-hocon:3.7.2") // configuration using hocon
 	implementation("org.jline:jline:3.28.0") // part of terminal implementation
 	compileOnly("org.jetbrains:annotations:26.0.2")
-	implementation(group = "org.eclipse.jdt", name = "org.eclipse.jdt.annotation", version = "2.2.700")
+	implementation("org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.700")
 	implementation("ch.qos.logback:logback-classic:1.5.32")
 	implementation("com.google.code.gson:gson:2.11.0")
 	implementation("mx.kenzie:mirror:5.0.3")
