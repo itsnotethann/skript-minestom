@@ -74,10 +74,13 @@ public class SimpleEvents {
 					broadcast "%event-target%"
 					broadcast "%event-includes-data%" # whether data should be included from the picked entity (ctrl + middle click)""");
 		Skript.registerEvent("Player Pick Block", SimpleEvent.class, PlayerPickBlockWrapper.class, "[player] pick block")
-			.description("Called when a player middle clicks on a block")
+			.description("Called when a player middle clicks on a block.")
 			.examples("""
 				on player pick block:
 					broadcast "%event-includes-data%" # whether data should be included from the picked block (ctrl + middle click)""");
+		Skript.registerEvent("Entity Equip", SimpleEvent.class, EntityEquipWrapper.class, "[entity] equip")
+			.description("Called when an equipment slot changes on an entity.")
+			.examples(" on entity equip");
 	}
 
 }
