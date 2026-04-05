@@ -29,17 +29,19 @@ public class ExprBlock extends SimpleExpression<Block> {
 
 	static {
 		Skript.registerExpression(ExprBlock.class, Block.class, ExpressionType.SIMPLE,
-			"block[s] [type[s]] %directions% %points% [in [(world|instance)] %instances%]");
+			"block[s] [type[s]] %directions% %points% [in [(world|instance)] %instances%] [1:with updates]");
 	}
 
 	private Expression<? extends Point> pointExpr;
 	private Expression<Instance> instanceExpr;
+	private boolean update;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
 		pointExpr = Direction.combine((Expression<? extends Direction>) expressions[0], (Expression<? extends Point>) expressions[1]);
 		instanceExpr = (Expression<Instance>) expressions[2];
+		update = parseResult.mark == 1;
 		return true;
 	}
 
@@ -73,7 +75,7 @@ public class ExprBlock extends SimpleExpression<Block> {
 		Point[] points = pointExpr.getArray(event);
 		for (Point p : points) {
 			if (!instance.isChunkLoaded(p)) continue;
-			instance.setBlock(p, block, false);
+			instance.setBlock(p, block, update);
 		}
 	}
 
