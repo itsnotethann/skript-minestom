@@ -21,7 +21,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("NotNullFieldNotInitialized")
 @Name("Block")
 @Description("The block at a certain location in an instance.")
 @Examples("set block at player's location to stone")

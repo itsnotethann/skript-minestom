@@ -41,10 +41,12 @@ public class ExprYawPitch extends PropertyExpression<Object, Number> {
 		Number[] numbers = new Number[length];
 		for (int i = 0; i < length; i++) {
 			Object o = objects[i];
-			if (o instanceof Entity entity) numbers[i] = getYawPitch(entity.getPosition());
-			else if (o instanceof Vec vec) numbers[i] = getYawPitch(vec);
-			else if (o instanceof Point point) numbers[i] = getYawPitch(point.asPos());
-			else numbers[i] = 0;
+			switch (o) {
+				case Entity entity -> numbers[i] = getYawPitch(entity.getPosition());
+				case Vec vec -> numbers[i] = getYawPitch(vec);
+				case Point point -> numbers[i] = getYawPitch(point.asPos());
+				case null, default -> numbers[i] = 0;
+			}
 		}
 		return numbers;
 	}
@@ -66,7 +68,7 @@ public class ExprYawPitch extends PropertyExpression<Object, Number> {
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return match == 1 ? "yaw " : "pitch " + "of " + getExpr().toString(event, debug);
+		return (match == 1 ? "yaw" : "pitch") + " of " + getExpr().toString(event, debug);
 	}
 
 }

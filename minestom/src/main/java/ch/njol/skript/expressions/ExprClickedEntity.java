@@ -13,6 +13,7 @@ import net.minestom.server.entity.Entity;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+// todo convert to event value
 public class ExprClickedEntity extends SimpleExpression<Entity> implements EventRestrictedSyntax {
 
 	static {

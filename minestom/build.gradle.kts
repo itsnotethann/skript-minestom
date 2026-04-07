@@ -22,7 +22,7 @@ repositories {
 dependencies {
 	implementation("net.minestom:minestom-sm:2026.03.30-1.21.11")
 	implementation("net.kyori:adventure-text-minimessage:4.26.1") // todo 5.0
-	implementation("dev.hollowcube:polar:1.15.0")
+	implementation("dev.hollowcube:polar:1.15.1")
 	implementation("it.unimi.dsi:fastutil:8.5.18") // fix polar error
 	implementation("dev.lu15:luckperms-minestom:5.5-SNAPSHOT")
 	implementation("com.h2database:h2:2.2.224") // fix luckperms cause it's lowkey being stupid
