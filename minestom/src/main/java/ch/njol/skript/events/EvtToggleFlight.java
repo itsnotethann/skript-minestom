@@ -14,7 +14,7 @@ public class EvtToggleFlight extends SkriptEvent {
 
 	static {
 		Class<? extends Event>[] eventTypes = CollectionUtils.array(PlayerStartFlyingWrapper.class, PlayerStopFlyingWrapper.class);
-		Skript.registerEvent("Toggle Sneak", EvtToggleFlight.class, eventTypes, "[player] fl(ight|ying) toggle [1:on|2:off]")
+		Skript.registerEvent("Toggle Flight", EvtToggleFlight.class, eventTypes, "[player] fl(ight|ying) toggle [1:on|2:off]")
 			.description("Called when a player toggles their flight state.")
 			.examples("on flight toggle:");
 	}

@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 @Name("Skin From")
 @Description("Returns a skin from a player name, UUID, or signature.")
-@Examples("set skin of player to skin of \"jeb_\"")
+@Examples("set skin of player to skin from \"jeb_\"")
 public class ExprSkinFrom extends SimpleExpression<PlayerSkin> {
 
 	public static final Pattern UUID_REGEX = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");

@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
 
 @Name("Skull Item")
 @Description("Creates a skull item from a skin.")
-@Examples("give player skull of skin of \"jeb_\"")
+@Examples("give player skull of skin from \"jeb_\"")
 public class ExprSkull extends SimplePropertyExpression<PlayerSkin, Item> {
 
 	static {

@@ -36,10 +36,9 @@ public class ExprColorFromHexCode extends SimplePropertyExpression<String, Alpha
 
 	@Override
 	public @Nullable AlphaColor convert(String from) {
-		if (from.startsWith("#")) // strip leading #
-			from = from.substring(1);
+		from = from.replace("#", "");
 		if (!HEX_COLOR_PATTERN.matcher(from).matches()) return null;
-		return new AlphaColor(Integer.decode(from));
+		return new AlphaColor((int) Long.parseLong(from, 16));
 	}
 
 	@Override

@@ -14,7 +14,7 @@ public class EvtToggleElytraFlight extends SkriptEvent {
 
 	static {
 		Class<? extends Event>[] eventTypes = CollectionUtils.array(PlayerStartFlyingWithElytraWrapper.class, PlayerStopFlyingWithElytraWrapper.class);
-		Skript.registerEvent("Toggle Sneak", EvtToggleElytraFlight.class, eventTypes, "[player] elytra fl(ight|ying) toggle [1:on|2:off]")
+		Skript.registerEvent("Toggle Elytra Flight", EvtToggleElytraFlight.class, eventTypes, "[player] elytra fl(ight|ying) toggle [1:on|2:off]")
 			.description("Called when a player toggles their elytra flight state.")
 			.examples("on elytra flight toggle:");
 	}
