@@ -45,8 +45,8 @@ public class PropertyUtils {
 		properties.setProperty(PORT_KEY, "25565");
 		properties.setProperty(AUTH_TYPE_KEY, "");
 		properties.setProperty(PROXY_KEY, "");
-		properties.setProperty(CHUNK_VIEW_DISTANCE, "32");
-		properties.setProperty(ENTITY_VIEW_DISTANCE, "32");
+		properties.setProperty(CHUNK_VIEW_DISTANCE, "12");
+		properties.setProperty(ENTITY_VIEW_DISTANCE, "12");
 		properties.setProperty(DISPATCHER_THREADS, "1");
         properties.setProperty(SERVER_STOPPING_MINIMESSAGE, "<white>Server is stopping.");
 		return properties;

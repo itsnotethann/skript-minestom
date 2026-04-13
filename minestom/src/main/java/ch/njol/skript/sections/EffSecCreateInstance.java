@@ -71,6 +71,7 @@ public class EffSecCreateInstance extends EffectSection {
 			.addEntryData(new ExpressionEntryData<>("dimension", null, true, DimensionType.class))
 			.addEntryData(new ExpressionEntryData<>("preload biome", null, true, Biome.class))
 			.addEntry("preload option", null, true)
+			.addEntry("async preload option", null, true)
 			.addSection("generator", true)
 			.build();
 		Skript.registerSection(EffSecCreateInstance.class,
@@ -100,6 +101,7 @@ public class EffSecCreateInstance extends EffectSection {
 	private Expression<Biome> biome;
 	@Nullable
 	private String preloadOption;
+	boolean asyncPreload = false;
 	@Nullable
 	private Trigger generator;
 	private boolean phonyAnvilLoader = false;
@@ -144,6 +146,15 @@ public class EffSecCreateInstance extends EffectSection {
 			biome = container.getOptional("preload biome", Expression.class, false);
 
 			String preloadOption = container.getOptional("preload option", String.class, false);
+			String asyncPreloadOption = container.getOptional("async preload option", String.class, false);
+			if (preloadOption != null && asyncPreloadOption != null) {
+				Skript.error("You can only have one preload option, not two.");
+				return false;
+			}
+			if (preloadOption == null) {
+				preloadOption = asyncPreloadOption;
+				if (preloadOption != null) asyncPreload = true;
+			}
 			if (preloadOption != null) {
 				if (!VALID_GENERATOR_PRESET_ENTRIES.contains(preloadOption)) {
 					Skript.error("An invalid preload option has been provided: '" + preloadOption + "'.");
@@ -329,6 +340,7 @@ public class EffSecCreateInstance extends EffectSection {
 					if (throwable != null) return;
 					fillChunkWithBiome(container, chunk1, biome);
 				});
+				if (!asyncPreload) future.join();
 			}
 		}
 		if (strict) {
