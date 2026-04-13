@@ -25,10 +25,10 @@ import java.util.List;
 	"    set custom name of entity to \"New Name\"",
 	"    set custom name visibility of entity to true"
 })
-public class EffSecEditEntityMeta extends Section {
+public class SecEditEntityMeta extends Section {
 
 	static {
-		Skript.registerSection(EffSecEditEntityMeta.class, "(modify|edit) [entity] meta[data] of %entities%",
+		Skript.registerSection(SecEditEntityMeta.class, "(modify|edit) [entity] meta[data] of %entities%",
 			"(modify|edit) %entities%'[s] [entity] meta[data]");
 		EventValues.registerEventValue(EditEntityMetaEvent.class, Entity.class, EditEntityMetaEvent::getEntity);
 	}
