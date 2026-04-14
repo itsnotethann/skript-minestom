@@ -180,6 +180,7 @@ public class EffSecCreateEnvironment extends EffectSection {
 		Object[] storageValue;
 		if (dimension) {
 			DimensionType.Builder builder = DimensionType.builder();
+			builder.timelines(((DimensionType) registry.get(DimensionType.OVERWORLD.key())).timelines());
 			if (container != null) {
 				if (fixedTime != null) builder.fixedTime(fixedTime);
 				if (skyLight != null) builder.skylight(skyLight);
