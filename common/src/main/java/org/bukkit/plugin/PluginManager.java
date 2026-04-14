@@ -19,6 +19,15 @@ public interface PluginManager {
 		Plugin plugin
 	);
 
+	void registerEvent(
+		Class<? extends Event> event,
+		Listener listener,
+		EventPriority priority,
+		EventExecutor executor,
+		Plugin plugin,
+		boolean ignoreCancelled
+	);
+
 	void registerEvents(Plugin plugin, Listener listener);
 
 	void callEvent(Event event);

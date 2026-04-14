@@ -14,6 +14,10 @@ public class HandlerList {
 		listeners.removeIf((registeredListener) -> registeredListener.getListener() == listener);
 	}
 
+	public void unregisterAll(Listener listener) {
+		unregister(listener);
+	}
+
 	public List<RegisteredListener> getRegisteredListeners() {
 		return listeners;
 	}

@@ -28,9 +28,14 @@ public class SimplePluginManager implements PluginManager {
 		EventExecutor executor,
 		Plugin plugin
 	) {
+		registerEvent(event, listener, priority, executor, plugin, false);
+	}
+
+	@Override
+	public void registerEvent(Class<? extends Event> event, Listener listener, EventPriority priority, EventExecutor executor, Plugin plugin, boolean ignoreCancelled) {
 		try {
 			HandlerList handlerList = getHandlerList(event);
-			handlerList.register(new RegisteredListener(plugin, executor, priority, false, listener));
+			handlerList.register(new RegisteredListener(plugin, executor, priority, ignoreCancelled, listener));
 		} catch (ReflectiveOperationException exception) {
 			exception.printStackTrace();
 		}
