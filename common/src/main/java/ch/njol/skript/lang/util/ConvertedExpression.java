@@ -100,18 +100,25 @@ public class ConvertedExpression<F, T> implements Expression<T> {
 		// we might be able to cast some (or all) of the possible return types to T
 		// for possible return types that can't be directly cast, regular converters will be used
 		List<ConverterInfo<? extends F, ? extends T>> infos = new ArrayList<>();
-		for (Class<? extends F> type : from.possibleReturnTypes()) {
+		main_loop: for (Class<? extends F> type : from.possibleReturnTypes()) {
 			if (CollectionUtils.containsSuperclass(to, type)) { // this type is of T, build a converter simply casting
 				// noinspection unchecked - 'type' is a desired type in 'to'
 				Class<T> toType = (Class<T>) type;
 				infos.add(new ConverterInfo<>(type, toType, toType::cast, 0));
-			} else { // this possible return type is not included in 'to'
-				// build all converters for converting the possible return type into any of the types of 'to'
-				for (Class<T> toType : to) {
-					ConverterInfo<? extends F, T> converter = Converters.getConverterInfo(type, toType);
-					if (converter != null)
-						infos.add(converter);
+				continue;
+			}
+			for (Class<T> toType : to) {
+				if (type.isAssignableFrom(toType)) {
+					infos.add(new ConverterInfo<>(type, toType, value -> toType.isInstance(value) ? (T) value : null, 0));
+					continue main_loop;
 				}
+			}
+			// this possible return type is not included in 'to'
+			// build all converters for converting the possible return type into any of the types of 'to'
+			for (Class<T> toType : to) {
+				ConverterInfo<? extends F, T> converter = Converters.getConverterInfo(type, toType);
+				if (converter != null)
+					infos.add(converter);
 			}
 		}
 		if (!infos.isEmpty()) { // there are converters for (at least some of) the return types

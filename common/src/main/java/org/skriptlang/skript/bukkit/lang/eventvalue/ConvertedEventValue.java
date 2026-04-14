@@ -75,6 +75,7 @@ record ConvertedEventValue<SourceEvent extends Event, ConvertedEvent extends Eve
 		);
 	}
 
+	@SuppressWarnings("unchecked")
 	private static <F, T> @Nullable Converter<F, T> getConverter(Class<F> from, Class<T> to) {
 		if (from.isArray() && to.isArray()) {
 			//noinspection rawtypes
@@ -93,7 +94,7 @@ record ConvertedEventValue<SourceEvent extends Event, ConvertedEvent extends Eve
 				return converted;
 			};
 		}
-		//noinspection unchecked
+		if (from.isAssignableFrom(to)) return value -> to.isInstance(value) ? (T) value : null;
 		return to.isAssignableFrom(from) ? value -> (T) value : Converters.getConverter(from, to);
 	}
 
