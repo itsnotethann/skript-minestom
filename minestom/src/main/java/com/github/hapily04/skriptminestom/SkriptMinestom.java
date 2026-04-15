@@ -176,7 +176,7 @@ public class SkriptMinestom {
 			event.setCancelled(true);
 			message = message.substring(1);
 
-			EffectCommandEvent effectCommandEvent = new EffectCommandEvent(player);
+			EffectCommandEvent effectCommandEvent = new EffectCommandEvent(player, message);
 			Bukkit.getPluginManager().callEvent(effectCommandEvent);
 			if (effectCommandEvent.isCancelled()) return;
 			try (RedirectingLogHandler log = new RedirectingLogHandler(player, null)) {

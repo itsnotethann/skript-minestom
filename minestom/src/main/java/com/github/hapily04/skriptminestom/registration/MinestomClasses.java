@@ -2050,6 +2050,8 @@ public class MinestomClasses {
 			return Relation.get(o2.equals(EntityType.PLAYER));
 		});
 		Comparators.registerComparator(Entity.class, EntityType.class, (o1, o2) -> Relation.get(o1.getEntityType().equals(o2)));
+		Comparators.registerComparator(Item.class, Slot.class, (o1, o2) -> Relation.get(o1.getItem().isSimilar(o2.getItem())));
+		Comparators.registerComparator(Item.class, Item.class, (o1, o2) -> Relation.get(o1.getItem().isSimilar(o2.getItem())));
 
 		/*
 		 *	Arithmetic

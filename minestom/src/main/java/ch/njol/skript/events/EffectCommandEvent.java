@@ -23,14 +23,20 @@ public class EffectCommandEvent extends Event implements CancellableEvent {
 	}
 
 	private final Player executor;
+	private final String command;
 	private boolean cancelled = false;
 
-	public EffectCommandEvent(Player executor) {
+	public EffectCommandEvent(Player executor, String command) {
 		this.executor = executor;
+		this.command = command;
 	}
 
 	public Player getExecutor() {
 		return executor;
+	}
+
+	public String getCommand() {
+		return command;
 	}
 
 	@Override
