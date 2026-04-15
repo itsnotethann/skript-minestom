@@ -6,6 +6,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
+import net.kyori.adventure.util.RGBLike;
 import net.minestom.server.color.AlphaColor;
 import net.minestom.server.color.Color;
 import net.minestom.server.entity.Entity;
@@ -15,10 +16,10 @@ import org.bukkit.event.Event;
 @Name("Background Color")
 @Description("The background color of a text display entity.")
 @Examples("set background color of targeted entity to red")
-public class ExprBackgroundColor extends SimplePropertyExpression<Entity, Color> {
+public class ExprBackgroundColor extends SimplePropertyExpression<Entity, RGBLike> {
 
 	static {
-		register(ExprBackgroundColor.class, Color.class, "background color", "entities");
+		register(ExprBackgroundColor.class, RGBLike.class, "background color", "entities");
 	}
 
 	@Override
@@ -29,20 +30,20 @@ public class ExprBackgroundColor extends SimplePropertyExpression<Entity, Color>
 
 	@Override
 	public @org.eclipse.jdt.annotation.Nullable Class<?>[] acceptChange(Changer.ChangeMode mode) {
-		if (mode == Changer.ChangeMode.SET || mode == Changer.ChangeMode.RESET) return CollectionUtils.array(Color.class);
+		if (mode == Changer.ChangeMode.SET || mode == Changer.ChangeMode.RESET) return CollectionUtils.array(RGBLike.class);
 		return null;
 	}
 
 	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @org.jspecify.annotations.Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
-		Color color = delta == null ? null : (Color) delta[0];
+		RGBLike color = delta == null ? null : (Color) delta[0];
 		for (Entity entity : getExpr().getArray(event)) {
 			if (!(entity.getEntityMeta() instanceof TextDisplayMeta meta)) continue;
 			switch (mode) {
 				case SET -> {
 					if (color == null) return;
-					if (!(color instanceof AlphaColor)) color = color.withAlpha(255);
+					if (!(color instanceof AlphaColor)) color = new AlphaColor(255, color);
 					meta.setBackgroundColor(((AlphaColor) color).asARGB());
 				}
 				case RESET -> meta.setBackgroundColor(0x40000000);
@@ -56,8 +57,8 @@ public class ExprBackgroundColor extends SimplePropertyExpression<Entity, Color>
 	}
 
 	@Override
-	public Class<? extends Color> getReturnType() {
-		return Color.class;
+	public Class<? extends RGBLike> getReturnType() {
+		return RGBLike.class;
 	}
 
 }

@@ -13,7 +13,7 @@ public class EvtBlockBreak extends SkriptEvent {
 
 	static {
 		Skript.registerEvent("Player Block Break", EvtBlockBreak.class, PlayerBlockBreakWrapper.class,
-			"[block] break[ing] [[of] %-blocks%]");
+			"[block] (break[ing]|min(e|ing)) [[of] %-blocks%]");
 	}
 
 	@Nullable
