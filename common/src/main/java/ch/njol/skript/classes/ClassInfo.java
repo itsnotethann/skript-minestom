@@ -374,6 +374,23 @@ public class ClassInfo<T> implements Debuggable {
 	public Pattern[] getUserInputPatterns() {
 		return userInputPatterns;
 	}
+
+	/**
+	 * Checks whether the given input matches any of the user input patterns.
+	 *
+	 * @param input The user input string to be checked against the patterns.
+	 * @return true if the input matches any of the patterns, false otherwise.
+	 */
+	public boolean matchesUserInput(String input) {
+		if (userInputPatterns == null)
+			return false;
+		for (Pattern typePattern : userInputPatterns) {
+			if (typePattern.matcher(input).matches()) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	@Nullable
 	public Changer<? super T> getChanger() {
