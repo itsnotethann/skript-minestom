@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 public class EffSecTeleport extends EffectSection {
 
 	static {
-		Skript.registerSection(EffSecTeleport.class, "teleport %entities% to %point% [instance:in [(world|instance)] %-instance%]");
+		Skript.registerSection(EffSecTeleport.class, "teleport %entities% to %point% [instance:in [(world|instance)] %-instance%] [:sync]");
 	}
 
 	private Expression<Entity> entities;
@@ -31,7 +31,7 @@ public class EffSecTeleport extends EffectSection {
 	private boolean providedInstance;
 	@Nullable
 	private Trigger callback;
-
+	private boolean sync;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -40,6 +40,7 @@ public class EffSecTeleport extends EffectSection {
 		point = (Expression<Point>) expressions[1];
 		instance = (Expression<Instance>) expressions[2];
 		providedInstance = parseResult.hasTag("instance");
+		sync = parseResult.hasTag("sync");
 		if (sectionNode != null) callback = loadCode(sectionNode, "teleport callback", EntitySpawnWrapper.class);
 		return true;
 	}
@@ -68,6 +69,7 @@ public class EffSecTeleport extends EffectSection {
 				Event e = new EntitySpawnWrapper(new EntitySpawnEvent(entity, instance));
 				Variables.withLocalVariables(variables, e, () -> TriggerItem.walk(callback, e));
 			});
+			if (sync) future.join();
 		}
 		return super.walk(event, false);
 	}
