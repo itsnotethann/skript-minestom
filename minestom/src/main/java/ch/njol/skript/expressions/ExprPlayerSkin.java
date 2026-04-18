@@ -27,7 +27,7 @@ public class ExprPlayerSkin extends SimplePropertyExpression<Player, PlayerSkin>
 
 	@Override
 	public @org.eclipse.jdt.annotation.Nullable Class<?>[] acceptChange(Changer.ChangeMode mode) {
-		if (mode == Changer.ChangeMode.SET) return CollectionUtils.array(PlayerSkin.class);
+		if (mode == Changer.ChangeMode.SET || mode == Changer.ChangeMode.RESET) return CollectionUtils.array(PlayerSkin.class);
 		return null;
 	}
 
@@ -35,8 +35,11 @@ public class ExprPlayerSkin extends SimplePropertyExpression<Player, PlayerSkin>
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		PlayerSkin skin = delta == null ? null : (PlayerSkin) delta[0];
-		if (skin == null) return;
 		for (Player p : getExpr().getArray(event)) {
+			if (mode == Changer.ChangeMode.RESET) {
+				skin = PlayerSkin.fromUuid(p.getUuid().toString());
+			}
+			if (skin == null) continue;
 			p.setSkin(skin);
 		}
 	}

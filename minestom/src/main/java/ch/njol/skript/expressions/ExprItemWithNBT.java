@@ -25,7 +25,7 @@ public class ExprItemWithNBT extends SimpleExpression<Item> {
 
 	static {
 		Skript.registerExpression(ExprItemWithNBT.class, Item.class, ExpressionType.COMBINED,
-			"%item% with nbt %nbtcompounds%");
+			"%item% with [nbt] %nbtcompounds%");
 	}
 
 	private Expression<Item> item;

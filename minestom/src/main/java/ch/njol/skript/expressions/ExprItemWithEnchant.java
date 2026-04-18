@@ -21,7 +21,7 @@ public class ExprItemWithEnchant extends SimpleExpression<Item> {
 
 	static {
 		Skript.registerExpression(ExprItemWithEnchant.class, Item.class, ExpressionType.PATTERN_MATCHES_EVERYTHING,
-			"%item% (of|with) [enchant[ment][s]] %enchantments%");
+			"%item% of [enchant[ment][s]] %enchantments%");
 	}
 
 	private Expression<Item> item;

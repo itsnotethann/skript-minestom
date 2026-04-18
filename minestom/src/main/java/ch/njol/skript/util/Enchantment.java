@@ -50,6 +50,14 @@ public record Enchantment(RegistryKey<net.minestom.server.item.enchant.Enchantme
 		return enchants;
 	}
 
+	public static int getLevel(Item item, RegistryKey<net.minestom.server.item.enchant.Enchantment> key) {
+		for (Enchantment enchantment : getEnchants(item)) {
+			if (!enchantment.enchantment.equals(key)) continue;
+			return enchantment.level;
+		}
+		return 0;
+	}
+
 	public static void put(Map<RegistryKey<net.minestom.server.item.enchant.Enchantment>, Integer> map, Enchantment... enchants) {
 		for (Enchantment enchant : enchants) {
 			int level = enchant.level;

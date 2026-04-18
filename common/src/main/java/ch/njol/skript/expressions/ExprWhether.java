@@ -32,7 +32,7 @@ public class ExprWhether extends SimpleExpression<Boolean> {
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int pattern, Kleenean delayed, ParseResult result) {
-		String input = result.regexes.get(0).group();
+		String input = result.regexes.getFirst().group();
 		this.condition = Condition.parse(input, "Can't understand this condition: " + input);
 		return condition != null;
 	}

@@ -46,7 +46,7 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.inventory.AbstractInventory;
 import net.minestom.server.inventory.EquipmentHandler;
 import net.minestom.server.inventory.Inventory;
-import net.minestom.server.inventory.InventoryType;
+import net.minestom.server.inventory.PlayerInventory;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
@@ -789,6 +789,16 @@ public class MinestomClasses {
 			.name("Resource Pack Status")
 			.description("The status of a resource pack that was sent.")
 			.defaultExpression(new EventValueExpression<>(ResourcePackStatus.class)));
+		Classes.registerClass(new ClassInfo<>(PlayerInventory.class, "playerinventory")
+			.user("player ?inventor(y|ies)")
+			.name("Player Inventory")
+			.description("Represents a player's inventory.")
+			.defaultExpression(new EventValueExpression<>(PlayerInventory.class)));
+		Classes.registerClass(new ClassInfo<>(Inventory.class, "nonsense")
+			.user("non ?sense")
+			.name("Nonsense")
+			.description("Represents a player's inventory.")
+			.defaultExpression(new EventValueExpression<>(Inventory.class)));
 		Classes.registerClass(new ClassInfo<>(AbstractInventory.class, "inventory")
 			.user("inventor(y|ies)")
 			.name("Inventory")

@@ -18,7 +18,7 @@ import java.util.UUID;
 public class ExprUsernameUUID extends SimpleExpression<String> {
 
 	static {
-		Skript.registerExpression(ExprUsernameUUID.class, String.class, ExpressionType.COMBINED,
+		Skript.registerExpression(ExprUsernameUUID.class, String.class, ExpressionType.PROPERTY,
 			"[mojang] (:uuid|username)[s] from %strings%");
 	}
 

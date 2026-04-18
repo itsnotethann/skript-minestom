@@ -3,11 +3,17 @@ package ch.njol.skript.conditions;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Example;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.Condition;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.ExpressionList;
+import ch.njol.skript.lang.Literal;
+import ch.njol.skript.lang.SimplifiedCondition;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
+import ch.njol.skript.lang.UnparsedLiteral;
+import ch.njol.skript.lang.VerboseAssert;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.log.ErrorQuality;
 import ch.njol.skript.log.ParseLogHandler;
@@ -32,9 +38,9 @@ import java.util.function.Predicate;
 	"Note: This is the only element where not all patterns are shown. It has actually another two sets of similar patters, " +
 		"but with <code>(was|were)</code> or <code>will be</code> instead of <code>(is|are)</code> respectively, " +
 		"which check different <a href='#ExprTimeState'>time states</a> of the first expression."})
-@Examples({"the clicked block is a stone slab or a double stone slab",
-	"time in the player's world is greater than 8:00",
-	"the creature is not an enderman or an ender dragon"})
+@Example("the clicked block is a stone slab or a double stone slab")
+@Example("time in the player's world is greater than 8:00")
+@Example("the creature is not an enderman or an ender dragon")
 @Since("1.0")
 public class CondCompare extends Condition implements VerboseAssert {
 
@@ -44,7 +50,7 @@ public class CondCompare extends Condition implements VerboseAssert {
 		{"(1¦neither|) %objects% ((is|are)(|2¦(n't| not|4¦ neither)) ((less|smaller|lower) than|below)|\\<) %objects%", Relation.SMALLER},
 		{"(1¦neither|) %objects% ((is|are)(|2¦(n't| not|4¦ neither)) (less|smaller|lower|below) [than] or (equal to|the same as)|\\<=) %objects%", Relation.SMALLER_OR_EQUAL},
 		{"(1¦neither|) %objects% (2¦)((is|are) (not|4¦neither)|isn't|aren't|!=) [equal to] %objects%", Relation.EQUAL},
-		{"(1¦neither|) %objects% (is|are|=) [equal to|the same as] %objects%", Relation.EQUAL},
+		{"(1¦neither|) %objects% (is|are|=) [(equal to|the same as)] %objects%", Relation.EQUAL},
 		{"(1¦neither|) %objects% (is|are) between %objects% and %objects%", Relation.EQUAL},
 		{"(1¦neither|) %objects% (2¦)(is not|are not|isn't|aren't) between %objects% and %objects%", Relation.EQUAL},
 
@@ -53,7 +59,7 @@ public class CondCompare extends Condition implements VerboseAssert {
 		{"(1¦neither|) %objects@-1% (was|were)(|2¦(n't| not|4¦ neither)) ((less|smaller|lower) than|below) %objects%", Relation.SMALLER},
 		{"(1¦neither|) %objects@-1% (was|were)(|2¦(n't| not|4¦ neither)) (less|smaller|lower|below) [than] or (equal to|the same as) %objects%", Relation.SMALLER_OR_EQUAL},
 		{"(1¦neither|) %objects@-1% (2¦)((was|were) (not|4¦neither)|wasn't|weren't) [equal to] %objects%", Relation.EQUAL},
-		{"(1¦neither|) %objects@-1% (was|were) [equal to|the same as] %objects%", Relation.EQUAL},
+		{"(1¦neither|) %objects@-1% (was|were) [(equal to|the same as)] %objects%", Relation.EQUAL},
 		{"(1¦neither|) %objects@-1% (was|were) between %objects% and %objects%", Relation.EQUAL},
 		{"(1¦neither|) %objects@-1% (2¦)(was not|were not|wasn't|weren't) between %objects% and %objects%", Relation.EQUAL},
 

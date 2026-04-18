@@ -7,13 +7,16 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.registrations.Classes;
+import ch.njol.skript.util.InventoryType;
 import ch.njol.util.Kleenean;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.entity.Player;
 import net.minestom.server.inventory.Inventory;
-import net.minestom.server.inventory.InventoryType;
+import net.minestom.server.inventory.PlayerInventory;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -39,18 +42,21 @@ public class EffOpenInventory extends Effect {
 	@SuppressWarnings({"unchecked", "null"})
 	@Override
 	public boolean init(final Expression<?>[] exprs, final int matchedPattern, final Kleenean isDelayed, final SkriptParser.ParseResult parseResult) {
-
 		if (matchedPattern == 2) {
 			open = true;
 			inventoryExpr = exprs[0];
+			if (inventoryExpr.getReturnType() == PlayerInventory.class) {
+				Skript.error("Cannot open player inventories.");
+				return false;
+			}
 		}
-
 		players = (Expression<Player>) exprs[exprs.length - 1];
 
-		/*if (exprs[0] instanceof Literal<?> lit && lit.getSingle() instanceof InventoryType type && !type.isCreatable()) {
+		if (exprs[0] instanceof Literal<?> lit && lit.getSingle() instanceof InventoryType type && type == InventoryType.PLAYER) {
 			Skript.error("Cannot create an inventory of type " + Classes.toString(type));
 			return false;
-		}*/
+		}
+
 		return true;
 	}
 
@@ -77,9 +83,12 @@ public class EffOpenInventory extends Effect {
 				player.openInventory(inventory);
 			}
 		} else if (target instanceof InventoryType type) {
+			if (type == InventoryType.PLAYER) return;
 			Component defaultTitle = getDefaultTitle(type);
+			net.minestom.server.inventory.InventoryType minestomType = type.getMinestomType();
+			assert minestomType != null;
 			for (Player player : targetPlayers) {
-				player.openInventory(new Inventory(type, defaultTitle));
+				player.openInventory(new Inventory(minestomType, defaultTitle));
 			}
 		}
 	}
@@ -106,7 +115,7 @@ public class EffOpenInventory extends Effect {
 			case WINDOW_3X3 -> "Dropper";
 			case CRAFTER_3X3 -> "Crafter";
 			case ANVIL -> "Repair & Name";
-			case BEACON, LECTERN -> "";
+			case BEACON, LECTERN, PLAYER -> "";
 			case BLAST_FURNACE -> "Blast Furnace";
 			case BREWING_STAND -> "Brewing Stand";
 			case CRAFTING -> "Crafting";
