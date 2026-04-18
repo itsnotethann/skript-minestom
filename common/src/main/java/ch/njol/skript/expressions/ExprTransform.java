@@ -71,7 +71,7 @@ public class ExprTransform extends SimpleExpression<Object> implements InputSour
 
 		//noinspection DuplicatedCode
 		if (!parseResult.regexes.isEmpty()) {
-			@Nullable String unparsedExpression = parseResult.regexes.get(0).group();
+			@Nullable String unparsedExpression = parseResult.regexes.getFirst().group();
 			assert unparsedExpression != null;
 			mappingExpr = parseExpression(unparsedExpression, getParser(), SkriptParser.ALL_FLAGS);
 			return mappingExpr != null;
