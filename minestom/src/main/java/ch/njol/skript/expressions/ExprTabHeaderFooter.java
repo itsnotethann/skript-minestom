@@ -20,13 +20,13 @@ import static com.github.hapily04.skriptminestom.util.NBTUtils.getTagOrElse;
 @Name("Tablist Header/Footer")
 @Description("The header or footer of a player's tablist, or their display name in the tablist.")
 @Examples("set tablist header of player to \"Welcome to our server!\"")
-public class ExprHeaderFooter extends PropertyExpression<Player, Component> {
+public class ExprTabHeaderFooter extends PropertyExpression<Player, Component> {
 
 	private static final Tag<Component> HEADER_TAG = Tag.Transient("skript-minestom:tablist-header");
 	private static final Tag<Component> FOOTER_TAG = Tag.Transient("skript-minestom:tablist-footer");
 
 	static {
-		register(ExprHeaderFooter.class, Component.class, "tab[[ ]list] (:header|footer|(name:([display] name)))", "players");
+		register(ExprTabHeaderFooter.class, Component.class, "tab[[ ]list] (:header|footer|(name:([display] name)))", "players");
 	}
 
 	private boolean header;
@@ -57,7 +57,6 @@ public class ExprHeaderFooter extends PropertyExpression<Player, Component> {
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Component component = delta == null ? null : (Component) delta[0];
@@ -72,7 +71,7 @@ public class ExprHeaderFooter extends PropertyExpression<Player, Component> {
 			}
 			else {
 				if (component == null) return;
-				if(!name) p.setTag(modifyComponent, component);
+				if (!name) p.setTag(modifyComponent, component);
 				else {
 					p.setDisplayName(component);
 					continue;

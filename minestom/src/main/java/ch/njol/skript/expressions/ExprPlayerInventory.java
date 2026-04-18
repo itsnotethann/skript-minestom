@@ -21,13 +21,13 @@ public class ExprPlayerInventory extends PropertyExpression<Player, AbstractInve
 		register(ExprPlayerInventory.class, AbstractInventory.class, "[open:(current|open)] inventory", "players");
 	}
 
-	private boolean current = false;
+	private boolean open = false;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
 		setExpr((Expression<? extends Player>) expressions[0]);
-		current = parseResult.hasTag("current");
+		open = parseResult.hasTag("open");
 		return true;
 	}
 
@@ -41,7 +41,7 @@ public class ExprPlayerInventory extends PropertyExpression<Player, AbstractInve
 		AbstractInventory[] inventories = new AbstractInventory[source.length];
 		for (int i = 0; i < source.length; i++) {
 			Player player = source[i];
-			inventories[i] = current ? player.getOpenInventory() : player.getInventory();
+			inventories[i] = open ? player.getOpenInventory() : player.getInventory();
 		}
 		return inventories;
 	}

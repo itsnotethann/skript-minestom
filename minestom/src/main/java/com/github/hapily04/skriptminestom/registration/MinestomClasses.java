@@ -384,7 +384,8 @@ public class MinestomClasses {
 				public @NotNull String toVariableNameString(@NotNull Point o) {
 					return "point x: " + o.x() + " y: " + o.y() + " z: " + o.z();
 				}
-			})); // don't think a serializer is needed as it should go to blockvec/vector/position
+			})
+			.serializeAs(Vec.class)); // don't think a serializer will be used as it should go to blockvec/vector/position
 		Classes.registerClass(new ClassInfo<>(BlockVec.class, "blockvector")
 			.user("block ?vectors?")
 			.name("Block Vector")

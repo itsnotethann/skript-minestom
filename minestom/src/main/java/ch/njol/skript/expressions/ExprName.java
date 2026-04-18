@@ -33,7 +33,7 @@ public class ExprName extends SimplePropertyExpression<Object, Component> {
 	@Override
 	public @Nullable Component convert(Object from) {
 		if (from instanceof Entity entity) {
-			if (entity instanceof Player player) return player.getName();
+			if (entity instanceof Player player) return Component.text(player.getUsername());
 			Component customName = entity.get(DataComponents.CUSTOM_NAME);
 			return customName == null ? Component.text(Classes.toString(entity)) : customName;
 		}
