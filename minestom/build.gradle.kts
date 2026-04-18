@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.github.hapily04"
-version = "1.0.0-alpha.1"
+version = "1.0.0-pre-alpha.2"
 
 repositories {
     mavenCentral()
@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-	implementation("net.minestom:minestom-sm:2026.03.30-1.21.11")
+	implementation("net.minestom:minestom-sm:2026.04.18-1.21.11")
 	implementation("net.kyori:adventure-text-minimessage:4.26.1") // todo 5.0
 	implementation("dev.hollowcube:polar:1.15.1")
 	implementation("it.unimi.dsi:fastutil:8.5.18") // fix polar error
