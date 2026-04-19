@@ -2035,8 +2035,52 @@ public class MinestomClasses {
 		 */
 		Converters.registerConverter(String.class, Component.class, Component::text);
 		Converters.registerConverter(Component.class, String.class, LEGACY_SERIALIZER::serialize);
+		Converters.registerConverter(CommandSender.class, Player.class, from -> {
+			if (from instanceof Player player) return player;
+			return null;
+		});
+		Converters.registerConverter(CommandSender.class, ConsoleSender.class, from -> {
+			if (from instanceof ConsoleSender sender) return sender;
+			return null;
+		});
 		Converters.registerConverter(Entity.class, EntityType.class, Entity::getEntityType);
+		Converters.registerConverter(Entity.class, LivingEntity.class, from -> {
+			if (from instanceof LivingEntity livingEntity) return livingEntity;
+			return null;
+		});
+		Converters.registerConverter(EquipmentHandler.class, LivingEntity.class, from -> {
+			if (from instanceof LivingEntity livingEntity) return livingEntity;
+			return null;
+		});
+		Converters.registerConverter(Entity.class, EntityCreature.class, from -> {
+			if (from instanceof EntityCreature entityCreature) return entityCreature;
+			return null;
+		});
+		Converters.registerConverter(Entity.class, Player.class, from -> {
+			if (from instanceof Player player) return player;
+			return null;
+		});
 		Converters.registerConverter(Entity.class, Pos.class, Entity::getPosition);
+		Converters.registerConverter(Point.class, Pos.class, from -> {
+			if (from instanceof Pos pos) return pos;
+			return null;
+		});
+		Converters.registerConverter(Point.class, Vec.class, from -> {
+			if (from instanceof Vec vec) return vec;
+			return null;
+		});
+		Converters.registerConverter(Point.class, BlockVec.class, from -> {
+			if (from instanceof BlockVec blockVec) return blockVec;
+			return null;
+		});
+		Converters.registerConverter(Instance.class, InstanceContainer.class, from -> {
+			if (from instanceof InstanceContainer container) return container;
+			return null;
+		});
+		Converters.registerConverter(Instance.class, SharedInstance.class, from -> {
+			if (from instanceof SharedInstance shared) return shared;
+			return null;
+		});
 		Converters.registerConverter(Player.class, AbstractInventory.class, Player::getInventory);
 		Converters.registerConverter(Vec.class, Direction.class, Direction::new);
 		Converters.registerConverter(Direction.class, Vec.class, Direction::getDirection);
@@ -2044,6 +2088,14 @@ public class MinestomClasses {
 		Converters.registerConverter(RGBLike.class, Color.class, from -> {
 			if (from instanceof Color color) return color;
 			return new Color(from.red(), from.green(), from.blue());
+		});
+		Converters.registerConverter(RGBLike.class, NamedTextColor.class, from -> {
+			if (from instanceof NamedTextColor color) return color;
+			return null;
+		});
+		Converters.registerConverter(ComponentLike.class, Component.class, from -> {
+			if (from instanceof Component c) return c;
+			return null;
 		});
 		Converters.registerConverter(Color.class, AlphaColor.class, from -> from.withAlpha(255));
 		Converters.registerConverter(Item.class, Block.class, from -> from.getItem().material().block());

@@ -103,7 +103,7 @@ public class SimplePluginManager implements PluginManager {
 		return null;
 	}
 
-	private HandlerList getHandlerList(Class<? extends Event> event) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+	public static HandlerList getHandlerList(Class<? extends Event> event) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 		Method getHandlerList = event.getMethod("getHandlerList");
 		return (HandlerList) getHandlerList.invoke(null);
 	}

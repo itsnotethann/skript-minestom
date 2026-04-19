@@ -140,7 +140,7 @@ public class ExprBlocks extends SimpleExpression<BlockVec> {
 		Block block = (Block) delta[0];
 		Iterator<BlockVec> it = iterator(event);
 		Instance instance = chunk != null ? chunk.getOptionalSingle(event).map(Chunk::getInstance).orElse(null) : this.instance.getSingle(event);
-		if (instance == null) return;
+		if (instance == null || it == null) return;
 		AbsoluteBlockBatch batch = new AbsoluteBlockBatch();
 		while (it.hasNext()) {
 			batch.setBlock(it.next(), block);

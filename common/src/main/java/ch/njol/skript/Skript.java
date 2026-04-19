@@ -409,6 +409,7 @@ public final class Skript extends JavaPlugin implements Listener {
 		new DefaultOperations();
 
 		try {
+			//Class.forName("ch.njol.skript.expressions.ExprEntities");
 			new ExprSets(); // higher priority than other similarly syntaxed expressions
 			getAddonInstance().loadClasses("ch.njol.skript", "elements", "conditions",
 				"effects", "events", "expressions", "entity", "literals", "sections", "structures");

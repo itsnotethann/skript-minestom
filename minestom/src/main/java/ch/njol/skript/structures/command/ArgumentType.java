@@ -20,6 +20,7 @@ import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.entity.EntityFinder;
+import net.minestom.server.utils.location.RelativeVec;
 
 import java.util.List;
 import java.util.UUID;
@@ -97,6 +98,7 @@ public enum ArgumentType {
 			}
 			return entities.toArray(new Entity[0]);
 		}
+		if (o instanceof RelativeVec relativeVec) return relativeVec.fromSender(sender);
 		return o;
 	}
 

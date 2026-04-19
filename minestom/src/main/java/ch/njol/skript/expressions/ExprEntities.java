@@ -17,6 +17,7 @@ import net.minestom.server.instance.Instance;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,6 +44,8 @@ public class ExprEntities extends SimpleExpression<Entity> {
 	@org.eclipse.jdt.annotation.Nullable
 	private Expression<Instance> instances;
 
+	private Class<? extends Entity> returnType;
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
@@ -51,6 +54,7 @@ public class ExprEntities extends SimpleExpression<Entity> {
 		radius = (Expression<Number>) expressions[1];
 		points = (Expression<Point>) expressions[2];
 		instances = (Expression<Instance>) expressions[3];
+		returnType = getReturnType();
 		return true;
 	}
 
@@ -72,7 +76,7 @@ public class ExprEntities extends SimpleExpression<Entity> {
 				} else entities.add(e);
 			}
 		}
-		return entities.toArray(new Entity[0]);
+		return entities.toArray((Entity[]) Array.newInstance(returnType, 0));
 	}
 
 	@Override

@@ -20,17 +20,19 @@ import static com.github.hapily04.skriptminestom.util.NBTUtils.getTagOrElse;
 @Name("Tablist Header/Footer")
 @Description("The header or footer of a player's tablist, or their display name in the tablist.")
 @Examples("set tablist header of player to \"Welcome to our server!\"")
-public class ExprTabHeaderFooter extends PropertyExpression<Player, Component> {
+public class ExprTabHeaderFooter extends PropertyExpression<Player, Object> {
 
 	private static final Tag<Component> HEADER_TAG = Tag.Transient("skript-minestom:tablist-header");
 	private static final Tag<Component> FOOTER_TAG = Tag.Transient("skript-minestom:tablist-footer");
 
 	static {
-		register(ExprTabHeaderFooter.class, Component.class, "tab[[ ]list] (:header|footer|(name:([display] name)))", "players");
+		register(ExprTabHeaderFooter.class, Object.class, "tab[[ ]list] (:header|footer|(name:([display] name))|:priority)", "players");
 	}
 
 	private boolean header;
 	private boolean name;
+	private boolean priority;
+	private Class<?> returnType;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -38,52 +40,61 @@ public class ExprTabHeaderFooter extends PropertyExpression<Player, Component> {
 		setExpr((Expression<? extends Player>) expressions[0]);
 		header = parseResult.hasTag("header");
 		name = parseResult.hasTag("name");
+		priority = parseResult.hasTag("priority");
+		returnType = getReturnType();
 		return true;
 	}
 
+	@SuppressWarnings("DataFlowIssue")
 	@Override
-	protected Component[] get(Event event, Player[] source) {
-		Component[] components = new Component[source.length];
+	protected Object[] get(Event event, Player[] source) {
+		Object[] array = priority ? new Integer[source.length] : new Component[source.length];
 		for (int i = 0; i < source.length; i++) {
-			if (!name) components[i] = source[i].getTag(header ? HEADER_TAG : FOOTER_TAG);
-			else components[i] = source[i].getDisplayName();
+			if (!priority) {
+				if (!name) array[i] = source[i].getTag(header ? HEADER_TAG : FOOTER_TAG);
+				else array[i] = source[i].getDisplayName();
+			} else array[i] = source[i].getListPriority();
 		}
-		return components;
+		return array;
 	}
 
 	@Override
 	public @org.eclipse.jdt.annotation.Nullable Class<?>[] acceptChange(Changer.ChangeMode mode) {
-		if (mode == Changer.ChangeMode.SET || mode == Changer.ChangeMode.RESET) return CollectionUtils.array(Component.class);
+		if (mode == Changer.ChangeMode.SET || mode == Changer.ChangeMode.RESET) return CollectionUtils.array(returnType);
 		return null;
 	}
 
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
-		Component component = delta == null ? null : (Component) delta[0];
+		Object o = delta == null ? null : delta[0];
 		Tag<Component> modifyComponent = header ? HEADER_TAG : FOOTER_TAG;
 		for (Player p : getExpr().getArray(event)) {
 			if (mode == Changer.ChangeMode.RESET) {
-				if (!name) p.setTag(modifyComponent, Component.empty());
-				else {
-					p.setDisplayName(null);
-					continue;
-				}
+				if (!priority) {
+					if (!name) p.setTag(modifyComponent, Component.empty());
+					else {
+						p.setDisplayName(null);
+						continue;
+					}
+				} else p.setListPriority(0);
 			}
 			else {
-				if (component == null) return;
-				if (!name) p.setTag(modifyComponent, component);
-				else {
-					p.setDisplayName(component);
-					continue;
-				}
+				if (o == null) return;
+				if (!priority) {
+					if (!name) p.setTag(modifyComponent, (Component) o);
+					else {
+						p.setDisplayName((Component) o);
+						continue;
+					}
+				} else p.setListPriority((int) o);
 			}
 			p.sendPlayerListHeaderAndFooter(getTagOrElse(p, HEADER_TAG, Component.empty()), getTagOrElse(p, FOOTER_TAG, Component.empty()));
 		}
 	}
 
 	@Override
-	public Class<? extends Component> getReturnType() {
-		return Component.class;
+	public Class<?> getReturnType() {
+		return priority ? Integer.class : Component.class;
 	}
 
 	@Override

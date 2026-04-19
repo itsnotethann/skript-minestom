@@ -70,17 +70,13 @@ public class ExprFacing extends SimplePropertyExpression<Object, Direction> {
 	@Override
 	@Nullable
 	public Class<?>[] acceptChange(final ChangeMode mode) {
-		System.out.println(Entity.class + " " + getExpr().getReturnType());
 		if (!Entity.class.isAssignableFrom(getExpr().getReturnType()))
 			return null;
-		System.out.println("here");
 		if (mode == ChangeMode.SET)
 			return CollectionUtils.array(Direction.class);
-		System.out.println("here2");
 		return null;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void change(final Event e, final @Nullable Object[] delta, final ChangeMode mode) throws UnsupportedOperationException {
 		assert mode == ChangeMode.SET;

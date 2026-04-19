@@ -17,7 +17,6 @@ import net.minestom.server.item.ItemStack;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
-@SuppressWarnings("NullableProblems")
 @Name("Item with NBT")
 @Description("An item with a specific NBT.")
 @Examples("give player stone with nbt from \"{display:{Name:'Custom'}}\"")

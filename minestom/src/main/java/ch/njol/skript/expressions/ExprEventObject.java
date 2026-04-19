@@ -15,6 +15,7 @@ import ch.njol.skript.localization.Noun;
 import ch.njol.skript.log.RetainingLogHandler;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.registrations.Classes;
+import ch.njol.skript.util.Utils;
 import ch.njol.util.Kleenean;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.entity.Entity;
@@ -39,23 +40,26 @@ public class ExprEventObject extends SimpleExpression<Object> {
 	private ClassInfo<?> type;
 
 	@SuppressWarnings("null")
-	private EventValueExpression<Object> entity;
+	private EventValueExpression<Object> eventValue;
 
 	@Override
 	public boolean init(final Expression<?>[] exprs, final int matchedPattern, final Kleenean isDelayed, final ParseResult parseResult) {
 		final RetainingLogHandler log = SkriptLogger.startRetainingLog();
+		String input = parseResult.regexes.getFirst().group();
+		Class<?> clazz;
 		try {
-			String input = parseResult.regexes.getFirst().group();
 			if (Noun.isIndefiniteArticle(input)) return false;
 			type = Classes.getClassInfoFromUserInput(input);
 			log.clear();
 			log.printLog();
-			if (type == null || (!Entity.class.isAssignableFrom(type.getC()) && !type.getC().equals(CommandSender.class))) return false;
+			if (type == null) return false;
+			clazz = type.getC();
+			if (!Entity.class.isAssignableFrom(clazz) && !clazz.equals(CommandSender.class)) return false;
 		} finally {
 			log.stop();
 		}
-		entity = new EventValueExpression<>(type.getC());
-		return entity.init();
+		eventValue = new EventValueExpression<>(Utils.isPlural(input).plural() ? clazz.arrayType() : clazz);
+		return eventValue.init();
 	}
 
 	@Override
@@ -71,7 +75,7 @@ public class ExprEventObject extends SimpleExpression<Object> {
 	@Override
 	@Nullable
 	protected Object[] get(final Event e) {
-		final Object[] es = entity.getArray(e);
+		final Object[] es = eventValue.getArray(e);
 		if (es.length == 0 || type.getC().isAssignableFrom(es[0].getClass()))
 			return es;
 		return null;
@@ -93,7 +97,7 @@ public class ExprEventObject extends SimpleExpression<Object> {
 	@Override
 	public boolean setTime(int time) {
 		// Allows using 'past' / 'future' event-entitydata if they're registered
-		return entity.setTime(time);
+		return eventValue.setTime(time);
 	}
 
 	@Override
