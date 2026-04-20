@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
 public class ExprPointOffset extends SimpleExpression<Point> {
 
 	static {
-		Skript.registerExpression(ExprPointOffset.class, Point.class, ExpressionType.COMBINED, "%points% (offset by|~) %point%");
+		Skript.registerExpression(ExprPointOffset.class, Point.class, ExpressionType.COMBINED, "%points%[ ](offset by|~)[ ]%point%");
 	}
 
 	private Expression<Point> pointsExpression;

@@ -31,16 +31,15 @@ public class ExprPlayerScoreboard extends SimplePropertyExpression<Player, Sideb
 	@Override
 	public Class<?> @Nullable [] acceptChange(Changer.ChangeMode mode) {
 		return switch (mode) {
-			case DELETE, SET -> CollectionUtils.array(Sidebar.class);
+			case DELETE, RESET, SET -> CollectionUtils.array(Sidebar.class);
 			default -> null;
 		};
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) throws UnsupportedOperationException {
 		for (Player player : getExpr().getArray(event)) {
-			if (mode == Changer.ChangeMode.DELETE) {
+			if (mode == Changer.ChangeMode.DELETE || mode == Changer.ChangeMode.RESET) {
 				Sidebar sidebar = player.getTag(SCOREBOARD_TAG);
 				if (sidebar == null) continue;
 				player.setTag(SCOREBOARD_TAG, null);

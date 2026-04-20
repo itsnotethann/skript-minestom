@@ -15,6 +15,7 @@ import net.minestom.server.command.builder.arguments.number.ArgumentLong;
 import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeBlockPosition;
 import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeVec2;
 import net.minestom.server.command.builder.arguments.relative.ArgumentRelativeVec3;
+import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
@@ -84,7 +85,7 @@ public enum ArgumentType {
 		this(expectedInitialInput, s -> new ArgumentEnum<>(s, enumClass).setFormat(ArgumentEnum.Format.LOWER_CASED));
 	}
 
-	public static Object convertToSkriptObject(Object o, CommandSender sender) {
+	public static Object convertToSkriptObject(Object o, CommandSender sender, Argument<?> arg) {
 		if (o instanceof UUID uuid) return uuid.toString();
 		if (o instanceof ItemStack itemStack) return new Item(itemStack);
 		if (o instanceof CompoundBinaryTag compound) return new NBTCompound(compound);
@@ -98,7 +99,15 @@ public enum ArgumentType {
 			}
 			return entities.toArray(new Entity[0]);
 		}
-		if (o instanceof RelativeVec relativeVec) return relativeVec.fromSender(sender);
+		if (o instanceof RelativeVec relativeVec) {
+			if (arg instanceof ArgumentRelativeVec2) {
+				if (sender instanceof Player player) return relativeVec.fromView(player);
+				return relativeVec.vec();
+			}
+			Point point = relativeVec.fromSender(sender);
+			if (sender instanceof Player player) point = player.getPosition().withCoord(point);
+			return point;
+		}
 		return o;
 	}
 
