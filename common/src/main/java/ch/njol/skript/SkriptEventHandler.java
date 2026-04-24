@@ -1,21 +1,3 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript;
 
 import ch.njol.skript.lang.SkriptEvent;
@@ -26,7 +8,7 @@ import com.google.common.collect.Multimap;
 import org.bukkit.Bukkit;
 import org.bukkit.event.*;
 import org.bukkit.plugin.EventExecutor;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -83,9 +65,9 @@ public final class SkriptEventHandler {
 		HandlerList eventHandlerList = getHandlerList(event);
 		assert eventHandlerList != null; // It had one at some point so this should remain true
 		return triggers.asMap().entrySet().stream()
-				.filter(entry -> entry.getKey().isAssignableFrom(event) && getHandlerList(entry.getKey()) == eventHandlerList)
-				.flatMap(entry -> entry.getValue().stream())
-				.collect(Collectors.toList()); // forces evaluation now and prevents us from having to call getTriggers again if very high logging is enabled
+			.filter(entry -> entry.getKey().isAssignableFrom(event) && getHandlerList(entry.getKey()) == eventHandlerList)
+			.flatMap(entry -> entry.getValue().stream())
+			.collect(Collectors.toList()); // forces evaluation now and prevents us from having to call getTriggers again if very high logging is enabled
 	}
 
 	/**
@@ -134,10 +116,9 @@ public final class SkriptEventHandler {
 	 * @return Whether the event should be treated as cancelled.
 	 */
 	private static boolean isCancelled(Event event) {
-		return event instanceof Cancellable &&
-			(((Cancellable) event).isCancelled()) &&
-			// TODO: listenCancelled is deprecated and should be removed in 2.10
-			!listenCancelled.contains(event.getClass());
+		if (!(event instanceof Cancellable cancellable))
+			return false;
+		return cancellable.isCancelled();
 	}
 
 	/**
@@ -155,9 +136,8 @@ public final class SkriptEventHandler {
 		};
 
 		if (trigger.getEvent().canExecuteAsynchronously()) {
-			if (trigger.getEvent().check(event)) {
+			if (trigger.getEvent().check(event))
 				execute.run();
-			}
 		} else { // Ensure main thread
 			Task.callSync(() -> {
 				if (trigger.getEvent().check(event))
@@ -239,10 +219,10 @@ public final class SkriptEventHandler {
 	}
 
 	/**
-	 * @deprecated This method no longer does anything as self registered Triggers
+	 * @deprecated This method no longer does anything as self registered Triggers.
 	 * 	are unloaded when the {@link ch.njol.skript.lang.SkriptEvent} is unloaded (no need to keep tracking them here).
 	 */
-	@Deprecated
+	@Deprecated(since = "2.7.0", forRemoval = true)
 	public static void addSelfRegisteringTrigger(Trigger t) { }
 
 	/**
@@ -308,14 +288,12 @@ public final class SkriptEventHandler {
 			if (handlerList == null)
 				continue;
 			Skript skript = Skript.getInstance();
-			// avoid concurrentmodification
-			List<RegisteredListener> listenersCopy = List.copyOf(handlerList.getRegisteredListeners());
-			for (RegisteredListener registeredListener : listenersCopy) {
+			for (RegisteredListener registeredListener : handlerList.getRegisteredListeners()) {
 				Listener listener = registeredListener.getListener();
 				if (
 					registeredListener.getPlugin() == skript
-					&& listener instanceof PriorityListener
-					&& ((PriorityListener) listener).priority == priority
+						&& listener instanceof PriorityListener
+						&& ((PriorityListener) listener).priority == priority
 				) {
 					handlerList.unregister(listener);
 				}
@@ -327,7 +305,7 @@ public final class SkriptEventHandler {
 	 * Events which are listened even if they are cancelled. This should no longer be used.
 	 * @deprecated Users should specify the listening behavior in the event declaration. "on any %event%:", "on cancelled %event%:".
 	 */
-	@Deprecated
+	@Deprecated(since = "2.9.0", forRemoval = true)
 	public static final Set<Class<? extends Event>> listenCancelled = new HashSet<>();
 
 	/**
@@ -387,8 +365,8 @@ public final class SkriptEventHandler {
 		} catch (NoSuchMethodException e) {
 			if (
 				eventClass.getSuperclass() != null
-				&& !eventClass.getSuperclass().equals(Event.class)
-				&& Event.class.isAssignableFrom(eventClass.getSuperclass())
+					&& !eventClass.getSuperclass().equals(Event.class)
+					&& Event.class.isAssignableFrom(eventClass.getSuperclass())
 			) {
 				return getHandlerListMethod(eventClass.getSuperclass().asSubclass(Event.class));
 			} else {
@@ -402,8 +380,8 @@ public final class SkriptEventHandler {
 			Listener listener = registeredListener.getListener();
 			if (
 				registeredListener.getPlugin() == Skript.getInstance()
-				&& listener instanceof PriorityListener
-				&& ((PriorityListener) listener).priority == priority
+					&& listener instanceof PriorityListener
+					&& ((PriorityListener) listener).priority == priority
 			) {
 				return true;
 			}

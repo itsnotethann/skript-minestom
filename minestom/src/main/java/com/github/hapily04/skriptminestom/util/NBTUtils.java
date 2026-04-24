@@ -144,8 +144,12 @@ public class NBTUtils {
 			}
 		}
 
-		// Create leaf compound (or empty if removing)
+		// Update only the leaf key while preserving siblings.
 		CompoundBinaryTag.Builder leafBuilder = CompoundBinaryTag.builder();
+		for (String key : current.keySet()) {
+			BinaryTag tag = current.get(key);
+			if (tag != null && !key.equals(keys[keys.length - 1])) leafBuilder.put(key, tag);
+		}
 		if (newValue != null) leafBuilder.put(keys[keys.length - 1], newValue);
 		CompoundBinaryTag modified = leafBuilder.build();
 

@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-	implementation("net.minestom:minestom-sm:2026.04.18b-1.21.11")
+	implementation("net.minestom:minestom-sm:2026.04.22-1.21.11")
 	implementation("net.kyori:adventure-text-minimessage:4.26.1") // todo 5.0
 	implementation("dev.hollowcube:polar:1.15.1")
 	implementation("it.unimi.dsi:fastutil:8.5.18") // fix polar error
