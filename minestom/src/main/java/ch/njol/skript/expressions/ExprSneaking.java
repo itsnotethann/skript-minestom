@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
 public class ExprSneaking extends SimplePropertyExpression<Entity, Boolean> {
 
 	static {
-		register(ExprSwimming.class, Boolean.class, "(sneak|crouch)[ing] [state]", "entities");
+		register(ExprSneaking.class, Boolean.class, "(sneak|crouch)[ing] [state]", "entities");
 	}
 
 	@Override
