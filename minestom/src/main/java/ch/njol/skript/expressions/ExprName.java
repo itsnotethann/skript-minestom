@@ -46,9 +46,7 @@ public class ExprName extends SimplePropertyExpression<Object, ComponentWrapper>
 		}
 		ItemStack item = ((Item) from).getItem();
 		// todo perhaps provide the visual name with item coloring (think enchanted golden apple and steak (material is cooked_beef))
-		Component customName = item.get(DataComponents.CUSTOM_NAME);
-		if (customName == null) customName = Component.text(Classes.toString(item.material()));
-		return toWrapper(customName);
+		return toWrapper(item.get(DataComponents.CUSTOM_NAME));
 	}
 
 	@Override
@@ -62,14 +60,15 @@ public class ExprName extends SimplePropertyExpression<Object, ComponentWrapper>
 		};
 	}
 
+	@SuppressWarnings("DataFlowIssue")
 	@Override
 	public void change(Event event, @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) throws UnsupportedOperationException {
-		Component name = delta[0] == null ? Component.empty() : ((ComponentWrapper) delta[0]).getComponent();
-		assert name != null;
+		ComponentWrapper nameWrapper = delta == null ? null : (ComponentWrapper) delta[0];
+		Component name = nameWrapper == null ? null : nameWrapper.getComponent();
 		for (Object o : getExpr().getArray(event)) {
 			switch (o) {
 				case Item item -> item.modify(i -> i.withCustomName(name), true);
-				case Inventory nameableInventory -> nameableInventory.setTitle(name);
+				case Inventory nameableInventory -> nameableInventory.setTitle(name == null ? Component.empty() : name);
 				case Entity e -> e.set(DataComponents.CUSTOM_NAME, name);
 				default -> {}
 			}

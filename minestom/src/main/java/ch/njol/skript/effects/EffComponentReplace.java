@@ -7,6 +7,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.SyntaxStringBuilder;
 import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.util.Kleenean;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.PatternReplacementResult;
 import net.kyori.adventure.text.TextReplacementConfig;
 import org.bukkit.event.Event;
@@ -23,12 +24,12 @@ public class EffComponentReplace extends Effect {
 
 	static {
 		Skript.registerEffect(EffComponentReplace.class,
-			"component replace [:first] [:regex] %strings% in %~components% with %component/string%");
+			"component replace [:first] [:regex] %strings% in %~components% with %component%");
 	}
 
 	private Expression<String> toReplace;
 	private Expression<ComponentWrapper> haystack;
-	private Expression<?> replacement;
+	private Expression<ComponentWrapper> replacement;
 
 	private boolean first;
 	private boolean regex;
@@ -38,7 +39,7 @@ public class EffComponentReplace extends Effect {
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
 		toReplace = (Expression<String>) expressions[0];
 		haystack = (Expression<ComponentWrapper>) expressions[1];
-		replacement = expressions[2];
+		replacement = (Expression<ComponentWrapper>) expressions[2];
 		first = parseResult.hasTag("first");
 		regex = parseResult.hasTag("regex");
 		return true;
@@ -47,7 +48,7 @@ public class EffComponentReplace extends Effect {
 	@SuppressWarnings("DataFlowIssue")
 	@Override
 	protected void execute(Event event) {
-		Object replacement = this.replacement.getSingle(event);
+		Component replacement = ComponentWrapper.getOrElse(this.replacement, event, null);
 		if (replacement == null) return;
 		for (String toReplace : this.toReplace.getArray(event)) {
 			Object capture = regex ? Pattern.compile(toReplace) : toReplace;
@@ -57,8 +58,7 @@ public class EffComponentReplace extends Effect {
 					if (first) builder.condition(ONLY_ONE_REPLACEMENT);
 					if (regex) builder.match((Pattern) capture);
 					else builder.matchLiteral((String) capture);
-					if (replacement instanceof ComponentWrapper wr) builder.replacement(wr.getComponent());
-					else builder.replacement((String) replacement);
+					builder.replacement(replacement);
 				}));
 				return wrapper;
 			});
