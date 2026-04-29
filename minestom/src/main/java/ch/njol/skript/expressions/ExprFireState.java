@@ -12,7 +12,8 @@ import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
 @Name("Fire State")
-@Description("The fire state of an entity. Unlike the fire time that goes down, this will persist until you turn it off.")
+@Description("The fire state of an entity. Unlike the fire time that goes down, this will persist until you turn it off." +
+	" If an entity gains fire time and it runs out, they will no longer be on fire regardless of what was set in this expression.")
 @Examples("set fire state of player to true")
 public class ExprFireState extends SimplePropertyExpression<Entity, Boolean> {
 
