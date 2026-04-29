@@ -8,6 +8,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import net.kyori.adventure.text.Component;
@@ -22,10 +23,10 @@ import java.util.List;
 
 import static ch.njol.skript.expressions.ExprMOTDPlayerCount.getPlayerInfo;
 
-public class ExprMOTDHoverSample extends SimpleExpression<Component> implements EventRestrictedSyntax {
+public class ExprMOTDHoverSample extends SimpleExpression<ComponentWrapper> implements EventRestrictedSyntax {
 
 	static {
-		Skript.registerExpression(ExprMOTDHoverSample.class, Component.class, ExpressionType.EVENT,
+		Skript.registerExpression(ExprMOTDHoverSample.class, ComponentWrapper.class, ExpressionType.EVENT,
 			"motd (hover|player) sample");
 	}
 
@@ -35,15 +36,15 @@ public class ExprMOTDHoverSample extends SimpleExpression<Component> implements 
 	}
 
 	@Override
-	protected @Nullable Component[] get(Event event) {
+	protected @Nullable ComponentWrapper[] get(Event event) {
 		ServerListPingEvent e = ((ServerListPingWrapper) event).getEvent();
 		Status.PlayerInfo playerInfo = getPlayerInfo(e.getStatus());
-		return playerInfo.sample().stream().map(NamedAndIdentified::getName).toArray(Component[]::new);
+		return playerInfo.sample().stream().map(NamedAndIdentified::getName).map(ComponentWrapper::new).toArray(ComponentWrapper[]::new);
 	}
 
 	@Override
 	public @org.eclipse.jdt.annotation.Nullable Class<?>[] acceptChange(Changer.ChangeMode mode) {
-		if (mode == Changer.ChangeMode.RESET || mode == Changer.ChangeMode.SET) return CollectionUtils.array(Component[].class);
+		if (mode == Changer.ChangeMode.RESET || mode == Changer.ChangeMode.SET) return CollectionUtils.array(ComponentWrapper[].class);
 		return null;
 	}
 
@@ -59,7 +60,7 @@ public class ExprMOTDHoverSample extends SimpleExpression<Component> implements 
 			sample = new ArrayList<>();
 			for (Object o : delta) {
 				if (o == null) continue;
-				sample.add(NamedAndIdentified.named((Component) o));
+				sample.add(NamedAndIdentified.named(((ComponentWrapper) o).getComponent()));
 			}
 		}
 		Status newStatus = Status.builder(currentStatus)
@@ -74,8 +75,8 @@ public class ExprMOTDHoverSample extends SimpleExpression<Component> implements 
 	}
 
 	@Override
-	public Class<? extends Component> getReturnType() {
-		return Component.class;
+	public Class<? extends ComponentWrapper> getReturnType() {
+		return ComponentWrapper.class;
 	}
 
 	@Override

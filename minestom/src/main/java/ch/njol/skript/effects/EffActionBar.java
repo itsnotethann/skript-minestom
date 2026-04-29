@@ -7,6 +7,7 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.util.Kleenean;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Player;
@@ -22,21 +23,22 @@ public class EffActionBar extends Effect {
 		Skript.registerEffect(EffActionBar.class, "send action[ ]bar %component% [to %players%]");
 	}
 
-	private Expression<Component> component;
+	private Expression<ComponentWrapper> component;
 	private Expression<Player> players;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-		component = (Expression<Component>) expressions[0];
+		component = (Expression<ComponentWrapper>) expressions[0];
 		players = (Expression<Player>) expressions[1];
 		return true;
 	}
 
 	@Override
 	protected void execute(Event event) {
-		Component component = this.component.getSingle(event);
-		if (component == null) return;
+		ComponentWrapper wrapper = this.component.getSingle(event);
+		if (wrapper == null) return;
+		Component component = wrapper.getComponent();
 		for (Player player : players.getArray(event)) {
 			player.sendActionBar(component);
 		}

@@ -91,7 +91,7 @@ public class EffReplace extends Effect {
 		if (!replaceString) return;
 		Function<String, String> replaceFunction = getReplaceFunction(needles, (String) replacement);
 		//noinspection unchecked
-		((Expression<String>) haystackExpr).changeInPlace(event, replaceFunction);;
+		((Expression<String>) haystackExpr).changeInPlace(event, replaceFunction);
 	}
 
 	private @NotNull Function<String, String> getReplaceFunction(Object[] needles, String replacement) {

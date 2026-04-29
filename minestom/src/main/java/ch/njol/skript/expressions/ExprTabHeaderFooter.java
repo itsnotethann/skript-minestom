@@ -7,6 +7,7 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import net.kyori.adventure.text.Component;
@@ -15,6 +16,7 @@ import net.minestom.server.tag.Tag;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+import static ch.njol.skript.util.ComponentWrapper.toWrapper;
 import static com.github.hapily04.skriptminestom.util.NBTUtils.getTagOrElse;
 
 @Name("Tablist Header/Footer")
@@ -48,11 +50,11 @@ public class ExprTabHeaderFooter extends PropertyExpression<Player, Object> {
 	@SuppressWarnings("DataFlowIssue")
 	@Override
 	protected Object[] get(Event event, Player[] source) {
-		Object[] array = priority ? new Integer[source.length] : new Component[source.length];
+		Object[] array = priority ? new Integer[source.length] : new ComponentWrapper[source.length];
 		for (int i = 0; i < source.length; i++) {
 			if (!priority) {
-				if (!name) array[i] = source[i].getTag(header ? HEADER_TAG : FOOTER_TAG);
-				else array[i] = source[i].getDisplayName();
+				if (!name) array[i] = toWrapper(source[i].getTag(header ? HEADER_TAG : FOOTER_TAG));
+				else array[i] = toWrapper(source[i].getDisplayName());
 			} else array[i] = source[i].getListPriority();
 		}
 		return array;
@@ -66,7 +68,7 @@ public class ExprTabHeaderFooter extends PropertyExpression<Player, Object> {
 
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
-		Object o = delta == null ? null : delta[0];
+		Object o = delta[0];
 		Tag<Component> modifyComponent = header ? HEADER_TAG : FOOTER_TAG;
 		for (Player p : getExpr().getArray(event)) {
 			if (mode == Changer.ChangeMode.RESET) {
@@ -81,9 +83,9 @@ public class ExprTabHeaderFooter extends PropertyExpression<Player, Object> {
 			else {
 				if (o == null) return;
 				if (!priority) {
-					if (!name) p.setTag(modifyComponent, (Component) o);
+					if (!name) p.setTag(modifyComponent, ((ComponentWrapper) o).getComponent());
 					else {
-						p.setDisplayName((Component) o);
+						p.setDisplayName(((ComponentWrapper) o).getComponent());
 						continue;
 					}
 				} else p.setListPriority((int) o);
@@ -94,7 +96,7 @@ public class ExprTabHeaderFooter extends PropertyExpression<Player, Object> {
 
 	@Override
 	public Class<?> getReturnType() {
-		return priority ? Integer.class : Component.class;
+		return priority ? Integer.class : ComponentWrapper.class;
 	}
 
 	@Override

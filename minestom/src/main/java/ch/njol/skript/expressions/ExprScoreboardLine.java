@@ -9,6 +9,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import com.github.hapily04.skriptminestom.util.ComponentUtils;
@@ -20,13 +21,15 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ch.njol.skript.util.ComponentWrapper.toWrapper;
+
 @Name("Scoreboard Line")
 @Description("A specific line of a sidebar scoreboard.")
 @Examples("set line 1 of player's sidebar to \"Welcome!\"")
-public class ExprScoreboardLine extends SimpleExpression<Component> {
+public class ExprScoreboardLine extends SimpleExpression<ComponentWrapper> {
 
 	static {
-		Skript.registerExpression(ExprScoreboardLine.class, Component.class, ExpressionType.PROPERTY,
+		Skript.registerExpression(ExprScoreboardLine.class, ComponentWrapper.class, ExpressionType.PROPERTY,
 			"line[s] %integers% of %scoreboards%", "%scoreboards%'[s] line[s] %integers%");
 	}
 
@@ -48,25 +51,25 @@ public class ExprScoreboardLine extends SimpleExpression<Component> {
 	}
 
 	@Override
-	protected @Nullable Component[] get(Event event) {
+	protected @Nullable ComponentWrapper[] get(Event event) {
 		Integer[] lines = this.lines.getArray(event);
 		Sidebar[] scoreboards = this.scoreboards.getArray(event);
-		List<Component> components = new ArrayList<>();
+		List<ComponentWrapper> components = new ArrayList<>();
 		for (Sidebar sidebar : scoreboards) {
 			for (Integer i : lines) {
 				Sidebar.ScoreboardLine line = sidebar.getLine(i.toString());
 				if (line == null) continue;
-				components.add(line.getContent());
+				components.add(toWrapper(line.getContent()));
 			}
 		}
-		return components.toArray(new Component[0]);
+		return components.toArray(new ComponentWrapper[0]);
 	}
 
 	@Override
 	public Class<?> @Nullable [] acceptChange(Changer.ChangeMode mode) {
 		return switch (mode) {
-			case /*RESET,*/ DELETE -> CollectionUtils.array(Component.class);
-			case SET -> CollectionUtils.array(Component[].class);
+			case /*RESET,*/ DELETE -> CollectionUtils.array(ComponentWrapper.class);
+			case SET -> CollectionUtils.array(ComponentWrapper[].class);
 			default -> null;
 		};
 	}
@@ -115,8 +118,8 @@ public class ExprScoreboardLine extends SimpleExpression<Component> {
 	}
 
 	@Override
-	public Class<? extends Component> getReturnType() {
-		return Component.class;
+	public Class<? extends ComponentWrapper> getReturnType() {
+		return ComponentWrapper.class;
 	}
 
 	@Override

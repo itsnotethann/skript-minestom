@@ -26,6 +26,7 @@ import ch.njol.skript.lang.ExpressionList;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.VariableString;
 import ch.njol.skript.registrations.Classes;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.skript.util.LiteralUtils;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
@@ -52,9 +53,6 @@ import java.util.List;
 	"on chat:",
 	"\tcancel event",
 	"\tsend \"[%player%] >> %message%\" to all players from player"})
-@RequiredPlugins("Minecraft 1.16.4+ for optional sender")
-@Since("1.0, 2.2-dev26 (advanced features), 2.5.2 (optional sender), 2.6 (sending objects)")
-@SuppressWarnings("NotNullFieldNotInitialized")
 public class EffMessage extends Effect {
 
 	static {
@@ -98,7 +96,7 @@ public class EffMessage extends Effect {
 				}
 			} else {
 				for (Object o : expression.getArray(e)) {
-					if (o instanceof Component component) components.add(component);
+					if (o instanceof ComponentWrapper wrapper) components.add(wrapper.getComponent());
 					else components.add(Component.text(onlyValid(toString(o))));
 				}
 			}

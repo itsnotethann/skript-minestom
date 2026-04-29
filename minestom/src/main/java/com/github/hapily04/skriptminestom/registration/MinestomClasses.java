@@ -670,12 +670,12 @@ public class MinestomClasses {
 			.name("Click Type")
 			.description("Click type")
 			.defaultExpression(new EventValueExpression<>(ClickType.class)));
-		Classes.registerClass(new ClassInfo<>(Component.class, "component")
+		Classes.registerClass(new ClassInfo<>(ComponentWrapper.class, "component")
 			.user("components?")
 			.name("Component")
 			.description("A piece of text with formatting (adventure component).")
 			.examples("set player's tab list header to mm(\"<rainbow>Hello!\")")
-			.defaultExpression(new EventValueExpression<>(Component.class))
+			.defaultExpression(new EventValueExpression<>(ComponentWrapper.class))
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -683,33 +683,33 @@ public class MinestomClasses {
 				}
 
 				@Override
-				public @NotNull String toString(@NotNull Component o, int flags) {
+				public @NotNull String toString(@NotNull ComponentWrapper o, int flags) {
 					return toVariableNameString(o);
 				}
 
 				@Override
-				public @NotNull String toVariableNameString(@NotNull Component o) {
-					return LEGACY_SERIALIZER.serialize(o);
+				public @NotNull String toVariableNameString(@NotNull ComponentWrapper o) {
+					return LEGACY_SERIALIZER.serialize(o.getComponent());
 				}
 			})
 			.serializer(new Serializer<>() {
 				@Override
-				public Fields serialize(Component o) throws NotSerializableException {
+				public Fields serialize(ComponentWrapper o) throws NotSerializableException {
 					Fields fields = new Fields();
-					fields.putObject("gson", GsonComponentSerializer.gson().serialize(o));
+					fields.putObject("gson", GsonComponentSerializer.gson().serialize(o.getComponent()));
 					return fields;
 				}
 
 				@Override
-				public void deserialize(Component o, Fields f) throws StreamCorruptedException, NotSerializableException {
+				public void deserialize(ComponentWrapper o, Fields f) throws StreamCorruptedException, NotSerializableException {
 					assert false;
 				}
 
 				@Override
-				protected @NonNull Component deserialize(@NotNull Fields f) throws StreamCorruptedException {
+				protected @NonNull ComponentWrapper deserialize(@NotNull Fields f) throws StreamCorruptedException {
 					String componentString = f.getObject("gson", String.class);
 					assert componentString != null;
-					return GsonComponentSerializer.gson().deserialize(componentString);
+					return new ComponentWrapper(GsonComponentSerializer.gson().deserialize(componentString));
 				}
 
 				@Override
@@ -722,6 +722,9 @@ public class MinestomClasses {
 					return false;
 				}
 			}));
+		// purely for serialization
+		Classes.registerClass(new ClassInfo<>(Component.class, "internalcomponent")
+			.serializeAs(ComponentWrapper.class));
 		Classes.registerClass(new ClassInfo<>(TagResolver.class, "tagresolver")
 			.user("tag ?resolvers?")
 			.name("Tag Resolver")
@@ -2110,8 +2113,8 @@ public class MinestomClasses {
 		/*
 		 * Converters
 		 */
-		Converters.registerConverter(String.class, Component.class, Component::text);
-		Converters.registerConverter(Component.class, String.class, LEGACY_SERIALIZER::serialize);
+		Converters.registerConverter(String.class, ComponentWrapper.class, from -> new ComponentWrapper(Component.text(from)));
+		Converters.registerConverter(ComponentWrapper.class, String.class, from -> LEGACY_SERIALIZER.serialize(from.getComponent()));
 		Converters.registerConverter(CommandSender.class, Player.class, from -> {
 			if (from instanceof Player player) return player;
 			return null;
@@ -2170,8 +2173,8 @@ public class MinestomClasses {
 			if (from instanceof NamedTextColor color) return color;
 			return null;
 		});
-		Converters.registerConverter(ComponentLike.class, Component.class, from -> {
-			if (from instanceof Component c) return c;
+		Converters.registerConverter(ComponentLike.class, ComponentWrapper.class, from -> {
+			if (from instanceof Component c) return new ComponentWrapper(c);
 			return null;
 		});
 		Converters.registerConverter(Color.class, AlphaColor.class, from -> from.withAlpha(255));
@@ -2180,9 +2183,9 @@ public class MinestomClasses {
 		/*
 		 *	Comparators
 		 */
-		Comparators.registerComparator(Component.class, Component.class, (o1, o2) -> {
-			String s1 = LEGACY_SERIALIZER.serialize(o1);
-			String s2 = LEGACY_SERIALIZER.serialize(o2);
+		Comparators.registerComparator(ComponentWrapper.class, ComponentWrapper.class, (o1, o2) -> {
+			String s1 = LEGACY_SERIALIZER.serialize(o1.getComponent());
+			String s2 = LEGACY_SERIALIZER.serialize(o2.getComponent());
 			return Comparators.compare(s1, s2);
 		});
 		Comparators.registerComparator(CommandSender.class, EntityType.class, (o1, o2) -> {
@@ -2209,6 +2212,7 @@ public class MinestomClasses {
 		 *	Variable Intermediaries
 		 */
 		Variables.registerVariableSetIntermediary(Slot.class, Item::copy);
+
 		/*
 		 *	Variable Converters
 		 */

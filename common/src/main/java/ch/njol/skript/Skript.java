@@ -422,7 +422,7 @@ public final class Skript extends JavaPlugin implements Listener {
 		}
 
 		if (logNormal())
-			info(" " + Language.get("skript.copyright"));
+			info("Skript " + Language.get("skript.copyright"));
 
 		PluginManager pluginManager = Bukkit.getPluginManager();
 

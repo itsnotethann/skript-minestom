@@ -6,6 +6,7 @@ import ch.njol.skript.lang.function.*;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.registrations.DefaultClasses;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.skript.util.Timespan;
 import ch.njol.util.coll.CollectionUtils;
 import com.github.hapily04.skriptminestom.util.NumberUtils;
@@ -38,6 +39,7 @@ import java.util.UUID;
 
 import static ch.njol.skript.expressions.ExprAmbientSounds.getSoundEvent;
 import static ch.njol.skript.expressions.ExprSkinFrom.UUID_REGEX;
+import static ch.njol.skript.util.ComponentWrapper.toWrapper;
 import static com.github.hapily04.skriptminestom.util.MessageUtils.BASIC_MINI_MESSAGE;
 
 @SuppressWarnings("NullableProblems")
@@ -94,25 +96,25 @@ public class MinestomFunctions {
 		Functions.registerFunction(new JavaFunction<>("mm", new Parameter[]{
 			new Parameter<>("input", DefaultClasses.STRING, true, null),
 			new Parameter<>("resolvers", Classes.getExactClassInfo(TagResolver.class), false, new SimpleLiteral<>(new TagResolver[0], TagResolver.class, true))
-		}, Classes.getExactClassInfo(Component.class), true) {
+		}, Classes.getExactClassInfo(ComponentWrapper.class), true) {
 			@Override
-			public @Nullable Component[] execute(FunctionEvent<?> e, Object[][] params) {
-				if (parametersNull(params, 0)) return new Component[0];
+			public @Nullable ComponentWrapper[] execute(FunctionEvent<?> e, Object[][] params) {
+				if (parametersNull(params, 0)) return new ComponentWrapper[0];
 				String input = (String) params[0][0];
 				TagResolver[] resolvers = (TagResolver[]) params[1];
-				return new Component[]{BASIC_MINI_MESSAGE.deserialize(input, resolvers)};
+				return new ComponentWrapper[]{toWrapper(BASIC_MINI_MESSAGE.deserialize(input, resolvers))};
 			}
 		}).description("Deserializes a MiniMessage string into a Component, with optional tag resolvers.").examples("send mm(\"<red>Hello <name>!\", resolver(\"name\", player's name))");
 		Functions.registerFunction(new JavaFunction<>("suggestionEntry", new Parameter[]{
 			new Parameter<>("entry", DefaultClasses.STRING, true, null),
-			new Parameter<>("tooltip", Classes.getExactClassInfo(Component.class), true, new SimpleLiteral<>(new Component[0], Component.class, true))
+			new Parameter<>("tooltip", Classes.getExactClassInfo(ComponentWrapper.class), true, new SimpleLiteral<>(new ComponentWrapper[0], ComponentWrapper.class, true))
 		}, Classes.getExactClassInfo(SuggestionEntry.class), true) {
 			@Override
 			public @Nullable SuggestionEntry[] execute(FunctionEvent<?> e, Object[][] params) {
 				if (parametersNull(params, 0)) return new SuggestionEntry[0];
 				String entry = (String) params[0][0];
-				Component tooltip = (Component) params[1][0];
-				return new SuggestionEntry[]{new SuggestionEntry(entry, tooltip)};
+				ComponentWrapper tooltip = (ComponentWrapper) params[1][0];
+				return new SuggestionEntry[]{new SuggestionEntry(entry, tooltip.getComponent())};
 			}
 		}).description("Deserializes a MiniMessage string into a Component, with optional tag resolvers.").examples("send mm(\"<red>Hello <name>!\", resolver(\"name\", player's name))");
 		/*Functions.registerFunction(new SimpleJavaFunction<TagResolver>("tagresolver", new Parameter<>[] {

@@ -8,6 +8,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import net.kyori.adventure.text.Component;
@@ -16,12 +17,13 @@ import net.minestom.server.ping.Status;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+import static ch.njol.skript.util.ComponentWrapper.toWrapper;
 import static com.github.hapily04.skriptminestom.util.MessageUtils.BASIC_MINI_MESSAGE;
 
-public class ExprMOTDDescription extends SimpleExpression<Component> implements EventRestrictedSyntax {
+public class ExprMOTDDescription extends SimpleExpression<ComponentWrapper> implements EventRestrictedSyntax {
 
 	static {
-		Skript.registerExpression(ExprMOTDDescription.class, Component.class, ExpressionType.EVENT,
+		Skript.registerExpression(ExprMOTDDescription.class, ComponentWrapper.class, ExpressionType.EVENT,
 			"motd description");
 	}
 
@@ -33,14 +35,14 @@ public class ExprMOTDDescription extends SimpleExpression<Component> implements 
 	}
 
 	@Override
-	protected @Nullable Component[] get(Event event) {
+	protected @Nullable ComponentWrapper[] get(Event event) {
 		ServerListPingEvent e = ((ServerListPingWrapper) event).getEvent();
-		return new Component[]{e.getStatus().description()};
+		return new ComponentWrapper[]{toWrapper(e.getStatus().description())};
 	}
 
 	@Override
 	public @org.eclipse.jdt.annotation.Nullable Class<?>[] acceptChange(Changer.ChangeMode mode) {
-		if (mode == Changer.ChangeMode.RESET || mode == Changer.ChangeMode.SET) return CollectionUtils.array(Component.class);
+		if (mode == Changer.ChangeMode.RESET || mode == Changer.ChangeMode.SET) return CollectionUtils.array(ComponentWrapper.class);
 		return null;
 	}
 
@@ -51,9 +53,9 @@ public class ExprMOTDDescription extends SimpleExpression<Component> implements 
 		Component description;
 		if (mode == Changer.ChangeMode.RESET) description = DEFAULT_DESCRIPTION;
 		else {
-			Component component = delta == null ? null : (Component) delta[0];
-			if (component == null) return;
-			description = component;
+			ComponentWrapper wrapper = (ComponentWrapper) delta[0];
+			if (wrapper == null) return;
+			description = wrapper.getComponent();
 		}
 		Status newStatus = Status.builder(currentStatus)
 			.description(description)
@@ -67,8 +69,8 @@ public class ExprMOTDDescription extends SimpleExpression<Component> implements 
 	}
 
 	@Override
-	public Class<? extends Component> getReturnType() {
-		return Component.class;
+	public Class<? extends ComponentWrapper> getReturnType() {
+		return ComponentWrapper.class;
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.SyntaxStringBuilder;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.util.Kleenean;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.world.attribute.BedRule;
@@ -23,7 +24,7 @@ public class ExprBedRule extends SimpleExpression<BedRule> {
 	private Expression<BedRule.Rule> spawnRule;
 	private boolean explodes;
 	@Nullable
-	private Expression<Component> errorMessage;
+	private Expression<ComponentWrapper> errorMessage;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -31,7 +32,7 @@ public class ExprBedRule extends SimpleExpression<BedRule> {
 		sleepRule = (Expression<BedRule.Rule>) expressions[0];
 		spawnRule = (Expression<BedRule.Rule>) expressions[1];
 		explodes = parseResult.hasTag("explode");
-		errorMessage = (Expression<Component>) expressions[2];
+		errorMessage = (Expression<ComponentWrapper>) expressions[2];
 		return true;
 	}
 
@@ -41,8 +42,7 @@ public class ExprBedRule extends SimpleExpression<BedRule> {
 		if (sleep == null) return new BedRule[0];
 		BedRule.Rule spawn = sleepRule.getSingle(event);
 		if (spawn == null) return new BedRule[0];
-		Component errorMessage = null;
-		if (this.errorMessage != null) errorMessage = this.errorMessage.getSingle(event);
+		Component errorMessage = ComponentWrapper.getOrElse(this.errorMessage, event, null);
 		return new BedRule[]{new BedRule(sleep, spawn, explodes, errorMessage)};
 	}
 

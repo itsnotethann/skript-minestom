@@ -7,6 +7,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.registrations.EventValues;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import ch.njol.util.Validate;
@@ -30,12 +31,12 @@ import java.util.UUID;
 	"    if resource pack status is successfully loaded:",
 	"        broadcast \"Pack loaded!\""
 })
-@SuppressWarnings("NullableProblems")
 public class EffSecSendPack extends EffectSection {
 
 	static {
 		Skript.registerSection(EffSecSendPack.class,
-			"send resource pack [from [url]] %string% with (uuid|id) %string% with hash %string% [with prompt %-component%] to %players% [force:(forcefully|with force)] [replace:to replace [current packs]]");
+			"send resource pack [from [url]] %string% with (uuid|id) %string% with hash %string% " +
+				"[with prompt %-component%] to %players% [force:(forcefully|with force)] [replace:to replace [current packs]]");
 		EventValues.registerEventValue(ResourcePackCallbackEvent.class, Player.class, ResourcePackCallbackEvent::getRecipient);
 	}
 
@@ -43,7 +44,7 @@ public class EffSecSendPack extends EffectSection {
 	private Expression<String> uuid;
 	private Expression<String> hash;
 	@Nullable
-	private Expression<Component> prompt;
+	private Expression<ComponentWrapper> prompt;
 	private Expression<Player> recipients;
 	private boolean force = false;
 	private boolean replace = false;
@@ -56,7 +57,7 @@ public class EffSecSendPack extends EffectSection {
 		url = (Expression<String>) expressions[0];
 		uuid = (Expression<String>) expressions[1];
 		hash = (Expression<String>) expressions[2];
-		prompt = (Expression<Component>) expressions[3];
+		prompt = (Expression<ComponentWrapper>) expressions[3];
 		recipients = (Expression<Player>) expressions[4];
 		force = parseResult.hasTag("force");
 		replace = parseResult.hasTag("replace");
@@ -73,20 +74,20 @@ public class EffSecSendPack extends EffectSection {
 		UUID uuid = UUID.fromString(sUuid);
 		String hash = this.hash.getSingle(event);
 		if (hash == null) return null;
-		Component prompt = this.prompt != null ? this.prompt.getSingle(event) : null;
+		Component prompt = ComponentWrapper.getOrElse(this.prompt, event, null);
 		Player[] players = recipients.getArray(event);
 		Object variables = Variables.copyLocalVariables(event);
 		ResourcePackRequest request = ResourcePackRequest.resourcePackRequest()
-														 .packs(ResourcePackInfo.resourcePackInfo(uuid, URI.create(url), hash))
-														 .prompt(prompt)
-														 .required(force)
-														 .replace(replace)
-														 .callback((u, status, audience) -> {
-															 if (callback != null) {
-																 ResourcePackCallbackEvent callbackEvent = new ResourcePackCallbackEvent(u.toString(), status, (Player) audience);
-																 Variables.withLocalVariables(variables, callbackEvent, () -> TriggerItem.walk(callback, callbackEvent));
-															 }
-														 }).build();
+			.packs(ResourcePackInfo.resourcePackInfo(uuid, URI.create(url), hash))
+			.prompt(prompt)
+			.required(force)
+			.replace(replace)
+			.callback((u, status, audience) -> {
+				if (callback != null) {
+					ResourcePackCallbackEvent callbackEvent = new ResourcePackCallbackEvent(u.toString(), status, (Player) audience);
+					Variables.withLocalVariables(variables, callbackEvent, () -> TriggerItem.walk(callback, callbackEvent));
+				}
+			}).build();
 		for (Player player : players) {
 			player.sendResourcePacks(request);
 		}

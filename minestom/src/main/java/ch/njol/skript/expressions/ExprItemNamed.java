@@ -8,6 +8,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.skript.util.Item;
 import ch.njol.util.Kleenean;
 import net.kyori.adventure.text.Component;
@@ -24,13 +25,13 @@ public class ExprItemNamed extends SimpleExpression<Item> {
 	}
 
 	private Expression<Item> item;
-	private Expression<Component> name;
+	private Expression<ComponentWrapper> name;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
 		item = (Expression<Item>) expressions[0];
-		name = (Expression<Component>) expressions[1];
+		name = (Expression<ComponentWrapper>) expressions[1];
 		return true;
 	}
 
@@ -39,7 +40,7 @@ public class ExprItemNamed extends SimpleExpression<Item> {
 		Item item = this.item.getSingle(event);
 		if (item == null) return new Item[0];
 		item = item.copy();
-		Component name = this.name.getSingle(event);
+		Component name = ComponentWrapper.getOrElse(this.name, event, null);
 		if (name != null) item.modify(i -> i.withCustomName(name));
 		return new Item[]{item};
 	}

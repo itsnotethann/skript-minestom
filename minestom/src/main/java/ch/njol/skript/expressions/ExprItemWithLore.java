@@ -8,11 +8,14 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.skript.util.Item;
 import ch.njol.util.Kleenean;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
+
+import java.util.Arrays;
 
 @Name("Item with Lore")
 @Description("An item with a specific lore.")
@@ -24,13 +27,13 @@ public class ExprItemWithLore extends SimpleExpression<Item> {
 	}
 
 	private Expression<Item> itemExpr;
-	private Expression<Component> loreExpr;
+	private Expression<ComponentWrapper> loreExpr;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
 		itemExpr = (Expression<Item>) expressions[0];
-		loreExpr = (Expression<Component>) expressions[1];
+		loreExpr = (Expression<ComponentWrapper>) expressions[1];
 		return true;
 	}
 
@@ -39,7 +42,7 @@ public class ExprItemWithLore extends SimpleExpression<Item> {
 		Item item = itemExpr.getSingle(event);
 		if (item == null) return new Item[0];
 		item = item.copy();
-		Component[] lore = loreExpr.getArray(event);
+		Component[] lore = Arrays.stream(loreExpr.getArray(event)).map(ComponentWrapper::getComponent).toArray(Component[]::new);
 		item.modify(i -> i.withLore(lore));
 		return new Item[]{item};
 	}

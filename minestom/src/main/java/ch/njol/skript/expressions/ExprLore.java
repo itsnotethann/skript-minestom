@@ -10,6 +10,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.skript.util.Item;
 import ch.njol.util.Kleenean;
 import ch.njol.util.Math2;
@@ -32,10 +33,10 @@ import java.util.List;
 @Description("An item's lore.")
 @Examples("set the 1st line of the item's lore to \"&lt;orange&gt;Excalibur 2.0\"")
 @Since("2.1")
-public class ExprLore extends SimpleExpression<Component> {
+public class ExprLore extends SimpleExpression<ComponentWrapper> {
 
 	static {
-		Skript.registerExpression(ExprLore.class, Component.class, ExpressionType.PROPERTY,
+		Skript.registerExpression(ExprLore.class, ComponentWrapper.class, ExpressionType.PROPERTY,
 			"[the] lore of %item%", "%item%'[s] lore",
 			"[the] line %number% of [the] lore of %item%",
 			"[the] line %number% of %item%'[s] lore",
@@ -59,23 +60,23 @@ public class ExprLore extends SimpleExpression<Component> {
 
 	@Override
 	@Nullable
-	protected Component[] get(final Event e) {
+	protected ComponentWrapper[] get(final Event e) {
 		final Item i = item.getSingle(e);
 		final Number n = lineNumber != null ? lineNumber.getSingle(e) : null;
 		if (n == null && lineNumber != null || i == null)
-			return new Component[0];
+			return new ComponentWrapper[0];
 		final ItemStack stack = i.getItem();
 		if (stack.material() == Material.AIR)
-			return new Component[0];
+			return new ComponentWrapper[0];
 		List<Component> lore = stack.get(DataComponents.LORE);
 		if (lore == null)
-			return new Component[0];
+			return new ComponentWrapper[0];
 		if (n == null)
-			return lore.toArray(new Component[0]);
+			return lore.stream().map(ComponentWrapper::new).toArray(ComponentWrapper[]::new);
 		final int l = n.intValue() - 1;
 		if (l < 0 || l >= lore.size())
-			return new Component[0];
-		return new Component[]{lore.get(l)};
+			return new ComponentWrapper[0];
+		return new ComponentWrapper[]{new ComponentWrapper(lore.get(l))};
 	}
 
 	@Override
@@ -90,8 +91,8 @@ public class ExprLore extends SimpleExpression<Component> {
 				acceptsMany = false;
 			case SET:
 			case ADD:
-				if (acceptsMany) return CollectionUtils.array(Component[].class);
-				return CollectionUtils.array(Component.class);
+				if (acceptsMany) return CollectionUtils.array(ComponentWrapper[].class);
+				return CollectionUtils.array(ComponentWrapper.class);
 			case RESET:
 			default:
 				return null;
@@ -103,8 +104,8 @@ public class ExprLore extends SimpleExpression<Component> {
 	public void change(final Event e, final @Nullable Object[] delta, final ChangeMode mode) throws UnsupportedOperationException {
 		Item i = item.getSingle(e);
 
-		Component[] componentD = delta == null ? new Component[0] : Arrays.copyOf(delta, delta.length, Component[].class);
-		List<Component> componentDelta = List.of(componentD);
+		ComponentWrapper[] componentD = delta == null ? new ComponentWrapper[0] : Arrays.copyOf(delta, delta.length, ComponentWrapper[].class);
+		List<Component> componentDelta = Arrays.stream(componentD).map(ComponentWrapper::getComponent).toList();
 
 		// air is just nothing, it can't have a lore
 		if (i == null)
@@ -152,11 +153,11 @@ public class ExprLore extends SimpleExpression<Component> {
 			switch (mode) {
 				case SET:
 					assert componentDelta != null;
-					lore.set(lineNum, componentD[0]);
+					lore.set(lineNum, componentD[0].getComponent());
 					break;
 				case ADD:
 					assert componentDelta != null;
-					lore.set(lineNum, lore.get(lineNum).append(componentD[0]));
+					lore.set(lineNum, lore.get(lineNum).append(componentD[0].getComponent()));
 					break;
 				case DELETE:
 					lore.remove(lineNum);
@@ -179,8 +180,8 @@ public class ExprLore extends SimpleExpression<Component> {
 	}
 
 	@Override
-	public Class<? extends Component> getReturnType() {
-		return Component.class;
+	public Class<? extends ComponentWrapper> getReturnType() {
+		return ComponentWrapper.class;
 	}
 
 	@Override

@@ -11,19 +11,22 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+import static ch.njol.skript.util.ComponentWrapper.toWrapper;
+
 @Name("Chat Format")
 @Description("The format of a chat message in a chat event.")
 @Examples("set chat format to \"[Admin] %player%: %message%\"")
-public class ExprChatFormat extends SimpleExpression<Component> implements EventRestrictedSyntax {
+public class ExprChatFormat extends SimpleExpression<ComponentWrapper> implements EventRestrictedSyntax {
 
 	static {
-		Skript.registerExpression(ExprChatFormat.class, Component.class, ExpressionType.SIMPLE, "chat format");
+		Skript.registerExpression(ExprChatFormat.class, ComponentWrapper.class, ExpressionType.SIMPLE, "chat format");
 	}
 
 	@Override
@@ -32,22 +35,21 @@ public class ExprChatFormat extends SimpleExpression<Component> implements Event
 	}
 
 	@Override
-	protected @Nullable Component[] get(Event event) {
-		return new Component[]{((PlayerChatWrapper) event).getEvent().getFormattedMessage()};
+	protected @Nullable ComponentWrapper[] get(Event event) {
+		return new ComponentWrapper[]{toWrapper(((PlayerChatWrapper) event).getEvent().getFormattedMessage())};
 	}
 
 	@Override
 	public @org.eclipse.jdt.annotation.Nullable Class<?>[] acceptChange(Changer.ChangeMode mode) {
-		if (mode == Changer.ChangeMode.SET) return CollectionUtils.array(Component.class);
+		if (mode == Changer.ChangeMode.SET) return CollectionUtils.array(ComponentWrapper.class);
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
-		Component format = delta == null ? null : (Component) delta[0];
+		ComponentWrapper format = (ComponentWrapper) delta[0];
 		if (format == null) return;
-		((PlayerChatWrapper) event).getEvent().setFormattedMessage(format);
+		((PlayerChatWrapper) event).getEvent().setFormattedMessage(format.getComponent());
 	}
 
 	@Override
@@ -56,8 +58,8 @@ public class ExprChatFormat extends SimpleExpression<Component> implements Event
 	}
 
 	@Override
-	public Class<? extends Component> getReturnType() {
-		return Component.class;
+	public Class<? extends ComponentWrapper> getReturnType() {
+		return ComponentWrapper.class;
 	}
 
 	@Override

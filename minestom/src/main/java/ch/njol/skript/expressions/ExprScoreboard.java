@@ -8,6 +8,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.util.Kleenean;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.scoreboard.Sidebar;
@@ -23,18 +24,18 @@ public class ExprScoreboard extends SimpleExpression<Sidebar> {
 		Skript.registerExpression(ExprScoreboard.class, Sidebar.class, ExpressionType.COMBINED, "[new] (score[ ]board|side[ ]bar) [(with [the] title|titled) %-component%]");
 	}
 
-	private Expression<Component> title;
+	private Expression<ComponentWrapper> title;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-		title = (Expression<Component>) expressions[0];
+		title = (Expression<ComponentWrapper>) expressions[0];
 		return true;
 	}
 
 	@Override
 	protected @Nullable Sidebar[] get(Event event) {
-		Component title = this.title != null ? this.title.getSingle(event) : Component.empty();
+		Component title = ComponentWrapper.getOrElse(this.title, event, Component.empty());
 		assert title != null;
 		return new Sidebar[]{new Sidebar(title)};
 	}

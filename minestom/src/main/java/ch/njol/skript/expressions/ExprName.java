@@ -6,6 +6,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.registrations.Classes;
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.skript.util.Item;
 import ch.njol.util.coll.CollectionUtils;
 import net.kyori.adventure.text.Component;
@@ -19,33 +20,35 @@ import net.minestom.server.item.ItemStack;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+import static ch.njol.skript.util.ComponentWrapper.toWrapper;
+
 @Name("Name")
 @Description("The name of a player, entity, or item.")
 @Examples("set name of player to \"Custom Name\"")
-public class ExprName extends SimplePropertyExpression<Object, Component> {
+public class ExprName extends SimplePropertyExpression<Object, ComponentWrapper> {
 
 	private static final Component PLAYER_INVENTORY_TITLE = Component.text("player inventory");
 
 	static {
-		register(ExprName.class, Component.class, "[custom[ ]]name", "entities/inventories/items");
+		register(ExprName.class, ComponentWrapper.class, "[custom[ ]]name", "entities/inventories/items");
 	}
 
 	@Override
-	public @Nullable Component convert(Object from) {
+	public @Nullable ComponentWrapper convert(Object from) {
 		if (from instanceof Entity entity) {
-			if (entity instanceof Player player) return Component.text(player.getUsername());
+			if (entity instanceof Player player) return toWrapper(Component.text(player.getUsername()));
 			Component customName = entity.get(DataComponents.CUSTOM_NAME);
-			return customName == null ? Component.text(Classes.toString(entity)) : customName;
+			return toWrapper(customName == null ? Component.text(Classes.toString(entity)) : customName);
 		}
 		else if (from instanceof AbstractInventory abstractInventory) {
-			if (abstractInventory instanceof Inventory inventory) return inventory.getTitle();
-			else return PLAYER_INVENTORY_TITLE;
+			if (abstractInventory instanceof Inventory inventory) return toWrapper(inventory.getTitle());
+			else return toWrapper(PLAYER_INVENTORY_TITLE);
 		}
 		ItemStack item = ((Item) from).getItem();
 		// todo perhaps provide the visual name with item coloring (think enchanted golden apple and steak (material is cooked_beef))
 		Component customName = item.get(DataComponents.CUSTOM_NAME);
 		if (customName == null) customName = Component.text(Classes.toString(item.material()));
-		return customName;
+		return toWrapper(customName);
 	}
 
 	@Override
@@ -54,16 +57,14 @@ public class ExprName extends SimplePropertyExpression<Object, Component> {
 		if (Player.class.isAssignableFrom(returnType)) return null;
 		if (PlayerInventory.class.isAssignableFrom(returnType)) return null;
 		return switch (mode) {
-			case RESET, DELETE, SET -> CollectionUtils.array(Component.class);
+			case RESET, DELETE, SET -> CollectionUtils.array(ComponentWrapper.class);
 			default -> null;
 		};
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) throws UnsupportedOperationException {
-		Object deltaObject = delta != null && delta.length > 0 ? delta[0] : null;
-		Component name = deltaObject == null ? Component.empty() : (Component) deltaObject;
+		Component name = delta[0] == null ? Component.empty() : ((ComponentWrapper) delta[0]).getComponent();
 		assert name != null;
 		for (Object o : getExpr().getArray(event)) {
 			switch (o) {
@@ -81,8 +82,8 @@ public class ExprName extends SimplePropertyExpression<Object, Component> {
 	}
 
 	@Override
-	public Class<? extends Component> getReturnType() {
-		return Component.class;
+	public Class<? extends ComponentWrapper> getReturnType() {
+		return ComponentWrapper.class;
 	}
 
 }

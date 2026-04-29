@@ -3,6 +3,7 @@ package ch.njol.skript.effects;
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Example;
 import ch.njol.skript.lang.SyntaxStringBuilder;
+import ch.njol.skript.util.ComponentWrapper;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
@@ -47,8 +48,8 @@ public class EffSendTitle extends Effect {
 			"send subtitle %component% " + suffix);
 	}
 
-	private @Nullable Expression<Component> title;
-	private @Nullable Expression<Component> subtitle;
+	private @Nullable Expression<ComponentWrapper> title;
+	private @Nullable Expression<ComponentWrapper> subtitle;
 	private Expression<CommandSender> senders;
 	private @Nullable Expression<Timespan> fadeIn;
 	private @Nullable Expression<Timespan> stay;
@@ -58,11 +59,11 @@ public class EffSendTitle extends Effect {
 	@SuppressWarnings("unchecked")
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
 		if (matchedPattern == 0) {
-			title = (Expression<Component>) exprs[0];
+			title = (Expression<ComponentWrapper>) exprs[0];
 		}
 		Expression<?> subtitle = exprs[1 - matchedPattern];
 		if (subtitle != null) {
-			this.subtitle = (Expression<Component>) subtitle;
+			this.subtitle = (Expression<ComponentWrapper>) subtitle;
 			if (this.subtitle == null) {
 				return false;
 			}
@@ -76,20 +77,8 @@ public class EffSendTitle extends Effect {
 
 	@Override
 	protected void execute(Event event) {
-		Component title = null;
-		if (this.title != null) {
-			title = this.title.getSingle(event);
-			if (title == null) {
-				return;
-			}
-		}
-		Component subtitle = null;
-		if (this.subtitle != null) {
-			subtitle = this.subtitle.getSingle(event);
-			if (subtitle == null) {
-				return;
-			}
-		}
+		Component title = ComponentWrapper.getOrElse(this.title, event, null);
+		Component subtitle = ComponentWrapper.getOrElse(this.subtitle, event, null);
 
 		boolean specifiesTimes = false;
 		Duration stay;
