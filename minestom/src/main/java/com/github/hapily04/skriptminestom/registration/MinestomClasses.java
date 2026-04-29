@@ -1735,6 +1735,11 @@ public class MinestomClasses {
 			.name("Particle Setting")
 			.description("The setting the player has set for their particles.")
 			.defaultExpression(new EventValueExpression<>(ClientSettings.ParticleSetting.class)));
+		Classes.registerClass(new EnumClassInfo<>(ParrotType.class, "parrottype")
+			.user("parrot ?types?")
+			.name("Parrot Type")
+			.description("The type of a parrot that can sit on a player's shoulder.")
+			.defaultExpression(new EventValueExpression<>(ParrotType.class)));
 		Classes.registerClass(new ClassInfo<>(BufferedImage.class, "bufferedimage")
 			.user("buffered ?images?")
 			.name("Buffered Image")
