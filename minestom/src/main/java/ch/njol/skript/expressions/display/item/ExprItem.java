@@ -16,14 +16,14 @@ import org.bukkit.event.Event;
 @Name("Display Item")
 @Description("The item displayed by an item display entity.")
 @Examples("set display item of targeted entity to diamond sword")
-public class ExprItem extends SimplePropertyExpression<Entity, Item> {
+public class ExprItem extends SimplePropertyExpression<Entity, Slot> {
 
 	static {
-		register(ExprItem.class, Item.class, "display item [slot]", "entities");
+		register(ExprItem.class, Slot.class, "display item [slot]", "entities");
 	}
 
 	@Override
-	public @org.jspecify.annotations.Nullable Item convert(Entity from) {
+	public @org.jspecify.annotations.Nullable Slot convert(Entity from) {
 		if (!(from.getEntityMeta() instanceof ItemDisplayMeta meta)) return null;
 		return new Slot(meta.getItemStack(), new Slot.Updater() {
 			@Override
@@ -49,7 +49,6 @@ public class ExprItem extends SimplePropertyExpression<Entity, Item> {
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @org.jspecify.annotations.Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Item item = delta == null ? null : (Item) delta[0];
@@ -71,8 +70,8 @@ public class ExprItem extends SimplePropertyExpression<Entity, Item> {
 	}
 
 	@Override
-	public Class<? extends Item> getReturnType() {
-		return Item.class;
+	public Class<? extends Slot> getReturnType() {
+		return Slot.class;
 	}
 
 }

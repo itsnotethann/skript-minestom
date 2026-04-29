@@ -45,7 +45,6 @@ public class ExprCamera extends SimplePropertyExpression<Player, Entity> {
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Entity target = delta == null ? null : (Entity) delta[0];

@@ -5,44 +5,47 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import ch.njol.skript.util.Timespan;
 import ch.njol.util.coll.CollectionUtils;
+import com.github.hapily04.skriptminestom.util.NumberUtils;
 import net.minestom.server.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
-@Name("Fire Ticks")
-@Description("The number of ticks an entity is on fire.")
-@Examples("set fire ticks of player to 100")
-public class ExprFireTicks extends SimplePropertyExpression<LivingEntity, Integer> {
+
+@Name("Fire Time")
+@Description("The amount of time an entity is on fire.")
+@Examples("set fire time of player to 3 seconds")
+public class ExprFireTime extends SimplePropertyExpression<LivingEntity, Timespan> {
 
 	static {
-		register(ExprFireTicks.class, Integer.class, "fire ticks", "livingentities");
+		register(ExprFireTime.class, Timespan.class, "fire time", "livingentities");
 	}
 
 	@Override
-	public @Nullable Integer convert(LivingEntity from) {
-		return from.getFireTicks();
+	public @Nullable Timespan convert(LivingEntity from) {
+		return NumberUtils.timespanFrom(from.getFireTicks());
 	}
 
 	@Override
 	public Class<?> @org.jspecify.annotations.Nullable [] acceptChange(Changer.ChangeMode mode) {
 		return switch (mode) {
-			case SET, REMOVE, ADD, RESET -> CollectionUtils.array(Integer.class);
+			case SET, REMOVE, ADD, RESET -> CollectionUtils.array(Timespan.class);
 			default -> null;
 		};
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) throws UnsupportedOperationException {
 		LivingEntity[] entities = getExpr().getArray(event);
-		Integer fireTicks = delta == null ? null : (Integer) delta[0];
+		Timespan fireTime = delta == null ? null : (Timespan) delta[0];
+		Integer fireTicks = fireTime == null ? null : Math.toIntExact(NumberUtils.ticksFrom(fireTime));
 		for (LivingEntity entity : entities) {
 			if (mode == Changer.ChangeMode.RESET) {
 				entity.setFireTicks(0);
 				continue;
 			}
-			if (fireTicks == null) return;
+			if (fireTime == null) return;
 			switch (mode) {
 				case ADD -> entity.setFireTicks(entity.getFireTicks()+fireTicks);
 				case REMOVE -> entity.setFireTicks(entity.getFireTicks()-fireTicks);
@@ -53,12 +56,12 @@ public class ExprFireTicks extends SimplePropertyExpression<LivingEntity, Intege
 
 	@Override
 	protected String getPropertyName() {
-		return "fire ticks";
+		return "fire time";
 	}
 
 	@Override
-	public Class<? extends Integer> getReturnType() {
-		return Integer.class;
+	public Class<? extends Timespan> getReturnType() {
+		return Timespan.class;
 	}
 
 }

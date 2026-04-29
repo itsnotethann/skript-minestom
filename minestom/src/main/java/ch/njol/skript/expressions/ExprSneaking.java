@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
 public class ExprSneaking extends SimplePropertyExpression<Entity, Boolean> {
 
 	static {
-		register(ExprSneaking.class, Boolean.class, "(sneak|crouch)[ing] [state]", "entities");
+		register(ExprSwimming.class, Boolean.class, "(sneak|crouch)[ing] [state]", "entities");
 	}
 
 	@Override
@@ -25,7 +25,6 @@ public class ExprSneaking extends SimplePropertyExpression<Entity, Boolean> {
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Boolean state = delta == null ? null : (Boolean) delta[0];

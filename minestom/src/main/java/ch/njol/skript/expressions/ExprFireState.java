@@ -1,21 +1,28 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.metadata.EntityMeta;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
-public class ExprSprinting extends SimplePropertyExpression<Entity, Boolean> {
+@Name("Fire State")
+@Description("The fire state of an entity. Unlike the fire time that goes down, this will persist until you turn it off.")
+@Examples("set fire state of player to true")
+public class ExprFireState extends SimplePropertyExpression<Entity, Boolean> {
 
 	static {
-		register(ExprSprinting.class, Boolean.class, "sprint[ing] [state]", "entities");
+		register(ExprFireState.class, Boolean.class, "(fire|flaming) [state]", "entities");
 	}
 
 	@Override
 	public @Nullable Boolean convert(Entity from) {
-		return from.isSprinting();
+		return from.isGlowing();
 	}
 
 	@Override
@@ -28,19 +35,20 @@ public class ExprSprinting extends SimplePropertyExpression<Entity, Boolean> {
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Boolean state = delta == null ? null : (Boolean) delta[0];
 		for (Entity e : getExpr().getArray(event)) {
+			EntityMeta entityMeta = e.getEntityMeta();
 			switch (mode) {
 				case SET -> {
 					if (state == null) return;
-					e.setSprinting(state);
+					entityMeta.setOnFire(state);
 				}
-				case RESET -> e.setSprinting(false);
+				case RESET -> entityMeta.setOnFire(false);
 			}
 		}
 	}
 
 	@Override
 	protected String getPropertyName() {
-		return "sprint state";
+		return "fire state";
 	}
 
 	@Override

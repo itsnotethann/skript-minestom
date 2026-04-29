@@ -38,6 +38,7 @@ public class ExprInstanceCopy extends SimpleExpression<InstanceContainer> {
 			newContainer.setChunkLoader(original.getChunkLoader());
 			newContainer.setChunkSupplier(original.getChunkSupplier());
 			newContainer.setGenerator(original.generator());
+			newContainer.enableAutoChunkLoad(original.hasEnabledAutoChunkLoad());
 			MinecraftServer.getInstanceManager().registerInstance(newContainer);
 			if (RELIGHT_INSTANCES.contains(original)) RELIGHT_INSTANCES.add(newContainer);
 			containers[i] = newContainer;

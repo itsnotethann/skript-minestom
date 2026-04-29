@@ -3,19 +3,19 @@ package ch.njol.skript.expressions;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
-import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.Player;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
-public class ExprSprinting extends SimplePropertyExpression<Entity, Boolean> {
+public class ExprFlightMode extends SimplePropertyExpression<Player, Boolean> {
 
 	static {
-		register(ExprSprinting.class, Boolean.class, "sprint[ing] [state]", "entities");
+		register(ExprFlightMode.class, Boolean.class, "fl(y[ing]|ight) (mode|state)", "players");
 	}
 
 	@Override
-	public @Nullable Boolean convert(Entity from) {
-		return from.isSprinting();
+	public @Nullable Boolean convert(Player from) {
+		return from.isAllowFlying();
 	}
 
 	@Override
@@ -27,20 +27,20 @@ public class ExprSprinting extends SimplePropertyExpression<Entity, Boolean> {
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Boolean state = delta == null ? null : (Boolean) delta[0];
-		for (Entity e : getExpr().getArray(event)) {
+		for (Player p : getExpr().getArray(event)) {
 			switch (mode) {
 				case SET -> {
 					if (state == null) return;
-					e.setSprinting(state);
+					p.setAllowFlying(state);
 				}
-				case RESET -> e.setSprinting(false);
+				case RESET -> p.setAllowFlying(p.getGameMode().allowFlying());
 			}
 		}
 	}
 
 	@Override
 	protected String getPropertyName() {
-		return "sprint state";
+		return "flight mode";
 	}
 
 	@Override

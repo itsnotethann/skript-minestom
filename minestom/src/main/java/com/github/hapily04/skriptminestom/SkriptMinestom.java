@@ -102,6 +102,7 @@ public class SkriptMinestom {
 		System.setProperty("minestom.entity-view-distance", properties.getProperty(ENTITY_VIEW_DISTANCE));
 		System.setProperty("minestom.dispatcher-threads", properties.getProperty(DISPATCHER_THREADS));
 		System.setProperty("minestom.registry.unsafe-ops", "true");
+		System.setProperty("minestom.new-socket-write-lock", "true");
 	}
 
 	private static LuckPerms initLuckPerms() {

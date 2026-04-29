@@ -50,6 +50,7 @@ import net.minestom.server.inventory.PlayerInventory;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
+import net.minestom.server.network.player.ClientSettings;
 import net.minestom.server.particle.Particle;
 import net.minestom.server.ping.ServerListPingType;
 import net.minestom.server.registry.RegistryKey;
@@ -1724,6 +1725,16 @@ public class MinestomClasses {
 			.name("Server List Ping Type")
 			.description("The ping type of a ServerListPing event")
 			.defaultExpression(new EventValueExpression<>(ServerListPingType.class)));
+		Classes.registerClass(new EnumClassInfo<>(InputKey.class, "inputkey")
+			.user("input ?keys?")
+			.name("Input Key")
+			.description("Represents a movement input key that is pressed by a player.")
+			.defaultExpression(new EventValueExpression<>(InputKey.class)));
+		Classes.registerClass(new EnumClassInfo<>(ClientSettings.ParticleSetting.class, "particlesetting")
+			.user("particle ?settings?")
+			.name("Particle Setting")
+			.description("The setting the player has set for their particles.")
+			.defaultExpression(new EventValueExpression<>(ClientSettings.ParticleSetting.class)));
 		Classes.registerClass(new ClassInfo<>(BufferedImage.class, "bufferedimage")
 			.user("buffered ?images?")
 			.name("Buffered Image")

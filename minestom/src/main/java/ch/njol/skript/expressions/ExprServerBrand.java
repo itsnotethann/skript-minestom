@@ -35,7 +35,6 @@ public class ExprServerBrand extends SimpleExpression<String> {
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		if (mode == Changer.ChangeMode.RESET) {

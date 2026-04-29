@@ -1,8 +1,5 @@
 package org.bukkit.event;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
