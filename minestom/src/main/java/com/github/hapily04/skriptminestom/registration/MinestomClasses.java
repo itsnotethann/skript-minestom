@@ -35,6 +35,7 @@ import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.*;
+import net.minestom.server.entity.attribute.Attribute;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import net.minestom.server.entity.metadata.display.ItemDisplayMeta;
 import net.minestom.server.entity.metadata.display.TextDisplayMeta;
@@ -1598,6 +1599,66 @@ public class MinestomClasses {
 			.name("Billboard Constraints")
 			.description("Billboard constraint e.g. FIXED")
 			.defaultExpression(new EventValueExpression<>(AbstractDisplayMeta.BillboardConstraints.class)));
+		Classes.registerClass(new ClassInfo<>(Attribute.class, "attributetype")
+			.user("attribute ?types?")
+			.name("Attribute Type")
+			.description("Represents the type of an attribute.")
+			.usage(String.join(", ", Attribute.values().stream().map(attribute -> attribute.key().value()).collect(Collectors.joining())))
+			.parser(new Parser<>() {
+				public Attribute parse(@NotNull String s, @NotNull ParseContext context) {
+					s = s.toLowerCase(Locale.ENGLISH).replace(' ', '_');
+					s = Utils.isPlural(s).updated();
+					if (!s.contains("minecraft:")) s = "minecraft:" + s;
+					if (!Key.parseable(s)) return null;
+					return Attribute.fromKey(s);
+				}
+
+				@Override
+				public boolean canParse(@NotNull ParseContext context) {
+					return true;
+				}
+
+				@Override
+				public @NotNull String toString(@NotNull Attribute o, int flags) {
+					return toVariableNameString(o);
+				}
+
+				@Override
+				public @NotNull String toVariableNameString(@NotNull Attribute o) {
+					return keyToString(o.key());
+				}
+			})
+			.serializer(new Serializer<>() {
+				@Override
+				public Fields serialize(Attribute o) throws NotSerializableException {
+					Fields f = new Fields();
+					f.putObject("type", o.key().asString());
+					return f;
+				}
+
+				@Override
+				public void deserialize(Attribute o, Fields f) throws StreamCorruptedException, NotSerializableException {
+					assert false;
+				}
+
+				@SuppressWarnings("DataFlowIssue")
+				@Override
+				protected @NonNull Attribute deserialize(@NotNull Fields f) throws StreamCorruptedException {
+					String type = f.getObject("type", String.class);
+					return Attribute.fromKey(type);
+				}
+
+				@Override
+				public boolean mustSyncDeserialization() {
+					return false;
+				}
+
+				@Override
+				protected boolean canBeInstantiated() {
+					return false;
+				}
+			})
+			.supplier(Attribute.values().toArray(new Attribute[0])));
 		Classes.registerClass(new ClassInfo<>(NamedTextColor.class, "namedtextcolor")
 			.user("named ?text ?colors?")
 			.name("Named Text Color")
