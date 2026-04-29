@@ -10,7 +10,7 @@ import org.jspecify.annotations.Nullable;
 public class ExprInstaBreak extends SimplePropertyExpression<Player, Boolean> {
 
 	static {
-		register(ExprInstaBreak.class, Boolean.class, "insta(-| |nt)break [stat(e|us)]", "players");
+		register(ExprInstaBreak.class, Boolean.class, "insta[nt] break [stat(e|us)]", "players");
 	}
 
 	@Override
