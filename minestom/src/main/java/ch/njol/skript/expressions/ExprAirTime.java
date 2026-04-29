@@ -44,7 +44,7 @@ public class ExprAirTime extends SimplePropertyExpression<Entity, Timespan> {
 		for (Entity entity : entities) {
 			EntityMeta entityMeta = entity.getEntityMeta();
 			if (mode == Changer.ChangeMode.RESET) {
-				entityMeta.setAirTicks(0);
+				entityMeta.setAirTicks(300);
 				continue;
 			}
 			if (airTime == null) return;
