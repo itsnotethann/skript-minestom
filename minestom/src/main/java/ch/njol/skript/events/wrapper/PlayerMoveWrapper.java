@@ -13,10 +13,14 @@ public class PlayerMoveWrapper extends EventWrapper<PlayerMoveEvent> implements 
 		EventValues.registerEventValue(EventValue.builder(PlayerMoveWrapper.class, Boolean.class)
 			.patterns("grounded")
 			.getter(from -> from.event.isOnGround())
+			.time(EventValue.Time.FUTURE)
+			.build());
+		EventValues.registerEventValue(EventValue.builder(PlayerMoveWrapper.class, Boolean.class)
+			.patterns("grounded")
+			.getter(from -> from.event.getPlayer().isOnGround())
 			.build());
 		EventValues.registerEventValue(EventValue.builder(PlayerMoveWrapper.class, Pos.class)
 			.getter(from -> from.event.getPlayer().getPosition())
-			.time(EventValue.Time.PAST)
 			.build());
 		EventValues.registerEventValue(EventValue.builder(PlayerMoveWrapper.class, Pos.class)
 			.getter(from -> from.event.getNewPosition())
