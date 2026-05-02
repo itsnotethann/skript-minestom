@@ -132,9 +132,7 @@ public class LuckPermsPlayer extends Player {
     }
 
     /**
-     * Gets the prefix of the player. This method uses the MiniMessage library
-     * to parse the prefix, which is a more advanced option than using legacy
-     * chat formatting.
+     * Gets the prefix of the player.
      *
      * @return the prefix of the player
      */
@@ -144,9 +142,7 @@ public class LuckPermsPlayer extends Player {
     }
 
     /**
-     * Gets the suffix of the player. This method uses the MiniMessage library
-     * to parse the suffix, which is a more advanced option than using legacy
-     * chat formatting.
+     * Gets the suffix of the player.
      *
      * @return the suffix of the player
      */
