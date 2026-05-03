@@ -43,7 +43,6 @@ public class ExprFacing extends SimplePropertyExpression<Object, Direction> {
 		return super.init(exprs, matchedPattern, isDelayed, parseResult);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	@Nullable
 	public Direction convert(final Object o) {
@@ -70,7 +69,7 @@ public class ExprFacing extends SimplePropertyExpression<Object, Direction> {
 	@Override
 	@Nullable
 	public Class<?>[] acceptChange(final ChangeMode mode) {
-		if (!Entity.class.isAssignableFrom(getExpr().getReturnType()))
+		if (!getExpr().getReturnType().isAssignableFrom(Entity.class))
 			return null;
 		if (mode == ChangeMode.SET)
 			return CollectionUtils.array(Direction.class);
