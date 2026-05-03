@@ -53,19 +53,19 @@ public class ExprSpeed extends SimplePropertyExpression<Player, Number> {
 
 	@Override
 	public void change(final Event e, final @Nullable Object[] delta, final ChangeMode mode) throws UnsupportedOperationException {
-		double input = delta == null ? 0 : ((Number) delta[0]).doubleValue();
+		float input = delta == null ? 0 : ((Number) delta[0]).floatValue();
 
 		for (final Player p : getExpr().getArray(e)) {
-			double oldSpeed = getSpeed(p);
+			float oldSpeed = getSpeed(p);
 
-			double newSpeed = switch (mode) {
+			float newSpeed = switch (mode) {
 				case SET -> input;
 				case ADD -> oldSpeed + input;
 				case REMOVE -> oldSpeed - input;
-				default -> walk ? 0.2 : 0.1;
+				default -> walk ? 0.1f : 0.05f;
 			};
 
-			final double d = Math2.fit(-1, newSpeed, 1);
+			final float d = Math2.fit(-1, newSpeed, 1);
 
 			setSpeed(p, d);
 		}
@@ -85,12 +85,14 @@ public class ExprSpeed extends SimplePropertyExpression<Player, Number> {
 		return walk ? Attribute.MOVEMENT_SPEED : Attribute.FLYING_SPEED;
 	}
 
-	private void setSpeed(Player player, double amount) {
-		player.getAttribute(getSpeedType()).setBaseValue(amount);
+	private void setSpeed(Player player, float amount) {
+		Attribute speedType = getSpeedType();
+		if (speedType == Attribute.FLYING_SPEED) player.setFlyingSpeed(amount);
+		player.getAttribute(speedType).setBaseValue(amount);
 	}
 
-	private double getSpeed(Player player) {
-		return player.getAttributeValue(getSpeedType());
+	private float getSpeed(Player player) {
+		return (float) player.getAttributeValue(getSpeedType());
 	}
 
 }

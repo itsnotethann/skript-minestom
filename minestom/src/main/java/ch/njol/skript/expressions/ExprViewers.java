@@ -43,7 +43,6 @@ public class ExprViewers extends PropertyExpression<Entity, Player> {
 		};
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @org.jspecify.annotations.Nullable @Nullable Object[] delta, Changer.ChangeMode mode) {
 		Player[] players = delta == null ? new Player[0] : Arrays.copyOf(delta, delta.length, Player[].class);
@@ -52,6 +51,7 @@ public class ExprViewers extends PropertyExpression<Entity, Player> {
 				Iterator<Player> iterator = entity.getViewers().iterator();
 				//noinspection WhileLoopReplaceableByForEach // not safe to replace
 				while (iterator.hasNext()) {
+					entity.updateViewerRule();
 					entity.removeViewer(iterator.next());
 				}
 				continue;

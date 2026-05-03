@@ -5,10 +5,12 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.effects.EffChange;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.sections.ExprSecInstance;
+import ch.njol.skript.lang.SyntaxElement;
+import ch.njol.skript.lang.parser.ParsingStack;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Entity;
@@ -27,7 +29,7 @@ public class ExprCamera extends SimplePropertyExpression<Player, Entity> {
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-		if (!ExprSecInstance.inEffChange(this)) {
+		if (!inEffChange(this)) {
 			Skript.error("You can't get the camera target of a player.");
 			return false;
 		}
@@ -64,6 +66,15 @@ public class ExprCamera extends SimplePropertyExpression<Player, Entity> {
 	@Override
 	public Class<? extends Entity> getReturnType() {
 		return Entity.class;
+	}
+
+	// todo maybe change this to only check 1st ParsingStack element
+	public static boolean inEffChange(SyntaxElement syntaxElement) {
+		for (ParsingStack.Element element : syntaxElement.getParser().getParsingStack()) {
+			if (!EffChange.class.isAssignableFrom(element.getSyntaxElementClass())) continue;
+			return true;
+		}
+		return false;
 	}
 
 }

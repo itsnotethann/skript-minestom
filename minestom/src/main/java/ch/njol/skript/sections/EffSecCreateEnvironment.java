@@ -79,11 +79,12 @@ public class EffSecCreateEnvironment extends EffectSection {
 		BIOME_ENTRY_VALIDATOR = biomeBuilder.build();
 
 		Skript.registerSection(EffSecCreateEnvironment.class,
-			"create (:dimension|biome) [type] under [name[ ]space] %string% (and store it|stored) in %objects%");
+			"create (:dimension|biome) [type] under [name[ ]space] %string% [(and store it|stored) in %-objects%]");
 	}
 
 	private EntryContainer container;
 	private Expression<String> namespace;
+	@Nullable
 	private Expression<Object> storage;
 	private boolean dimension;
 
@@ -222,7 +223,7 @@ public class EffSecCreateEnvironment extends EffectSection {
 			register(key, registry, biome);
 		}
 
-		storage.change(event, storageValue, Changer.ChangeMode.SET); // store the created dimension type on the variable
+		if (storage != null) storage.change(event, storageValue, Changer.ChangeMode.SET); // store the created environment on the variable
 		return super.walk(event, false);
 	}
 

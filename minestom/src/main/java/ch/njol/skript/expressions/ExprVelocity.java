@@ -8,6 +8,7 @@ import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.Player;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
@@ -25,7 +26,7 @@ public class ExprVelocity extends SimplePropertyExpression<Entity, Vec> {
 
 	@Override
 	public @Nullable Vec convert(Entity from) {
-		return from.getVelocity();
+		return getTrueVelocity(from);
 	}
 
 	@Override
@@ -36,7 +37,6 @@ public class ExprVelocity extends SimplePropertyExpression<Entity, Vec> {
 		};
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Vec vector = delta == null ? null : (Vec) delta[0];
@@ -48,8 +48,8 @@ public class ExprVelocity extends SimplePropertyExpression<Entity, Vec> {
 			if (vector == null) return;
 			switch (mode) {
 				case SET -> e.setVelocity(vector);
-				case ADD -> e.setVelocity(e.getVelocity().add(vector));
-				case REMOVE -> e.setVelocity(e.getVelocity().sub(vector));
+				case ADD -> e.setVelocity(getTrueVelocity(e).add(vector));
+				case REMOVE -> e.setVelocity(getTrueVelocity(e).sub(vector));
 			}
 		}
 	}
@@ -62,6 +62,12 @@ public class ExprVelocity extends SimplePropertyExpression<Entity, Vec> {
 	@Override
 	public Class<? extends Vec> getReturnType() {
 		return Vec.class;
+	}
+
+	// todo make even truer because previous position is not updated if player stands still
+	public static Vec getTrueVelocity(Entity entity) {
+		if (entity instanceof Player player) return player.getPreviousPosition().sub(player.getPosition()).asVec();
+		return entity.getVelocity();
 	}
 
 }

@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.sections.ExprSecInstance;
 import ch.njol.util.Kleenean;
 import net.minestom.server.entity.Player;
 import net.minestom.server.network.packet.server.play.CustomChatCompletionPacket;
@@ -38,7 +37,7 @@ public class ExprPlayerChatCompletions extends SimplePropertyExpression<Player, 
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
-		if (!ExprSecInstance.inEffChange(this)) {
+		if (!ExprCamera.inEffChange(this)) {
 			Skript.error("You can't get the chat completions of a player.");
 			return false;
 		}

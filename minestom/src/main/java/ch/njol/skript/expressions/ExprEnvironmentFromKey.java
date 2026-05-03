@@ -17,7 +17,7 @@ public class ExprEnvironmentFromKey extends SimpleExpression<Object> {
 
 	static {
 		Skript.registerExpression(ExprEnvironmentFromKey.class, Object.class, ExpressionType.COMBINED,
-			"(:biome|dimension [type]) (from|under) [key] %string%");
+			"(:biome|dimension [type]) (from|under) [name[ ]space[d]] [key] %string%");
 	}
 
 	private Expression<String> key;

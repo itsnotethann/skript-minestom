@@ -35,6 +35,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.skriptlang.skript.common.function.DefaultFunction;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import static ch.njol.skript.expressions.ExprAmbientSounds.getSoundEvent;
@@ -83,7 +84,7 @@ public class MinestomFunctions {
 				return new Vec[]{new Vec(x.doubleValue(), y.doubleValue(), z.doubleValue())};
 			}
 		}).description("Creates a vector with the given x, y and z.").examples("set {_vec} to vector(1, 0, 0)");
-		Functions.register(DefaultFunction.builder(Skript.getAddonInstance(), "blockvector", BlockVec.class)
+		Functions.register(DefaultFunction.builder(Skript.getAddonInstance(), "blockVector", BlockVec.class)
 			.parameter("x", Integer.class)
 			.parameter("y", Integer.class)
 			.parameter("z", Integer.class)
@@ -93,6 +94,15 @@ public class MinestomFunctions {
 				int z = args.get("z");
 				return new BlockVec(x, y ,z);
 			}));
+		/*Functions.register(DefaultFunction.builder(Skript.getAddonInstance(), "mm", ComponentWrapper.class)
+			.parameter("input", String.class)
+			.parameter("resolvers", TagResolver[].class, org.skriptlang.skript.common.function.Parameter.Modifier.OPTIONAL)
+			.build(args -> {
+				String input = args.get("input");
+				TagResolver[] resolvers = args.getOrDefault("resolvers", new TagResolver[0]);
+				System.out.println("resolvers: " + Arrays.toString(resolvers));
+				return toWrapper(BASIC_MINI_MESSAGE.deserialize(input, resolvers));
+			}));*/
 		Functions.registerFunction(new JavaFunction<>("mm", new Parameter[]{
 			new Parameter<>("input", DefaultClasses.STRING, true, null),
 			new Parameter<>("resolvers", Classes.getExactClassInfo(TagResolver.class), false, new SimpleLiteral<>(new TagResolver[0], TagResolver.class, true))
@@ -233,6 +243,7 @@ public class MinestomFunctions {
 				if (parametersNull(params, 1)) return new TagResolver[0];
 				String name = (String) params[0][0];
 				Object value = params[1][0];
+				if (value instanceof ComponentWrapper wrapper) value = wrapper.getComponent();
 				boolean parsed = (boolean) params[2][0];
 				if (value instanceof String s) return CollectionUtils.array(parsed ? Placeholder.parsed(name, s) : Placeholder.unparsed(name, s));
 				if (value instanceof ComponentLike c) return CollectionUtils.array(Placeholder.component(name, c));

@@ -43,7 +43,7 @@ public class ExpressionSection extends Section {
 		// log handler to prevent claim error from showing up if we fail to claim the section but can init without it
 		try (ParseLogHandler log = SkriptLogger.startParseLogHandler()) {
 			// try to claim section
-			boolean claimedSection = false;//context.claim(this, parseResult.expr);
+			boolean claimedSection = context.claim(this, parseResult.expr);
 			if (claimedSection) {
 				// now that we have claimed the section, we have to commit
 				boolean init = expression.init(expressions, matchedPattern, isDelayed, parseResult, context.sectionNode, context.triggerItems);

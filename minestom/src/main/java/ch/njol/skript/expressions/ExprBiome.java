@@ -56,7 +56,6 @@ public class ExprBiome extends SimpleExpression<Biome> {
 		return biomes.toArray(new Biome[0]);
 	}
 
-	@SuppressWarnings("DataFlowIssue")
 	@Override
 	@Nullable
 	public Class<?>[] acceptChange(Changer.ChangeMode mode) {

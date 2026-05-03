@@ -2124,7 +2124,7 @@ public class MinestomClasses {
 			if (from instanceof ConsoleSender sender) return sender;
 			return null;
 		});
-		Converters.registerConverter(Entity.class, EntityType.class, Entity::getEntityType);
+		//Converters.registerConverter(Entity.class, EntityType.class, Entity::getEntityType);
 		Converters.registerConverter(Entity.class, LivingEntity.class, from -> {
 			if (from instanceof LivingEntity livingEntity) return livingEntity;
 			return null;
@@ -2190,10 +2190,14 @@ public class MinestomClasses {
 			return Comparators.compare(s1, s2);
 		});
 		Comparators.registerComparator(CommandSender.class, EntityType.class, (o1, o2) -> {
+			System.out.println("relating commandsender and entitytype");
 			if (!(o1 instanceof Player)) return Relation.get(false);
 			return Relation.get(o2.equals(EntityType.PLAYER));
 		});
-		Comparators.registerComparator(Entity.class, EntityType.class, (o1, o2) -> Relation.get(o1.getEntityType().equals(o2)));
+		Comparators.registerComparator(Entity.class, EntityType.class, (o1, o2) -> {
+			System.out.println("relating entity and entitytype");
+			return Relation.get(o1.getEntityType().equals(o2));
+		});
 		Comparators.registerComparator(Item.class, Slot.class, (o1, o2) -> Relation.get(o1.getItem().isSimilar(o2.getItem())));
 		Comparators.registerComparator(Item.class, Item.class, (o1, o2) -> Relation.get(o1.getItem().isSimilar(o2.getItem())));
 

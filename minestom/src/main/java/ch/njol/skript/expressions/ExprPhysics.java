@@ -24,7 +24,6 @@ public class ExprPhysics extends SimplePropertyExpression<Entity, Boolean> {
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Boolean state = delta == null ? null : (Boolean) delta[0];

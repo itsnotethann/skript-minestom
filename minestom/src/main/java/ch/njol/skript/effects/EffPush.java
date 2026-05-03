@@ -5,6 +5,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Example;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
+import ch.njol.skript.expressions.ExprVelocity;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -14,6 +15,7 @@ import ch.njol.util.Kleenean;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.Player;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,7 +93,7 @@ public class EffPush extends Effect {
 				// Some component of the mod vector is not finite, so just stop
 				return;
 			}
-			entity.setVelocity(entity.getVelocity().add(pushDirection));
+			entity.setVelocity(ExprVelocity.getTrueVelocity(entity).add(pushDirection));
 		}
 	}
 
