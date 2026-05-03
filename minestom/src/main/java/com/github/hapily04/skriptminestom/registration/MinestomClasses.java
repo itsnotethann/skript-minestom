@@ -238,23 +238,7 @@ public class MinestomClasses {
 			.user("equipment ?handlers?")
 			.name("Equipment Handler")
 			.description("An entity that is capable of bearing armor and off/main hand tools.")
-			.defaultExpression(new EventValueExpression<>(EquipmentHandler.class))
-			.parser(new Parser<>() {
-				@Override
-				public boolean canParse(@NotNull ParseContext context) {
-					return false;
-				}
-
-				@Override
-				public @NotNull String toString(@NotNull EquipmentHandler o, int flags) {
-					return toVariableNameString(o);
-				}
-
-				@Override
-				public @NotNull String toVariableNameString(@NotNull EquipmentHandler o) {
-					return "equipment handler"; // don't think we can make this better
-				}
-			}));
+			.defaultExpression(new EventValueExpression<>(EquipmentHandler.class)));
 		Classes.registerClass(new ClassInfo<>(Pos.class, "position")
 			.user("positions?")
 			.name("Position")

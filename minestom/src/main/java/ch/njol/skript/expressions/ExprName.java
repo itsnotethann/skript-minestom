@@ -36,9 +36,9 @@ public class ExprName extends SimplePropertyExpression<Object, ComponentWrapper>
 	@Override
 	public @Nullable ComponentWrapper convert(Object from) {
 		if (from instanceof Entity entity) {
-			if (entity instanceof Player player) return toWrapper(Component.text(player.getUsername()));
-			Component customName = entity.get(DataComponents.CUSTOM_NAME);
-			return toWrapper(customName == null ? Component.text(Classes.toString(entity)) : customName);
+			Component component = entity.get(DataComponents.CUSTOM_NAME);
+			if (entity instanceof Player player) component = Component.text(player.getUsername());
+			return toWrapper(component);
 		}
 		else if (from instanceof AbstractInventory abstractInventory) {
 			if (abstractInventory instanceof Inventory inventory) return toWrapper(inventory.getTitle());
