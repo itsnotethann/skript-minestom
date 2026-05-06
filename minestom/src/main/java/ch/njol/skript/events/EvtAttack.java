@@ -17,7 +17,7 @@ public class EvtAttack extends SkriptEvent {
 
 	static {
 		Skript.registerEvent("Entity Attack", EvtAttack.class, EntityAttackWrapper.class,
-			"(%-entitytypes%|entity) attack [on %-entitytypes%");
+			"(%-entitytypes%|entity) attack [on %-entitytypes%]");
 		EventValues.registerEventValue(EventValue.builder(EntityAttackWrapper.class, Entity.class)
 			.patterns("attacker")
 			.getter(from -> from.getEvent().getEntity())

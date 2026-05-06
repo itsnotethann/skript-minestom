@@ -84,6 +84,15 @@ public class SimpleEvents {
 		Skript.registerEvent("Player Move", SimpleEvent.class, PlayerMoveWrapper.class, "[player] move")
 			.description("Called when a player attempts to move")
 			.examples("on player move");
+		Skript.registerEvent("Cancel Item Use", SimpleEvent.class, PlayerCancelItemUseWrapper.class, "[player] cancel item us(e|age)")
+			.description("Called when a player cancels their item usage before it finishes.")
+			.examples("on player cancel item use");
+		Skript.registerEvent("Begin Item Use", SimpleEvent.class, PlayerBeginItemUseWrapper.class, "[player] begin item us(e|age)")
+			.description("Called when a player begins to use (consume) their item.")
+			.examples("on player begin item use");
+		Skript.registerEvent("Finish Item Use", SimpleEvent.class, PlayerFinishItemUseWrapper.class, "[player] finish item us(e|age)")
+			.description("Called when a player completes their item usage.")
+			.examples("on player finish item use");
 	}
 
 }

@@ -48,6 +48,7 @@ import net.minestom.server.inventory.AbstractInventory;
 import net.minestom.server.inventory.EquipmentHandler;
 import net.minestom.server.inventory.Inventory;
 import net.minestom.server.inventory.PlayerInventory;
+import net.minestom.server.item.ItemAnimation;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
@@ -645,6 +646,11 @@ public class MinestomClasses {
 			.name("Player Hand")
 			.description("Represents a player's hand. Possible values: main, off.")
 			.defaultExpression(new EventValueExpression<>(PlayerHand.class)));
+		Classes.registerClass(new EnumClassInfo<>(ItemAnimation.class, "itemanimation")
+			.user("item ?animations?")
+			.name("Item Animation")
+			.description("Represents the animation an item is playing while consuming.")
+			.defaultExpression(new EventValueExpression<>(ItemAnimation.class)));
 		Classes.registerClass(new EnumClassInfo<>(InventoryType.class, "inventorytype")
 			.user("inventory ?types?")
 			.name("Inventory Type")

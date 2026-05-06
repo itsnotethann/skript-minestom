@@ -11,6 +11,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerHand;
 import net.minestom.server.event.player.*;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.item.ItemStack;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -104,9 +105,10 @@ public class EvtClick extends SkriptEvent {
 				if (o != null && click != ANY) yield false;
 				PlayerUseItemEvent e = wr.getEvent();
 				Player player = e.getPlayer();
+				ItemStack itemStack = e.getItemStack();
 				PlayerHand hand = e.getHand();
 				if (!INTERACT_TRACKER.checkEvent(player, e, hand)) yield false;
-				yield verifyEvent(o, null, player, hand);
+				yield verifyEvent(o, itemStack, player, hand);
 			}
 			case PlayerStartDiggingWrapper wr -> {
 				if (click == RIGHT) yield false;
