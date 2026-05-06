@@ -8,6 +8,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.registrations.EventValues;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
+import net.minestom.server.event.entity.EntityAttackEvent;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 import org.skriptlang.skript.bukkit.lang.eventvalue.EventValue;
@@ -15,7 +16,8 @@ import org.skriptlang.skript.bukkit.lang.eventvalue.EventValue;
 public class EvtAttack extends SkriptEvent {
 
 	static {
-		Skript.registerEvent("Entity Attack", EvtAttack.class, EntityAttackWrapper.class, "[%-entitytypes%] attack[ing]");
+		Skript.registerEvent("Entity Attack", EvtAttack.class, EntityAttackWrapper.class,
+			"(%-entitytypes%|entity) attack [on %-entitytypes%");
 		EventValues.registerEventValue(EventValue.builder(EntityAttackWrapper.class, Entity.class)
 			.patterns("attacker")
 			.getter(from -> from.getEvent().getEntity())
@@ -27,29 +29,40 @@ public class EvtAttack extends SkriptEvent {
 	}
 
 	@Nullable
-	private Literal<EntityType> types;
+	private Literal<EntityType> attackerTypes;
+	@Nullable
+	private Literal<EntityType> victimTypes;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Literal<?>[] args, int matchedPattern, SkriptParser.ParseResult parseResult) {
-		types = (Literal<EntityType>) args[0];
+		attackerTypes = (Literal<EntityType>) args[0];
+		victimTypes = (Literal<EntityType>) args[1];
 		return true;
 	}
 
 	@Override
 	public boolean check(Event event) {
-		if (types == null) return true;
-		EntityType toCheck = ((EntityAttackWrapper) event).getEvent().getEntity().getEntityType();
-		EntityType[] types = this.types.getAll();
-		for (EntityType type : types) {
-			if (type.equals(toCheck)) return true;
-		}
-		return false;
+		EntityAttackEvent e = ((EntityAttackWrapper) event).getEvent();
+		boolean attackerCheck = check(attackerTypes, e.getEntity().getEntityType());
+		boolean victimCheck = check(victimTypes, e.getTarget().getEntityType());
+		return attackerCheck && victimCheck;
 	}
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return (types != null ? types.toString(event, debug) + " " : "") + "attack";
+		return (attackerTypes != null ? attackerTypes.toString(event, debug) : "entity") + " attack"
+			+ (victimTypes != null ? " of " + victimTypes.toString(event, debug) : "");
+	}
+
+	private boolean check(@Nullable Literal<EntityType> entityTypes, EntityType type) {
+		if (entityTypes == null) return true;
+		for (EntityType t : entityTypes.getAll()) {
+			if (t.equals(type)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -10,7 +10,9 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
+import net.minestom.server.network.packet.server.ServerPacket;
 import net.minestom.server.network.packet.server.play.EntityAnimationPacket;
+import net.minestom.server.network.packet.server.play.HitAnimationPacket;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -43,7 +45,10 @@ public class EffPlayAnimation extends Effect {
 		Player[] players = this.players == null ? null : this.players.getArray(event);
 		for (EntityAnimationPacket.Animation animation : animations.getArray(event)) {
 			for (Entity entity : entities) {
-				EntityAnimationPacket packet = new EntityAnimationPacket(entity.getEntityId(), animation);
+				int entityId = entity.getEntityId();
+				ServerPacket packet;
+				if (animation == EntityAnimationPacket.Animation.TAKE_DAMAGE) packet = new HitAnimationPacket(entityId, 0);
+				else packet = new EntityAnimationPacket(entityId, animation);
 				if (players == null) entity.getInstance().sendGroupedPacket(packet);
 				else {
 					for (Player player : players) {

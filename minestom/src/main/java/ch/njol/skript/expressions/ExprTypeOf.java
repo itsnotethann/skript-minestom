@@ -78,6 +78,7 @@ public class ExprTypeOf extends SimplePropertyExpression<Object, Object> {
 			case AbstractInventory inventory -> inventory instanceof PlayerInventory ? InventoryType.PLAYER : InventoryType.of(((Inventory) inventory).getInventoryType());
 			case Block block -> {
 				Material material = block.registry().material();
+				if (block == Block.AIR) material = Material.AIR; // edge case in minestom rn
 				yield material == null ? null : new Item(ItemStack.of(material));
 			}
 			case Enchantment enchantment -> new Enchantment(enchantment.enchantment(), -1);

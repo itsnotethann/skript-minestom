@@ -2164,6 +2164,11 @@ public class MinestomClasses {
 		});
 		Converters.registerConverter(Color.class, AlphaColor.class, from -> from.withAlpha(255));
 		Converters.registerConverter(Item.class, Block.class, from -> from.getItem().material().block());
+		/*Converters.registerConverter(Block.class, Item.class, from -> {
+			Material material = from.registry().material();
+			if (from == Block.AIR) material = Material.AIR; // edge case in minestom rn
+			return material == null ? null : new Item(ItemStack.of(material));
+		});*/
 
 		/*
 		 *	Comparators
@@ -2174,16 +2179,17 @@ public class MinestomClasses {
 			return Comparators.compare(s1, s2);
 		});
 		Comparators.registerComparator(CommandSender.class, EntityType.class, (o1, o2) -> {
-			System.out.println("relating commandsender and entitytype");
 			if (!(o1 instanceof Player)) return Relation.get(false);
 			return Relation.get(o2.equals(EntityType.PLAYER));
 		});
-		Comparators.registerComparator(Entity.class, EntityType.class, (o1, o2) -> {
-			System.out.println("relating entity and entitytype");
-			return Relation.get(o1.getEntityType().equals(o2));
+		Comparators.registerComparator(EntityType.class, Player.class, (o1, o2) -> {
+			if (o1 == EntityType.PLAYER) return Relation.EQUAL;
+			return Relation.NOT_EQUAL;
 		});
+		Comparators.registerComparator(Entity.class, EntityType.class, (o1, o2) -> Relation.get(o1.getEntityType().equals(o2)));
 		Comparators.registerComparator(Item.class, Slot.class, (o1, o2) -> Relation.get(o1.getItem().isSimilar(o2.getItem())));
 		Comparators.registerComparator(Item.class, Item.class, (o1, o2) -> Relation.get(o1.getItem().isSimilar(o2.getItem())));
+		Comparators.registerComparator(Block.class, Block.class, (o1, o2) -> Relation.get(o1.compare(o2)));
 
 		/*
 		 *	Arithmetic
