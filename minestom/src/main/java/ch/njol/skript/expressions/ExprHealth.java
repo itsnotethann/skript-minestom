@@ -33,7 +33,6 @@ public class ExprHealth extends SimplePropertyExpression<LivingEntity, Number> {
 		};
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) throws UnsupportedOperationException {
 		LivingEntity[] entities = getExpr().getArray(event);

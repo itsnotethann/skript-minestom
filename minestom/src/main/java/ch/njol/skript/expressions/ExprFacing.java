@@ -14,6 +14,8 @@ import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.LivingEntity;
+import net.minestom.server.entity.Player;
 import net.minestom.server.instance.block.Block;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
@@ -69,7 +71,8 @@ public class ExprFacing extends SimplePropertyExpression<Object, Direction> {
 	@Override
 	@Nullable
 	public Class<?>[] acceptChange(final ChangeMode mode) {
-		if (!getExpr().getReturnType().isAssignableFrom(Entity.class))
+		Class<?> returnType = getExpr().getReturnType();
+		if (!(returnType.isAssignableFrom(Entity.class) || returnType.isAssignableFrom(LivingEntity.class) || returnType.isAssignableFrom(Player.class)))
 			return null;
 		if (mode == ChangeMode.SET)
 			return CollectionUtils.array(Direction.class);

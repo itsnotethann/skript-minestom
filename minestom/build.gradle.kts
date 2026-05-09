@@ -35,6 +35,7 @@ dependencies {
 	implementation("com.google.code.gson:gson:2.11.0")
 	implementation("mx.kenzie:mirror:5.0.3")
 	implementation(project(":common"))
+	implementation("org.apache.commons:commons-lang3:3.20.0") // fix skript dependency
 }
 
 tasks.withType<JavaCompile>().configureEach {

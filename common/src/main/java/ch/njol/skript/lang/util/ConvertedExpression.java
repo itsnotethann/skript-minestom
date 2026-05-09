@@ -100,25 +100,18 @@ public class ConvertedExpression<F, T> implements Expression<T> {
 		// we might be able to cast some (or all) of the possible return types to T
 		// for possible return types that can't be directly cast, regular converters will be used
 		List<ConverterInfo<? extends F, ? extends T>> infos = new ArrayList<>();
-		main_loop: for (Class<? extends F> type : from.possibleReturnTypes()) {
+		for (Class<? extends F> type : from.possibleReturnTypes()) {
 			if (CollectionUtils.containsSuperclass(to, type)) { // this type is of T, build a converter simply casting
 				// noinspection unchecked - 'type' is a desired type in 'to'
 				Class<T> toType = (Class<T>) type;
 				infos.add(new ConverterInfo<>(type, toType, toType::cast, 0));
-				continue;
-			}
-			for (Class<T> toType : to) {
-				if (type.isAssignableFrom(toType)) {
-					infos.add(new ConverterInfo<>(type, toType, value -> toType.isInstance(value) ? (T) value : null, 0));
-					continue main_loop;
+			} else { // this possible return type is not included in 'to'
+				// build all converters for converting the possible return type into any of the types of 'to'
+				for (Class<T> toType : to) {
+					ConverterInfo<? extends F, T> converter = Converters.getConverterInfo(type, toType);
+					if (converter != null)
+						infos.add(converter);
 				}
-			}
-			// this possible return type is not included in 'to'
-			// build all converters for converting the possible return type into any of the types of 'to'
-			for (Class<T> toType : to) {
-				ConverterInfo<? extends F, T> converter = Converters.getConverterInfo(type, toType);
-				if (converter != null)
-					infos.add(converter);
 			}
 		}
 		if (!infos.isEmpty()) { // there are converters for (at least some of) the return types
@@ -254,6 +247,16 @@ public class ConvertedExpression<F, T> implements Expression<T> {
 	@Override
 	public int getTime() {
 		return source.getTime();
+	}
+
+	@Override
+	public boolean returnNestedStructures(boolean nested) {
+		return source.returnNestedStructures(nested);
+	}
+
+	@Override
+	public boolean returnsNestedStructures() {
+		return source.returnsNestedStructures();
 	}
 
 	@Override

@@ -1,21 +1,3 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.lang;
 
 import ch.njol.skript.Skript;
@@ -40,8 +22,12 @@ import ch.njol.util.StringUtils;
 import ch.njol.util.coll.CollectionUtils;
 import ch.njol.util.coll.iterator.EmptyIterator;
 import ch.njol.util.coll.iterator.SingleItemIterator;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterators;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.skriptlang.skript.lang.arithmetic.Arithmetics;
 import org.skriptlang.skript.lang.arithmetic.OperationInfo;
 import org.skriptlang.skript.lang.arithmetic.Operator;
@@ -50,6 +36,7 @@ import org.skriptlang.skript.lang.comparator.Relation;
 import org.skriptlang.skript.lang.converter.Converters;
 import org.skriptlang.skript.lang.script.Script;
 import org.skriptlang.skript.lang.script.ScriptWarning;
+import org.skriptlang.skript.util.IndexTrackingTreeMap;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -57,18 +44,18 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class Variable<T> implements Expression<T> {
+public class Variable<T> implements Expression<T>, KeyReceiverExpression<T>, KeyProviderExpression<T> {
 
 	private final static String SINGLE_SEPARATOR_CHAR = ":";
 	public final static String SEPARATOR = SINGLE_SEPARATOR_CHAR + SINGLE_SEPARATOR_CHAR;
 	public final static String LOCAL_VARIABLE_TOKEN = "_";
-	public final static String EPHEMERAL_VARIABLE_TOKEN = "-";
+	public static final String EPHEMERAL_VARIABLE_TOKEN = "-";
+	private static final char[] reservedTokens = {'~', '.', '+', '$', '!', '&', '^', '*'};
 
 	/**
 	 * Script this variable was created in.
 	 */
-	@Nullable
-	private final Script script;
+	private final @Nullable Script script;
 
 	/**
 	 * The name of this variable, excluding the local variable token, but including the list variable token '::*'.
@@ -82,8 +69,10 @@ public class Variable<T> implements Expression<T> {
 	private final boolean ephemeral;
 	private final boolean list;
 
-	@Nullable
-	private final Variable<?> source;
+	private final @Nullable Variable<?> source;
+	private final Map<Event, String[]> cache = Collections.synchronizedMap(new WeakHashMap<>());
+
+	private ListProvider listProvider = new ShallowListProvider();
 
 	@SuppressWarnings("unchecked")
 	private Variable(VariableString name, Class<? extends T>[] types, boolean local, boolean ephemeral, boolean list, @Nullable Variable<?> source) {
@@ -102,7 +91,7 @@ public class Variable<T> implements Expression<T> {
 		this.name = name;
 
 		this.types = types;
-		this.superType = (Class<T>) Utils.getSuperType(types);
+		this.superType = (Class<T>) Classes.getSuperClassInfo(types).getC();
 
 		this.source = source;
 	}
@@ -116,7 +105,15 @@ public class Variable<T> implements Expression<T> {
 	 * @return true if the name is valid, false otherwise.
 	 */
 	public static boolean isValidVariableName(String name, boolean allowListVariable, boolean printErrors) {
-		name = name.startsWith(LOCAL_VARIABLE_TOKEN) ? "" + name.substring(LOCAL_VARIABLE_TOKEN.length()).trim() : "" + name.trim();
+		assert !name.isEmpty(): "Variable name should not be empty";
+		char first = name.charAt(0);
+		for (char token : reservedTokens) {
+			if (first == token && printErrors) {
+				Skript.warning("The character '" + token + "' is reserved at the start of variable names, "
+					+ "and may be restricted in future versions");
+			}
+		}
+		name = name.startsWith(LOCAL_VARIABLE_TOKEN) ? name.substring(LOCAL_VARIABLE_TOKEN.length()).trim() : name.trim();
 		if (!allowListVariable && name.contains(SEPARATOR)) {
 			if (printErrors)
 				Skript.error("List variables are not allowed here (error in variable {" + name + "})");
@@ -158,19 +155,27 @@ public class Variable<T> implements Expression<T> {
 				Skript.error("A variable's name must not contain the separator '" + SEPARATOR + "' multiple times in a row (error in variable {" + name + "})");
 			return false;
 		} else if (name.replace(SEPARATOR, "").contains(SINGLE_SEPARATOR_CHAR)) {
-			if (printErrors)
-				Skript.warning("If you meant to make the variable {" + name + "} a list, its name should contain '"
-					+ SEPARATOR + "'. Having a single '" + SINGLE_SEPARATOR_CHAR + "' does nothing!");
+			if (printErrors) {
+				ParserInstance parser = ParserInstance.get();
+				Script currentScript = parser.isActive() ? parser.getCurrentScript() : null;
+				if (currentScript != null) {
+					Skript.warning("If you meant to make the variable {" + name + "} a list, its name should contain '"
+						+ SEPARATOR + "'. Having a single '" + SINGLE_SEPARATOR_CHAR + "' does nothing!");
+				}
+			}
 		}
 		return true;
 	}
 
 	/**
-	 * Prints errors
+	 * Creates a new variable instance with the given name and types. Prints errors.
+	 * @param name The raw name of the variable.
+	 * @param types The types this variable is expected to be.
+	 * @return A new variable instance, or null if the name is invalid or the variable could not be created.
+	 * @param <T> The supertype the variable is expected to be.
 	 */
-	@Nullable
-	public static <T> Variable<T> newInstance(String name, Class<? extends T>[] types) {
-		name = "" + name.trim();
+	public static <T> @Nullable Variable<T> newInstance(String name, Class<? extends T>[] types) {
+		name = name.trim();
 		if (!isValidVariableName(name, true, true))
 			return null;
 		VariableString variableString = VariableString.newInstance(
@@ -184,44 +189,60 @@ public class Variable<T> implements Expression<T> {
 
 		ParserInstance parser = ParserInstance.get();
 		Script currentScript = parser.isActive() ? parser.getCurrentScript() : null;
+
+		// check for 'starting with expression' warning
 		if (currentScript != null
-				&& !SkriptConfig.disableVariableStartingWithExpressionWarnings.value()
-				&& !currentScript.suppressesWarning(ScriptWarning.VARIABLE_STARTS_WITH_EXPRESSION)
-				&& (isLocal ? name.substring(LOCAL_VARIABLE_TOKEN.length()) : name).startsWith("%")) {
-			Skript.warning("Starting a variable's name with an expression is discouraged ({" + name + "}). " +
-				"You could prefix it with the script's name: " +
-				"{" + StringUtils.substring(currentScript.getConfig().getFileName(), 0, -3) + SEPARATOR + name + "}");
+			&& !SkriptConfig.disableVariableStartingWithExpressionWarnings.value()
+			&& !currentScript.suppressesWarning(ScriptWarning.VARIABLE_STARTS_WITH_EXPRESSION)) {
+
+			String strippedName = name;
+			if (isLocal) {
+				strippedName = strippedName.substring(LOCAL_VARIABLE_TOKEN.length());
+			} else if (isEphemeral) {
+				strippedName = strippedName.substring(EPHEMERAL_VARIABLE_TOKEN.length());
+			}
+			if (strippedName.startsWith("%")) {
+				Skript.warning("Starting a variable's name with an expression is discouraged ({" + name + "}). " +
+					"You could prefix it with the script's name: " +
+					"{" + StringUtils.substring(currentScript.getConfig().getFileName(), 0, -3) + SEPARATOR + name + "}");
+			}
 		}
 
 		// Check for local variable type hints
 		if (isLocal && variableString.isSimple()) { // Only variable names we fully know already
-			Class<?> hint = TypeHints.get(variableString.toString());
-			if (hint != null && !hint.equals(Object.class)) { // Type hint available
-				// See if we can get correct type without conversion
-				for (Class<? extends T> type : types) {
-					assert type != null;
-					if (type.isAssignableFrom(hint)) {
-						// Hint matches, use variable with exactly correct type
-						return new Variable<>(variableString, CollectionUtils.array(type), true, false, isPlural, null);
-					}
+			Set<Class<?>> hints = parser.getHintManager().get(variableString.toString(null));
+			if (!hints.isEmpty()) { // Type hint(s) available
+				if (types[0] == Object.class) { // Object is generic, so we initialize with the hints instead
+					//noinspection unchecked
+					return new Variable<>(variableString, hints.toArray(new Class[0]), true, isEphemeral, isPlural, null);
 				}
 
-				// Or with conversion?
+				List<Class<? extends T>> potentialTypes = new ArrayList<>();
+
+				// Determine what types are applicable based on our known hints
 				for (Class<? extends T> type : types) {
-					if (Converters.converterExists(hint, type)) {
-						// Hint matches, even though converter is needed
-						return new Variable<>(variableString, CollectionUtils.array(type), true, false, isPlural, null);
+					// Check whether we could resolve to 'type' at runtime
+					if (hints.stream().anyMatch(hint -> type.isAssignableFrom(hint) || Converters.converterExists(hint, type))) {
+						potentialTypes.add(type);
 					}
+				}
+				if (!potentialTypes.isEmpty()) { // Hint matches, use variable with exactly correct type
+					//noinspection unchecked
+					return new Variable<>(variableString, potentialTypes.toArray(Class[]::new), true, isEphemeral, isPlural, null);
 				}
 
 				// Hint exists and does NOT match any types requested
 				ClassInfo<?>[] infos = new ClassInfo[types.length];
 				for (int i = 0; i < types.length; i++) {
-					infos[i] = Classes.getExactClassInfo(types[i]);
+					infos[i] = Classes.getSuperClassInfo(types[i]);
 				}
-				Skript.warning("Variable '{_" + name + "}' is " + Classes.toString(Classes.getExactClassInfo(hint))
-					+ ", not " + Classes.toString(infos, false));
-				// Fall back to not having any type hints
+				ClassInfo<?>[] hintInfos = hints.stream()
+					.map(Classes::getSuperClassInfo)
+					.toArray(ClassInfo[]::new);
+				String isTypes = Utils.a(Classes.toString(hintInfos, false));
+				String notTypes = Utils.a(Classes.toString(infos, false));
+				Skript.error("Expected variable '{_" + variableString.toString(null) + "}' to be " + notTypes + ", but it is " + isTypes);
+				return null;
 			}
 		}
 
@@ -233,14 +254,23 @@ public class Variable<T> implements Expression<T> {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * @return Whether this variable is a local variable, i.e. starts with {@link #LOCAL_VARIABLE_TOKEN}.
+	 */
 	public boolean isLocal() {
 		return local;
 	}
 
+	/**
+	 * @return Whether this variable is an ephemeral variable, i.e. starts with {@link #EPHEMERAL_VARIABLE_TOKEN}.
+	 */
 	public boolean isEphemeral() {
 		return ephemeral;
 	}
 
+	/**
+	 * @return Whether this variable is a list variable, i.e. ends with {@link #SEPARATOR + "*"}.
+	 */
 	public boolean isList() {
 		return list;
 	}
@@ -253,6 +283,11 @@ public class Variable<T> implements Expression<T> {
 	@Override
 	public Class<? extends T> getReturnType() {
 		return superType;
+	}
+
+	@Override
+	public Class<? extends T>[] possibleReturnTypes() {
+		return Arrays.copyOf(types, types.length);
 	}
 
 	@Override
@@ -285,6 +320,18 @@ public class Variable<T> implements Expression<T> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <R> Variable<R> getConvertedExpression(Class<R>... to) {
+		boolean converterExists = superType == Object.class;
+		if (!converterExists) {
+			for (Class<?> type : types) {
+				if (Converters.converterExists(type, to)) {
+					converterExists = true;
+					break;
+				}
+			}
+		}
+		if (!converterExists) {
+			return null;
+		}
 		return new Variable<>(name, to, local, ephemeral, list, this);
 	}
 
@@ -292,8 +339,7 @@ public class Variable<T> implements Expression<T> {
 	 * Gets the value of this variable as stored in the variables map.
 	 * This method also checks against default variables.
 	 */
-	@Nullable
-	public Object getRaw(Event event) {
+	public @Nullable Object getRaw(Event event) {
 		DefaultVariables data = script == null ? null : script.getData(DefaultVariables.class);
 		if (data != null)
 			data.enterScope();
@@ -323,146 +369,67 @@ public class Variable<T> implements Expression<T> {
 		return null;
 	}
 
-	@Nullable
-	@SuppressWarnings("unchecked")
-	private Object get(Event event) {
+	private @Nullable Object get(Event event) {
 		Object rawValue = getRaw(event);
 		if (!list)
 			return rawValue;
-		if (rawValue == null)
-			return Array.newInstance(types[0], 0);
-		List<Object> convertedValues = new ArrayList<>();
-		for (Entry<String, ?> variable : ((Map<String, ?>) rawValue).entrySet()) {
-			if (variable.getKey() != null && variable.getValue() != null) {
-				Object value;
-				if (variable.getValue() instanceof Map)
-					value = ((Map<String, ?>) variable.getValue()).get(null);
-				else
-					value = variable.getValue();
-				if (value != null)
-					convertedValues.add(variable.getValue());
-			}
-		}
-		return convertedValues.toArray();
+		KeyedValue<?>[] values = listProvider.getValues(event);
+		//noinspection unchecked,rawtypes
+		return KeyedValue.unzip((KeyedValue[]) values).values().toArray();
+	}
+
+	@Override
+	public Iterator<KeyedValue<T>> keyedIterator(Event event) {
+		if (!list)
+			throw new SkriptAPIException("Invalid call to keyedIterator");
+		Iterator<KeyedValue<?>> iterator = Iterators.forArray(listProvider.getValues(event));
+		Iterator<KeyedValue<T>> transformed = Iterators.transform(iterator, value -> {
+			assert value != null;
+			T converted = Converters.convert(value.value(), types);
+			if (converted == null)
+				return null;
+			return new KeyedValue<>(value.key(), converted);
+		});
+		return Iterators.filter(transformed, Objects::nonNull);
 	}
 
 	public Iterator<Pair<String, Object>> variablesIterator(Event event) {
 		if (!list)
 			throw new SkriptAPIException("Looping a non-list variable");
-		String name = StringUtils.substring(this.name.toString(event), 0, -1);
-		Object val = Variables.getVariable(name + "*", event, local);
-		if (val == null)
-			return new EmptyIterator<>();
-		assert val instanceof TreeMap;
-		// temporary list to prevent CMEs
-		@SuppressWarnings("unchecked")
-		Iterator<String> keys = new ArrayList<>(((Map<String, Object>) val).keySet()).iterator();
-		return new Iterator<Pair<String, Object>>() {
-			@Nullable
-			private String key;
-			@Nullable
-			private Object next = null;
-
-			@Override
-			public boolean hasNext() {
-				if (next != null)
-					return true;
-				while (keys.hasNext()) {
-					key = keys.next();
-					if (key != null) {
-						next = Variables.getVariable(name + key, event, local);
-						if (next != null && !(next instanceof TreeMap))
-							return true;
-					}
-				}
-				next = null;
-				return false;
-			}
-
-			@Override
-			public Pair<String, Object> next() {
-				if (!hasNext())
-					throw new NoSuchElementException();
-				Pair<String, Object> n = new Pair<>(key, next);
-				next = null;
-				return n;
-			}
-
-			@Override
-			public void remove() {
-				throw new UnsupportedOperationException();
-			}
-		};
+		return Variables.getVariableIterator(name.toString(event), local, event);
 	}
 
 	@Override
-	@Nullable
-	@SuppressWarnings("unchecked")
-	public Iterator<T> iterator(Event event) {
+	public @Nullable Iterator<T> iterator(Event event) {
 		if (!list) {
 			T value = getSingle(event);
 			return value != null ? new SingleItemIterator<>(value) : null;
 		}
-		String name = StringUtils.substring(this.name.toString(event), 0, -1);
-		Object value = Variables.getVariable(name + "*", event, local);
-		if (value == null)
-			return new EmptyIterator<>();
-		assert value instanceof TreeMap;
-		// temporary list to prevent CMEs
-		Iterator<String> keys = new ArrayList<>(((Map<String, Object>) value).keySet()).iterator();
-		return new Iterator<T>() {
-			@Nullable
-			private String key;
-			@Nullable
-			private T next = null;
-
-			@Override
-			@SuppressWarnings({"unchecked"})
-			public boolean hasNext() {
-				if (next != null)
-					return true;
-				while (keys.hasNext()) {
-					key = keys.next();
-					if (key != null) {
-						next = Converters.convert(Variables.getVariable(name + key, event, local), types);
-						if (next != null && !(next instanceof TreeMap))
-							return true;
-					}
-				}
-				next = null;
-				return false;
-			}
-
-			@Override
-			public T next() {
-				if (!hasNext())
-					throw new NoSuchElementException();
-				T n = next;
-				assert n != null;
-				next = null;
-				return n;
-			}
-
-			@Override
-			public void remove() {
-				throw new UnsupportedOperationException();
-			}
-		};
+		//noinspection DataFlowIssue
+		return Iterators.transform(keyedIterator(event), KeyedValue::value);
 	}
 
-	@Nullable
-	private T getConverted(Event event) {
+	private @Nullable T getConverted(Event event) {
 		assert !list;
 		return Converters.convert(get(event), types);
 	}
 
 	private T[] getConvertedArray(Event event) {
 		assert list;
-		return Converters.convert((Object[]) get(event), types, superType);
+		//noinspection unchecked
+		KeyedValue<Object>[] values = (KeyedValue<Object>[]) listProvider.getValues(event);
+		KeyedValue<T>[] mappedValues = KeyedValue.map(values, value -> Converters.convert(value, types));
+		mappedValues = ArrayUtils.removeAllOccurrences(mappedValues, null);
+
+		KeyedValue.UnzippedKeyValues<T> unzipped = KeyedValue.unzip(mappedValues);
+
+		cache.put(event, unzipped.keys().toArray(new String[0]));
+		//noinspection unchecked
+		return unzipped.values().toArray((T[]) Array.newInstance(superType, 0));
 	}
 
 	private void set(Event event, @Nullable Object value) {
-		Variables.setVariable("" + name.toString(event), value, event, local);
+		Variables.setVariable(name.toString(event), value, event, local);
 	}
 
 	private void setIndex(Event event, String index, @Nullable Object value) {
@@ -472,34 +439,71 @@ public class Variable<T> implements Expression<T> {
 		Variables.setVariable(name.substring(0, name.length() - 1) + index, value, event, local);
 	}
 
+	public int size(Event event) {
+		Preconditions.checkState(list, "Cannot get the size of a single variable");
+		Map<?, ?> map = (Map<?, ?>) getRaw(event);
+		if (map == null)
+			return 0;
+
+		int size = map.size();
+		if (map.containsKey(null)) // if we're trying to get the size of {_list::*}, exclude {_list} from being counted
+			size--;
+
+		if (!(map instanceof IndexTrackingTreeMap<?> indexTrackingMap)) {
+			for (Object value : map.values()) {
+				if (value instanceof Map<?, ?> sublist && !sublist.containsKey(null))
+					size--;
+			}
+			return size;
+		}
+
+		Collection<String> sublistIndices = indexTrackingMap.mapIndices();
+		for (String sublistIndex : sublistIndices) {
+			if (!((Map<?, ?>) map.get(sublistIndex)).containsKey(null))
+				size--;
+		}
+
+		return size;
+	}
+
 	@Override
-	public Class<?>[] acceptChange(ChangeMode mode) {
+	public Class<?> @Nullable [] acceptChange(ChangeMode mode) {
 		if (!list && mode == ChangeMode.SET)
 			return CollectionUtils.array(Object.class);
 		return CollectionUtils.array(Object[].class);
 	}
 
 	@Override
+	public void change(Event event, Object @NotNull [] delta, ChangeMode mode, @NotNull String @NotNull [] keys) {
+		if (!list) {
+			this.change(event, delta, mode);
+			return;
+		}
+		if (mode == ChangeMode.SET) {
+			assert delta.length == keys.length;
+			this.set(event, null);
+			int length = Math.min(delta.length, keys.length);
+			for (int index = 0; index < length; index++) {
+				Object value = delta[index];
+				String key = keys[index];
+				if (value instanceof Object[] array) {
+					for (int j = 0; j < array.length; j++)
+						this.setIndex(event, key + SEPARATOR + (j + 1), array[j]);
+				} else {
+					this.setIndex(event, key, value);
+				}
+			}
+			return;
+		}
+		// no other modes are supported right now
+		this.change(event, delta, mode);
+	}
+
+	@Override
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	public void change(Event event, @Nullable Object[] delta, ChangeMode mode) throws UnsupportedOperationException {
+	public void change(Event event, Object @Nullable [] delta, ChangeMode mode) throws UnsupportedOperationException {
 		switch (mode) {
 			case DELETE:
-				if (list) {
-					ArrayList<String> toDelete = new ArrayList<>();
-					Map<String, Object> map = (Map<String, Object>) getRaw(event);
-					if (map == null)
-						return;
-					for (Entry<String, Object> entry : map.entrySet()) {
-						if (entry.getKey() != null){
-							toDelete.add(entry.getKey());
-						}
-					}
-					for (String index : toDelete) {
-						assert index != null;
-						setIndex(event, index, null);
-					}
-				}
-
 				set(event, null);
 				break;
 			case SET:
@@ -549,14 +553,15 @@ public class Variable<T> implements Expression<T> {
 					if (mode == ChangeMode.REMOVE) {
 						if (map == null)
 							return;
-						ArrayList<String> toRemove = new ArrayList<>(); // prevents CMEs
+						Set<String> toRemove = new HashSet<>(); // prevents CMEs
 						for (Object value : delta) {
 							for (Entry<String, Object> entry : map.entrySet()) {
+								String key = entry.getKey();
+								if (key == null)
+									continue; // This is NOT a part of list variable
+								if (toRemove.contains(key))
+									continue; // Skip if we've already marked this key to be removed
 								if (Relation.EQUAL.isImpliedBy(Comparators.compare(entry.getValue(), value))) {
-									String key = entry.getKey();
-									if (key == null)
-										continue; // This is NOT a part of list variable
-
 									// Otherwise, we'll mark that key to be set to null
 									toRemove.add(key);
 									break;
@@ -570,7 +575,7 @@ public class Variable<T> implements Expression<T> {
 					} else if (mode == ChangeMode.REMOVE_ALL) {
 						if (map == null)
 							return;
-						ArrayList<String> toRemove = new ArrayList<>(); // prevents CMEs
+						Set<String> toRemove = new HashSet<>(); // prevents CMEs
 						for (Entry<String, Object> i : map.entrySet()) {
 							for (Object value : delta) {
 								if (Relation.EQUAL.isImpliedBy(Comparators.compare(i.getValue(), value)))
@@ -583,6 +588,13 @@ public class Variable<T> implements Expression<T> {
 						}
 					} else {
 						assert mode == ChangeMode.ADD;
+						if (map instanceof IndexTrackingTreeMap<Object> indexTrackingMap) {
+							for (Object value : delta) {
+								int index = indexTrackingMap.nextOpenIndex();
+								setIndex(event, String.valueOf(index), value);
+							}
+							return;
+						}
 						int i = 1;
 						for (Object value : delta) {
 							if (map != null)
@@ -605,11 +617,11 @@ public class Variable<T> implements Expression<T> {
 							if (info == null)
 								continue;
 
-							Object value = originalValue == null ? Arithmetics.getDefaultValue(info.getLeft()) : originalValue;
+							Object value = originalValue == null ? Arithmetics.getDefaultValue(info.left()) : originalValue;
 							if (value == null)
 								continue;
 
-							originalValue = info.getOperation().calculate(value, newValue);
+							originalValue = info.operation().calculate(value, newValue);
 							changed = true;
 						}
 						if (changed)
@@ -637,6 +649,15 @@ public class Variable<T> implements Expression<T> {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @param getAll This has no effect for a Variable, as {@link #getArray(Event)} is the same as {@link #getAll(Event)}.
+	 */
+	@Override
+	public <R> void changeInPlace(Event event, Function<T, R> changeFunction, boolean getAll) {
+		changeInPlace(event, changeFunction);
+	}
+
 	@Override
 	public <R> void changeInPlace(Event event, Function<T, R> changeFunction) {
 		if (!list) {
@@ -646,22 +667,55 @@ public class Variable<T> implements Expression<T> {
 			set(event, changeFunction.apply(value));
 			return;
 		}
-		variablesIterator(event).forEachRemaining(pair -> {
-			String index = pair.getKey();
-			T value = Converters.convert(pair.getValue(), types);
-			if (value == null)
-				return;
-			Object newValue = changeFunction.apply(value);
+		keyedIterator(event).forEachRemaining(keyedValue -> {
+			String index = keyedValue.key();
+			Object newValue = changeFunction.apply(keyedValue.value());
 			setIndex(event, index, newValue);
 		});
 	}
 
 	@Override
-	@Nullable
-	public T getSingle(Event event) {
+	public @Nullable T getSingle(Event event) {
 		if (list)
 			throw new SkriptAPIException("Invalid call to getSingle");
 		return getConverted(event);
+	}
+
+	@Override
+	public @NotNull String @NotNull [] getArrayKeys(Event event) throws SkriptAPIException {
+		if (!list)
+			throw new SkriptAPIException("Invalid call to getArrayKeys on non-list");
+		if (!cache.containsKey(event))
+			throw new IllegalStateException();
+		return cache.remove(event);
+	}
+
+	@Override
+	public @NotNull String @NotNull [] getAllKeys(Event event) {
+		return this.getArrayKeys(event);
+	}
+
+	@Override
+	public boolean canReturnKeys() {
+		return list;
+	}
+
+	@Override
+	public boolean areKeysRecommended() {
+		return false; // We want `set {list::*} to {other::*}` reset numbering!
+	}
+
+	@Override
+	public boolean returnNestedStructures(boolean nested) {
+		if (!canReturnKeys())
+			return false;
+		listProvider = nested ? new RecursiveListProvider() : new ShallowListProvider();
+		return true;
+	}
+
+	@Override
+	public boolean returnsNestedStructures() {
+		return listProvider.getClass() == RecursiveListProvider.class;
 	}
 
 	@Override
@@ -685,11 +739,10 @@ public class Variable<T> implements Expression<T> {
 
 	@Override
 	public boolean isLoopOf(String input) {
-		return input.equalsIgnoreCase("var") || input.equalsIgnoreCase("variable") || input.equalsIgnoreCase("value") || input.equalsIgnoreCase("index");
-	}
-
-	public boolean isIndexLoop(String input) {
-		return input.equalsIgnoreCase("index");
+		return KeyProviderExpression.super.isLoopOf(input)
+			|| input.equalsIgnoreCase("var")
+			|| input.equalsIgnoreCase("variable")
+			|| input.equalsIgnoreCase("value");
 	}
 
 	@Override
@@ -740,6 +793,88 @@ public class Variable<T> implements Expression<T> {
 	@Override
 	public boolean supportsLoopPeeking() {
 		return true;
+	}
+
+	private interface ListProvider {
+
+		KeyedValue<?>[] getValues(Event event);
+
+	}
+
+	class ShallowListProvider implements ListProvider {
+
+		@Override
+		public KeyedValue<?>[] getValues(Event event) {
+			if (!list)
+				throw new SkriptAPIException("Invalid call to getValues on non-list variable");
+
+			Object rawValue = getRaw(event);
+			if (rawValue == null)
+				return new KeyedValue[0];
+
+			List<KeyedValue<?>> keyedValues = new ArrayList<>();
+			String name = StringUtils.substring(Variable.this.name.toString(event), 0, -1);
+			//noinspection unchecked
+			for (Entry<String, ?> variable : ((Map<String, ?>) rawValue).entrySet()) {
+				if (variable.getKey() == null || variable.getValue() == null)
+					continue;
+
+				Object value;
+				if (variable.getValue() instanceof Map<?, ?> sublist) {
+					value = sublist.get(null);
+				} else {
+					value = variable.getValue();
+				}
+				value = Variables.findAndRunConverter(name + variable.getKey(), event, value, local);
+				if (value != null)
+					keyedValues.add(new KeyedValue<>(variable.getKey(), value));
+			}
+
+			return keyedValues.toArray(new KeyedValue[0]);
+		}
+
+	}
+
+	class RecursiveListProvider implements ListProvider {
+
+		@Override
+		public KeyedValue<?>[] getValues(Event event) {
+			if (!list)
+				throw new SkriptAPIException("Invalid call to getValues on non-list variable");
+
+			Object rawValue = getRaw(event);
+			if (rawValue == null)
+				return new KeyedValue[0];
+
+			List<KeyedValue<?>> keyedValues = new ArrayList<>();
+			String name = StringUtils.substring(Variable.this.name.toString(event), 0, -1);
+			getValuesRecursive(event, (Map<?, ?>) rawValue, name, "", keyedValues);
+
+			return keyedValues.toArray(new KeyedValue[0]);
+		}
+
+		private void getValuesRecursive(Event event, Map<?, ?> variable, String root, String prefix, List<KeyedValue<?>> values) {
+			//noinspection unchecked
+			for (Entry<String, ?> entry : ((Map<String, ?>) variable).entrySet()) {
+				if (entry.getKey() == null || entry.getValue() == null)
+					continue;
+
+				String relativeKey = prefix + entry.getKey();
+				String absoluteKey = root + relativeKey;
+				Object value;
+				if (entry.getValue() instanceof Map<?, ?> sublist) {
+					getValuesRecursive(event, (Map<?, ?>) entry.getValue(), root, relativeKey + SEPARATOR, values);
+					value = sublist.get(null);
+				} else {
+					value = entry.getValue();
+				}
+
+				value = Variables.findAndRunConverter(absoluteKey, event, value, local);
+				if (value != null)
+					values.add(new KeyedValue<>(relativeKey, value));
+			}
+		}
+
 	}
 
 }
