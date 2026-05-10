@@ -7,15 +7,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
+import java.util.Queue;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 public class BukkitSchedulerImpl implements BukkitScheduler {
 	// concurrenthashmap fixes concurrentmodificationexception from having a lot of events run at once
 	private final Map<Integer, Task> tasks = new ConcurrentHashMap<>();
+	private final Queue<Task> pendingTasks = new ConcurrentLinkedQueue<>();
+	private final ExecutorService threadPool = Executors.newCachedThreadPool();
 	private Task currentTask = null;
 
 	public BukkitSchedulerImpl() {
@@ -24,22 +24,25 @@ public class BukkitSchedulerImpl implements BukkitScheduler {
 	}
 
 	public void tick() {
+		Task pending;
+		while ((pending = pendingTasks.poll()) != null) {
+			tasks.put(pending.id, pending);
+		}
+
 		for (int taskID : tasks.keySet()) {
 			Task task = tasks.get(taskID);
+			if (task == null) continue; // Task was removed mid-tick
 			task.ticksLeft--;
 
-			if (task.ticksLeft <= 0) {
-				currentTask = task;
-				if (task.async)
-					new Thread(task.runnable).start();
-				else task.runnable.run();
+			if (task.ticksLeft > 0) continue;
+			currentTask = task;
+			if (task.async) threadPool.submit(task.runnable);
+			else task.runnable.run();
 
-				currentTask = null;
-				task.ticksLeft = task.isRepeating() ? task.duration : task.delay;
+			currentTask = null;
+			task.ticksLeft = task.isRepeating() ? task.duration : task.delay;
 
-				if (!task.isRepeating())
-					tasks.remove(taskID);
-			}
+			if (!task.isRepeating()) tasks.remove(taskID);
 		}
 	}
 
@@ -179,7 +182,7 @@ public class BukkitSchedulerImpl implements BukkitScheduler {
 
 	private BukkitTask scheduleTask(Plugin owner, Runnable runnable, boolean async, long delay, @Nullable Long duration) {
 		Task task = new Task(owner, runnable, async, delay, duration);
-		tasks.put(task.id, task);
+		pendingTasks.add(task);
 		return task;
 	}
 }

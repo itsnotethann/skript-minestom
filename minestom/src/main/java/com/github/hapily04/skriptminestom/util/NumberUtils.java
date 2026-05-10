@@ -28,7 +28,7 @@ public class NumberUtils {
 	}
 
 	public static Timespan timespanFrom(long ticks) {
-		long millis = (1000/ServerFlag.SERVER_TICKS_PER_SECOND)*ticks;
+		long millis = (1000L * ticks) / ServerFlag.SERVER_TICKS_PER_SECOND;
 		return new Timespan(millis);
 	}
 
