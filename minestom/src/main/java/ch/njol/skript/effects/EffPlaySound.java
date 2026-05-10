@@ -63,13 +63,17 @@ public class EffPlaySound extends Effect {
 
 	@Override
 	protected void execute(Event event) {
+		Player[] players = this.players == null ? null : this.players.getArray(event);
+		Point[] points = this.points == null ? null : this.points.getArray(event);
+		Entity[] entities = this.entities == null ? null : this.entities.getArray(event);
+		Instance[] instances = this.instances == null ? null : this.instances.getArray(event);
 		for (Sound sound : sounds.getArray(event)) {
 			switch (pattern) {
 				case 0 -> {
 					assert players != null;
 					assert points != null;
-					for (Player player : players.getArray(event)) {
-						for (Point point : points.getArray(event)) {
+					for (Player player : players) {
+						for (Point point : points) {
 							player.playSound(sound, point);
 						}
 					}
@@ -77,18 +81,18 @@ public class EffPlaySound extends Effect {
 				case 1 -> {
 					assert points != null;
 					assert instances != null;
-					for (Point point : points.getArray(event)) {
-						for (Instance instance : instances.getArray(event)) {
+					for (Point point : points) {
+						for (Instance instance : instances) {
 							instance.playSound(sound, point);
 						}
 					}
 				}
 				case 2 -> {
 					assert entities != null;
-					for (Entity entity : entities.getArray(event)) {
+					for (Entity entity : entities) {
 						if (players == null) entity.getInstance().playSound(sound, entity);
 						else {
-							for (Player player : players.getArray(event)) {
+							for (Player player : players) {
 								player.playSound(sound, entity);
 							}
 						}
