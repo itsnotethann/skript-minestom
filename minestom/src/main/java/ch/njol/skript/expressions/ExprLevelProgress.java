@@ -76,8 +76,7 @@ public class ExprLevelProgress extends SimplePropertyExpression<Player, Number> 
 					assert false;
 					return;
 			}
-			p.setLevel(Math.max(0, p.getLevel() + (int) Math.floor(c)));
-			p.setExp(Math2.mod(Math2.safe(c), 1));
+			p.setExp(Math.clamp(c, 0, 1));
 		}
 	}
 
