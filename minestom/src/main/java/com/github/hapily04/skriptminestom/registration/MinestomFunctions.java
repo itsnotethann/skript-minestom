@@ -117,7 +117,7 @@ public class MinestomFunctions {
 		}).description("Deserializes a MiniMessage string into a Component, with optional tag resolvers.").examples("send mm(\"<red>Hello <name>!\", resolver(\"name\", player's name))");
 		Functions.registerFunction(new JavaFunction<>("suggestionEntry", new Parameter[]{
 			new Parameter<>("entry", DefaultClasses.STRING, true, null),
-			new Parameter<>("tooltip", Classes.getExactClassInfo(ComponentWrapper.class), true, new SimpleLiteral<>(new ComponentWrapper[0], ComponentWrapper.class, true))
+			new Parameter<>("tooltip", Classes.getExactClassInfo(ComponentWrapper.class), true, null) // todo provide default value of null
 		}, Classes.getExactClassInfo(SuggestionEntry.class), true) {
 			@Override
 			public @Nullable SuggestionEntry[] execute(FunctionEvent<?> e, Object[][] params) {

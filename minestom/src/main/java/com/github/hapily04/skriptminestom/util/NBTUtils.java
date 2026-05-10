@@ -260,6 +260,7 @@ public class NBTUtils {
 		private final Class<?> skriptCompatibleClass;
 		private final Function<Object, BinaryTag> objectConverter;
 		private final Function<BinaryTag, Object> binaryTagConverter;
+
 		TagType(BinaryTagType<?> expectedBinaryTag, Class<?> skriptCompatibleClass, Function<Object, BinaryTag> objectConverter,
 				Function<BinaryTag, Object> binaryTagConverter) {
 			this.expectedBinaryTag = expectedBinaryTag;

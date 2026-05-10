@@ -45,9 +45,7 @@ public class ExprUsernameUUID extends SimpleExpression<String> {
 				} else {
 					strings.add(MojangUtils.getUUID(s).toString());
 				}
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+			} catch (Exception ignored) {}
 		}
 		return strings.toArray(new String[0]);
 	}
