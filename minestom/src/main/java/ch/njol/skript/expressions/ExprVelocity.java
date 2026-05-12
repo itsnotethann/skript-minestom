@@ -66,7 +66,7 @@ public class ExprVelocity extends SimplePropertyExpression<Entity, Vec> {
 
 	// todo make even truer because previous position is not updated if player stands still
 	public static Vec getTrueVelocity(Entity entity) {
-		if (entity instanceof Player player) return player.getPreviousPosition().sub(player.getPosition()).asVec();
+		if (entity instanceof Player player) return player.getPosition().sub(player.getPreviousPosition()).asVec();
 		return entity.getVelocity();
 	}
 

@@ -8,9 +8,9 @@ import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.registrations.DefaultClasses;
 import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.skript.util.Timespan;
+import ch.njol.util.Validate;
 import ch.njol.util.coll.CollectionUtils;
 import com.github.hapily04.skriptminestom.util.NumberUtils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -35,18 +35,14 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.skriptlang.skript.common.function.DefaultFunction;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 import static ch.njol.skript.expressions.ExprAmbientSounds.getSoundEvent;
-import static ch.njol.skript.expressions.ExprSkinFrom.UUID_REGEX;
 import static ch.njol.skript.util.ComponentWrapper.toWrapper;
 import static com.github.hapily04.skriptminestom.util.MessageUtils.BASIC_MINI_MESSAGE;
 
-@SuppressWarnings("NullableProblems")
 public class MinestomFunctions {
 
-	@SuppressWarnings("DataFlowIssue")
 	public static void register() {
 		Parameter<Number> xParam = new Parameter<>("x", DefaultClasses.NUMBER, true, null);
 		Parameter<Number> yParam = new Parameter<>("y", DefaultClasses.NUMBER, true, null);
@@ -324,10 +320,17 @@ public class MinestomFunctions {
 	static Player findPlayer(String input, boolean strict) {
 		ConnectionManager connectionManager = MinecraftServer.getConnectionManager();
 		Player player;
-		if (input.contains("-") && input.matches(UUID_REGEX.pattern())) player = connectionManager.getOnlinePlayerByUuid(UUID.fromString(input));
+		if (input.contains("-") && Validate.isUUID(input)) player = connectionManager.getOnlinePlayerByUuid(UUID.fromString(input));
 		else {
-			if (!strict) player = connectionManager.findOnlinePlayer(input);
-			else player = connectionManager.getOnlinePlayerByUsername(input);
+			player = connectionManager.getOnlinePlayerByUsername(input);
+			if (!strict && player == null) {
+				for (Player p : connectionManager.getOnlinePlayers()) {
+					if (p.getUsername().contains(input)) {
+						player = p;
+						break;
+					}
+				}
+			}
 		}
 		return player;
 	}
