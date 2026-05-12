@@ -8,7 +8,11 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.util.Item;
 import ch.njol.skript.util.NBTCompound;
 import ch.njol.util.Kleenean;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.minestom.server.MinecraftServer;
+import net.minestom.server.component.DataComponents;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.item.component.CustomData;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
@@ -40,7 +44,10 @@ public class ExprNBTItem extends SimpleExpression<Object> {
 		Item[] items = (Item[]) expression.getArray(event);
 		NBTCompound[] compounds = new NBTCompound[items.length];
 		for (int i = 0; i < items.length; i++) {
-			compounds[i] = new NBTCompound(items[i].getItem().toItemNBT());
+			ItemStack item = items[i].getItem();
+			CompoundBinaryTag customData = item.get(DataComponents.CUSTOM_DATA, new CustomData(CompoundBinaryTag.empty())).nbt();
+			customData = customData.putInt("DataVersion", MinecraftServer.DATA_VERSION);
+			compounds[i] = new NBTCompound(item.with(DataComponents.CUSTOM_DATA, new CustomData(customData)).toItemNBT());
 		}
 		return compounds;
 	}
