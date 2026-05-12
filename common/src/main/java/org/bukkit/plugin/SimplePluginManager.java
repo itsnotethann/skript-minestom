@@ -69,7 +69,7 @@ public class SimplePluginManager implements PluginManager {
 			int priorityA = a.getPriority().ordinal();
 			int priorityB = b.getPriority().ordinal();
 
-			return Integer.compare(priorityA, priorityB);
+			return Integer.compare(priorityB, priorityA);
 		});
 
 		for (RegisteredListener handler : handlers) {

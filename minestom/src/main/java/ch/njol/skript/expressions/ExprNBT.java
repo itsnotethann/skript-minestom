@@ -86,11 +86,11 @@ public class ExprNBT extends SimpleExpression<NBTCompound> {
 					File f = new File(FileUtils.getServerDirectory(), s);
 					try (FileInputStream input = new FileInputStream(f)) {
 						compounds[i] = new NBTCompound(BinaryTagIO.reader().read(input, BinaryTagIO.Compression.GZIP));
-					} catch (FileNotFoundException e) {
-						SkriptLogger.LOGGER.error("Couldn't find file at '{}' while attempting to create an nbt compound.", s);
-					} catch (IOException e) {
-						SkriptLogger.LOGGER.error("Couldn't parse file '{}' as an nbt compound:", s);
-						e.printStackTrace();
+					} catch (FileNotFoundException ignored) {
+						//SkriptLogger.LOGGER.error("Couldn't find file at '{}' while attempting to create an nbt compound.", s);
+					} catch (IOException ignored) {
+						/*SkriptLogger.LOGGER.error("Couldn't parse file '{}' as an nbt compound:", s);
+						e.printStackTrace();*/
 					}
 				}
 			}
