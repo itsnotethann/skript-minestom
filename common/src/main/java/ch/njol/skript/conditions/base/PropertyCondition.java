@@ -169,7 +169,7 @@ public abstract class PropertyCondition<T> extends Condition implements Predicat
 	}
 
 	@Override
-	public final boolean check(Event event) {
+	public boolean check(Event event) {
 		return expr.check(event, this, isNegated());
 	}
 

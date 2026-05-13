@@ -21,7 +21,7 @@ public class ExprNBTItem extends SimpleExpression<Object> {
 	static {
 		Skript.registerExpression(ExprNBTItem.class, Object.class, ExpressionType.COMBINED,
 			"item from %nbtcompound%",
-			"full nbt[ ][compound[s]] (of|from) %items%");
+			"full item nbt[ ][compound[s]] (of|from) %items%");
 	}
 
 	private Expression<?> expression;

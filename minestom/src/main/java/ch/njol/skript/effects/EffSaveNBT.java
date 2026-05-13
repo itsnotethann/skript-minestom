@@ -41,7 +41,7 @@ public class EffSaveNBT extends Effect {
 		if (compound == null) return;
 		CompoundBinaryTag compoundBinaryTag = compound.getCompound();
 		for (String file : files.getArray(event)) {
-			File f = new File(FileUtils.getServerDirectory(), file);
+			File f = FileUtils.defendFile(new File(FileUtils.getServerDirectory(), file));
 			try (FileOutputStream output = new FileOutputStream(f)) {
 				BinaryTagIO.writer().write(compoundBinaryTag, output, BinaryTagIO.Compression.GZIP);
 			} catch (FileNotFoundException e) {
