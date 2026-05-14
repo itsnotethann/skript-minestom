@@ -25,6 +25,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.util.RGBLike;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.advancements.FrameType;
 import net.minestom.server.color.AlphaColor;
 import net.minestom.server.color.Color;
 import net.minestom.server.command.CommandSender;
@@ -661,6 +662,11 @@ public class MinestomClasses {
 			.name("Click Type")
 			.description("Click type")
 			.defaultExpression(new EventValueExpression<>(ClickType.class)));
+		Classes.registerClass(new EnumClassInfo<>(FrameType.class, "frametype")
+			.user("frame ?types?")
+			.name("Frame Type")
+			.description("The type of the frame for an advancement/notification.")
+			.defaultExpression(new EventValueExpression<>(FrameType.class)));
 		Classes.registerClass(new ClassInfo<>(ComponentWrapper.class, "component")
 			.user("components?")
 			.name("Component")
