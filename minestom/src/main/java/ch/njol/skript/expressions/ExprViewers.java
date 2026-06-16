@@ -48,7 +48,7 @@ public class ExprViewers extends PropertyExpression<Entity, Player> {
 		Player[] players = delta == null ? new Player[0] : Arrays.copyOf(delta, delta.length, Player[].class);
 		for (Entity entity : getExpr().getArray(event)) {
 			if (mode == Changer.ChangeMode.DELETE || mode == Changer.ChangeMode.RESET) {
-				Iterator<Player> iterator = entity.getViewers().iterator();
+				Iterator<? extends Player> iterator = entity.getViewers().iterator();
 				//noinspection WhileLoopReplaceableByForEach // not safe to replace
 				while (iterator.hasNext()) {
 					entity.updateViewerRule();

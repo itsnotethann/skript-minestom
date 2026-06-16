@@ -1,7 +1,7 @@
 package com.github.hapily04.skriptminestom.command;
 
 import ch.njol.skript.ScriptLoader;
-import ch.njol.skript.Skript;
+import ch.njol.skript.util.FileUtils;
 import com.github.hapily04.skriptminestom.luckperms.LuckPermsPlayer;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.command.builder.Command;
@@ -10,6 +10,7 @@ import net.minestom.server.command.builder.arguments.ArgumentStringArray;
 import org.skriptlang.skript.lang.script.Script;
 
 import java.io.File;
+import java.io.IOException;
 
 import static com.github.hapily04.skriptminestom.command.reload.ReloadCommand.fileNotFoundMessage;
 import static com.github.hapily04.skriptminestom.command.reload.ReloadCommand.initSuggestions;
@@ -23,14 +24,10 @@ public class DisableCommand extends Command {
 
 	public DisableCommand() {
 		super("disable");
-		setCondition((sender, commandString) -> LuckPermsPlayer.hasPermission(sender, "skript.disable"));
-		setDefaultExecutor((sender, context) -> sender.sendMessage(DISABLE_USAGE));
+		setCondition((sender, _) -> LuckPermsPlayer.hasPermission(sender, "skript.disable"));
+		setDefaultExecutor((sender, _) -> sender.sendMessage(DISABLE_USAGE));
 		Argument<String[]> fileArg = new ArgumentStringArray("to_disable")
-			.setSuggestionCallback((sender, context, suggestion) -> {
-				File scriptsFolder = Skript.getInstance().getScriptsFolder();
-				initSuggestions(scriptsFolder.listFiles(), scriptsFolder.getPath().length(), suggestion,
-					false, true, false);
-			});
+			.setSuggestionCallback((_, ctx, suggestion) -> initSuggestions(suggestion, ctx.getInput(), false));
 		addSyntax((sender, context) -> {
 			String locationProvided = context.get(fileArg)[0];
 			String originalProvidedLocation = locationProvided;
@@ -47,7 +44,17 @@ public class DisableCommand extends Command {
 				return;
 			}
 			ScriptLoader.unloadScript(script);
-			sender.sendMessage(SKRIPT_MINI_MESSAGE.deserialize("<skript_minestom_tag> <success_color>Successfully unloaded and disabled <yellow>" + originalProvidedLocation + "<success_color>."));
+			try {
+				FileUtils.move(
+					scriptFile,
+					new File(scriptFile.getParentFile(), ScriptLoader.DISABLED_SCRIPT_PREFIX + scriptFile.getName()),
+					false
+				);
+				sender.sendMessage(SKRIPT_MINI_MESSAGE.deserialize("<skript_minestom_tag> <success_color>Successfully unloaded and disabled <yellow>" + originalProvidedLocation + "<success_color>."));
+			} catch (IOException e) {
+				sender.sendMessage(SKRIPT_MINI_MESSAGE.deserialize("<skript_minestom_tag> <error_color>Error occurred whilst disabling '<yellow>" + originalProvidedLocation + "<error_color>'!"));
+				e.printStackTrace();
+			}
 		}, fileArg);
 	}
 

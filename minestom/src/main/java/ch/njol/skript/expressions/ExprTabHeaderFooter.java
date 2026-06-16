@@ -55,7 +55,7 @@ public class ExprTabHeaderFooter extends PropertyExpression<Player, Object> {
 			if (!priority) {
 				if (!name) array[i] = toWrapper(source[i].getTag(header ? HEADER_TAG : FOOTER_TAG));
 				else array[i] = toWrapper(source[i].getDisplayName());
-			} else array[i] = source[i].getListPriority();
+			} else array[i] = source[i].getListOrder();
 		}
 		return array;
 	}
@@ -78,7 +78,7 @@ public class ExprTabHeaderFooter extends PropertyExpression<Player, Object> {
 						p.setDisplayName(null);
 						continue;
 					}
-				} else p.setListPriority(0);
+				} else p.setListOrder(0);
 			}
 			else {
 				if (o == null) return;
@@ -88,7 +88,7 @@ public class ExprTabHeaderFooter extends PropertyExpression<Player, Object> {
 						p.setDisplayName(((ComponentWrapper) o).getComponent());
 						continue;
 					}
-				} else p.setListPriority((int) o);
+				} else p.setListOrder((int) o);
 			}
 			p.sendPlayerListHeaderAndFooter(getTagOrElse(p, HEADER_TAG, Component.empty()), getTagOrElse(p, FOOTER_TAG, Component.empty()));
 		}

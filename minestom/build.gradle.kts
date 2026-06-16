@@ -20,8 +20,8 @@ repositories {
 }
 
 dependencies {
-	implementation("net.minestom:minestom-sm:2026.05.06-1.21.11")
-	implementation("net.kyori:adventure-text-minimessage:4.26.1") // todo 5.0
+	implementation("net.minestom:minestom-sm:2026.06.15-26.1.2")
+	implementation("net.kyori:adventure-text-minimessage:5.1.1") // todo 5.0
 	implementation("dev.hollowcube:polar:1.15.1")
 	implementation("it.unimi.dsi:fastutil:8.5.18") // fix polar error
 	implementation("dev.lu15:luckperms-minestom:5.5-SNAPSHOT")

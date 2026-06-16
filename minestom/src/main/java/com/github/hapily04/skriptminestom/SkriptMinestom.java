@@ -69,7 +69,7 @@ public class SkriptMinestom {
 		initMinestomProperties();
 		MinecraftServer server = MinecraftServer.init(PropertyUtils.getAuth(properties));
 
-		luckPerms = initLuckPerms();
+		//luckPerms = initLuckPerms();
 		spark = initSpark();
 
 		MinecraftServer.setBrandName(DEFAULT_BRAND_NAME);
@@ -213,7 +213,7 @@ public class SkriptMinestom {
 			for (SkriptAddon addon : Skript.getAddons()) {
 				pluginManager.disablePlugin(addon.plugin);
 			}
-			LuckPermsMinestom.disable();
+			//LuckPermsMinestom.disable();
 			MinestomTerminal.stop();
 			System.exit(0); // sometimes server hangs so manually stop
 		});

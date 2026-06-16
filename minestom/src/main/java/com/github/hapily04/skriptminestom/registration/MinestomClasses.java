@@ -864,7 +864,11 @@ public class MinestomClasses {
 						String amountPart = parts[0];
 						if (NumberUtils.isOnlyDigits(amountPart)) {
 							if (!NumberUtils.isInteger(amountPart)) return null;
-							amount = Integer.parseInt(amountPart);
+							try {
+								amount = Integer.parseInt(amountPart);
+							} catch (NumberFormatException e) {
+								return null;
+							}
 							materialIndex = 1;
 						}
 					}
@@ -1052,7 +1056,11 @@ public class MinestomClasses {
 						String levelPart = parts[parts.length-1];
 						if (NumberUtils.isOnlyDigits(levelPart)) {
 							if (!NumberUtils.isInteger(levelPart)) return null;
-							level = Integer.parseInt(levelPart);
+							try {
+								level = Integer.parseInt(levelPart);
+							} catch (NumberFormatException e) {
+								return null;
+							}
 							hasLevel = 1;
 						}
 					}
