@@ -231,7 +231,7 @@ public class EffSecCreateEnvironment extends EffectSection {
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return "create " + getEnvName() + " under " + namespace.toString(event, debug) + " stored in " + storage.toString(event, debug);
+		return "create " + getEnvName() + " under " + namespace.toString(event, debug) + (storage != null ? (" stored in " + storage.toString(event, debug)) : "");
 	}
 
 	public void applyAttributes(BiConsumer<EnvironmentAttribute<?>, Object> consumer, Event event) {
