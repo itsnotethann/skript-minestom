@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Example;
 import ch.njol.skript.lang.SyntaxStringBuilder;
 import ch.njol.skript.util.ComponentWrapper;
+import com.github.hapily04.skriptminestom.util.NumberUtils;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
@@ -25,6 +26,7 @@ import org.skriptlang.skript.registration.SyntaxInfo;
 import org.skriptlang.skript.registration.SyntaxRegistry;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 @Name("Title - Send")
 @Description({
@@ -75,6 +77,7 @@ public class EffSendTitle extends Effect {
 		return true;
 	}
 
+	// TODO THE TIMER IS LONGER THAN IT SHOULD BE (3x?)
 	@Override
 	protected void execute(Event event) {
 		Component title = ComponentWrapper.getOrElse(this.title, event, null);
@@ -89,7 +92,7 @@ public class EffSendTitle extends Effect {
 			if (stayTimespan == null) {
 				return;
 			}
-			stay = Duration.from(stayTimespan);
+			stay = stayTimespan.getDuration();
 			specifiesTimes = true;
 		}
 		Duration fadeIn;
@@ -100,7 +103,7 @@ public class EffSendTitle extends Effect {
 			if (fadeInTimespan == null) {
 				return;
 			}
-			fadeIn = Duration.from(fadeInTimespan);
+			fadeIn = fadeInTimespan.getDuration();
 			specifiesTimes = true;
 		}
 		Duration fadeOut;
@@ -111,7 +114,7 @@ public class EffSendTitle extends Effect {
 			if (fadeOutTimespan == null) {
 				return;
 			}
-			fadeOut = Duration.from(fadeOutTimespan);
+			fadeOut = fadeOutTimespan.getDuration();
 			specifiesTimes = true;
 		}
 
