@@ -164,7 +164,7 @@ public class SkriptClasses {
 					"e.g. '5 minecraft days and 12 hours'.",
 				"NOTE: Months always have the value of 30 days, and years of 365 days.",
 				"See <a href='#date'>date</a> and <a href='#time'>time</a> for the other time types of Skript.")
-			.usage("&lt;number&gt; [minecraft/mc/real/rl/irl] ticks/seconds/minutes/hours/days/weeks/months/years [[,/and] &lt;more...&gt;]",
+			.usage("<number> [minecraft/mc/real/rl/irl] ticks/seconds/minutes/hours/days/weeks/months/years [[,/and] <more...>]",
 				"[###:]##:##[.####] ([hours:]minutes:seconds[.milliseconds])")
 			.examples("every 5 minecraft days:",
 				"	wait a minecraft second and 5 ticks",
@@ -176,7 +176,7 @@ public class SkriptClasses {
 				@Nullable
 				public Timespan parse(final String s, final ParseContext context) {
 					try {
-						return Timespan.parse(s);
+						return Timespan.parse(s, context);
 					} catch (IllegalArgumentException e) {
 						Skript.error("'" + s + "' is not a valid timespan");
 						return null;
@@ -190,7 +190,7 @@ public class SkriptClasses {
 
 				@Override
 				public String toVariableNameString(final Timespan o) {
-					return "timespan:" + o.getMilliSeconds();
+					return "timespan:" + o.getAs(Timespan.TimePeriod.MILLISECOND);
 				}
 			}).serializer(new YggdrasilSerializer<>()));
 
