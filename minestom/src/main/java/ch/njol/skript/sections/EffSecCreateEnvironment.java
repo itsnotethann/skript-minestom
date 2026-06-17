@@ -22,11 +22,11 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.skriptlang.skript.lang.entry.EntryContainer;
 import org.skriptlang.skript.lang.entry.EntryValidator;
 import org.skriptlang.skript.lang.entry.util.ExpressionEntryData;
-import org.skriptlang.skript.lang.entry.util.LiteralEntryData;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class EffSecCreateEnvironment extends EffectSection {
@@ -38,30 +38,30 @@ public class EffSecCreateEnvironment extends EffectSection {
 	static {
 		EntryValidator.EntryValidatorBuilder dimensionBuilder = EntryValidator.builder();
 		dimensionBuilder
-			.addEntryData(new LiteralEntryData<>("fixed time", false, true, Boolean.class))
-			.addEntryData(new LiteralEntryData<>("sky light", null, true, Boolean.class))
-			.addEntryData(new LiteralEntryData<>("ceiling", null, true, Boolean.class))
-			.addEntryData(new LiteralEntryData<>("coordinate scale", null, true, Number.class))
-			.addEntryData(new LiteralEntryData<>("minimum y", null, true, Integer.class))
-			.addEntryData(new LiteralEntryData<>("maximum y", null, true, Integer.class))
-			.addEntryData(new LiteralEntryData<>("logical y", null, true, Integer.class))
-			.addEntryData(new LiteralEntryData<>("infiniburn", null, true, String.class))
-			.addEntryData(new LiteralEntryData<>("ambient light", null, true, Number.class))
-			.addEntryData(new LiteralEntryData<>("skybox", null, true, DimensionType.Skybox.class))
-			.addEntryData(new LiteralEntryData<>("cardinal light", null, true, DimensionType.CardinalLight.class));
+			.addEntryData(new ExpressionEntryData<>("fixed time", new SimpleLiteral<>(false, true), true, Boolean.class))
+			.addEntryData(new ExpressionEntryData<>("sky light", null, true, Boolean.class))
+			.addEntryData(new ExpressionEntryData<>("ceiling", null, true, Boolean.class))
+			.addEntryData(new ExpressionEntryData<>("coordinate scale", null, true, Number.class))
+			.addEntryData(new ExpressionEntryData<>("minimum y", null, true, Integer.class))
+			.addEntryData(new ExpressionEntryData<>("maximum y", null, true, Integer.class))
+			.addEntryData(new ExpressionEntryData<>("logical y", null, true, Integer.class))
+			.addEntryData(new ExpressionEntryData<>("infiniburn", null, true, String.class))
+			.addEntryData(new ExpressionEntryData<>("ambient light", null, true, Number.class))
+			.addEntryData(new ExpressionEntryData<>("skybox", null, true, DimensionType.Skybox.class))
+			.addEntryData(new ExpressionEntryData<>("cardinal light", null, true, DimensionType.CardinalLight.class));
 			// todo timelines
 
 		EntryValidator.EntryValidatorBuilder biomeBuilder = EntryValidator.builder();
 		biomeBuilder
-			.addEntryData(new LiteralEntryData<>("precipitation", true, true, Boolean.class))
-			.addEntryData(new LiteralEntryData<>("temperature", 0.8f, true, Number.class))
-			.addEntryData(new LiteralEntryData<>("temperature modifier", Biome.TemperatureModifier.NONE, true, Biome.TemperatureModifier.class))
-			.addEntryData(new LiteralEntryData<>("downfall", 0.4f, true, Number.class))
-			.addEntryData(new LiteralEntryData<>("water color", new Color(0x3f76e4), true, RGBLike.class))
-			.addEntryData(new LiteralEntryData<>("foliage color", null, true, RGBLike.class))
-			.addEntryData(new LiteralEntryData<>("dry foliage color", null, true, RGBLike.class))
-			.addEntryData(new LiteralEntryData<>("grass color", null, true, RGBLike.class))
-			.addEntryData(new LiteralEntryData<>("grass color modifier", BiomeEffects.GrassColorModifier.NONE, true, BiomeEffects.GrassColorModifier.class));
+			.addEntryData(new ExpressionEntryData<>("precipitation", new SimpleLiteral<>(true, true), true, Boolean.class))
+			.addEntryData(new ExpressionEntryData<>("temperature", new SimpleLiteral<>(0.8f, true), true, Number.class))
+			.addEntryData(new ExpressionEntryData<>("temperature modifier", new SimpleLiteral<>(Biome.TemperatureModifier.NONE, true), true, Biome.TemperatureModifier.class))
+			.addEntryData(new ExpressionEntryData<>("downfall", new SimpleLiteral<>(0.4f, true), true, Number.class))
+			.addEntryData(new ExpressionEntryData<>("water color", new SimpleLiteral<>(new Color(0x3f76e4), true), true, RGBLike.class))
+			.addEntryData(new ExpressionEntryData<>("foliage color", null, true, RGBLike.class))
+			.addEntryData(new ExpressionEntryData<>("dry foliage color", null, true, RGBLike.class))
+			.addEntryData(new ExpressionEntryData<>("grass color", null, true, RGBLike.class))
+			.addEntryData(new ExpressionEntryData<>("grass color modifier", new SimpleLiteral<>(BiomeEffects.GrassColorModifier.NONE, true), true, BiomeEffects.GrassColorModifier.class));
 
 		for (EnvironmentAttribute<?> value : EnvironmentAttribute.values()) {
 			String key = value.key().asMinimalString().split("/")[1].replace('_', ' ');
@@ -88,27 +88,27 @@ public class EffSecCreateEnvironment extends EffectSection {
 	private Expression<Object> storage;
 	private boolean dimension;
 
-	private Boolean fixedTime;
-	private Boolean skyLight;
-	private Boolean ceiling;
-	private Number coordinateScale;
-	private Integer minY;
-	private Integer maxY;
-	private Integer logicalY;
-	private String infiniburn;
-	private Number ambientLight;
-	private DimensionType.Skybox skybox;
-	private DimensionType.CardinalLight cardinalLight;
+	private Expression<Boolean> fixedTime;
+	private Expression<Boolean> skyLight;
+	private Expression<Boolean> ceiling;
+	private Expression<Number> coordinateScale;
+	private Expression<Integer> minY;
+	private Expression<Integer> maxY;
+	private Expression<Integer> logicalY;
+	private Expression<String> infiniburn;
+	private Expression<Number> ambientLight;
+	private Expression<DimensionType.Skybox> skybox;
+	private Expression<DimensionType.CardinalLight> cardinalLight;
 
-	private Boolean precipitaion;
-	private Number temperature;
-	private Biome.TemperatureModifier temperatureModifier;
-	private Number downfall;
-	private RGBLike waterColor;
-	private RGBLike foliageColor;
-	private RGBLike dryFoliageColor;
-	private RGBLike grassColor;
-	private BiomeEffects.GrassColorModifier grassColorModifier;
+	private Expression<Boolean> precipitation;
+	private Expression<Number> temperature;
+	private Expression<Biome.TemperatureModifier> temperatureModifier;
+	private Expression<Number> downfall;
+	private Expression<RGBLike> waterColor;
+	private Expression<RGBLike> foliageColor;
+	private Expression<RGBLike> dryFoliageColor;
+	private Expression<RGBLike> grassColor;
+	private Expression<BiomeEffects.GrassColorModifier> grassColorModifier;
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult,
@@ -135,30 +135,30 @@ public class EffSecCreateEnvironment extends EffectSection {
 				container = DIMENSION_ENTRY_VALIDATOR.validate(sectionNode);
 				if (container == null) return false;
 
-				fixedTime = container.getOptional("fixed time", Boolean.class, true);
-				skyLight = container.getOptional("sky light", Boolean.class, true);
-				ceiling = container.getOptional("ceiling", Boolean.class, true);
-				coordinateScale = container.getOptional("coordinate scale", Number.class, true);
-				minY = container.getOptional("minimum y", Integer.class, true);
-				maxY = container.getOptional("maximum y", Integer.class, true);
-				logicalY = container.getOptional("logical y", Integer.class, true);
-				infiniburn = container.getOptional("infiniburn", String.class, true);
-				ambientLight = container.getOptional("ambient light", Number.class, true);
-				skybox = container.getOptional("skybox", DimensionType.Skybox.class, true);
-				cardinalLight = container.getOptional("cardinal light", DimensionType.CardinalLight.class, true);
+				fixedTime = (Expression<Boolean>) container.getOptional("fixed time", true);
+				skyLight = (Expression<Boolean>) container.getOptional("sky light", true);
+				ceiling = (Expression<Boolean>) container.getOptional("ceiling", true);
+				coordinateScale = (Expression<Number>) container.getOptional("coordinate scale", true);
+				minY = (Expression<Integer>) container.getOptional("minimum y", true);
+				maxY = (Expression<Integer>) container.getOptional("maximum y", true);
+				logicalY = (Expression<Integer>) container.getOptional("logical y", true);
+				infiniburn = (Expression<String>) container.getOptional("infiniburn", true);
+				ambientLight = (Expression<Number>) container.getOptional("ambient light", true);
+				skybox = (Expression<DimensionType.Skybox>) container.getOptional("skybox", true);
+				cardinalLight = (Expression<DimensionType.CardinalLight>) container.getOptional("cardinal light", true);
 			} else {
 				container = BIOME_ENTRY_VALIDATOR.validate(sectionNode);
 				if (container == null) return false;
 
-				precipitaion = container.getOptional("precipitation", Boolean.class, true);
-				temperature = container.getOptional("temperature", Number.class, true);
-				temperatureModifier = container.getOptional("temperature modifier", Biome.TemperatureModifier.class, true);
-				downfall = container.getOptional("downfall", Number.class, true);
-				waterColor = container.getOptional("water color", RGBLike.class, true);
-				foliageColor = container.getOptional("foliage color", RGBLike.class, true);
-				dryFoliageColor = container.getOptional("dry foliage color", RGBLike.class, true);
-				grassColor = container.getOptional("grass color", RGBLike.class, true);
-				grassColorModifier = container.getOptional("grass color modifier", BiomeEffects.GrassColorModifier.class, true);
+				precipitation = (Expression<Boolean>) container.getOptional("precipitation", true);
+				temperature = (Expression<Number>) container.getOptional("temperature", true);
+				temperatureModifier = (Expression<Biome.TemperatureModifier>) container.getOptional("temperature modifier", true);
+				downfall = (Expression<Number>) container.getOptional("downfall", true);
+				waterColor = (Expression<RGBLike>) container.getOptional("water color", false);
+				foliageColor = (Expression<RGBLike>) container.getOptional("foliage color", false);
+				dryFoliageColor = (Expression<RGBLike>) container.getOptional("dry foliage color", true);
+				grassColor = (Expression<RGBLike>) container.getOptional("grass color", true);
+				grassColorModifier = (Expression<BiomeEffects.GrassColorModifier>) container.getOptional("grass color modifier", true);
 			}
 		}
 		return true;
@@ -183,17 +183,17 @@ public class EffSecCreateEnvironment extends EffectSection {
 			DimensionType.Builder builder = DimensionType.builder();
 			builder.timelines(((DimensionType) registry.get(DimensionType.OVERWORLD.key())).timelines());
 			if (container != null) {
-				if (fixedTime != null) builder.fixedTime(fixedTime);
-				if (skyLight != null) builder.skylight(skyLight);
-				if (ceiling != null) builder.ceiling(ceiling);
-				if (coordinateScale != null) builder.coordinateScale(coordinateScale.doubleValue());
-				if (minY != null) builder.minY(minY);
-				if (maxY != null) builder.height(maxY);
-				if (logicalY != null) builder.logicalHeight(logicalY);
-				if (infiniburn != null) builder.infiniburn(infiniburn);
-				if (ambientLight != null) builder.ambientLight(ambientLight.floatValue());
-				if (skybox != null) builder.skybox(skybox);
-				if (cardinalLight != null) builder.cardinalLight(cardinalLight);
+				executeIfPresent(fixedTime, event, builder::fixedTime);
+				executeIfPresent(skyLight, event, builder::skylight);
+				executeIfPresent(ceiling, event, builder::ceiling);
+				executeIfPresent(coordinateScale, event, number -> builder.coordinateScale(number.doubleValue()));
+				executeIfPresent(minY, event, builder::minY);
+				executeIfPresent(maxY, event, builder::height);
+				executeIfPresent(logicalY, event, builder::logicalHeight);
+				executeIfPresent(infiniburn, event, builder::infiniburn);
+				executeIfPresent(ambientLight, event, number -> builder.ambientLight(number.floatValue()));
+				executeIfPresent(skybox, event, builder::skybox);
+				executeIfPresent(cardinalLight, event, builder::cardinalLight);
 				applyAttributes((attribute, o) -> setAttribute(builder, attribute, o), event);
 			}
 
@@ -203,18 +203,20 @@ public class EffSecCreateEnvironment extends EffectSection {
 		} else {
 			Biome.Builder builder = Biome.builder();
 			if (container != null) {
-				builder
-					.precipitation(precipitaion)
-					.temperature(temperature.floatValue())
-					.temperatureModifier(temperatureModifier)
-					.downfall(downfall.floatValue())
-					.effects(BiomeEffects.builder()
-						.waterColor(waterColor)
-						.foliageColor(foliageColor)
-						.dryFoliageColor(dryFoliageColor)
-						.grassColor(grassColor)
-						.grassColorModifier(grassColorModifier)
-						.build());
+				BiomeEffects.Builder effectsBuilder = BiomeEffects.builder();
+				executeIfPresent(waterColor, event, effectsBuilder::waterColor);
+				executeIfPresent(foliageColor, event, effectsBuilder::foliageColor);
+				executeIfPresent(dryFoliageColor, event, effectsBuilder::dryFoliageColor);
+				executeIfPresent(grassColor, event, effectsBuilder::grassColor);
+				executeIfPresent(grassColorModifier, event, effectsBuilder::grassColorModifier);
+				BiomeEffects effects = effectsBuilder.build();
+
+				builder.effects(effects);
+				executeIfPresent(precipitation, event, builder::precipitation);
+				executeIfPresent(temperature, event, number -> builder.temperature(number.floatValue()));
+				executeIfPresent(temperatureModifier, event, builder::temperatureModifier);
+				executeIfPresent(downfall, event, number -> builder.downfall(number.floatValue()));
+
 				applyAttributes((attribute, o) -> setAttribute(builder, attribute, o), event);
 			}
 
@@ -225,6 +227,11 @@ public class EffSecCreateEnvironment extends EffectSection {
 
 		if (storage != null) storage.change(event, storageValue, Changer.ChangeMode.SET); // store the created environment on the variable
 		return super.walk(event, false);
+	}
+
+	@Override
+	public String toString(@Nullable Event event, boolean debug) {
+		return "create " + getEnvName() + " under " + namespace.toString(event, debug) + " stored in " + storage.toString(event, debug);
 	}
 
 	public void applyAttributes(BiConsumer<EnvironmentAttribute<?>, Object> consumer, Event event) {
@@ -257,9 +264,11 @@ public class EffSecCreateEnvironment extends EffectSection {
 		builder.setAttribute(attribute, value);
 	}
 
-	@Override
-	public String toString(@Nullable Event event, boolean debug) {
-		return "create " + getEnvName() + " under " + namespace.toString(event, debug) + " stored in " + storage.toString(event, debug);
+	private <T> void executeIfPresent(@Nullable Expression<T> expr, Event event, Consumer<T> consumer) {
+		if (expr == null) return;
+		T value = expr.getSingle(event);
+		if (value == null) return;
+		consumer.accept(value);
 	}
 
 	private String getEnvName() {
