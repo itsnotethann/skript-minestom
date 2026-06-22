@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -12,6 +15,10 @@ import net.minestom.server.entity.metadata.avatar.PlayerMeta;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Shoulder Parrot Type")
+@Description("The type of parrot on a player's left or right shoulder.")
+@Examples("set left shoulder parrot type of player to red")
 public class ExprParrotType extends SimplePropertyExpression<Player, ParrotType> {
 
 	static {

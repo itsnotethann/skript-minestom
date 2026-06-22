@@ -1,6 +1,9 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -18,6 +21,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+@Name("Save NBT")
+@Description("Saves an NBT compound to a gzip-compressed file in the server directory.")
+@Examples("save {_nbt} to file \"data/player.dat\"")
 public class EffSaveNBT extends Effect {
 
 	static {

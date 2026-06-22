@@ -2,6 +2,9 @@ package ch.njol.skript.sections;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.EffectSection;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -14,6 +17,23 @@ import org.skriptlang.skript.lang.entry.EntryContainer;
 
 import java.util.List;
 
+@Name("Subcommand")
+@Description({
+	"Defines a subcommand within a command structure.",
+	"The subcommand name and argument syntax are parsed from the section key.",
+	"Supports the same entries as a command: aliases, condition, trigger, arguments, and nested subcommands."
+})
+@Examples({
+	"command /admin:",
+	"    trigger:",
+	"        send \"Usage: /admin <subcommand>\"",
+	"    subcommand reload:",
+	"        trigger:",
+	"            reload script \"admin.sk\"",
+	"    subcommand kick <target: player>:",
+	"        trigger:",
+	"            kick {target}"
+})
 public class EffSecSubcommand extends EffectSection {
 
 	static {

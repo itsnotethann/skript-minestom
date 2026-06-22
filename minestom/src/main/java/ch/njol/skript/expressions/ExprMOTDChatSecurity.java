@@ -2,6 +2,9 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.ServerListPingWrapper;
 import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
@@ -15,6 +18,10 @@ import net.minestom.server.ping.Status;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("MOTD Chat Security")
+@Description("Whether the server enforces secure chat in the server list ping event.")
+@Examples("set motd chat security to true")
 public class ExprMOTDChatSecurity extends SimpleExpression<Boolean> implements EventRestrictedSyntax {
 
 	static {

@@ -3,6 +3,9 @@ package ch.njol.skript.sections;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.log.SkriptLogger;
@@ -29,6 +32,25 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
+@Name("Create Environment")
+@Description({
+	"Registers a custom dimension type or biome under the given namespace.",
+	"The namespace must be in the format 'prefix:value'.",
+	"Optional entries inside the section configure properties of the dimension or biome.",
+	"Environment attributes from the registry can also be set as entries using their key names.",
+	"This section cannot be delayed."
+})
+@Examples({
+	"create biome type under \"custom:meadow\" and store it in {_biome}:",
+	"    temperature: 0.7",
+	"    precipitation: true",
+	"    water color: rgb(0x3f76e4)",
+	"create dimension type under \"custom:void\" stored in {_dim}:",
+	"    ceiling: false",
+	"    sky light: true",
+	"    minimum y: -64",
+	"    maximum y: 320"
+})
 public class EffSecCreateEnvironment extends EffectSection {
 
 	private static final EntryValidator DIMENSION_ENTRY_VALIDATOR;

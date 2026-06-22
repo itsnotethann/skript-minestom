@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,6 +14,10 @@ import net.minestom.server.coordinate.Vec;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Vector Rotated Around Axis")
+@Description("Rotates a vector around another vector by a number of degrees.")
+@Examples("set {_v} to vector(1, 0, 0) rotated around vector(0, 1, 0) by 90 degrees")
 public class ExprVectorRotatedAroundAnother extends SimpleExpression<Vec> {
 
 	static {

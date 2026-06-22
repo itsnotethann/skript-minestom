@@ -1,6 +1,9 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,6 +14,9 @@ import net.minestom.server.instance.generator.Generator;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Regenerate Chunk")
+@Description("Regenerates the given chunks using the instance's chunk generator.")
+@Examples("regenerate chunk at player")
 public class EffRegenerateChunk extends Effect {
 
 	static {

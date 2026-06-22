@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,6 +14,10 @@ import net.minestom.server.instance.block.Block;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
+
+@Name("Block With Property")
+@Description("A block with a specific block state property set.")
+@Examples("set {_b} to oak stairs with block \"facing\" property of \"north\"")
 public class ExprBlockWithProperty extends SimpleExpression<Block> {
 
 	static {

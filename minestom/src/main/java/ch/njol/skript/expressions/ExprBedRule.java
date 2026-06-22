@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -13,6 +16,10 @@ import net.minestom.server.world.attribute.BedRule;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
+
+@Name("Bed Rule")
+@Description("Creates a bed rule with sleep, spawn, and optional explosion settings.")
+@Examples("set {_rule} to new bed rule with sleep rule monsters and with spawn rule spawn")
 public class ExprBedRule extends SimpleExpression<BedRule> {
 
 	static {

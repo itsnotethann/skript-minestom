@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.expressions.base.PropertyExpression;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
@@ -8,6 +11,10 @@ import net.minestom.server.instance.Chunk;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+
+@Name("Chunk Coordinate")
+@Description("The x or z coordinate of a chunk.")
+@Examples("broadcast \"Chunk X: %chunk x of chunk at player%\"")
 public class ExprChunkCoordinate extends PropertyExpression<Chunk, Integer> {
 
 	static {

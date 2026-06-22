@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions.display.abstr;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -12,6 +15,10 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import org.bukkit.event.Event;
 
+
+@Name("Transformation Interpolation")
+@Description("The transformation interpolation start or duration of a display entity.")
+@Examples("set transformation interpolation duration of targeted entity to 1 second")
 public class ExprTransformationInterpolation extends SimplePropertyExpression<Entity, Object> {
 
 	static {

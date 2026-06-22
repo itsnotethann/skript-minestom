@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions.display.text;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Entity;
@@ -8,6 +11,10 @@ import net.minestom.server.entity.metadata.display.TextDisplayMeta;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Use Default Background")
+@Description("Whether a text display entity uses the default background color.")
+@Examples("set use default background property of targeted entity to true")
 public class ExprUseDefaultBackground extends SimplePropertyExpression<Entity, Boolean> {
 
 	static {

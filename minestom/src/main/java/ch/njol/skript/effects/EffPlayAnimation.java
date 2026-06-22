@@ -18,7 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 @Name("Play Animation")
 @Description("Plays an animation for the given entities.")
-@Examples("play swing main arm animation for all players")
+@Examples("play swing main arm animation on player")
 public class EffPlayAnimation extends Effect {
 
 	static {

@@ -23,7 +23,7 @@ import java.util.List;
 
 @Name("Block")
 @Description("The block at a certain location in an instance.")
-@Examples("set block at player's location to stone")
+@Examples("set block at player's position to stone")
 public class ExprBlock extends SimpleExpression<Block> {
 
 	static {

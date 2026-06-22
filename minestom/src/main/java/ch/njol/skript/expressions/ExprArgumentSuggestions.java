@@ -2,6 +2,9 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -15,6 +18,10 @@ import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Argument Suggestions")
+@Description("The suggestion entries in an argument section callback.")
+@Examples("set {_suggestions::*} to argument suggestions")
 public class ExprArgumentSuggestions extends SimpleExpression<SuggestionEntry> implements EventRestrictedSyntax {
 
 	static {

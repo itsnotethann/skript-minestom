@@ -1,12 +1,19 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Entity;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Physics")
+@Description("Whether physics is enabled for an entity.")
+@Examples("set physics property of targeted entity to false")
 public class ExprPhysics extends SimplePropertyExpression<Entity, Boolean> {
 
 	static {

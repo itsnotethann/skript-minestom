@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions.display.abstr;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,6 +14,10 @@ import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Display Brightness Override")
+@Description("The block or sky brightness override of a display entity.")
+@Examples("set display block brightness override of targeted entity to 15")
 public class ExprDisplayBrightness extends SimplePropertyExpression<Entity, Integer> {
 
 	static {

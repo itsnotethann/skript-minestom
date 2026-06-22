@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -18,6 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+
+@Name("Ambient Sounds")
+@Description("Creates ambient sounds with optional loop, mood, and additions.")
+@Examples("set {_sounds} to new ambient sounds with loop \"minecraft:ambient.cave\"")
 public class ExprAmbientSounds extends SimpleExpression<AmbientSounds> {
 
 	static {

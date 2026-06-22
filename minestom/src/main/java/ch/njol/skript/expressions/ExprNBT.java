@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -28,6 +31,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+
+@Name("NBT Compound")
+@Description("The NBT compound of a taggable, string, item, or file.")
+@Examples("set {_nbt} to nbt compound of player's tool")
 public class ExprNBT extends SimpleExpression<NBTCompound> {
 
 	public static final Tag<BinaryTag> NBT_TAG = Tag.NBT("skript-minestom:custom-nbt");

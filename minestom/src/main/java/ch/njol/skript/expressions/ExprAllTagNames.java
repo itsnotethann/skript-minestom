@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -16,6 +19,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Name("All NBT Tag Names")
+@Description("All tag names or keys of a given type in an NBT compound.")
+@Examples("set {_tags::*} to all tag names of {_nbt}")
 public class ExprAllTagNames extends SimpleExpression<String> {
 
 	static {

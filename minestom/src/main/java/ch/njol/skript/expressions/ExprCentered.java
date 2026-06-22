@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,6 +14,10 @@ import net.minestom.server.coordinate.Vec;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Centered Point")
+@Description("Returns the center of a block position (adds 0.5 to x and z).")
+@Examples("set {_p} to centered player's position")
 public class ExprCentered extends SimpleExpression<Point> {
 
 	static {

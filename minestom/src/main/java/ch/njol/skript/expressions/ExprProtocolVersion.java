@@ -2,6 +2,9 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.ServerListPingWrapper;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -18,6 +21,10 @@ import net.minestom.server.ping.Status;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Protocol Version")
+@Description("A player's protocol version, or the protocol version in a server list ping event.")
+@Examples("broadcast \"Version: %protocol version of player%\"")
 public class ExprProtocolVersion extends SimpleExpression<Object> {
 
 	static {

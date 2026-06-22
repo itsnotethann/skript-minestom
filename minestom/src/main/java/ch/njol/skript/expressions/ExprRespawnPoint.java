@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
 
 @Name("Respawn Point")
 @Description("The respawn point of a player.")
-@Examples("set respawn point of player to player's location")
+@Examples("set respawn point of player to player's position")
 public class ExprRespawnPoint extends SimplePropertyExpression<Player, Point> {
 
 	private static final Pos DEFAULT_SPAWNPOINT = new Pos(0, 0, 0, 0, 0);

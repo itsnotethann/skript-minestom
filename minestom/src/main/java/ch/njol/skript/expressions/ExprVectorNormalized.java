@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -10,6 +13,10 @@ import net.minestom.server.coordinate.Vec;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+
+@Name("Normalized Vector")
+@Description("Returns normalized (unit length) vectors.")
+@Examples("set {_v} to normalized vector(3, 4, 0)")
 public class ExprVectorNormalized extends SimpleExpression<Vec> {
 
 	static {

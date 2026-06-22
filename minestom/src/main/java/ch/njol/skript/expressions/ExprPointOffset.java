@@ -15,7 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 @Name("Point Offset")
 @Description("A point offset by a certain amount.")
-@Examples("set {_p} to player's location offset by (1, 2, 3)")
+@Examples("set {_p} to player's position offset by (1, 2, 3)")
 public class ExprPointOffset extends SimpleExpression<Point> {
 
 	static {

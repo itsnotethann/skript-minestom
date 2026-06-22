@@ -1,11 +1,17 @@
 package ch.njol.skript.conditions;
 
 import ch.njol.skript.conditions.base.PropertyCondition;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.minestom.CustomConnectEvent;
 import ch.njol.skript.events.wrapper.CustomConnectWrapper;
 import net.minestom.server.entity.Player;
 import org.bukkit.event.Event;
 
+@Name("Is Online")
+@Description("Checks if players are online. During a connect event, also accounts for whether the player was kicked.")
+@Examples("player is online")
 public class CondIsOnline extends PropertyCondition<Player> {
 
 	static {

@@ -1,6 +1,9 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -15,6 +18,9 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.regex.Pattern;
 
+@Name("Component Replace")
+@Description("Replaces text in adventure components in place. Optionally replaces only the first occurrence or uses regex matching.")
+@Examples("component replace \"foo\" in {_component} with \"bar\"")
 public class EffComponentReplace extends Effect {
 
 	private static final TextReplacementConfig.Condition ONLY_ONE_REPLACEMENT = (_, _, replaced) -> {

@@ -2,6 +2,9 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.ServerListPingWrapper;
 import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
@@ -20,6 +23,10 @@ import org.jspecify.annotations.Nullable;
 import static ch.njol.skript.util.ComponentWrapper.toWrapper;
 import static com.github.hapily04.skriptminestom.util.MessageUtils.BASIC_MINI_MESSAGE;
 
+
+@Name("MOTD Description")
+@Description("The description shown in the server list ping event.")
+@Examples("set motd description to \"<green>Welcome!\"")
 public class ExprMOTDDescription extends SimpleExpression<ComponentWrapper> implements EventRestrictedSyntax {
 
 	static {

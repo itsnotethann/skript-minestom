@@ -2,6 +2,9 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.ServerListPingWrapper;
 import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
@@ -22,6 +25,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+
+@Name("MOTD Icon")
+@Description("The favicon image in the server list ping event.")
+@Examples("set motd favicon to image from file \"server-icon.png\"")
 public class ExprMOTDIcon extends SimpleExpression<BufferedImage> implements EventRestrictedSyntax {
 
 	static {

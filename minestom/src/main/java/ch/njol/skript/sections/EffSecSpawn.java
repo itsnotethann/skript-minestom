@@ -29,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
 @Name("Spawn Entity")
 @Description("Spawns one or more entities at a location.")
 @Examples({
-	"spawn living zombie at player's location:",
+	"spawn living zombie at player's position:",
 	"    before spawn:",
 	"        set display name of entity to \"Custom Zombie\"",
 	"    after spawn:",

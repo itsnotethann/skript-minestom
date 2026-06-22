@@ -1,6 +1,9 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -16,6 +19,9 @@ import net.minestom.server.item.Material;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Send Notification")
+@Description("Sends an advancement-style notification to the given players with a frame type, title, and icon item.")
+@Examples("send task notification with title \"Quest Complete!\" and diamond as the icon to player")
 public class EffSendNotification extends Effect {
 
 	static {

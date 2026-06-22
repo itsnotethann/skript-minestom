@@ -15,7 +15,7 @@ import org.jspecify.annotations.Nullable;
 
 @Name("Point with Property")
 @Description("A point with a specific property (x, y, z, yaw, pitch) modified.")
-@Examples("set {_p} to player's location with yaw 90")
+@Examples("set {_p} to player's position with yaw 90")
 public class ExprPointWithProperty extends SimpleExpression<Point> {
 
 	static {

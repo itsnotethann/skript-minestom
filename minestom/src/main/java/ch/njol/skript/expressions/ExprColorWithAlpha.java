@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.Literal;
@@ -13,6 +16,10 @@ import net.minestom.server.utils.MathUtils;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
+
+@Name("Color With Alpha")
+@Description("A color with a specific opacity/alpha value.")
+@Examples("set {_c} to red with alpha value 128")
 public class ExprColorWithAlpha extends SimpleExpression<AlphaColor> {
 
 	static {

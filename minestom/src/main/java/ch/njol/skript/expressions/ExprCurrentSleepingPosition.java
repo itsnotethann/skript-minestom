@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.coordinate.Point;
@@ -10,6 +13,10 @@ import net.minestom.server.entity.metadata.LivingEntityMeta;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Current Sleeping Position")
+@Description("The position where a living entity is currently sleeping.")
+@Examples("set {_bed} to current sleeping position of player")
 public class ExprCurrentSleepingPosition extends SimplePropertyExpression<LivingEntity, Point> {
 
 	static {

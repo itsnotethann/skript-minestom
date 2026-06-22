@@ -1,12 +1,19 @@
 package ch.njol.skript.expressions.display.abstr;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import org.bukkit.event.Event;
 
+
+@Name("Display Shadow Radius")
+@Description("The shadow radius of a display entity.")
+@Examples("set display shadow radius of targeted entity to 0.5")
 public class ExprShadowRadius extends SimplePropertyExpression<Entity, Number> {
 
 	static {

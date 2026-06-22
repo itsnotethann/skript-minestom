@@ -2,11 +2,18 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.instance.Instance;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Instance")
+@Description("The instance an entity is in.")
+@Examples("broadcast \"%instance of player%\"")
 public class ExprInstance extends SimplePropertyExpression<Entity, Instance> {
 
 	static {

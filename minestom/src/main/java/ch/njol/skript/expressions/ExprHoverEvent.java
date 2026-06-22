@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.util.coll.CollectionUtils;
@@ -9,6 +12,10 @@ import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
 @SuppressWarnings("rawtypes")
+
+@Name("Hover Event")
+@Description("The hover event of a component.")
+@Examples("set hover event of {_component} to hover event showing \"Hello\"")
 public class ExprHoverEvent extends SimplePropertyExpression<ComponentWrapper, HoverEvent> {
 
 	static {

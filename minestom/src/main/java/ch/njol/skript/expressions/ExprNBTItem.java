@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -16,6 +19,10 @@ import net.minestom.server.item.component.CustomData;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("NBT Item")
+@Description("Creates an item from NBT or returns the full item NBT of items.")
+@Examples("set {_item} to item from {_nbt}")
 public class ExprNBTItem extends SimpleExpression<Object> {
 
 	static {

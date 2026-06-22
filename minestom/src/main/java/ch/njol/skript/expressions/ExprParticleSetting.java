@@ -1,10 +1,17 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import net.minestom.server.entity.Player;
 import net.minestom.server.network.player.ClientSettings;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Particle Setting")
+@Description("A player's particle display setting.")
+@Examples("set particle setting of player to all")
 public class ExprParticleSetting extends SimplePropertyExpression<Player, ClientSettings.ParticleSetting> {
 
 	static {

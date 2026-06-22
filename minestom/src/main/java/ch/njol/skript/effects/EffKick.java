@@ -1,6 +1,9 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.minestom.CustomConnectEvent;
 import ch.njol.skript.events.wrapper.CustomConnectWrapper;
 import ch.njol.skript.lang.Effect;
@@ -13,6 +16,9 @@ import net.minestom.server.entity.Player;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Kick")
+@Description("Kicks the given players from the server with an optional message. During a connect event, kicks the connecting player through that event instead.")
+@Examples("kick player due to \"You have been banned\"")
 public class EffKick extends Effect {
 
 	static {

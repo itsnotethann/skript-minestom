@@ -22,8 +22,8 @@ import org.jetbrains.annotations.Nullable;
 	on entity explosion:
 		set {_player} to the nearest player
 		{_player} is set
-		distance between {_player} and the event-location is less than 15
-		make {_player} look towards vector from the {_player} to location of the event-entity
+		distance between {_player} and the event-position is less than 15
+		make {_player} look towards vector from the {_player} to event-entity's position
 	""")
 @Example("force {_enderman} to face the block 3 meters above {_location}")
 public class EffLook extends Effect {

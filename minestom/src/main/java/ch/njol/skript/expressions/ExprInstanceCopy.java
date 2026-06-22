@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -13,6 +16,10 @@ import org.jspecify.annotations.Nullable;
 
 import static ch.njol.skript.sections.EffSecCreateInstance.RELIGHT_INSTANCES;
 
+
+@Name("Instance Copy")
+@Description("Creates a copy of an instance container.")
+@Examples("set {_copy} to instance copy of {_instance}")
 public class ExprInstanceCopy extends SimpleExpression<InstanceContainer> {
 
 	static {

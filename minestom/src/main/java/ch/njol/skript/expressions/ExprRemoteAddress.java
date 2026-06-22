@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.ServerListPingWrapper;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -15,6 +18,10 @@ import org.jspecify.annotations.Nullable;
 
 import static ch.njol.skript.expressions.ExprProtocolVersion.verifyMOTDEvent;
 
+
+@Name("Remote Address")
+@Description("A player's IP address or remote address.")
+@Examples("broadcast \"%ip of player%\"")
 public class ExprRemoteAddress extends SimpleExpression<String> {
 
 	static {

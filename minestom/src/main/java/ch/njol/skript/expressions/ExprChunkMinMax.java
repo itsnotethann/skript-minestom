@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -13,6 +16,10 @@ import net.minestom.server.instance.generator.GenerationUnit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
+
+@Name("Generation Chunk Bounds")
+@Description("The start or end point of a generation chunk in a create instance section.")
+@Examples("set {_start} to start of generation chunk")
 public class ExprChunkMinMax extends SimpleExpression<Point> implements EventRestrictedSyntax {
 
 	static {

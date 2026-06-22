@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Entity;
@@ -9,6 +12,10 @@ import net.minestom.server.entity.metadata.other.SlimeMeta;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Slime Size")
+@Description("The size of a slime entity.")
+@Examples("set slime size of targeted entity to 3")
 public class ExprSlimeSize extends SimplePropertyExpression<Entity, Integer> {
 
 	static {

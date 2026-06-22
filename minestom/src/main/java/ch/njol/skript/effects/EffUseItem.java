@@ -1,6 +1,9 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -22,6 +25,13 @@ import net.minestom.server.item.component.Consumable;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Use Item")
+@Description("Makes living entities begin, stop, or complete using an item in their hand. Dispatches the corresponding Minestom item use events for players.")
+@Examples({
+	"make player begin using item",
+	"make player stop using active item",
+	"make player complete using active item"
+})
 public class EffUseItem extends Effect {
 
 	static {

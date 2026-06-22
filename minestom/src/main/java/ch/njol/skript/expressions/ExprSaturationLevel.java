@@ -1,12 +1,19 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Player;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Saturation Level")
+@Description("A player's saturation level.")
+@Examples("set saturation level of player to 5")
 public class ExprSaturationLevel extends SimplePropertyExpression<Player, Number> {
 
 	static {

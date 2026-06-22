@@ -1,12 +1,19 @@
 package ch.njol.skript.expressions.display.abstr;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import org.bukkit.event.Event;
 
+
+@Name("Billboard Render Constraints")
+@Description("The billboard render constraints of a display entity.")
+@Examples("set billboard render constraints of targeted entity to fixed")
 public class ExprBillboardConstraints extends SimplePropertyExpression<Entity, AbstractDisplayMeta.BillboardConstraints> {
 
 	static {

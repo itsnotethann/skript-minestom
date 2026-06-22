@@ -2,6 +2,9 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.ServerListPingWrapper;
 import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
@@ -16,6 +19,10 @@ import net.minestom.server.ping.Status;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("MOTD Player Count")
+@Description("The online or maximum player count in the server list ping event.")
+@Examples("set motd max player count to 100")
 public class ExprMOTDPlayerCount extends SimpleExpression<Integer> implements EventRestrictedSyntax {
 
 	static {

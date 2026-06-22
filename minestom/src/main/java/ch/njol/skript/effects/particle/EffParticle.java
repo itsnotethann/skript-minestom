@@ -1,6 +1,9 @@
 package ch.njol.skript.effects.particle;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -21,6 +24,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Name("Draw Particle")
+@Description("Draws particles at the given locations for specific players or everyone in specified instances. Either players or an instance must be provided.")
+@Examples({
+	"draw 10 of flame at player for player",
+	"draw 5 of smoke at player's position in player's instance with speed 0.5"
+})
 public class EffParticle extends Effect {
 
 	static {

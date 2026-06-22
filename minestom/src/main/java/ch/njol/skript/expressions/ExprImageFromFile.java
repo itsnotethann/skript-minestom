@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -18,6 +21,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Name("Image From File")
+@Description("Loads a buffered image from a file path.")
+@Examples("set {_img} to image from file \"server-icon.png\"")
 public class ExprImageFromFile extends SimpleExpression<BufferedImage> {
 
 	static {

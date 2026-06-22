@@ -133,11 +133,13 @@ public class MinestomClasses {
 			.user("senders?")
 			.name("Command Sender")
 			.description("Something that can execute a command and receive messages (players/console).")
+			.examples("send \"Hello\" to player")
 			.defaultExpression(new EventValueExpression<>(CommandSender.class)));
 		Classes.registerClass(new ClassInfo<>(ConsoleSender.class, "consolesender")
 			.user("console ?senders?")
 			.name("Console Sender")
 			.description("The console.")
+			.examples("send \"Server started\" to console")
 			.defaultExpression(new EventValueExpression<>(ConsoleSender.class))
 			.parser(new Parser<>() {
 				@Override
@@ -159,6 +161,7 @@ public class MinestomClasses {
 			.user("players?")
 			.name("Player")
 			.description("A entity of type Player with a connection to the server.")
+			.examples("send \"hi\" to player(\"Steve\")")
 			.defaultExpression(new EventValueExpression<>(Player.class))
 			.parser(new Parser<>() {
 				@Nullable
@@ -204,11 +207,13 @@ public class MinestomClasses {
 			.user("taggables?")
 			.name("Taggable")
 			.description("An object that can hold tags (entities, instances, etc.)")
+			.examples("set metadata \"key\" of player to \"value\"")
 			.defaultExpression(new EventValueExpression<>(Taggable.class)));
 		Classes.registerClass(new ClassInfo<>(Entity.class, "entity")
 			.user("entit(y|ies)")
 			.name("Entity")
 			.description("A mob/player/physical non-block object in an instance.")
+			.examples("kill targeted entity")
 			.defaultExpression(new EventValueExpression<>(Entity.class))
 			.parser(new Parser<>() {
 				@Override
@@ -230,21 +235,25 @@ public class MinestomClasses {
 			.user("living ?entit(y|ies)")
 			.name("Living Entity")
 			.description("An entity that has health, armor, and a main/offhand.")
+			.examples("set health of targeted entity to 20")
 			.defaultExpression(new EventValueExpression<>(LivingEntity.class)));
 		Classes.registerClass(new ClassInfo<>(EntityCreature.class, "entitycreature")
 			.user("entity ?creatures?")
 			.name("Entity Creature")
 			.description("An entity that has health, armor, main/offhand, and is able to pathfind.")
+			.examples("set navigation target of targeted entity to player")
 			.defaultExpression(new EventValueExpression<>(EntityCreature.class)));
 		Classes.registerClass(new ClassInfo<>(EquipmentHandler.class, "equipmenthandler")
 			.user("equipment ?handlers?")
 			.name("Equipment Handler")
 			.description("An entity that is capable of bearing armor and off/main hand tools.")
+			.examples("set chestplate of player to iron chestplate")
 			.defaultExpression(new EventValueExpression<>(EquipmentHandler.class)));
 		Classes.registerClass(new ClassInfo<>(Pos.class, "position")
 			.user("positions?")
 			.name("Position")
 			.description("A location with an x, y, z, yaw, and pitch. An instance is not attached to this type.")
+			.examples("set {_pos} to position(0, 64, 0)")
 			.defaultExpression(new EventValueExpression<>(Pos.class))
 			.parser(new Parser<>() {
 				@Override
@@ -303,6 +312,7 @@ public class MinestomClasses {
 			.user("vectors?")
 			.name("Vector")
 			.description("An object with 3 values: x, y, z. Can be used as a location, but position is used more often for that use-case.")
+			.examples("set {_vec} to vector(1, 0, 0)")
 			.defaultExpression(new EventValueExpression<>(Vec.class))
 			.parser(new Parser<>() {
 				@Override
@@ -357,6 +367,7 @@ public class MinestomClasses {
 			.user("points?")
 			.name("Point")
 			.description("An object with 3 values: x, y, z. Is internally either a block vector, vector, or position.")
+			.examples("set {_p} to player's position")
 			.defaultExpression(new EventValueExpression<>(Point.class))
 			.parser(new Parser<>() {
 				@Override
@@ -379,6 +390,7 @@ public class MinestomClasses {
 			.user("block ?vectors?")
 			.name("Block Vector")
 			.description("A vector with the x, y, and z without decimals.")
+			.examples("set {_bv} to blockVector(0, 64, 0)")
 			.defaultExpression(new EventValueExpression<>(BlockVec.class))
 			.parser(new Parser<>() {
 				@Override
@@ -433,6 +445,7 @@ public class MinestomClasses {
 			.user("instances?")
 			.name("Instance")
 			.description("A world consisting of blocks and entities.")
+			.examples("teleport player to {_instance}")
 			.defaultExpression(new EventValueExpression<>(Instance.class))
 			.parser(new Parser<>() {
 				@Override
@@ -454,16 +467,19 @@ public class MinestomClasses {
 			.user("instance ?containers?")
 			.name("Instance Container")
 			.description("A world consisting of blocks and entities.")
+			.examples("set {_world} to instance of player")
 			.defaultExpression(new EventValueExpression<>(InstanceContainer.class)));
 		Classes.registerClass(new ClassInfo<>(SharedInstance.class, "sharedinstance")
 			.user("shared ?instances?")
 			.name("Shared Instance")
 			.description("A world sharing the blocks from its underlying Instance Container. Entities are not shared.")
+			.examples("create shared instance from {_container} and store it in {_shared}")
 			.defaultExpression(new EventValueExpression<>(SharedInstance.class)));
 		Classes.registerClass(new ClassInfo<>(Chunk.class, "chunk")
 			.user("chunks?")
 			.name("Chunk")
-			.description("A block container")
+			.description("A 16×16 section of blocks in an instance.")
+			.examples("loop all blocks in chunk at player:")
 			.defaultExpression(new EventValueExpression<>(Chunk.class))
 			.parser(new Parser<>() {
 				@Override
@@ -485,6 +501,7 @@ public class MinestomClasses {
 			.user("dimension ?types?")
 			.name("Dimension Type")
 			.description("A dimension type with several values.")
+			.examples("set {_dim} to dimension type from namespace key \"minecraft:overworld\"")
 			.defaultExpression(new EventValueExpression<>(DimensionType.class))
 			.parser(new Parser<>() {
 				@Override
@@ -509,6 +526,7 @@ public class MinestomClasses {
 			.user("biomes?")
 			.name("Biome")
 			.description("A biome with several values.")
+			.examples("set biome at player's position in player's instance to plains")
 			.defaultExpression(new EventValueExpression<>(Biome.class))
 			.parser(new Parser<>() {
 				@Override
@@ -646,26 +664,31 @@ public class MinestomClasses {
 			.user("player ?hands?")
 			.name("Player Hand")
 			.description("Represents a player's hand. Possible values: main, off.")
+			.examples("on item use:\n\tbroadcast \"%event-hand%\"")
 			.defaultExpression(new EventValueExpression<>(PlayerHand.class)));
 		Classes.registerClass(new EnumClassInfo<>(ItemAnimation.class, "itemanimation")
 			.user("item ?animations?")
 			.name("Item Animation")
 			.description("Represents the animation an item is playing while consuming.")
+			.examples("on item use:\n\tbroadcast \"%event-animation%\"")
 			.defaultExpression(new EventValueExpression<>(ItemAnimation.class)));
 		Classes.registerClass(new EnumClassInfo<>(InventoryType.class, "inventorytype")
 			.user("inventory ?types?")
 			.name("Inventory Type")
-			.description("Inventory type")
+			.description("The type of an inventory window (chest, anvil, etc.).")
+			.examples("open chest 3 row to player")
 			.defaultExpression(new EventValueExpression<>(InventoryType.class)));
 		Classes.registerClass(new EnumClassInfo<>(ClickType.class, "clicktype")
 			.user("click ?types?")
 			.name("Click Type")
-			.description("Click type")
+			.description("The type of click in an inventory click event.")
+			.examples("on inventory click:\n\tif click type is left click:")
 			.defaultExpression(new EventValueExpression<>(ClickType.class)));
 		Classes.registerClass(new EnumClassInfo<>(FrameType.class, "frametype")
 			.user("frame ?types?")
 			.name("Frame Type")
 			.description("The type of the frame for an advancement/notification.")
+			.examples("send task notification with title \"Quest Complete!\" and diamond as the icon to player")
 			.defaultExpression(new EventValueExpression<>(FrameType.class)));
 		Classes.registerClass(new ClassInfo<>(ComponentWrapper.class, "component")
 			.user("components?")
@@ -721,6 +744,8 @@ public class MinestomClasses {
 			}));
 		// purely for serialization
 		Classes.registerClass(new ClassInfo<>(Component.class, "internalcomponent")
+			.name("Internal Component")
+			.description("Internal Adventure component type used for serialization.")
 			.serializeAs(ComponentWrapper.class));
 		Classes.registerClass(new ClassInfo<>(TagResolver.class, "tagresolver")
 			.user("tag ?resolvers?")
@@ -791,16 +816,18 @@ public class MinestomClasses {
 			.user("resource ?pack ?status(es)?")
 			.name("Resource Pack Status")
 			.description("The status of a resource pack that was sent.")
+			.examples("if resource pack status is successfully loaded:")
 			.defaultExpression(new EventValueExpression<>(ResourcePackStatus.class)));
 		Classes.registerClass(new ClassInfo<>(PlayerInventory.class, "playerinventory")
 			.user("player ?inventor(y|ies)")
 			.name("Player Inventory")
 			.description("Represents a player's inventory.")
+			.examples("open inventory of player to player")
 			.defaultExpression(new EventValueExpression<>(PlayerInventory.class)));
 		Classes.registerClass(new ClassInfo<>(Inventory.class, "nonsense")
 			.user("non ?sense")
 			.name("Nonsense")
-			.description("Represents a player's inventory.")
+			.description("Internal inventory class alias used by Skript.")
 			.defaultExpression(new EventValueExpression<>(Inventory.class)));
 		Classes.registerClass(new ClassInfo<>(AbstractInventory.class, "inventory")
 			.user("inventor(y|ies)")
@@ -943,6 +970,7 @@ public class MinestomClasses {
 			.user("slots?")
 			.name("Slot")
 			.description("Represents an item in a slot in an inventory.")
+			.examples("set slot 0 of player's inventory to diamond")
 			.defaultExpression(new EventValueExpression<>(Slot.class))
 			.serializeAs(Item.class)
 			.changer(ITEM_CHANGER));
@@ -1021,6 +1049,7 @@ public class MinestomClasses {
 			.user("score ?boards?")
 			.name("Scoreboard")
 			.description("The scoreboard on the side of a player's screen")
+			.examples("set {_s} to a new sidebar scoreboard named \"Stats\"")
 			.defaultExpression(new EventValueExpression<>(Sidebar.class))
 			.parser(new Parser<>() {
 				@Override
@@ -1163,6 +1192,7 @@ public class MinestomClasses {
 			.user("sounds?")
 			.name("Sound")
 			.description("A sound with an id, seed, category, volume, and pitch.")
+			.examples("play sound \"entity.player.levelup\" at player to all players")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1228,6 +1258,7 @@ public class MinestomClasses {
 			.user("ambient ?sounds?")
 			.name("Ambient Sounds")
 			.description("An ambient sound with an id, mood, and additions.")
+			.examples("set {_sounds} to new ambient sounds with loop \"minecraft:ambient.cave\"")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1311,6 +1342,7 @@ public class MinestomClasses {
 			.user("moods?")
 			.name("Mood")
 			.description("The mood for ambient sounds.")
+			.examples("set {_mood} to mood(\"ambient.cave\", 1 second, 8, 2)")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1368,6 +1400,7 @@ public class MinestomClasses {
 			.user("additions?")
 			.name("Additions")
 			.description("The additions for ambient sounds.")
+			.examples("set {_additions} to additions(\"ambient.cave\", 0.01)")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1420,6 +1453,7 @@ public class MinestomClasses {
 			.user("background ?musics?")
 			.name("Background Music")
 			.description("The background music.")
+			.examples("set {_music} to new background music with music {_track}")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1477,6 +1511,7 @@ public class MinestomClasses {
 			.user("musics?")
 			.name("Music")
 			.description("The regular/creative/underwater background music.")
+			.examples("set {_music} to music(\"music.overworld\", 1 minute, 2 minutes, true)")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1533,12 +1568,19 @@ public class MinestomClasses {
 		Classes.registerClass(new EnumClassInfo<>(EntityActivity.class, "entityactivity")
 			.user("entity activit(y|ies)")
 			.name("Entity Activity")
+			.description("The activity state of an entity (in water, on ground, in air, etc.).")
+			.examples("on spawn:\n\tif entity activity is on ground:")
 			.defaultExpression(new EventValueExpression<>(EntityActivity.class)));
-		Classes.registerClass(new EnumClassInfo<>(MoonPhase.class, "moonphase").user("moon ?phases?"));
+		Classes.registerClass(new EnumClassInfo<>(MoonPhase.class, "moonphase")
+			.user("moon ?phases?")
+			.name("Moon Phase")
+			.description("The phase of the moon in a dimension.")
+			.examples("set {_phase} to full moon"));
 		Classes.registerClass(new ClassInfo<>(BedRule.class, "bedrule")
 			.user("bed ?rules?")
 			.name("Bed Rule")
 			.description("The bed rule environment attribute.")
+			.examples("set {_rule} to new bed rule with sleep rule monsters and with spawn rule spawn")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1596,21 +1638,26 @@ public class MinestomClasses {
 		Classes.registerClass(new EnumClassInfo<>(BedRule.Rule.class, "bedrulerule")
 			.user("bed ?rule ?rules?")
 			.name("Bed Rule Rule")
+			.description("A sleep or spawn rule used when creating a bed rule.")
+			.examples("set {_rule} to new bed rule with sleep rule monsters and with spawn rule spawn")
 			.defaultExpression(new EventValueExpression<>(BedRule.Rule.class)));
 		Classes.registerClass(new EnumClassInfo<>(Sound.Source.class, "soundcategory")
 			.user("sound ?categor(y|ies)")
 			.name("Sound Category")
 			.description("A sound category e.g. master")
+			.examples("play sound \"entity.player.levelup\" at player to all players")
 			.defaultExpression(new EventValueExpression<>(Sound.Source.class)));
 		Classes.registerClass(new EnumClassInfo<>(AbstractDisplayMeta.BillboardConstraints.class, "billboardconstraint")
 			.user("bill ?board ?constraints?")
 			.name("Billboard Constraints")
 			.description("Billboard constraint e.g. FIXED")
+			.examples("set billboard render constraints of targeted entity to fixed")
 			.defaultExpression(new EventValueExpression<>(AbstractDisplayMeta.BillboardConstraints.class)));
 		Classes.registerClass(new ClassInfo<>(Attribute.class, "attributetype")
 			.user("attribute ?types?")
 			.name("Attribute Type")
 			.description("Represents the type of an attribute.")
+			.examples("set attack speed attribute of player to 2")
 			.usage(String.join(", ", Attribute.values().stream().map(attribute -> attribute.key().value()).collect(Collectors.joining())))
 			.parser(new Parser<>() {
 				public Attribute parse(@NotNull String s, @NotNull ParseContext context) {
@@ -1671,6 +1718,7 @@ public class MinestomClasses {
 			.user("named ?text ?colors?")
 			.name("Named Text Color")
 			.description("Team colors (dark red, dark aqua, etc.)")
+			.examples("set {_color} to dark red")
 			.usage(String.join(", ", NamedTextColor.NAMES.keys()))
 			.parser(new Parser<>() {
 				public NamedTextColor parse(@NotNull String s, @NotNull ParseContext context) {
@@ -1731,6 +1779,7 @@ public class MinestomClasses {
 			.user("colors?")
 			.name("Color")
 			.description("Color (outside of the team color range)")
+			.examples("set {_color} to rgb(255, 0, 0)")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1753,6 +1802,7 @@ public class MinestomClasses {
 			.user("alpha ?colors?")
 			.name("Alpha Color")
 			.description("Alpha Color (color with an alpha (transparency) value)")
+			.examples("set the colour of a text display to rgb(10, 50, 100, 50)")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1773,45 +1823,55 @@ public class MinestomClasses {
 			.user("display ?contexts?")
 			.name("Item Display Context")
 			.description("The context in which an item display is rendered (e.g. GUI)")
+			.examples("set display context of targeted entity to head")
 			.defaultExpression(new EventValueExpression<>(ItemDisplayMeta.DisplayContext.class)));
 		Classes.registerClass(new EnumClassInfo<>(TextDisplayMeta.Alignment.class, "textalignment")
 			.user("textalignments?")
 			.name("Text Alignment")
 			.description("The text alignment of a text display (center, left, or right)")
+			.examples("set alignment of targeted entity to center")
 			.defaultExpression(new EventValueExpression<>(TextDisplayMeta.Alignment.class)));
 		Classes.registerClass(new EnumClassInfo<>(EntityAnimationPacket.Animation.class, "animation")
 			.user("animations?")
 			.name("Entity Animation")
 			.description("An animation that an entity can play (main hand swing, leave bed, etc.)")
+			.examples("play swing main arm animation on player")
 			.defaultExpression(new EventValueExpression<>(EntityAnimationPacket.Animation.class)));
 		Classes.registerClass(new EnumClassInfo<>(NBTUtils.TagType.class, "tagtype")
 			.user("tag ?types?")
 			.name("NBT Tag Type")
 			.description("The tag type of an nbt tag (e.g. int array)")
+			.examples("set {_tag} to string nbt tag \"CustomName\" of {_nbt}")
 			.defaultExpression(new EventValueExpression<>(NBTUtils.TagType.class)));
 		Classes.registerClass(new EnumClassInfo<>(ServerListPingType.class, "pingtype")
 			.user("ping ?types?")
 			.name("Server List Ping Type")
 			.description("The ping type of a ServerListPing event")
+			.examples("on server list ping:\n\tif ping type is modern full:")
 			.defaultExpression(new EventValueExpression<>(ServerListPingType.class)));
 		Classes.registerClass(new EnumClassInfo<>(InputKey.class, "inputkey")
 			.user("input ?keys?")
 			.name("Input Key")
 			.description("Represents a movement input key that is pressed by a player.")
+			.examples("broadcast \"%current input keys of player%\"")
 			.defaultExpression(new EventValueExpression<>(InputKey.class)));
 		Classes.registerClass(new EnumClassInfo<>(ClientSettings.ParticleSetting.class, "particlesetting")
 			.user("particle ?settings?")
 			.name("Particle Setting")
 			.description("The setting the player has set for their particles.")
+			.examples("set particle setting of player to all")
 			.defaultExpression(new EventValueExpression<>(ClientSettings.ParticleSetting.class)));
 		Classes.registerClass(new EnumClassInfo<>(ParrotType.class, "parrottype")
 			.user("parrot ?types?")
 			.name("Parrot Type")
 			.description("The type of a parrot that can sit on a player's shoulder.")
+			.examples("set left shoulder parrot type of player to red")
 			.defaultExpression(new EventValueExpression<>(ParrotType.class)));
 		Classes.registerClass(new ClassInfo<>(BufferedImage.class, "bufferedimage")
 			.user("buffered ?images?")
 			.name("Buffered Image")
+			.description("A raster image loaded from a file.")
+			.examples("set {_img} to image from file \"server-icon.png\"")
 			.defaultExpression(new EventValueExpression<>(BufferedImage.class))
 			.parser(new Parser<>() {
 				@Override
@@ -1833,6 +1893,7 @@ public class MinestomClasses {
 			.user("particles?")
 			.name("Particle")
 			.description("Particle (e.g. dust)")
+			.examples("draw 10 of flame at player for player")
 			.usage(Particle.values().stream().map(particle -> particle.key().value()).collect(Collectors.joining(", ")))
 			.parser(new Parser<>() {
 				public Particle parse(@NotNull String s, @NotNull ParseContext context) {
@@ -1862,6 +1923,7 @@ public class MinestomClasses {
 			.user("ambient ?particles?")
 			.name("Ambient Particle")
 			.description("Particle (e.g. dust) with a probability of spawning")
+			.examples("set {_particle} to ambientParticle(white ash, 0.118093334)")
 			.parser(new Parser<>() {
 
 				@Override
@@ -1883,6 +1945,7 @@ public class MinestomClasses {
 			.user("dust ?options?")
 			.name("Dust Option")
 			.description("Dust options for the dust particle")
+			.examples("set {_data} to dustOption(red, 1)")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1903,6 +1966,7 @@ public class MinestomClasses {
 			.user("dust ?transitions?")
 			.name("Dust Transition")
 			.description("Dust options for the dust color transition particle")
+			.examples("set {_data} to dustTransition(red, blue, 1)")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1924,6 +1988,7 @@ public class MinestomClasses {
 			.user("effect ?datas?")
 			.name("Effect Data")
 			.description("Effect data options for the effect and instance effect particles.")
+			.examples("set {_data} to effectData(red, 1)")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1944,6 +2009,7 @@ public class MinestomClasses {
 			.user("trail ?datas?")
 			.name("Trail Data")
 			.description("Trail data options for the trail particle")
+			.examples("set {_data} to trailData(point(0, 64, 0), red, 5 seconds)")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1965,6 +2031,7 @@ public class MinestomClasses {
 			.user("vibration ?datas?")
 			.name("Vibration Data")
 			.description("Vibration data options for the vibration particle")
+			.examples("set {_data} to entityVibrationData(player, 5 seconds)")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1987,6 +2054,7 @@ public class MinestomClasses {
 			.user("rgb ?likes?")
 			.name("RGB Like (Color)")
 			.description("Essentially a color")
+			.examples("set {_data} to dustOption(red, 1)")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -2007,6 +2075,7 @@ public class MinestomClasses {
 			.user("skins?")
 			.name("Skin")
 			.description("A skin with textures and a signature")
+			.examples("set skin of player to skin from \"jeb_\"")
 			.defaultExpression(new EventValueExpression<>(PlayerSkin.class))
 			.parser(new Parser<>() {
 				@Override
@@ -2060,6 +2129,7 @@ public class MinestomClasses {
 			.user("nbt ?compounds?")
 			.name("NBT Compound")
 			.description("A compound (e.g. {test:1b,hello:\"hi\"}")
+			.examples("set {_nbt} to nbt compound of player's tool")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {

@@ -3,6 +3,9 @@ package ch.njol.skript.sections;
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.structures.command.StructCommand;
@@ -23,6 +26,25 @@ import org.skriptlang.skript.lang.entry.util.ExpressionEntryData;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
+@Name("Command Argument")
+@Description({
+	"Defines a typed argument for a command structure.",
+	"The argument name and type are parsed from the section key in the form '<name: type>'.",
+	"Optional entries include 'default value', 'format' (for enum arguments), a 'suggestions' section, and a 'trigger' section.",
+	"If sub-arguments are defined, each leaf argument must have its own trigger instead."
+})
+@Examples({
+	"command /give <item: item>:",
+	"    argument <amount: integer>",
+	"        default value: 1",
+	"        trigger:",
+	"            give {amount} of {item} to player",
+	"command /gamemode <mode: gamemode>:",
+	"    argument <target: player>",
+	"        format: lower case",
+	"        trigger:",
+	"            set gamemode of {target} to {mode}"
+})
 public class SecArgument extends Section {
 
 	private static final EntryValidator ENTRY_VALIDATOR = EntryValidator.builder()

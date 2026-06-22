@@ -3,6 +3,7 @@ package ch.njol.skript.expressions;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.EventValueExpression;
@@ -30,6 +31,12 @@ import org.jetbrains.annotations.Nullable;
 @Name("Creature/Entity/Player/Projectile/Villager/Powered Creeper/etc.")
 @Description({"The entity involved in an event (an entity is a player, a creature or an inanimate object like ignited TNT, a dropped item or an arrow).",
 	"You can use the specific type of the entity that's involved in the event, e.g. in a 'death of a creeper' event you can use 'the creeper' instead of 'the entity'."})
+@Examples({
+	"on damage:",
+	"    broadcast \"%attacker% damaged %victim%!\"",
+	"on spawn of a zombie:",
+	"    set name of event-entity to \"&cZombie\""
+})
 @Since("1.0")
 public class ExprEventObject extends SimpleExpression<Object> {
 	static {

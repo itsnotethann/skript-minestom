@@ -1,12 +1,19 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Player;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Reduced Debug Information")
+@Description("Whether a player has reduced debug information enabled.")
+@Examples("set reduced debug information property of player to true")
 public class ExprReducedDebugInformation extends SimplePropertyExpression<Player, Boolean> {
 
 	static {

@@ -9,7 +9,7 @@ import net.minestom.server.coordinate.Vec;
 
 @Name("Is Normalized")
 @Description("Checks whether a vector is normalized i.e. length of 1")
-@Examples("vector of player's location is normalized")
+@Examples("vector(1, 0, 0) is normalized")
 @Since("2.5.1")
 public class CondIsVectorNormalized extends PropertyCondition<Vec> {
 

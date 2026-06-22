@@ -82,6 +82,8 @@ public class MinestomFunctions {
 			}
 		}).description("Creates a vector with the given x, y and z.").examples("set {_vec} to vector(1, 0, 0)");
 		Functions.register(DefaultFunction.builder(Skript.getAddonInstance(), "blockVector", BlockVec.class)
+			.description("Creates a block vector with integer x, y, and z coordinates.")
+			.examples("set {_bv} to blockVector(0, 64, 0)")
 			.parameter("x", Integer.class)
 			.parameter("y", Integer.class)
 			.parameter("z", Integer.class)
@@ -123,7 +125,7 @@ public class MinestomFunctions {
 				ComponentWrapper tooltip = (ComponentWrapper) params[1][0];
 				return new SuggestionEntry[]{new SuggestionEntry(entry, tooltip.getComponent())};
 			}
-		}).description("Deserializes a MiniMessage string into a Component, with optional tag resolvers.").examples("send mm(\"<red>Hello <name>!\", resolver(\"name\", player's name))");
+		}).description("Creates a command suggestion entry with an optional tooltip component.").examples("set {_entry} to suggestionEntry(\"help\", mm(\"<gray>Shows help\"))");
 		/*Functions.registerFunction(new SimpleJavaFunction<TagResolver>("tagresolver", new Parameter<>[] {
 
 		}) {
@@ -260,6 +262,8 @@ public class MinestomFunctions {
 			}
 		}).description("Find an online player from their username or UUID.").examples("send \"test\" to player(\"bob\")");
 		Functions.register(DefaultFunction.builder(Skript.getAddonInstance(), "mood", AmbientSounds.Mood.class)
+			.description("Creates ambient mood sound data for biome effects.")
+			.examples("set {_mood} to mood(\"ambient.cave\", 1 second, 8, 2)")
 			.parameter("sound-id", String.class)
 			.parameter("delay", Timespan.class)
 			.parameter("block-search-extent", Integer.class)
@@ -278,6 +282,8 @@ public class MinestomFunctions {
 				return new AmbientSounds.Mood(sound, tickDelay, blockSearchExtent, offset.doubleValue());
 			}));
 		Functions.register(DefaultFunction.builder(Skript.getAddonInstance(), "additions", AmbientSounds.Additions.class)
+			.description("Creates ambient addition sound data for biome effects.")
+			.examples("set {_additions} to additions(\"ambient.cave\", 0.01)")
 			.parameter("sound-id", String.class)
 			.parameter("tick-chance", Number.class)
 			.build(args -> {
@@ -289,6 +295,8 @@ public class MinestomFunctions {
 				return new AmbientSounds.Additions(sound, tickChance.doubleValue());
 			}));
 		Functions.register(DefaultFunction.builder(Skript.getAddonInstance(), "music", Music.class)
+			.description("Creates background music data with min/max delay and whether it replaces current music.")
+			.examples("set {_music} to music(\"music.overworld\", 1 minute, 2 minutes, true)")
 			.parameter("sound-id", String.class)
 			.parameter("min-delay", Timespan.class)
 			.parameter("max-delay", Timespan.class)
@@ -307,6 +315,8 @@ public class MinestomFunctions {
 					Math.toIntExact(NumberUtils.ticksFrom(maxDelay)), replacesCurrentMusic);
 			}));
 		Functions.register(DefaultFunction.builder(Skript.getAddonInstance(), "ambientParticle", AmbientParticle.class)
+			.description("Creates ambient particle data with a spawn probability for biome effects.")
+			.examples("set {_particle} to ambientParticle(white ash, 0.118093334)")
 			.parameter("particle", Particle.class)
 			.parameter("probability", Number.class)
 			.build(args -> {

@@ -4,6 +4,9 @@ import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.lang.util.SimpleEvent;
@@ -28,6 +31,28 @@ import org.skriptlang.skript.lang.structure.Structure;
 import java.util.*;
 import java.util.stream.Stream;
 
+@Name("Command")
+@Description({
+	"Defines a custom command that is registered with the server when the script loads.",
+	"Arguments can be declared inline in the command name using '<name: type>' syntax.",
+	"Optional entries include 'aliases', a 'condition' section, and a 'trigger' section.",
+	"Additional 'argument' and 'subcommand' sections can be used to build complex command trees.",
+	"Parsed argument values are available as local variables named after each argument."
+})
+@Examples({
+	"command /hello:",
+	"    trigger:",
+	"        send \"Hello!\" to player",
+	"command /give <item: item> <amount: integer>:",
+	"    aliases: g",
+	"    trigger:",
+	"        give {amount} of {item} to player",
+	"command /admin:",
+	"    condition:",
+	"        return player has permission \"admin\"",
+	"    trigger:",
+	"        send \"Admin panel\" to player"
+})
 public class StructCommand extends Structure {
 
 	public static final EntryValidator COMMAND_VALIDATOR = EntryValidator.builder()

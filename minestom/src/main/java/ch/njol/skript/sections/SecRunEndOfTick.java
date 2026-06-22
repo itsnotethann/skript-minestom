@@ -2,6 +2,9 @@ package ch.njol.skript.sections;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
@@ -11,6 +14,17 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.List;
 
+@Name("Run at End of Tick")
+@Description({
+	"Schedules the code inside this section to run at the end of the current server tick.",
+	"Local variables from the current scope are preserved."
+})
+@Examples({
+	"schedule to run at the end of the tick:",
+	"    broadcast \"End of tick!\"",
+	"run by end of tick:",
+	"    delete {temp::*}"
+})
 public class SecRunEndOfTick extends Section {
 
 	static {

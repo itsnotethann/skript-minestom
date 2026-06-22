@@ -2,6 +2,9 @@ package ch.njol.skript.sections;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.EntitySpawnWrapper;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.variables.Variables;
@@ -17,6 +20,19 @@ import org.eclipse.jdt.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+@Name("Teleport")
+@Description({
+	"Teleports one or more entities to a location.",
+	"Optionally specify an instance to move entities into a different world.",
+	"Use 'sync' to wait for each teleport to finish before continuing.",
+	"An optional subsection runs once the teleport completes."
+})
+@Examples({
+	"teleport player to location at(0, 64, 0):",
+	"    broadcast \"Player arrived!\"",
+	"teleport {_entity} to {_loc} in instance {_world} sync:",
+	"    set health of entity to 20"
+})
 public class EffSecTeleport extends EffectSection {
 
 	static {

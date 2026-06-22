@@ -2,6 +2,9 @@ package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.ServerListPingWrapper;
 import ch.njol.skript.lang.EventRestrictedSyntax;
 import ch.njol.skript.lang.Expression;
@@ -23,6 +26,10 @@ import java.util.List;
 
 import static ch.njol.skript.expressions.ExprMOTDPlayerCount.getPlayerInfo;
 
+
+@Name("MOTD Hover Sample")
+@Description("The hover/player sample text in the server list ping event.")
+@Examples("set motd hover sample to \"<gray>Join us!\"")
 public class ExprMOTDHoverSample extends SimpleExpression<ComponentWrapper> implements EventRestrictedSyntax {
 
 	static {

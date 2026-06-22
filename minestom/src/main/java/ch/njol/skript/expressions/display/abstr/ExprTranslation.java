@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions.display.abstr;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.coordinate.Point;
@@ -9,6 +12,10 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import org.bukkit.event.Event;
 
+
+@Name("Display Translation")
+@Description("The translation offset of a display entity.")
+@Examples("set display translation of targeted entity to location(0, 1, 0)")
 public class ExprTranslation extends SimplePropertyExpression<Entity, Point> {
 
 	static {

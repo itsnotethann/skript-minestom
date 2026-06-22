@@ -2,12 +2,19 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Entity;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
+
+@Name("Silent")
+@Description("Whether an entity is silent.")
+@Examples("set silent property of targeted entity to true")
 public class ExprSilent extends SimplePropertyExpression<Entity, Boolean> {
 
 	static {

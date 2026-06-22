@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -12,6 +15,10 @@ import org.bukkit.event.Event;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Name("Block Property")
+@Description("A block state property value of a block.")
+@Examples("set {_facing} to block \"facing\" property of block at player")
 public class ExprBlockProperty extends PropertyExpression<Block, String> {
 
 	static {

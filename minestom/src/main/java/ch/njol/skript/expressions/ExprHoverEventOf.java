@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -15,6 +18,10 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("rawtypes")
+
+@Name("Hover Event Of")
+@Description("Creates a hover event that shows a component, item, or entity.")
+@Examples("set {_hover} to hover event showing player")
 public class ExprHoverEventOf extends SimpleExpression<HoverEvent> {
 
 	static {

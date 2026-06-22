@@ -1,6 +1,9 @@
 package ch.njol.skript.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -10,6 +13,9 @@ import net.minestom.server.entity.EntityType;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Switch Entity Type")
+@Description("Changes the entity type of the given entities without despawning them.")
+@Examples("switch player's entity type to pig")
 public class EffSwitchEntityType extends Effect {
 
 	static {

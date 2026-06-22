@@ -2,6 +2,9 @@ package ch.njol.skript.conditions;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.conditions.base.PropertyCondition;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,6 +14,9 @@ import com.github.hapily04.skriptminestom.util.NBTUtils;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Has NBT Tag")
+@Description("Checks whether NBT compounds contain the given tag paths. Supports nested tags using dot notation.")
+@Examples("{_nbt} has the nbt tag \"Health\"")
 public class CondHasTag extends Condition {
 
 	static {

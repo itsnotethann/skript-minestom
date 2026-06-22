@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -17,6 +20,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.OptionalLong;
 
+@Name("Sound")
+@Description("Creates a sound from an ID with optional seed, category, volume, and pitch.")
+@Examples("set {_sound} to sound \"minecraft:entity.experience_orb.pickup\" at volume 1 and pitch 1")
 public class ExprSound extends SimpleExpression<Sound> {
 
 	static {

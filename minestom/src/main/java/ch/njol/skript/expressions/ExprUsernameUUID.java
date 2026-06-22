@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -15,6 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+
+@Name("Username/UUID From Mojang")
+@Description("Looks up a Mojang username from a UUID or vice versa.")
+@Examples("set {_name} to username from \"%uuid of player%\"")
 public class ExprUsernameUUID extends SimpleExpression<String> {
 
 	static {

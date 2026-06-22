@@ -1,6 +1,9 @@
 package ch.njol.skript.conditions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -9,6 +12,9 @@ import net.minestom.server.MinecraftServer;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+@Name("Is Stopping")
+@Description("Checks if the server is shutting down.")
+@Examples("server is stopping")
 public class CondIsStopping extends Condition {
 
 	static {

@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.events.wrapper.EntityAttackWrapper;
 import ch.njol.skript.events.wrapper.PlayerEntityInteractWrapper;
 import ch.njol.skript.lang.EventRestrictedSyntax;
@@ -14,6 +17,10 @@ import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
 // todo convert to event value
+
+@Name("Clicked Entity")
+@Description("The entity that was clicked in an entity click event.")
+@Examples("broadcast \"%clicked entity%\"")
 public class ExprClickedEntity extends SimpleExpression<Entity> implements EventRestrictedSyntax {
 
 	static {

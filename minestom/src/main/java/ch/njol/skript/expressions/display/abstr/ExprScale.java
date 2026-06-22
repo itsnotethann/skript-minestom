@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions.display.abstr;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.coordinate.Vec;
@@ -8,6 +11,10 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import org.bukkit.event.Event;
 
+
+@Name("Display Scale")
+@Description("The scale of a display entity.")
+@Examples("set display scale of targeted entity to vector(2, 2, 2)")
 public class ExprScale extends SimplePropertyExpression<Entity, Vec> {
 
 	static {

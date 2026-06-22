@@ -1,6 +1,9 @@
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.Literal;
@@ -13,6 +16,10 @@ import net.minestom.server.world.DimensionType;
 import net.minestom.server.world.biome.Biome;
 import org.bukkit.event.Event;
 
+
+@Name("Biome/Dimension From Key")
+@Description("A biome or dimension type from a namespace key.")
+@Examples("set {_biome} to biome from namespace key \"minecraft:plains\"")
 public class ExprEnvironmentFromKey extends SimpleExpression<Object> {
 
 	static {
