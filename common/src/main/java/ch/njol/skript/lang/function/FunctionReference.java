@@ -278,6 +278,10 @@ public class FunctionReference<T> implements Contract {
 		return function;
 	}
 
+	public @Nullable Signature<? extends T> getSignature() {
+		return signature;
+	}
+
 	public boolean resetReturnValue() {
 		if (function != null)
 			return function.resetReturnValue();

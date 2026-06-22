@@ -35,6 +35,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.skriptlang.skript.common.function.DefaultFunction;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import static ch.njol.skript.expressions.ExprAmbientSounds.getSoundEvent;
@@ -324,8 +325,9 @@ public class MinestomFunctions {
 		else {
 			player = connectionManager.getOnlinePlayerByUsername(input);
 			if (!strict && player == null) {
+				input = input.toLowerCase(Locale.ENGLISH);
 				for (Player p : connectionManager.getOnlinePlayers()) {
-					if (p.getUsername().contains(input)) {
+					if (p.getUsername().toLowerCase(Locale.ENGLISH).contains(input)) {
 						player = p;
 						break;
 					}

@@ -1,67 +1,55 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.expressions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.SkriptAPIException;
 import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Example;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
-import ch.njol.skript.lang.Literal;
+import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
+import ch.njol.skript.lang.simplification.SimplifiedLiteral;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.util.LiteralUtils;
 import ch.njol.skript.util.Patterns;
 import ch.njol.util.Kleenean;
 import ch.njol.util.StringUtils;
 import ch.njol.util.coll.CollectionUtils;
+import ch.njol.util.coll.iterator.EmptyIterator;
 import com.google.common.collect.Iterators;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.function.TriFunction;
 import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
-import java.util.Iterator;
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @Name("Elements")
 @Description({
-	"The first, last, range or a random element of a set, e.g. a list variable.",
+	"The first, last, range or a random element of a set, e.g. a list variable, or a queue.",
+	"Asking for elements from a queue will also remove them from the queue, see the new queue expression for more information.",
 	"See also: <a href='#ExprRandom'>random expression</a>"
 })
-@Examples({
-	"broadcast the first 3 elements of {top players::*}",
-	"set {_last} to last element of {top players::*}",
-	"set {_random player} to random element out of all players",
-	"send 2nd last element of {top players::*} to player",
-	"set {page2::*} to elements from 11 to 20 of {top players::*}"
-})
+@Example("broadcast the first 3 elements of {top players::*}")
+@Example("set {_last} to last element of {top players::*}")
+@Example("set {_random player} to random element out of all players")
+@Example("send 2nd last element of {top players::*} to player")
+@Example("set {page2::*} to elements from 11 to 20 of {top players::*}")
+@Example("broadcast the 1st element in {queue}")
+@Example("broadcast the first 3 elements in {queue}")
 @Since("2.0, 2.7 (relative to last element), 2.8.0 (range of elements)")
-public class ExprElement<T> extends SimpleExpression<T> {
+public class ExprElement<T> extends SimpleExpression<T> implements KeyProviderExpression<T> {
 
 	private static final Patterns<ElementType[]> PATTERNS = new Patterns<>(new Object[][]{
-		{"[the] (first|1:last) element [out] of %objects%", new ElementType[] {ElementType.FIRST_ELEMENT, ElementType.LAST_ELEMENT}},
-		{"[the] (first|1:last) %integer% elements [out] of %objects%", new ElementType[] {ElementType.FIRST_X_ELEMENTS, ElementType.LAST_X_ELEMENTS}},
-		{"[a] random element [out] of %objects%", new ElementType[] {ElementType.RANDOM}},
-		{"[the] %integer%(st|nd|rd|th) [1:[to] last] element [out] of %objects%", new ElementType[] {ElementType.ORDINAL, ElementType.TAIL_END_ORDINAL}},
-		{"[the] elements (from|between) %integer% (to|and) %integer% [out] of %objects%", new ElementType[] {ElementType.RANGE}}
+		{"[the] (first|1:last) element [out] (of|in) %objects%", new ElementType[]{ElementType.FIRST_ELEMENT, ElementType.LAST_ELEMENT}},
+		{"[the] (first|1:last) %integer% elements [out] (of|in) %objects%", new ElementType[]{ElementType.FIRST_X_ELEMENTS, ElementType.LAST_X_ELEMENTS}},
+		{"[a] random element [out] (of|in) %objects%", new ElementType[]{ElementType.RANDOM}},
+		{"[the] %integer%(st|nd|rd|th) [1:[to] last] element [out] (of|in) %objects%", new ElementType[]{ElementType.ORDINAL, ElementType.TAIL_END_ORDINAL}},
+		{"[the] elements (from|between) %integer% (to|and) %integer% [out] (of|in) %objects%", new ElementType[]{ElementType.RANGE}},
 	});
 
 	static {
@@ -70,109 +58,175 @@ public class ExprElement<T> extends SimpleExpression<T> {
 	}
 
 	private enum ElementType {
-		FIRST_ELEMENT,
-		LAST_ELEMENT,
-		FIRST_X_ELEMENTS,
-		LAST_X_ELEMENTS,
-		RANDOM,
-		ORDINAL,
-		TAIL_END_ORDINAL,
-		RANGE
+		FIRST_ELEMENT(iterator -> Iterators.limit(iterator, 1)),
+		LAST_ELEMENT(iterator -> Iterators.singletonIterator(Iterators.getLast(iterator))),
+		FIRST_X_ELEMENTS(Iterators::limit),
+		LAST_X_ELEMENTS((iterator, index) -> {
+			Object[] array = Iterators.toArray(iterator, Object.class);
+			index = Math.min(index, array.length);
+			return Iterators.forArray(CollectionUtils.subarray(array, array.length - index, array.length));
+		}),
+		RANDOM(iterator -> {
+			Object[] array = Iterators.toArray(iterator, Object.class);
+			if (array.length == 0)
+				return EmptyIterator.get();
+			Object element = CollectionUtils.getRandom(array);
+			return Iterators.singletonIterator(element);
+		}),
+		ORDINAL((iterator, index) -> {
+			Iterators.advance(iterator, index - 1);
+			if (!iterator.hasNext())
+				return EmptyIterator.get();
+			return Iterators.singletonIterator(iterator.next());
+		}),
+		TAIL_END_ORDINAL((iterator, index) -> {
+			Object[] array = Iterators.toArray(iterator, Object.class);
+			if (index > array.length)
+				return EmptyIterator.get();
+			return Iterators.singletonIterator(array[array.length - index]);
+		}),
+		RANGE((iterator, startIndex, endIndex) -> {
+			boolean reverse = startIndex > endIndex;
+			int from = Math.max(Math.min(startIndex, endIndex) - 1, 0);
+			int to = Math.max(Math.max(startIndex, endIndex), 0);
+			if (reverse) {
+				Object[] array = Iterators.toArray(iterator, Object.class);
+				Object[] elements = CollectionUtils.subarray(array, from, to);
+				ArrayUtils.reverse(elements);
+				return Iterators.forArray(elements);
+			}
+			Iterators.advance(iterator, from);
+			return Iterators.limit(iterator, to - from);
+		});
+
+		private final TriFunction<Iterator<?>, Integer, Integer, Iterator<?>> function;
+
+		ElementType(Function<Iterator<?>, Iterator<?>> function) {
+			this.function = (it, start, end) -> function.apply(it);
+		}
+
+		ElementType(BiFunction<Iterator<?>, Integer, Iterator<?>> function) {
+			this.function = (it, start, end) -> function.apply(it, start);
+		}
+
+		ElementType(TriFunction<Iterator<?>, Integer, Integer, Iterator<?>> function) {
+			this.function = function;
+		}
+
+		public <T> Iterator<T> apply(Iterator<T> iterator, int startIndex, int endIndex) {
+			//noinspection unchecked
+			return (Iterator<T>) function.apply(iterator, startIndex, endIndex);
+		}
+
 	}
 
+	private final Map<Event, List<String>> cache = new WeakHashMap<>();
+
 	private Expression<? extends T> expr;
-	private	@Nullable Expression<Integer> startIndex, endIndex;
+	private @Nullable Expression<Integer> startIndex, endIndex;
 	private ElementType type;
+	private boolean keyed;
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
+	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
 		ElementType[] types = PATTERNS.getInfo(matchedPattern);
-		expr = LiteralUtils.defendExpression(exprs[exprs.length - 1]);
+		this.expr = LiteralUtils.defendExpression(expressions[expressions.length - 1]);
+
 		switch (type = types[parseResult.mark]) {
 			case RANGE:
-				endIndex = (Expression<Integer>) exprs[1];
-				//$FALL-THROUGH$
-			case FIRST_X_ELEMENTS:
-			case LAST_X_ELEMENTS:
-			case ORDINAL:
-			case TAIL_END_ORDINAL:
-				startIndex = (Expression<Integer>) exprs[0];
+				endIndex = (Expression<Integer>) expressions[1];
+			case FIRST_X_ELEMENTS, LAST_X_ELEMENTS, ORDINAL, TAIL_END_ORDINAL:
+				startIndex = (Expression<Integer>) expressions[0];
 				break;
 			default:
 				startIndex = null;
 				break;
 		}
+		this.keyed = KeyProviderExpression.canReturnKeys(this.expr);
 		return LiteralUtils.canInitSafely(expr);
 	}
 
 	@Override
-	@Nullable
-	@SuppressWarnings("unchecked")
-	protected T[] get(Event event) {
+	protected T @Nullable [] get(Event event) {
+		if (keyed) {
+			KeyedValue.UnzippedKeyValues<T> unzipped = KeyedValue.unzip(keyedIterator(event));
+			cache.put(event, unzipped.keys());
+			//noinspection unchecked
+			T[] empty = (T[]) Array.newInstance(getReturnType(), 0);
+			return unzipped.values().toArray(empty);
+		}
+
+		Iterator<? extends T> iterator;
+		if (expr.isSingle()) {
+			T single = expr.getSingle(event);
+			iterator = transformIterator(event, Iterators.singletonIterator(single));
+		} else {
+			iterator = transformIterator(event, expr.iterator(event));
+		}
+
+		assert iterator != null;
+		//noinspection unchecked
+		return Iterators.toArray(iterator, (Class<T>) getReturnType());
+	}
+
+	@Override
+	public @NotNull String @NotNull [] getArrayKeys(Event event) throws IllegalStateException {
+		if (!keyed)
+			throw new UnsupportedOperationException();
+		if (!cache.containsKey(event))
+			throw new SkriptAPIException("Cannot call getArrayKeys() before calling getArray() or getAll()");
+		return cache.remove(event).toArray(new String[0]);
+	}
+
+	@Override
+	public @Nullable Iterator<? extends T> iterator(Event event) {
+		if (expr.isSingle()) {
+			T single = expr.getSingle(event);
+			return Iterators.singletonIterator(single);
+		}
 		Iterator<? extends T> iterator = expr.iterator(event);
+		return transformIterator(event, iterator);
+	}
+
+	@Override
+	public Iterator<KeyedValue<T>> keyedIterator(Event event) {
+		if (!keyed)
+			throw new UnsupportedOperationException();
+		//noinspection unchecked
+		Iterator<KeyedValue<T>> iterator = ((KeyProviderExpression<T>) expr).keyedIterator(event);
+		return transformIterator(event, iterator);
+	}
+
+	private <A> Iterator<A> transformIterator(Event event, @Nullable Iterator<A> iterator) {
 		if (iterator == null || !iterator.hasNext())
-			return null;
-		T element = null;
-		Class<T> returnType = (Class<T>) getReturnType();
-		int startIndex = 0, endIndex = 0;
+			return EmptyIterator.get();
+		Integer startIndex = 0, endIndex = 0;
 		if (this.startIndex != null) {
-			Integer integer = this.startIndex.getSingle(event);
-			if (integer == null)
-				return null;
-			startIndex = integer;
-			if (startIndex <= 0 && type != ElementType.RANGE)
-				return null;
+			startIndex = this.startIndex.getSingle(event);
+			if (startIndex == null || startIndex <= 0 && type != ElementType.RANGE)
+				return EmptyIterator.get();
 		}
 		if (this.endIndex != null) {
-			Integer integer = this.endIndex.getSingle(event);
-			if (integer == null)
-				return null;
-			endIndex = integer;
+			endIndex = this.endIndex.getSingle(event);
+			if (endIndex == null)
+				return EmptyIterator.get();
 		}
-		T[] elementArray;
-		switch (type) {
-			case FIRST_ELEMENT:
-				element = iterator.next();
-				break;
-			case LAST_ELEMENT:
-				element = Iterators.getLast(iterator);
-				break;
-			case RANDOM:
-				element = CollectionUtils.getRandom(Iterators.toArray(iterator, returnType));
-				break;
-			case ORDINAL:
-				Iterators.advance(iterator, startIndex - 1);
-				if (!iterator.hasNext())
-					return null;
-				element = iterator.next();
-				break;
-			case TAIL_END_ORDINAL:
-				elementArray = Iterators.toArray(iterator, returnType);
-				if (startIndex > elementArray.length)
-					return null;
-				element = elementArray[elementArray.length - startIndex];
-				break;
-			case FIRST_X_ELEMENTS:
-				return Iterators.toArray(Iterators.limit(iterator, startIndex), returnType);
-			case LAST_X_ELEMENTS:
-				elementArray = Iterators.toArray(iterator, returnType);
-				startIndex = Math.min(startIndex, elementArray.length);
-				return CollectionUtils.subarray(elementArray, elementArray.length - startIndex, elementArray.length);
-			case RANGE:
-				elementArray = Iterators.toArray(iterator, returnType);
-				boolean reverse = startIndex > endIndex;
-				int from = Math.min(startIndex, endIndex) - 1;
-				int to = Math.max(startIndex, endIndex);
-				T[] elements = CollectionUtils.subarray(elementArray, from, to);
-				if (reverse)
-					ArrayUtils.reverse(elements);
-				return elements;
-		}
-		//noinspection unchecked
-		elementArray = (T[]) Array.newInstance(getReturnType(), 1);
-		elementArray[0] = element;
-		return elementArray;
+		return type.apply(iterator, startIndex, endIndex);
+	}
+
+	@Override
+	public boolean canReturnKeys() {
+		if (!keyed)
+			return false;
+		return ((KeyProviderExpression<?>) expr).canReturnKeys();
+	}
+
+	@Override
+	public boolean areKeysRecommended() {
+		if (!keyed)
+			return false;
+		return ((KeyProviderExpression<?>) expr).areKeysRecommended();
 	}
 
 	@Override
@@ -198,7 +252,32 @@ public class ExprElement<T> extends SimpleExpression<T> {
 
 	@Override
 	public Class<? extends T> getReturnType() {
-		return expr.getReturnType();
+		Class<? extends T> returnType = expr.getReturnType();
+		//noinspection unchecked
+		return returnType;
+	}
+
+	@Override
+	public Class<? extends T>[] possibleReturnTypes() {
+		Class<? extends T> returnType = expr.getReturnType();
+		//noinspection unchecked
+		return expr.possibleReturnTypes();
+	}
+
+	@Override
+	public boolean canReturn(Class<?> returnType) {
+		return expr.canReturn(returnType);
+	}
+
+	@Override
+	public Expression<? extends T> simplify() {
+		if (expr instanceof Literal<?>
+			&& type != ElementType.RANDOM
+			&& (startIndex == null || startIndex instanceof Literal<Integer>)
+			&& (endIndex == null || endIndex instanceof Literal<Integer>)) {
+			return SimplifiedLiteral.fromExpression(this);
+		}
+		return this;
 	}
 
 	@Override

@@ -39,6 +39,7 @@ import net.luckperms.api.LuckPerms;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventDispatcher;
+import net.minestom.server.event.EventNode;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerChatEvent;
 import org.bukkit.Bukkit;
@@ -146,6 +147,8 @@ public class SkriptMinestom {
 
 		// init events
 		GlobalEventHandler geh = MinecraftServer.getGlobalEventHandler();
+		EventNode<net.minestom.server.event.Event> skriptEventNode = EventNode.all("skript-user-events").setPriority(50);
+		geh.addChild(skriptEventNode);
 		for (SkriptEventInfo<?> eventInfo : Skript.getEvents()) {
 			for (Class<? extends Event> bukkitEventClazz : eventInfo.events) {
 				if (!EventWrapper.class.isAssignableFrom(bukkitEventClazz)) continue;
@@ -159,7 +162,7 @@ public class SkriptMinestom {
 				}
 				if (constructor == null) continue;
 				ConstructorAccessor<? extends Event> mirrorConstructor = Mirror.of(bukkitEventClazz).constructor(eventType);
-				geh.addListener(eventType.asSubclass(net.minestom.server.event.Event.class), event -> {
+				skriptEventNode.addListener(eventType.asSubclass(net.minestom.server.event.Event.class), event -> {
 					EventWrapper eventWrapper = (EventWrapper) mirrorConstructor.newInstance(event);
 					pluginManager.callEvent(eventWrapper);
 				});

@@ -66,7 +66,7 @@ public class EffSecCreateInstance extends EffectSection {
 	static {
 		ENTRY_VALIDATOR = EntryValidator.builder()
 			.addEntryData(new LiteralEntryData<>("dynamic lighting", null, true, Boolean.class))
-			.addEntry("file", null, true)
+			.addEntryData(new ExpressionEntryData<>("file", null, true, String.class))
 			.addEntry("loader", null, true)
 			.addEntryData(new ExpressionEntryData<>("dimension", null, true, DimensionType.class))
 			.addEntryData(new ExpressionEntryData<>("preload biome", null, true, Biome.class))
@@ -92,7 +92,7 @@ public class EffSecCreateInstance extends EffectSection {
 	private Expression<InstanceContainer> originalInstance;
 	private boolean dynamicLighting = false;
 	@Nullable
-	private File worldFile;
+	private Expression<String> worldFile;
 	@Nullable
 	private String loader;
 	@Nullable
@@ -126,8 +126,8 @@ public class EffSecCreateInstance extends EffectSection {
 			Boolean dynamicLighting = container.getOptional("dynamic lighting", Boolean.class, false);
 			if (dynamicLighting != null) this.dynamicLighting = dynamicLighting;
 
-			String worldFile = container.getOptional("file", String.class, false);
-			this.worldFile = worldFile == null ? null : new File(FileUtils.getServerDirectory(), worldFile);
+			this.worldFile = container.getOptional("file", Expression.class, false);
+			//this.worldFile = worldFile == null ? null : new File(FileUtils.getServerDirectory(), worldFile);
 
 			String loader = container.getOptional("loader", String.class, false);
 			if (loader != null) {
@@ -203,9 +203,13 @@ public class EffSecCreateInstance extends EffectSection {
 				instance.setChunkSupplier(LightingChunk::new);
 				RELIGHT_INSTANCES.add(container);
 			}
-			assert worldFile != null; // shouldn't be null because we throw a skript error if the file doesn't exist or if it's null
+			assert worldFile != null; // shouldn't be null because we throw a skript error if it's null
+			String worldFile = this.worldFile.getSingle(event);
+			if (worldFile == null) return super.walk(event, false);
+			File trueWorldFile = new File(FileUtils.getServerDirectory(), worldFile);
 			if (loader != null) {
-				Path worldPath = worldFile.toPath();
+				if (!trueWorldFile.exists()) return super.walk(event, false);
+				Path worldPath = trueWorldFile.toPath();
 				if (loader.equalsIgnoreCase("anvil")) container.setChunkLoader(new AnvilLoader(worldPath));
 				else {
 					try {
@@ -224,7 +228,7 @@ public class EffSecCreateInstance extends EffectSection {
 					Variables.withLocalVariables(variables, generateEvent, () -> TriggerItem.walk(generator, generateEvent));
 				});
 			}
-			if (preloadOption != null) preLoadChunks(container, worldFile, preloadOption.equals("strict"), biome);
+			if (preloadOption != null) preLoadChunks(container, trueWorldFile, preloadOption.equals("strict"), biome);
 		} else {
 			assert originalInstance != null; // it won't be null because it's in the pattern
 			InstanceContainer instanceContainer = originalInstance.getSingle(event);

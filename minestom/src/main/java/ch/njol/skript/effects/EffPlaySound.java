@@ -28,7 +28,7 @@ public class EffPlaySound extends Effect {
 
 	static {
 		Skript.registerEffect(EffPlaySound.class,
-			"play %sounds% %directions% %points% (to|for) %players%",
+			"play %sounds% [%-directions% %-points%] (to|for) %players%",
 			"play %sounds% [%directions% %points%] [in [(world|instance)] %instances%]",
 			"play %sounds% (on|from) %entities% [(to|for) %-players%]");
 	}
@@ -51,7 +51,10 @@ public class EffPlaySound extends Effect {
 		pattern = matchedPattern;
 		sounds = (Expression<Sound>) expressions[0];
 		if (matchedPattern != 2) {
-			points = Direction.combine((Expression<? extends Direction>) expressions[1], (Expression<? extends Point>) expressions[2]);
+			Expression<? extends Direction> expr1 = (Expression<? extends Direction>) expressions[1];
+			Expression<? extends Point> expr2 = (Expression<? extends Point>) expressions[2];
+			if (expr1 != null && expr2 != null) points = Direction.combine((Expression<? extends Direction>) expressions[1],
+				(Expression<? extends Point>) expressions[2]);
 			if (matchedPattern == 0) players = (Expression<Player>) expressions[3];
 			else instances = (Expression<Instance>) expressions[3];
 		} else {
@@ -71,12 +74,18 @@ public class EffPlaySound extends Effect {
 			switch (pattern) {
 				case 0 -> {
 					assert players != null;
-					assert points != null;
-					for (Player player : players) {
-						for (Point point : points) {
-							player.playSound(sound, point);
+					if (points == null) {
+						for (Player player : players) {
+							player.playSound(sound);
+						}
+					} else {
+						for (Player player : players) {
+							for (Point point : points) {
+								player.playSound(sound, point);
+							}
 						}
 					}
+
 				}
 				case 1 -> {
 					assert points != null;
@@ -107,7 +116,7 @@ public class EffPlaySound extends Effect {
 	public String toString(@Nullable Event event, boolean debug) {
 		String toString = "play sound " + sounds.toString(event, debug);
 		return switch (pattern) {
-			case 0 -> toString + points.toString(event, debug) + " to " + players.toString(event, debug);
+			case 0 -> toString + (points != null ? points.toString(event, debug) : "") + " to " + players.toString(event, debug);
 			case 1 -> toString + points.toString(event, debug) + " in instance " + instances.toString(event, debug);
 			case 2 -> toString + " from " + entities.toString(event, debug) + (players == null ? "" : " " + players.toString(event, debug));
 			default -> throw new IllegalStateException("Unexpected value: " + pattern);
