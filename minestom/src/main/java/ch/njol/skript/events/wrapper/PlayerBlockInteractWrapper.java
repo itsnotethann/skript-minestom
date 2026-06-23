@@ -8,10 +8,6 @@ import net.minestom.server.event.player.PlayerBlockInteractEvent;
 
 public class PlayerBlockInteractWrapper extends EventWrapper<PlayerBlockInteractEvent> implements PlayerInstanceEventMarker, BlockEventMarker {
 
-	static {
-		EventValues.registerEventValue(PlayerBlockInteractWrapper.class, BlockVec.class, from -> from.getEvent().getBlockPosition());
-	}
-
 	public PlayerBlockInteractWrapper(PlayerBlockInteractEvent event) {
 		super(event);
 	}
