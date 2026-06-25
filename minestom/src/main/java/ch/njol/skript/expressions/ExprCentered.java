@@ -59,7 +59,7 @@ public class ExprCentered extends SimpleExpression<Point> {
 	}
 
 	private Point toCenter(Point point) {
-		return new Vec(point.blockX()+0.5, point.y(), point.blockZ()+0.5);
+		return point.withX(point.blockX()+0.5).withZ(point.blockZ()+0.5);
 	}
 
 }
