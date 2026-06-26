@@ -4,6 +4,7 @@ import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
 import ch.njol.skript.log.RedirectingLogHandler;
 import ch.njol.skript.log.TimingLogHandler;
+import ch.njol.skript.util.FileUtils;
 import ch.njol.util.OpenCloseable;
 import com.github.hapily04.skriptminestom.luckperms.LuckPermsPlayer;
 import net.kyori.adventure.text.Component;
@@ -12,6 +13,8 @@ import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.arguments.ArgumentStringArray;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
 
 import static com.github.hapily04.skriptminestom.command.reload.ReloadCommand.fileNotFoundMessage;
 import static com.github.hapily04.skriptminestom.command.reload.ReloadCommand.initSuggestions;
@@ -23,14 +26,10 @@ public class EnableCommand extends Command {
 
 	public EnableCommand() {
 		super("enable");
-		setCondition((sender, commandString) -> LuckPermsPlayer.hasPermission(sender, "skript.enable"));
-		setDefaultExecutor((sender, context) -> sender.sendMessage(ENABLE_USAGE));
+		setCondition((sender, _) -> LuckPermsPlayer.hasPermission(sender, "skript.enable"));
+		setDefaultExecutor((sender, _) -> sender.sendMessage(ENABLE_USAGE));
 		Argument<String[]> fileArg = new ArgumentStringArray("to_enable")
-			.setSuggestionCallback((sender, context, suggestion) -> {
-				File scriptsFolder = Skript.getInstance().getScriptsFolder();
-				initSuggestions(scriptsFolder.listFiles(), scriptsFolder.getPath().length(), suggestion,
-					false, false, true);
-			});
+			.setSuggestionCallback((_, ctx, suggestion) -> initSuggestions(suggestion, ctx.getInput(), false));
 		addSyntax((sender, context) -> {
 			String locationProvided = context.get(fileArg)[0];
 			String originalProvidedLocation = locationProvided;
@@ -45,13 +44,26 @@ public class EnableCommand extends Command {
 				sender.sendMessage(SKRIPT_MINI_MESSAGE.deserialize("<skript_minestom_tag> <yellow>" + originalProvidedLocation + " <error_color>is already enabled."));
 				return;
 			}
+			FileFilter filter = ScriptLoader.getDisabledScriptsFilter();
+			if (filter.accept(scriptFile)) {
+				File newFile = new File(scriptFile.getParentFile(), scriptFile.getName()
+					.substring(ScriptLoader.DISABLED_SCRIPT_PREFIX_LENGTH));
+				try {
+					FileUtils.move(scriptFile, newFile, false);
+					scriptFile = newFile;
+				} catch (IOException e) {
+					sender.sendMessage(SKRIPT_MINI_MESSAGE.deserialize("<skript_minestom_tag> <error_color>Error occurred whilst enabling '<yellow>" + originalProvidedLocation + "<error_color>'!"));
+					e.printStackTrace();
+				}
+			}
 			try (TimingLogHandler timingLogHandler = new TimingLogHandler().start()) {
 				ScriptLoader.loadScripts(scriptFile, OpenCloseable.combine(new RedirectingLogHandler(sender, null), timingLogHandler))
-							.whenComplete((scriptInfo, throwable) -> {
-								long time = timingLogHandler.getTimeTaken();
-								sender.sendMessage(SKRIPT_MINI_MESSAGE.deserialize("<skript_minestom_tag> <success_color>Successfully enabled <yellow>" + originalProvidedLocation + " <success_color>in " + time + "ms."));
-							});
+					.whenComplete((_, _) -> {
+						long time = timingLogHandler.getTimeTaken();
+						sender.sendMessage(SKRIPT_MINI_MESSAGE.deserialize("<skript_minestom_tag> <success_color>Successfully enabled <yellow>" + originalProvidedLocation + " <success_color>in " + time + "ms."));
+					});
 			}
+
 		}, fileArg);
 	}
 

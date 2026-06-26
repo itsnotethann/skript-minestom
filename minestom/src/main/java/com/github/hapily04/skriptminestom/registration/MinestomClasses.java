@@ -40,6 +40,8 @@ import net.minestom.server.entity.attribute.Attribute;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import net.minestom.server.entity.metadata.display.ItemDisplayMeta;
 import net.minestom.server.entity.metadata.display.TextDisplayMeta;
+import net.minestom.server.entity.metadata.monster.BasePiglinMeta;
+import net.minestom.server.entity.metadata.monster.PiglinMeta;
 import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;

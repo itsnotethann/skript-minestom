@@ -14,11 +14,13 @@ import net.minestom.server.command.builder.arguments.Argument;
 import net.minestom.server.command.builder.arguments.ArgumentStringArray;
 import net.minestom.server.command.builder.suggestion.Suggestion;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
-import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.skriptlang.skript.lang.script.Script;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import static com.github.hapily04.skriptminestom.util.MessageUtils.SKRIPT_MINI_MESSAGE;
 
@@ -31,12 +33,10 @@ public class ReloadCommand extends Command {
 		setCondition((sender, _) -> LuckPermsPlayer.hasPermission(sender, "skript.reload"));
 		setDefaultExecutor((sender, _) -> sender.sendMessage(RELOAD_USAGE));
 		Argument<String[]> folderFileArg = new ArgumentStringArray("to_reload")
-			.setSuggestionCallback((sender, _, suggestion) -> {
+			.setSuggestionCallback((sender, ctx, suggestion) -> {
 				suggestion.addEntry(new SuggestionEntry("all"));
 				suggestion.addEntry(new SuggestionEntry("config"));
-				File scriptsFolder = Skript.getInstance().getScriptsFolder();
-				initSuggestions(scriptsFolder.listFiles(), scriptsFolder.getPath().length(), suggestion, true,
-					false, false);
+				initSuggestions(suggestion, ctx.getInput(), false);
 			});
 		addSyntax((sender, context) -> {
 			String locationProvided = context.get(folderFileArg)[0];
@@ -90,26 +90,47 @@ public class ReloadCommand extends Command {
 		}, folderFileArg);
 	}
 
-	public static void initSuggestions(File @Nullable [] files, int folderPathLength, @NotNull Suggestion suggestion,
-									   boolean includingFolders, boolean includingEnabledScripts, boolean includingDisabledScripts) {
-		if (files == null) return;
-		for (File file : files) {
-			if (file.isHidden()) continue;
-			String fileString = file.toString().substring(folderPathLength);
-			if (fileString.isBlank()) continue;
-			if (file.isDirectory()) {
-				initSuggestions(file.listFiles(), folderPathLength, suggestion, includingFolders, includingEnabledScripts, includingDisabledScripts);
-				if (!includingFolders) return;
-				fileString += File.separator;
-			} else {
-				boolean isEnabled = ScriptLoader.getScript(file) != null;
-				if (includingEnabledScripts && !isEnabled) continue;
-				if (includingDisabledScripts && isEnabled) continue;
-				fileString = fileString.substring(1);
-			}
-			if (fileString.contains(".") && !fileString.endsWith(".sk")) continue;
-			fileString = fileString.replace(File.separatorChar, '/');
-			suggestion.addEntry(new SuggestionEntry(fileString));
+	public static void initSuggestions(@NotNull Suggestion suggestion, String input, boolean enable) {
+		String scriptArg = input.split(" ")[2];
+		System.out.println("scriptArg: " + scriptArg);
+		File scripts = Skript.getInstance().getScriptsFolder();
+		String scriptsPathString = scripts.toPath().toString();
+		int scriptsPathLength = scriptsPathString.length();
+
+		String fs = File.separator;
+
+		// Live update, this will get all old and new (even not loaded) scripts
+		try (Stream<Path> files = Files.walk(scripts.toPath())) {
+			files.map(Path::toFile)
+				.forEach(file -> {
+					if (!(enable ? ScriptLoader.getDisabledScriptsFilter() : ScriptLoader.getLoadedScriptsFilter()).accept(file))
+						return;
+
+					// Ignore hidden files like .git/ for users that use git source control.
+					if (file.isHidden())
+						return;
+
+					String fileString = file.toString().substring(scriptsPathLength);
+					if (fileString.isEmpty())
+						return;
+
+					if (file.isDirectory()) {
+						fileString = fileString + fs; // Add file separator at the end of directories
+					} else if (file.getParentFile().toPath().toString().equals(scriptsPathString)) {
+						fileString = fileString.substring(1); // Remove file separator from the beginning of files or directories in root only
+						if (fileString.isEmpty())
+							return;
+					}
+
+					// Make sure the user's argument matches with the file's name or beginning of file path
+					if (!scriptArg.isEmpty() && !file.getName().startsWith(scriptArg) && !fileString.startsWith(scriptArg))
+						return;
+
+					suggestion.addEntry(new SuggestionEntry(fileString.replace('\\', '/')));
+				});
+		} catch (Exception e) {
+			//noinspection ThrowableNotThrown
+			Skript.exception(e, "An error occurred while trying to update the list of disabled scripts!");
 		}
 	}
 
