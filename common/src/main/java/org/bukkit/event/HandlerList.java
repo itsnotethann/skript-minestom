@@ -1,43 +1,38 @@
 package org.bukkit.event;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.bukkit.plugin.SimplePluginManager.getHandlerList;
-
 public class HandlerList {
+	private static final List<HandlerList> allLists = new ArrayList<>();
+
 	private final List<RegisteredListener> listeners = new ArrayList<>();
 
-	public void register(RegisteredListener handler) {
+	public HandlerList() {
+		synchronized (allLists) {
+			allLists.add(this);
+		}
+	}
+
+	public synchronized void register(RegisteredListener handler) {
 		listeners.add(handler);
 	}
 
-	public void unregister(Listener listener) {
+	public synchronized void unregister(Listener listener) {
 		listeners.removeIf((registeredListener) -> registeredListener.getListener() == listener);
 	}
 
 	public static void unregisterAll(Listener listener) {
-		for (Method method : listener.getClass().getMethods()) {
-			if (!method.isAnnotationPresent(EventHandler.class) || method.getParameterCount() != 1)
-				continue;
-
-			Class<?> event = method.getParameterTypes()[0];
-
-			if (!Event.class.isAssignableFrom(event))
-				continue;
-
-			try {
-				@SuppressWarnings("unchecked")
-				HandlerList handlerList = getHandlerList((Class<? extends Event>) event);
-				handlerList.unregister(listener);
-			} catch (ReflectiveOperationException exception) {
-				exception.printStackTrace();
-			}
+		List<HandlerList> snapshot;
+		synchronized (allLists) {
+			snapshot = List.copyOf(allLists);
+		}
+		for (HandlerList handlerList : snapshot) {
+			handlerList.unregister(listener);
 		}
 	}
 
-	public List<RegisteredListener> getRegisteredListeners() {
-		return listeners;
+	public synchronized List<RegisteredListener> getRegisteredListeners() {
+		return List.copyOf(listeners);
 	}
 }

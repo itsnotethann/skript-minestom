@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.github.hapily04"
-version = "1.0.0-pre-alpha.3"
+version = "1.0.0-pre-alpha.5"
 
 repositories {
     mavenCentral()
@@ -20,9 +20,9 @@ repositories {
 }
 
 dependencies {
-	implementation("net.minestom:minestom-sm:2026.06.24-26.1.2")
-	implementation("net.kyori:adventure-text-minimessage:5.1.1") // todo 5.0
-	implementation("dev.hollowcube:polar:1.15.1")
+	implementation("net.minestom:minestom-sm:2026.07.17b-26.2")
+	implementation("net.kyori:adventure-text-minimessage:5.2.0")
+	implementation("dev.hollowcube:polar:1.16.0")
 	implementation("it.unimi.dsi:fastutil:8.5.18") // fix polar error
 	implementation("dev.lu15:luckperms-minestom:5.5-SNAPSHOT")
 	implementation("com.h2database:h2:2.2.224") // fix luckperms cause it's lowkey being stupid
