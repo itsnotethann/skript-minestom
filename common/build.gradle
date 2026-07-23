@@ -93,6 +93,16 @@ tasks.withType(ShadowJar) {
 	}
 }
 
+task cleanGeneratedResources {
+	doLast {
+		delete "$buildDir/resources/main"
+	}
+}
+
+tasks.withType(ProcessResources).configureEach {
+	dependsOn cleanGeneratedResources
+}
+
 processResources {
 	filter ReplaceTokens, tokens: [
 		'version'         : project.property('version'),
