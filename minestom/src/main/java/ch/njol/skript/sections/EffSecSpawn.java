@@ -52,7 +52,7 @@ public class EffSecSpawn extends EffectSection {
 			"(summon|spawn) %integer% [of] [(:navigable|:living)] %entitytypes% [%directions% %points%] [in [(world|instance)[s]] %instances%] [:sync]");
 	}
 
-	private Expression<Number> amount;
+	private Expression<Integer> amount;
 	private Expression<EntityType> types;
 	private Expression<Point> points;
 	private Expression<Instance> instances;
@@ -68,7 +68,7 @@ public class EffSecSpawn extends EffectSection {
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult,
 						@Nullable SectionNode sectionNode, @Nullable List<TriggerItem> triggerItems) {
-		if (matchedPattern == 1) amount = (Expression<Number>) expressions[0];
+		if (matchedPattern == 1) amount = (Expression<Integer>) expressions[0];
 		types = (Expression<EntityType>) expressions[matchedPattern];
 		points = Direction.combine((Expression<? extends Direction>) expressions[1+matchedPattern], (Expression<? extends Point>) expressions[2+matchedPattern]);
 		instances = (Expression<Instance>) expressions[3+matchedPattern];
@@ -92,10 +92,7 @@ public class EffSecSpawn extends EffectSection {
 	@Override
 	protected @Nullable TriggerItem walk(Event event) {
 		Integer amount = null;
-		if (this.amount != null) {
-			Number num = this.amount.getSingle(event);
-			if (num != null) amount = num.intValue();
-		}
+		if (this.amount != null) amount = this.amount.getSingle(event);
 		if (amount == null) amount = 1;
 		EntityType[] types = this.types.getArray(event);
 		Point[] points = this.points.getArray(event);

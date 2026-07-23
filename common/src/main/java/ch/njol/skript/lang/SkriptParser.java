@@ -481,7 +481,7 @@ public final class SkriptParser {
 				if (functionReference != null) {
 					log.printLog();
 					//noinspection rawtypes
-					return new ExprFunctionCall(functionReference);
+					return new ExprFunctionCall<>(functionReference, types);
 				} else if (log.hasError()) {
 					log.printError();
 					return null;
@@ -645,7 +645,7 @@ public final class SkriptParser {
 					}
 
 					log.printLog();
-					return new ExprFunctionCall<>(functionReference);
+					return new ExprFunctionCall<>(functionReference, types);
 				} else if (log.hasError()) {
 					log.printError();
 					return null;

@@ -2200,7 +2200,7 @@ public class MinestomClasses {
 			if (from instanceof ConsoleSender sender) return sender;
 			return null;
 		});
-		Converters.registerConverter(Player.class, EntityType.class, Player::getEntityType);
+		Converters.registerConverter(Player.class, EntityType.class, _ -> EntityType.PLAYER);
 		Converters.registerConverter(Entity.class, LivingEntity.class, from -> {
 			if (from instanceof LivingEntity livingEntity) return livingEntity;
 			return null;
