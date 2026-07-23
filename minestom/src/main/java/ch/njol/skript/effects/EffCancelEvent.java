@@ -45,16 +45,13 @@ public class EffCancelEvent extends Effect {
 			return false;
 		}
 		cancel = matchedPattern == 0;
-		final Class<? extends Event>[] es = getParser().getCurrentEvents();
-		if (es == null)
+		final Class<? extends Event>[] currentEvents = getParser().getCurrentEvents();
+		if (currentEvents == null)
 			return false;
-		for (final Class<? extends Event> e : es) {
-			if (!isCancellable(e)) {
-				Skript.error(Utils.A(getParser().getCurrentEventName()) + " event cannot be cancelled", ErrorQuality.SEMANTIC_ERROR);
-				return false;
-			}
-			return true;
+		for (final Class<? extends Event> e : currentEvents) {
+			if (isCancellable(e)) return true;
 		}
+		Skript.error(Utils.A(getParser().getCurrentEventName()) + " event cannot be cancelled", ErrorQuality.SEMANTIC_ERROR);
 		return false;
 	}
 

@@ -1,21 +1,3 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.variables;
 
 import ch.njol.skript.Skript;
@@ -23,11 +5,21 @@ import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.Variable;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.registrations.Classes;
-import ch.njol.skript.util.*;
+import ch.njol.skript.util.ExceptionUtils;
+import ch.njol.skript.util.FileUtils;
+import ch.njol.skript.util.Task;
+import ch.njol.skript.util.Utils;
+import ch.njol.skript.util.Version;
 import ch.njol.util.NotifyingReference;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -84,7 +76,7 @@ public class FlatFileStorage extends VariablesStorage {
 	 * The amount of {@link #changes} needed
 	 * for a new {@link #saveVariables(boolean) save}.
 	 */
-	private static final int REQUIRED_CHANGES_FOR_RESAVE = 1000;
+	private static int REQUIRED_CHANGES_FOR_RESAVE = 1000;
 
 	/**
 	 * The amount of variable changes written since the last full save.
@@ -116,10 +108,10 @@ public class FlatFileStorage extends VariablesStorage {
 	/**
 	 * Create a new CSV storage of the given name.
 	 *
-	 * @param name the name.
+	 * @param type the databse type i.e. CSV.
 	 */
-	FlatFileStorage(String name) {
-		super(name);
+	FlatFileStorage(String type) {
+		super(type);
 	}
 
 	/**
@@ -147,13 +139,11 @@ public class FlatFileStorage extends VariablesStorage {
 		Version csvSkriptVersion;
 
 		// Some variables used to allow legacy CSV files to be loaded
-		Version v2_0_beta3 = new Version(2, 0, "beta 3");
-		boolean update2_0_beta3 = false;
 		Version v2_1 = new Version(2, 1);
 		boolean update2_1 = false;
 
 		try (BufferedReader reader = new BufferedReader(
-				new InputStreamReader(Files.newInputStream(file.toPath()), FILE_CHARSET))) {
+			new InputStreamReader(Files.newInputStream(file.toPath()), FILE_CHARSET))) {
 			String line;
 			int lineNum = 0;
 			while ((line = reader.readLine()) != null) {
@@ -168,7 +158,6 @@ public class FlatFileStorage extends VariablesStorage {
 
 						try {
 							csvSkriptVersion = new Version(line.substring("# version:".length()).trim());
-							update2_0_beta3 = csvSkriptVersion.isSmallerThan(v2_0_beta3);
 							update2_1 = csvSkriptVersion.isSmallerThan(v2_1);
 						} catch (IllegalArgumentException ignored) {
 						}
@@ -211,11 +200,6 @@ public class FlatFileStorage extends VariablesStorage {
 						continue;
 					}
 
-					// Legacy
-					if (deserializedValue instanceof String && update2_0_beta3) {
-						deserializedValue = Utils.replaceChatStyles((String) deserializedValue);
-					}
-
 					Variables.variableLoaded(split[0], deserializedValue, this);
 				}
 			}
@@ -228,7 +212,7 @@ public class FlatFileStorage extends VariablesStorage {
 			// Something's wrong (or just an old version)
 			if (unsuccessfulVariableCount > 0) {
 				Skript.error(unsuccessfulVariableCount + " variable" + (unsuccessfulVariableCount == 1 ? "" : "s") +
-						" could not be loaded!");
+					" could not be loaded!");
 				Skript.error("Affected variables: " + invalid.toString());
 			}
 
@@ -429,8 +413,8 @@ public class FlatFileStorage extends VariablesStorage {
 						pw.close();
 						FileUtils.move(tempFile, file, true);
 					} catch (IOException e) {
-						Skript.error("Unable to make a final save of the database '" + databaseName +
-								"' (no variables are lost): " + ExceptionUtils.toString(e));
+						Skript.error("Unable to make a final save of the database '" + getUserConfigurationName() +
+							"' (no variables are lost): " + ExceptionUtils.toString(e));
 						// FIXME happens at random - check locks/threads
 					}
 				} finally {
@@ -464,7 +448,10 @@ public class FlatFileStorage extends VariablesStorage {
 	 */
 	@SuppressWarnings("unchecked")
 	private void save(PrintWriter pw, String parent, TreeMap<String, Object> map) {
-		if (parent.startsWith(Variable.EPHEMERAL_VARIABLE_TOKEN)) return;
+		if (parent.startsWith(Variable.EPHEMERAL_VARIABLE_TOKEN))
+			// Skip ephemeral variables
+			return;
+
 		// Iterate over all children
 		for (Entry<String, Object> childEntry : map.entrySet()) {
 			Object childNode = childEntry.getValue();
@@ -479,7 +466,10 @@ public class FlatFileStorage extends VariablesStorage {
 			} else {
 				// Remove variable separator if needed
 				String name = childKey == null ? parent.substring(0, parent.length() - Variable.SEPARATOR.length()) : parent + childKey;
-				if (name.startsWith(Variable.EPHEMERAL_VARIABLE_TOKEN)) continue;
+
+				if (name.startsWith(Variable.EPHEMERAL_VARIABLE_TOKEN))
+					// Skip ephemeral variables
+					continue;
 
 				try {
 					// Loop over storages to make sure this variable is ours to store
@@ -540,6 +530,15 @@ public class FlatFileStorage extends VariablesStorage {
 
 	/**
 	 * A regex pattern of a line in a CSV file.
+	 * <ul>
+	 * <li>{@code (?<=^|,)}: assert that the match is preceded by the start of the line or a comma</li>
+	 * <li>{@code (?:([^",]*)|"((?:[^"]+|"")*)")}: match either a quoted or unquoted value</li>
+	 * <ul>
+	 * 	<li>- {@code ([^",]*)}: match an unquoted value</li>
+	 * 	<li>- {@code "((?:[^"]+|"")*)"}: match a quoted value</li>
+	 * </ul>
+	 * <li>{@code (?:,|$)}: match either a comma or the end of the line</li>
+	 * </ul>
 	 */
 	private static final Pattern CSV_LINE_PATTERN = Pattern.compile("(?<=^|,)\\s*(?:([^\",]*)|\"((?:[^\"]+|\"\")*)\")\\s*(?:,|$)");
 
@@ -615,6 +614,19 @@ public class FlatFileStorage extends VariablesStorage {
 		}
 
 		printWriter.println();
+	}
+
+	/**
+	 * Change the required amount of variable changes until variables are saved.
+	 * Cannot be zero or less.
+	 * @param value
+	 */
+	public static void setRequiredChangesForResave(int value) {
+		if (value <= 0) {
+			Skript.warning("Variable changes until save cannot be zero or less. Using default of 1000.");
+			value = 1000;
+		}
+		REQUIRED_CHANGES_FOR_RESAVE = value;
 	}
 
 }
