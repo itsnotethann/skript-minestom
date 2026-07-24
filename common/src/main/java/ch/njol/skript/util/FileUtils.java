@@ -100,21 +100,18 @@ public abstract class FileUtils {
 	 * @throws IllegalArgumentException If 'toKeep' parameter is less than 0
 	 */
 	public static void backupPurge(File varFile, int toKeep) throws IOException, IllegalArgumentException {
-		System.out.println("backupPurge");
 		if (toKeep < 0)
 			throw new IllegalArgumentException("Called with invalid input, 'toKeep' can not be less than 0");
 		File backupDir = new File(varFile.getParentFile(), "backups" + File.separator);
 		if (!backupDir.exists() || !backupDir.isDirectory())
 			throw new IOException("Backup directory not found");
 		ArrayList<File> files = new ArrayList<File>(Arrays.asList(backupDir.listFiles()));
-		System.out.println("here!");
 		if (files == null || files.size() <= toKeep)
 			return;
 		if (toKeep > 0)
 			files.sort(Comparator.comparingLong(File::lastModified));
 		int numberToRemove = files.size() - toKeep;
 		for (int i = 0; i < numberToRemove; i++) {
-			System.out.println("deleting backup file: " + files.get(i) + ": " + i);
 			files.get(i).delete();
 		}
 	}

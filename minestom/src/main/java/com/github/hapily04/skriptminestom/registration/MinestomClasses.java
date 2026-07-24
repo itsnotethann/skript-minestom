@@ -1660,7 +1660,7 @@ public class MinestomClasses {
 			.name("Attribute Type")
 			.description("Represents the type of an attribute.")
 			.examples("set attack speed attribute of player to 2")
-			.usage(String.join(", ", Attribute.values().stream().map(attribute -> attribute.key().value()).collect(Collectors.joining())))
+			.usage(Attribute.values().stream().map(attribute -> attribute.key().value()).collect(Collectors.joining(", ")))
 			.parser(new Parser<>() {
 				public Attribute parse(@NotNull String s, @NotNull ParseContext context) {
 					s = s.toLowerCase(Locale.ENGLISH).replace(' ', '_');
