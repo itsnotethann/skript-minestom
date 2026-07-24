@@ -10,7 +10,8 @@ version = "1.0.0-pre-alpha.5"
 
 repositories {
     mavenCentral()
-	maven("https://repo.hypera.dev/snapshots/")
+	maven("https://maven.conceptmc.com/releases") // luckperms
+	maven("https://repo.hypera.dev/snapshots/") // spark (& was luckperms)
 	maven("https://repo.lucko.me/")
 	maven("https://maven.hapily.me/releases")
 	maven("https://maven.hapily.me/snapshots")
@@ -24,7 +25,7 @@ dependencies {
 	implementation("net.kyori:adventure-text-minimessage:5.2.0")
 	implementation("dev.hollowcube:polar:1.16.0")
 	implementation("it.unimi.dsi:fastutil:8.5.18") // fix polar error
-	implementation("dev.lu15:luckperms-minestom:5.5-SNAPSHOT")
+	implementation("com.conceptmc:luckperms-minestom:5.5-SNAPSHOT")
 	implementation("com.h2database:h2:2.2.224") // fix luckperms cause it's lowkey being stupid
 	implementation("dev.lu15:spark-minestom:1.10-SNAPSHOT")
 	implementation("org.spongepowered:configurate-hocon:3.7.2") // configuration using hocon

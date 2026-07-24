@@ -22,8 +22,8 @@ public class SkriptCommand extends Command {
         setCondition((sender, _) ->  LuckPermsPlayer.hasPermission(sender, "skript.skript"));
         setDefaultExecutor((sender, _) -> sender.sendMessage(HELP_MESSAGE));
         addSubcommand(new ReloadCommand());
-		addSubcommand(new DisableCommand());
-		addSubcommand(new EnableCommand());
+		//addSubcommand(new DisableCommand());
+		//addSubcommand(new EnableCommand());
 		addSubcommand(new InfoCommand());
 		addSubcommand(new HelpCommand());
 	}

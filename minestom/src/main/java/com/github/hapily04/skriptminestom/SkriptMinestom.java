@@ -70,7 +70,7 @@ public class SkriptMinestom {
 		initMinestomProperties();
 		MinecraftServer server = MinecraftServer.init(PropertyUtils.getAuth(properties));
 
-		//luckPerms = initLuckPerms();
+		luckPerms = initLuckPerms();
 		spark = initSpark();
 
 		MinecraftServer.setBrandName(DEFAULT_BRAND_NAME);
@@ -141,7 +141,6 @@ public class SkriptMinestom {
 		});
 		skript.setEnabled(true);
 		skript.onEnable(); // have to manually initialize, addons are initialized on their own
-		//ExprEntities.register(Skript.UNSAFE_instance().syntaxRegistry());
 		//Skript.getAddonInstance(true).UNSAFE_setLanguageFileDirectory("minestomlang"); // todo figure out how to do this if lang file is used
 		Skript.closeUnsafeSkript();
 
@@ -216,7 +215,7 @@ public class SkriptMinestom {
 			for (SkriptAddon addon : Skript.getAddons()) {
 				pluginManager.disablePlugin(addon.plugin);
 			}
-			//LuckPermsMinestom.disable();
+			LuckPermsMinestom.disable();
 			MinestomTerminal.stop();
 			System.exit(0); // sometimes server hangs so manually stop
 		});

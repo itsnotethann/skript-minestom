@@ -25,13 +25,13 @@ import java.util.concurrent.CompletableFuture;
 
 public class LuckPermsPlayer extends Player {
 
-    private /*final*/ @NotNull LuckPerms luckPerms;
-    private /*final*/ @NonNull PlayerAdapter<Player> playerAdapter;
+    private final @NotNull LuckPerms luckPerms;
+    private final @NonNull PlayerAdapter<Player> playerAdapter;
 
     public LuckPermsPlayer(@NotNull LuckPerms luckPerms, @NotNull PlayerConnection connection, @NotNull GameProfile profile) {
         super(connection, profile);
-        /*this.luckPerms = luckPerms;
-        this.playerAdapter = this.luckPerms.getPlayerAdapter(Player.class);*/
+        this.luckPerms = luckPerms;
+        this.playerAdapter = this.luckPerms.getPlayerAdapter(Player.class);
     }
 
     private @NotNull User getLuckPermsUser() {
@@ -115,8 +115,7 @@ public class LuckPermsPlayer extends Player {
      * @return true if the player has the permission
      */
     public boolean hasPermission(@NotNull String permissionName) {
-        return true;
-		//return this.getPermission(permissionName).asBoolean();
+		return this.getPermission(permissionName).asBoolean();
     }
 
     /**
