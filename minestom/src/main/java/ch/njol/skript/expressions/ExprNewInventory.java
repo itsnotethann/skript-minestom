@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.effects.EffOpenInventory;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.Literal;
@@ -16,6 +17,8 @@ import net.minestom.server.inventory.AbstractInventory;
 import net.minestom.server.inventory.Inventory;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
+
+import static ch.njol.skript.effects.EffOpenInventory.getDefaultTitle;
 
 
 @Name("New Inventory")
@@ -54,8 +57,7 @@ public class ExprNewInventory extends SimpleExpression<AbstractInventory>{
 		}
 
 		//noinspection DataFlowIssue
-		Inventory inventory = new Inventory(type.getMinestomType(), ComponentWrapper.getOrElse(this.name, e, null));
-
+		Inventory inventory = new Inventory(type.getMinestomType(), ComponentWrapper.getOrElse(this.name, e, getDefaultTitle(type)));
 		return new Inventory[]{inventory};
 	}
 
