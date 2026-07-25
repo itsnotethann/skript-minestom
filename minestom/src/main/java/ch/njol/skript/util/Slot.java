@@ -6,6 +6,7 @@ import net.minestom.server.inventory.AbstractInventory;
 import net.minestom.server.inventory.EquipmentHandler;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.inventory.PlayerInventoryUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.UnaryOperator;
 
@@ -19,7 +20,7 @@ public class Slot extends Item {
 	}
 
 	public Slot(ItemStack item, AbstractInventory container, int slot) {
-		this(item ,new InventoryUpdater(container, slot));
+		this(item, new InventoryUpdater(container, slot));
 	}
 
 	public Slot(ItemStack item, EquipmentHandler handler, EquipmentSlot slot) {
@@ -38,6 +39,10 @@ public class Slot extends Item {
 		return updater.getSlot();
 	}
 
+	public @Nullable AbstractInventory getContainer() {
+		return updater.getContainer();
+	}
+
 	public interface Updater {
 
 		void update(ItemStack item);
@@ -45,6 +50,8 @@ public class Slot extends Item {
 		ItemStack getCurrentItem();
 
 		int getSlot();
+
+		AbstractInventory getContainer();
 
 	}
 
@@ -71,6 +78,11 @@ public class Slot extends Item {
 		@Override
 		public int getSlot() {
 			return slot;
+		}
+
+		@Override
+		public AbstractInventory getContainer() {
+			return container;
 		}
 
 	}
@@ -102,6 +114,11 @@ public class Slot extends Item {
 				case OFF_HAND, MAIN_HAND -> getPlayerSlot();
 				default -> -1;
 			};
+		}
+
+		@Override
+		public AbstractInventory getContainer() {
+			return null;
 		}
 
 		private int getPlayerSlot() {
