@@ -47,6 +47,8 @@ val generateSources by tasks.registering(Copy::class) {
 	from("src/main/java-templates")
 	into(layout.buildDirectory.dir("generated/sources/java"))
 
+	inputs.property("version", project.version) // fix: version wasn't rewriting unless file is gone
+
 	expand("version" to project.version)
 	rename { it.removeSuffix(".peb") }
 }
