@@ -1,6 +1,6 @@
 # skript-minestom
 **skript-minestom** is a server implementation from Minestom, where users write exactly what they want the server to do
-using Skript syntax. Skript is baked within the server jar, and it supports some existing Skript addons (skript-reflect),
+using Skript syntax. Skript is baked within the server jar, and it supports some existing Skript addons (skript-reflect 2.6.3),
 but most addons are written specifically for skript-minestom.
 
 This GitHub fork of Skript is based on SkriptLang's fork of Mirreski's improvements of Skript which was built on Njol's original Skript.
