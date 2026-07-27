@@ -28,17 +28,15 @@ import java.util.Objects;
 @Name("Contains")
 @Description("Checks whether an inventory contains an item, a text contains another piece of text, " +
 	"or a list (e.g. {list variable::*} or 'drops') contains another object.")
-@Examples({"block contains 20 cobblestone",
-	"player has 4 flint and 2 iron ingots",
-	"{list::*} contains 5"})
+@Examples("whether player has 4 flint and 2 iron ingot")
 @Since("1.0")
 public class CondContains extends Condition {
 
 	static {
 		Skript.registerCondition(CondContains.class,
-			"%inventories% (has|have) %item% [in [(the[ir]|his|her|its)] inventory]",
-			"%inventories% (doesn't|does not|do not|don't) have %item% [in [(the[ir]|his|her|its)] inventory]",
-			"%inventories/strings/objects% contain[(1¦s)] %item/strings/objects%",
+			"%inventories% (has|have) %items% [in [(the[ir]|his|her|its)] inventory]",
+			"%inventories% (doesn't|does not|do not|don't) have %items% [in [(the[ir]|his|her|its)] inventory]",
+			"%inventories/strings/objects% contain[(1¦s)] %items/strings/objects%",
 			"%inventories/strings/objects% (doesn't|does not|do not|don't) contain %item/strings/objects%"
 		);
 	}
