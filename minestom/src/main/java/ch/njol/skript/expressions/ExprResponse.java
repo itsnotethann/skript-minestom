@@ -12,7 +12,7 @@ import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
 @Name("Response")
-@Description("The response state of an interaction entity.")
+@Description("The response state of an interaction entity (whether the player's hand will swing or not when interacting with it).")
 @Examples("set response state of {_interaction} to true")
 public class ExprResponse extends SimplePropertyExpression<Entity, Boolean> {
 
@@ -32,7 +32,6 @@ public class ExprResponse extends SimplePropertyExpression<Entity, Boolean> {
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Boolean state = delta == null ? null : (Boolean) delta[0];

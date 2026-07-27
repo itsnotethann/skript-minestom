@@ -23,7 +23,13 @@ import static ch.njol.skript.util.ComponentWrapper.toWrapper;
 
 @Name("Chat Message")
 @Description("The raw message in a chat event.")
-@Examples("broadcast the chat message")
+@Examples("""
+	on chat with priority lowest:
+	    set {_message} to resolver("message", message) # resolver so they can't inject minimessage tags
+	    set chat format to mm("%player% <grey>» <white><message>", {_message})
+	    send chat format to console
+	
+	    play sound "block.comparator.click" at volume 0.5 with pitch 2 to all players""")
 public class ExprChatMessage extends SimpleExpression<String> implements EventRestrictedSyntax {
 
 	static {

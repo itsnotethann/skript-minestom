@@ -11,7 +11,7 @@ import net.minestom.server.instance.Instance;
 import org.jspecify.annotations.Nullable;
 
 
-@Name("Instance")
+@Name("Instance/World")
 @Description("The instance an entity is in.")
 @Examples("broadcast \"%instance of player%\"")
 public class ExprInstance extends SimplePropertyExpression<Entity, Instance> {

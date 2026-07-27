@@ -14,7 +14,7 @@ import org.bukkit.event.Event;
 
 @Name("Display Scale")
 @Description("The scale of a display entity.")
-@Examples("set display scale of targeted entity to vector(2, 2, 2)")
+@Examples("set display scale of {_entity} to vector(2, 2, 2)")
 public class ExprScale extends SimplePropertyExpression<Entity, Vec> {
 
 	static {

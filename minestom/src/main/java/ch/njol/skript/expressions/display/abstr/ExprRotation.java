@@ -20,7 +20,7 @@ import static com.github.hapily04.skriptminestom.util.NumberUtils.vecFromQuat;
 
 @Name("Display Rotation")
 @Description("The left or right rotation of a display entity.")
-@Examples("set display left rotation of targeted entity to vector(0, 0, 0, 1)")
+@Examples("set display left rotation of {_entity} to vector(0, 0, 0, 1)")
 public class ExprRotation extends SimplePropertyExpression<Entity, Vec> {
 
 	static {

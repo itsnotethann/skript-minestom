@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
 
 
 @Name("Reduced Debug Information")
-@Description("Whether a player has reduced debug information enabled.")
+@Description("Whether a player has reduced debug information enabled. Limits their F3 menu's capabilities and disables hitboxes (F3+b).")
 @Examples("set reduced debug information property of player to true")
 public class ExprReducedDebugInformation extends SimplePropertyExpression<Player, Boolean> {
 
@@ -31,7 +31,6 @@ public class ExprReducedDebugInformation extends SimplePropertyExpression<Player
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Boolean state = delta == null ? null : (Boolean) delta[0];

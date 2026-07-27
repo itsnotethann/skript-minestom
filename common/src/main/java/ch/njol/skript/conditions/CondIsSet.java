@@ -20,10 +20,7 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @Name("Exists/Is Set")
 @Description("Checks whether a given expression or variable is set.")
-@Examples({"{teams::%player's uuid%::preferred-team} is not set",
-	"on damage:",
-	"	projectile exists",
-	"	broadcast \"%attacker% used a %projectile% to attack %victim%!\""})
+@Examples("send whether {_var} exists to player")
 @Since("1.2")
 public class CondIsSet extends Condition implements VerboseAssert {
 	static {

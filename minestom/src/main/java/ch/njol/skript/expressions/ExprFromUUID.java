@@ -25,7 +25,7 @@ import java.util.UUID;
 
 @Name("From UUID")
 @Description("A player, entity, or instance from a UUID string.")
-@Examples("set {_p} to player from uuid \"%uuid of player%\"")
+@Examples("set {_p} to player from uuid uuid of player")
 public class ExprFromUUID extends SimpleExpression<Object> {
 
 	static {

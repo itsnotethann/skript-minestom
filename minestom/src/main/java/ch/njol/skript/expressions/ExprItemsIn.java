@@ -31,9 +31,8 @@ import ch.njol.util.Kleenean;
 })
 @Example("""
     loop all items in the player's inventory:
-    	loop-item is enchanted
-    	remove loop-item from the player
-    """)
+    	loop-item's name = "Bob"
+    	remove loop-item from the player""")
 @Example("set {inventory::%uuid of player%::*} to items in the player's inventory")
 @Since("2.0, 2.8.0 (specific types of items)")
 public class ExprItemsIn extends SimpleExpression<Slot> {

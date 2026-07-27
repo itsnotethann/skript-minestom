@@ -11,7 +11,7 @@ import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
 @Name("Visibility")
-@Description("The visibility state of an entity.")
+@Description("The visibility state of an entity. Does what the invisibility potion effect does.")
 @Examples("set visibility of player to false")
 public class ExprVisibility extends SimplePropertyExpression<Entity, Boolean> {
 

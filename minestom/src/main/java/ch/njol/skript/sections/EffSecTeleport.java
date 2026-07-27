@@ -28,9 +28,9 @@ import java.util.concurrent.CompletableFuture;
 	"An optional subsection runs once the teleport completes."
 })
 @Examples({
-	"teleport player to location at(0, 64, 0):",
+	"teleport player to vector(0, 64, 0):",
 	"    broadcast \"Player arrived!\"",
-	"teleport {_entity} to {_loc} in instance {_world} sync:",
+	"teleport {_entity} to {_loc} in instance {_instance} sync:",
 	"    set health of entity to 20"
 })
 public class EffSecTeleport extends EffectSection {

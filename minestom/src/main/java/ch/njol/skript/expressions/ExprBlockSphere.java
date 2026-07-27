@@ -31,10 +31,7 @@ import java.util.Iterator;
  */
 @Name("Block Sphere")
 @Description("All blocks in a sphere around a center, mostly useful for looping.")
-@Examples("""
-	loop blocks in radius 5 around the player:
-		set loop-block to air
-	""")
+@Examples("set all blocks in radius 3 around player in player's instance to stone")
 @Since("1.0")
 public class ExprBlockSphere extends SimpleExpression<BlockVec> {
 	static {
@@ -77,10 +74,9 @@ public class ExprBlockSphere extends SimpleExpression<BlockVec> {
 		final ArrayList<BlockVec> list = new ArrayList<>((int) (1.1 * 4 / 3. * Math.PI * Math.pow(r.doubleValue(), 3)));
 		for (final BlockVec b : new IteratorIterable<>(iterator(e)))
 			list.add(b);
-		return list.toArray(new BlockVec[list.size()]);
+		return list.toArray(new BlockVec[0]);
 	}
 
-	@SuppressWarnings("DataFlowIssue")
 	@Override
 	@org.eclipse.jdt.annotation.Nullable
 	public Class<?>[] acceptChange(Changer.ChangeMode mode) {

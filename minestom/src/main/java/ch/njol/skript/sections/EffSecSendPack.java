@@ -35,7 +35,7 @@ public class EffSecSendPack extends EffectSection {
 
 	static {
 		Skript.registerSection(EffSecSendPack.class,
-			"send resource pack [from [url]] %string% with (uuid|id) %string% with hash %string% " +
+			"send [resource] pack [from [url]] %string% with (uuid|id) %string% with hash %string% " +
 				"[with prompt %-component%] to %players% [force:(forcefully|with force)] [replace:to replace [current packs]]");
 		EventValues.registerEventValue(ResourcePackCallbackEvent.class, Player.class, ResourcePackCallbackEvent::getRecipient);
 	}

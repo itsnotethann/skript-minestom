@@ -28,15 +28,11 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Peter Güttinger
  */
-@Name("Creature/Entity/Player/Projectile/Villager/Powered Creeper/etc.")
-@Description({"The entity involved in an event (an entity is a player, a creature or an inanimate object like ignited TNT, a dropped item or an arrow).",
-	"You can use the specific type of the entity that's involved in the event, e.g. in a 'death of a creeper' event you can use 'the creeper' instead of 'the entity'."})
-@Examples({
-	"on damage:",
-	"    broadcast \"%attacker% damaged %victim%!\"",
-	"on spawn of a zombie:",
-	"    set name of event-entity to \"&cZombie\""
-})
+@Name("Event Entity/Player/CommandSender")
+@Description("The entity/player/commandsender involved in an event, allowing the exclusion of 'event-'.")
+@Examples("""
+	on join:
+		send "Welcome to the server" to player # 'player'""")
 @Since("1.0")
 public class ExprEventObject extends SimpleExpression<Object> {
 	static {
@@ -75,7 +71,7 @@ public class ExprEventObject extends SimpleExpression<Object> {
 	}
 
 	@Override
-	public Class<? extends Object> getReturnType() {
+	public Class<?> getReturnType() {
 		return type.getC();
 	}
 

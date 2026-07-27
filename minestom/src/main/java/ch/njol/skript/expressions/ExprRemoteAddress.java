@@ -59,7 +59,8 @@ public class ExprRemoteAddress extends SimpleExpression<String> {
 		Player[] players = this.players.getArray(event);
 		String[] ips = new String[players.length];
 		for (int i = 0; i < players.length; i++) {
-			ips[i] = players[i].getPlayerConnection().getRemoteAddress().toString();
+			String ip = players[i].getPlayerConnection().getRemoteAddress().toString().replace("/", "");
+			ips[i] = ip.contains(":") ? ip.substring(0, ip.indexOf(":")) : ip;
 		}
 		return ips;
 	}

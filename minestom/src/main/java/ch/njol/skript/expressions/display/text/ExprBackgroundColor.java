@@ -15,7 +15,7 @@ import org.bukkit.event.Event;
 
 @Name("Background Color")
 @Description("The background color of a text display entity.")
-@Examples("set background color of targeted entity to red")
+@Examples("set background color of {-a} to rgb(255, 255, 255, 128)")
 public class ExprBackgroundColor extends SimplePropertyExpression<Entity, RGBLike> {
 
 	static {
@@ -34,7 +34,6 @@ public class ExprBackgroundColor extends SimplePropertyExpression<Entity, RGBLik
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @org.jspecify.annotations.Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		RGBLike color = delta == null ? null : (Color) delta[0];

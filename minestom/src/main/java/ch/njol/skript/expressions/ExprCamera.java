@@ -20,7 +20,7 @@ import org.jspecify.annotations.Nullable;
 
 @Name("Camera Target")
 @Description("The camera target of a player. Only available within an instance change effect.")
-@Examples("set camera target of player to targeted entity")
+@Examples("set camera target of player to {_entity}")
 public class ExprCamera extends SimplePropertyExpression<Player, Entity> {
 
 	static {

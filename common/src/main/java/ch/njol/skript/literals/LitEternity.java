@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 		"However, operations that would return NaN with numbers will instead return a timespan of 0 seconds.",
 	"Note that an eternity will often be treated as the longest duration something supports, rather than a true eternity."
 })
-@Example("set fire to the player for an eternity")
+@Example("send whether {_timespan} = forever")
 @Since("2.12")
 public class LitEternity extends SimpleLiteral<Timespan> {
 

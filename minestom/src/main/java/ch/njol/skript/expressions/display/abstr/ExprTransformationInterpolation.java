@@ -18,7 +18,7 @@ import org.bukkit.event.Event;
 
 @Name("Transformation Interpolation")
 @Description("The transformation interpolation start or duration of a display entity.")
-@Examples("set transformation interpolation duration of targeted entity to 1 second")
+@Examples("set transformation interpolation duration of {_entity} to 1 second")
 public class ExprTransformationInterpolation extends SimplePropertyExpression<Entity, Object> {
 
 	static {

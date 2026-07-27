@@ -13,7 +13,7 @@ import org.bukkit.event.Event;
 
 @Name("Display View Range")
 @Description("The view range of a display entity.")
-@Examples("set display view range of targeted entity to 2")
+@Examples("set display view range of {_entity} to 2")
 public class ExprViewRange extends SimplePropertyExpression<Entity, Number> {
 
 	static {

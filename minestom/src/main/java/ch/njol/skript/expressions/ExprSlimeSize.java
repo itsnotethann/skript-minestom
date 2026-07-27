@@ -15,7 +15,7 @@ import org.jspecify.annotations.Nullable;
 
 @Name("Slime Size")
 @Description("The size of a slime entity.")
-@Examples("set slime size of targeted entity to 3")
+@Examples("set slime size of {_entity} to 3")
 public class ExprSlimeSize extends SimplePropertyExpression<Entity, Integer> {
 
 	static {

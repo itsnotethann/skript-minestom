@@ -27,10 +27,8 @@ import java.util.stream.Stream;
 	"Resetting an entity's attribute is only available in Minecraft 1.11 and above."
 })
 @Example("""
-	on damage of player:
-		send "You are wounded!" to event-victim
-		set event-victim's attack speed attribute to 2
-	""")
+	on join:
+		set player's scale attribute to 0.5""")
 @Since("2.5, 2.6.1 (final attribute value)")
 public class ExprEntityAttribute extends PropertyExpression<LivingEntity, Number> {
 

@@ -27,24 +27,73 @@ import java.util.*;
 
 @SuppressWarnings("unchecked")
 @Name("Command Argument")
-@Description({
-	"Defines a typed argument for a command structure.",
-	"The argument name and type are parsed from the section key in the form '<name: type>'.",
-	"Optional entries include 'default value', 'format' (for enum arguments), a 'suggestions' section, and a 'trigger' section.",
-	"If sub-arguments are defined, each leaf argument must have its own trigger instead."
-})
-@Examples({
-	"command /give <item: item>:",
-	"    argument <amount: integer>",
-	"        default value: 1",
-	"        trigger:",
-	"            give {amount} of {item} to player",
-	"command /gamemode <mode: gamemode>:",
-	"    argument <target: player>",
-	"        format: lower case",
-	"        trigger:",
-	"            set gamemode of {target} to {mode}"
-})
+@Description("""
+	This section allows you to create and more finely control custom command arguments.
+	
+	List of argument types with the skript type that will be stored in the variable:
+	- literal -> string
+	- boolean -> boolean
+	- integer -> integer
+	- long -> integer
+	- double -> number
+	- float -> number
+	- string -> string # can be unlimited length, just must be surrounded by quotation marks if there are spaces for this argument
+	- word -> string # singular piece of text
+	- stringarray -> strings # should eat the rest of the command (typically how bukkit commands work)
+	- gamemode -> gamemode
+	- particle -> particle
+	- entitytype -> entitytype
+	- block -> block # essentially paper's blockdata
+	- entity -> entity
+	- entities -> entities
+	- player -> player
+	- players -> players
+	- item -> item
+	- component -> component
+	- uuid -> string
+	- nbtcompound -> nbtcompound
+	- blockposition -> position # relative, can use ~ in arguments for example
+	- vector -> position # relative, can use ~ in arguments for example
+	- 2dvector -> vector # relative, can use ~ in arguments for example. Relative part is for sender's yaw/pitch. X and Z are the values, y is 0.
+	
+	NOTE: Entity/player selectors (@s, @a, etc.) are supported, but the sender must have the proper permission level in order for it to show up.
+	See the 'Permission Level' expression""")
+@Examples("""
+	# Rough Syntax
+	arg[ument] <local-var-name: argumenttype>:
+		suggestions: # [OPTIONAL] section allowing you to add suggestion entries to the argument suggestions expression
+		default value: # [OPTIONAL] allows you to set this argument to be optional, and have the default value set if this argument wasn't provided
+		format: # [OPTIONAL] allows you to set the format for the argument (default, lower case, and upper case). Currently only supports gamemode
+		trigger: # [OPTIONAL] section that runs the code in it when the command is executed. Only optional if there is another argument/subcommand further in this tree
+	
+	# Simple Example
+	command /test:
+		argument <text: string>:
+			default value: "hello"
+			trigger:
+				send {_text} to sender
+	
+	# Expected Execution:
+	# /test -> sends 'hello' to the sender
+	# /test bob -> sends 'bob' to the sender
+	
+	# More Involved Example
+	command /tp:
+		condition:
+			return whether sender is a player
+		argument <target-player: player>:
+			argument <msg: string>:
+				default value: "Someone teleported to you."
+				trigger:
+					teleport player to {_target-player} in {_target-player}'s instance
+					send {_msg} to {_target-player}
+		trigger:
+			send "Usage: /tp <player> <msg>" to player
+	
+	# Expected Execution:
+	# /tp -> sends the usage message
+	# /tp Notch -> teleports the player to notch and sends 'Someone teleported to you.' to Notch
+	# /tp Notch hi notch -> teleports the player to notch and sends 'hi notch' to Notch""")
 public class SecArgument extends Section {
 
 	private static final EntryValidator ENTRY_VALIDATOR = EntryValidator.builder()
@@ -94,7 +143,9 @@ public class SecArgument extends Section {
 				Skript.error("Invalid format '" + format + "' has been provided. Valid options are default, lower case, and upper case.");
 				return false;
 			}
-			enumArg.setFormat(ArgumentEnum.Format.valueOf(format.replace(' ', '_').toUpperCase(Locale.ENGLISH) + "D"));
+			String sFormat = format.replace(' ', '_').toUpperCase(Locale.ENGLISH);
+			if (!sFormat.contains("DEFAULT")) sFormat += "D";
+			enumArg.setFormat(ArgumentEnum.Format.valueOf(sFormat));
 		}
 
 		SectionNode node = container.getOptional("suggestions", SectionNode.class, false);

@@ -18,7 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 public class EffClearPack extends Effect {
 
 	static {
-		Skript.registerEffect(EffClearPack.class, "clear %players%'[s] [resource][ ]pack[s]");
+		Skript.registerEffect(EffClearPack.class, "clear %players%'[s] [resource] pack[s]");
 	}
 
 	private Expression<Player> players;

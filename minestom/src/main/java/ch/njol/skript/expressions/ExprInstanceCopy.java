@@ -18,7 +18,7 @@ import static ch.njol.skript.sections.EffSecCreateInstance.RELIGHT_INSTANCES;
 
 
 @Name("Instance Copy")
-@Description("Creates a copy of an instance container.")
+@Description("Creates and registers a true copy of an instance container.")
 @Examples("set {_copy} to instance copy of {_instance}")
 public class ExprInstanceCopy extends SimpleExpression<InstanceContainer> {
 

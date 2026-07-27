@@ -10,12 +10,13 @@ import ch.njol.skript.util.Slot;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.metadata.display.ItemDisplayMeta;
+import net.minestom.server.inventory.AbstractInventory;
 import net.minestom.server.item.ItemStack;
 import org.bukkit.event.Event;
 
 @Name("Display Item")
 @Description("The item displayed by an item display entity.")
-@Examples("set display item of targeted entity to diamond sword")
+@Examples("set display item of {_entity} to diamond sword")
 public class ExprItem extends SimplePropertyExpression<Entity, Slot> {
 
 	static {
@@ -39,6 +40,11 @@ public class ExprItem extends SimplePropertyExpression<Entity, Slot> {
 			@Override
 			public int getSlot() {
 				return 0;
+			}
+
+			@Override
+			public AbstractInventory getContainer() {
+				return null;
 			}
 		});
 	}

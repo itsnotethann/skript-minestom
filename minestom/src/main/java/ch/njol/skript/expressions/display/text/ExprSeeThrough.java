@@ -13,7 +13,7 @@ import org.jspecify.annotations.Nullable;
 
 @Name("See Through")
 @Description("The see through state of a text display entity.")
-@Examples("set see through of targeted entity to true")
+@Examples("set see through of {_entity} to true")
 public class ExprSeeThrough extends SimplePropertyExpression<Entity, Boolean> {
 
 	static {

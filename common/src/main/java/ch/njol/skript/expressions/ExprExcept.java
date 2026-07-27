@@ -21,8 +21,9 @@ import java.lang.reflect.Array;
 @Name("Except")
 @Description("Filter a list by providing objects to be excluded.")
 @Examples("""
-	spawn zombie at location(0, 0, 0):
-		hide entity from all players except {_player}
+	spawn zombie at position(0, 0, 0, 90, 25) in {_instance}:
+		set auto viewability of entity to false
+		add all players except {_player} to viewers of entity
 	""")
 @Since("2.12")
 public class ExprExcept extends WrapperExpression<Object> {

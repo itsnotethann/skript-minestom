@@ -13,7 +13,7 @@ import org.jspecify.annotations.Nullable;
 
 @Name("Physics")
 @Description("Whether physics is enabled for an entity.")
-@Examples("set physics property of targeted entity to false")
+@Examples("set physics property of {_entity} to false")
 public class ExprPhysics extends SimplePropertyExpression<Entity, Boolean> {
 
 	static {

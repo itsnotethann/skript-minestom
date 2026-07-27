@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
 
 @Name("Particle Setting")
 @Description("A player's particle display setting.")
-@Examples("set particle setting of player to all")
+@Examples("send particle setting of player to player")
 public class ExprParticleSetting extends SimplePropertyExpression<Player, ClientSettings.ParticleSetting> {
 
 	static {

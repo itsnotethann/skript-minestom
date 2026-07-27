@@ -14,8 +14,8 @@ import net.minestom.server.entity.Player;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
-@Name("Kill")
-@Description("Kills the given entities.")
+@Name("Kill/Remove")
+@Description("If the provided entity is a livingentity and 'kill' was typed, its death animation will play. Otherwise, the entity will be removed permanently.")
 @Examples("kill all entities")
 public class EffKill extends Effect {
 

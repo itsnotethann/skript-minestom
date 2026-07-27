@@ -33,7 +33,7 @@ public class NumberUtils {
 	}
 
 	public static long ticksFrom(Timespan timespan) {
-		return timespan.get(ChronoUnit.MILLIS)/(1000/ServerFlag.SERVER_TICKS_PER_SECOND);
+		return Math.min(Integer.MAX_VALUE, timespan.get(ChronoUnit.MILLIS)/(1000/ServerFlag.SERVER_TICKS_PER_SECOND));
 	}
 
 	public static float[] quatFromVec(Vec vec) {

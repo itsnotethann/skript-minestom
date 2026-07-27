@@ -20,18 +20,8 @@ import ch.njol.util.Math2;
 	"Changing this value can cause the player's level to change if the resulting level progess is negative or larger than 1, e.g. " +
 		"<code>increase the player's level progress by 0.5</code> will make the player gain a level if their progress was more than 50%."})
 @Example("""
-	# use the exp bar as mana
-	on rightclick with a blaze rod:
-		player's level progress is larger than 0.2
-		shoot a fireball from the player
-		reduce the player's level progress by 0.2
-	every 2 seconds:
-		loop all players:
-			level progress of loop-player is smaller than 0.9:
-				increase level progress of the loop-player by 0.1
-			else:
-				set level progress of the loop-player to 0.99
-	""")
+	on rightclick with diamnod sword:
+		add 0.05 to player's level progress""")
 public class ExprLevelProgress extends SimplePropertyExpression<Player, Number> {
 
 	static {

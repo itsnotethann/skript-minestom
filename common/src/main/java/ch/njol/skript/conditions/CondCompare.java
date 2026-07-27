@@ -38,9 +38,7 @@ import java.util.function.Predicate;
 	"Note: This is the only element where not all patterns are shown. It has actually another two sets of similar patters, " +
 		"but with <code>(was|were)</code> or <code>will be</code> instead of <code>(is|are)</code> respectively, " +
 		"which check different <a href='#ExprTimeState'>time states</a> of the first expression."})
-@Example("the clicked block is a stone slab or a double stone slab")
-@Example("time in the player's world is greater than 8:00")
-@Example("the creature is not an enderman or an ender dragon")
+@Example("sender is a player")
 @Since("1.0")
 public class CondCompare extends Condition implements VerboseAssert {
 

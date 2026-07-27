@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Name("Spectator Collision")
-@Description("Enables spectator collision mode for the given players, allowing them to collide with other players even in spectator mode.")
+@Description("Enables spectator collision mode for the given players, allowing them to collide with blocks even in spectator mode.")
 @Examples("enable spectator collision for all players")
 public class EffSpectatorCollision extends Effect {
 

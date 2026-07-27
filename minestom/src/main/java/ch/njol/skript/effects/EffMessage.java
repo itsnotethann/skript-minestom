@@ -30,8 +30,8 @@ import java.util.List;
 @Examples({"message \"A wild %player% appeared!\"",
 	"message \"This message is a distraction. Mwahaha!\"",
 	"send \"Your kill streak is %{kill streak::%uuid of player%}%.\" to player",
-	"if the targeted entity exists:",
-	"\tmessage \"You're currently looking at a %type of the targeted entity%!\"",
+	"if the {_entity} exists:",
+	"\tmessage \"You're currently looking at a %type of the {_entity}%!\"",
 	"on chat:",
 	"\tcancel event",
 	"\tsend \"[%player%] >> %message%\" to all players from player"})

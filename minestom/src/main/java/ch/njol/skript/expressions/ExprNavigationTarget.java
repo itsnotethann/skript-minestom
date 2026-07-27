@@ -13,8 +13,8 @@ import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
 @Name("Navigation Target")
-@Description("The navigation target of an entity.")
-@Examples("set navigation target of targeted entity to player")
+@Description("The navigation target of an entity. Minestom's pathfinding system isn't great right now.")
+@Examples("set navigation target of {_entity} to player")
 public class ExprNavigationTarget extends SimplePropertyExpression<EntityCreature, Point> {
 
 	static {
@@ -34,7 +34,6 @@ public class ExprNavigationTarget extends SimplePropertyExpression<EntityCreatur
 		};
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) throws UnsupportedOperationException {
 		EntityCreature[] entities = getExpr().getArray(event);

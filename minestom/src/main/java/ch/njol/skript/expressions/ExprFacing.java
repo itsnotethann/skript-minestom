@@ -27,9 +27,7 @@ import static ch.njol.skript.util.VectorMath.*;
  */
 @Name("Facing")
 @Description("The facing of an entity or block, i.e. exactly north, south, east, west, up or down (unlike <a href='#ExprDirection'>direction</a> which is the exact direction, e.g. '0.5 south and 0.7 east')")
-@Examples({"# makes a bridge",
-	"loop blocks from the block below the player in the horizontal facing of the player:",
-	"\tset loop-block to cobblestone"})
+@Examples("set facing of player to vector from yaw 90 and pitch 0 # won't teleport the player, will just set their facing")
 @Since("1.4")
 public class ExprFacing extends SimplePropertyExpression<Object, Direction> {
 

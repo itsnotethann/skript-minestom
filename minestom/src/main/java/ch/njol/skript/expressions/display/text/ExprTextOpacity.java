@@ -13,7 +13,7 @@ import org.bukkit.event.Event;
 
 @Name("Text Opacity")
 @Description("The text opacity of a text display entity.")
-@Examples("set text opacity of targeted entity to 255")
+@Examples("set text opacity of {_entity} to 255")
 public class ExprTextOpacity extends SimplePropertyExpression<Entity, Integer> {
 
 	static {

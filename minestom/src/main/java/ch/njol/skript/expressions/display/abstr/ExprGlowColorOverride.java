@@ -14,7 +14,7 @@ import org.bukkit.event.Event;
 
 @Name("Glow Color Override")
 @Description("The glow color override of a display entity.")
-@Examples("set glow color override of targeted entity to red")
+@Examples("set glow color override of {_entity} to red")
 public class ExprGlowColorOverride extends SimplePropertyExpression<Entity, NamedTextColor> {
 
 	static {

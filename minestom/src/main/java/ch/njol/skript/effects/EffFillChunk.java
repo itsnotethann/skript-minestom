@@ -20,7 +20,6 @@ import net.minestom.server.world.biome.Biome;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
-@SuppressWarnings("NotNullFieldNotInitialized")
 @Name("Fill Chunk")
 @Description("Fills a chunk or a portion of it with a specific block within a chunk generator.")
 @Examples({"fill chunk with stone", "fill chunk between y levels 0 and 64 with water"})

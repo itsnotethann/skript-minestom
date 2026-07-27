@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
 
 
 @Name("Flight Mode")
-@Description("Whether a player is in flight mode.")
+@Description("Whether the player is capable of flying or not.")
 @Examples("set flight mode of player to true")
 public class ExprFlightMode extends SimplePropertyExpression<Player, Boolean> {
 

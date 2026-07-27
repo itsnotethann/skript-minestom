@@ -32,27 +32,55 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @Name("Command")
-@Description({
-	"Defines a custom command that is registered with the server when the script loads.",
-	"Arguments can be declared inline in the command name using '<name: type>' syntax.",
-	"Optional entries include 'aliases', a 'condition' section, and a 'trigger' section.",
-	"Additional 'argument' and 'subcommand' sections can be used to build complex command trees.",
-	"Parsed argument values are available as local variables named after each argument."
-})
-@Examples({
-	"command /hello:",
-	"    trigger:",
-	"        send \"Hello!\" to player",
-	"command /give <item: item> <amount: integer>:",
-	"    aliases: g",
-	"    trigger:",
-	"        give {amount} of {item} to player",
-	"command /admin:",
-	"    condition:",
-	"        return player has permission \"admin\"",
-	"    trigger:",
-	"        send \"Admin panel\" to player"
-})
+@Description("""
+	Allows creation of true custom commands.
+	See the 'Command Argument' section documentation for a list of supported argument types and how to use them.""")
+@Examples("""
+	# Rough Syntax
+	command [/]<commandname> [<arguments>]:
+		aliases: # [OPTIONAL] list of other names the command can go by (no / in front)
+		condition: # [OPTIONAL] section allowing you to return a boolean of whether the sender should have access to the command
+		subcommand [/]<commandname> [<arguments>]: # [OPTIONAL] works exactly like a command, can have argument/subcommand sections within
+		arg[ument] <argument>: # [OPTIONAL] allows you to more finely tune or scope an argument. See the Command Argument section documentation for more details
+		trigger: # [OPTIONAL] all arguments defined on the initial command line will be run inside this section
+	
+	# Simple Example
+	command /spawn:
+		aliases: hub
+		condition:
+			if any:
+				sender isn't a player
+				sender doesn't have permission "spawn"
+			then:
+				return false
+			return true
+		trigger:
+			teleport player to {spawn}
+	
+	# More Involved Example
+	command /foo <num: integer>:
+		aliases: f
+		condition:
+			return whether sender has permission "foo"
+		argument <i: item>:
+			trigger:
+				if sender isn't a player:
+					send "You can't get a foo'd item because you're not a player!" to sender
+					stop
+				give player {_num} of {_i}
+		trigger:
+			if {_num} isn't set:
+				send "Usage: /foo <amount> <item>" to sender
+				stop
+			loop {_num} times:
+				send "foo" to sender
+			send "You have been foo'd %{_num}% times" to sender
+	
+	# Expected Execution:
+	# /foo 5 -> prints 'foo' 5 times in the sender's chat and tells them how many times they have been foo'd.
+	# /foo -> Prints the usage message
+	# /foo 5 acacia_boat -> Gives the player 5 acacia boats
+	# /foo 5 acacia_boa (misspell) -> prints 'foo' 5 times in the sender's chat and tells them how many times they have been foo'd.""")
 public class StructCommand extends Structure {
 
 	public static final EntryValidator COMMAND_VALIDATOR = EntryValidator.builder()

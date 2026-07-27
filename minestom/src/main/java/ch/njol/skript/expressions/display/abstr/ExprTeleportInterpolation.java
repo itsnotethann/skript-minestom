@@ -15,7 +15,7 @@ import org.bukkit.event.Event;
 
 @Name("Teleport Interpolation Duration")
 @Description("The teleport interpolation duration of a display entity.")
-@Examples("set teleport interpolation duration of targeted entity to 1 second")
+@Examples("set teleport interpolation duration of {_entity} to 1 second")
 public class ExprTeleportInterpolation extends SimplePropertyExpression<Entity, Timespan> {
 
 	static {

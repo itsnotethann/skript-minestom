@@ -25,10 +25,9 @@ import java.lang.reflect.Type;
  */
 @Name("Cancel Event")
 @Description("Cancels the event (e.g. prevent blocks from being placed, or damage being taken).")
-@Examples({"on damage:",
-	"	victim is a player",
-	"	victim has the permission \"skript.god\"",
-	"	cancel the event"})
+@Examples("""
+	on chat:
+		cancel event""")
 @Since("1.0")
 public class EffCancelEvent extends Effect {
 	static {

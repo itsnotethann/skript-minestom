@@ -15,7 +15,7 @@ import org.bukkit.event.Event;
 
 @Name("Height")
 @Description("The height of a display or interaction entity.")
-@Examples("set height of targeted entity to 1.5")
+@Examples("set height of {_entity} to 1.5")
 public class ExprHeight extends SimplePropertyExpression<Entity, Number> {
 
 	static {

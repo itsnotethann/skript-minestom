@@ -19,7 +19,7 @@ public class ExprTranslationKey extends SimplePropertyExpression<Object, String>
 
 	static {
 		register(ExprTranslationKey.class, String.class, "translation key",
-			"entitytypes/items/attributetypes/blocks/sounds");
+			"entitytypes/items/attributetypes/blocks");
 	}
 
 	@Override
@@ -29,8 +29,6 @@ public class ExprTranslationKey extends SimplePropertyExpression<Object, String>
 			case Item item -> item.getItem().material().registry().translationKey();
 			case Attribute attribute -> attribute.registry().translationKey();
 			case Block block -> block.registry().translationKey();
-			// todo better method of getting the sound translation key
-			case Sound sound -> "subtitles." + sound.name().value();
 			default -> null;
 		};
 	}

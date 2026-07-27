@@ -19,7 +19,9 @@ import java.util.List;
 
 @Name("Instance Time")
 @Description("The time or time rate of an instance.")
-@Examples("set time of current instance to 1000")
+@Examples("""
+	set time of {_instance} to 6000 # noon
+	set time rate of {_instance} to 0 # sun won't move""")
 public class ExprInstanceTime extends PropertyExpression<Instance, Number> {
 
 	static {
@@ -54,7 +56,6 @@ public class ExprInstanceTime extends PropertyExpression<Instance, Number> {
 		};
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) throws UnsupportedOperationException {
 		Instance[] instances = getExpr().getArray(event);

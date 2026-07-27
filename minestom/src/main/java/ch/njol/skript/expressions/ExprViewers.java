@@ -21,7 +21,9 @@ import java.util.List;
 
 @Name("Viewers")
 @Description("The viewers of an entity.")
-@Examples("broadcast \"Viewers: %viewers of player%\"")
+@Examples("""
+	add {_owner} to viewers of {_invisible-admin} # reveal admin to owner
+	remove {_owner} from viewers of {_invisible-admin} # owner can't see admin anymore""")
 public class ExprViewers extends PropertyExpression<Entity, Player> {
 
 	static {

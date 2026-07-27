@@ -25,7 +25,7 @@ import ch.njol.util.Kleenean;
 @Name("Can Hold")
 @Description("Tests whether a player or a chest can hold the given item.")
 @Example("block can hold 200 cobblestone")
-@Example("player has enough space for 64 feathers")
+@Example("player has enough space for 64 feather")
 @Since("1.0")
 public class CondCanHold extends Condition {
 

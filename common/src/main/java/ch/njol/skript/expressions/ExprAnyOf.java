@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 	"Useful when doing comparisons with variable lists."
 })
 @Example("if any of {_numbers::*} are 1:")
-@Example("if any of {teamA::*} are within location(0, 0, 0) and location(10, 10, 10):")
+@Example("if any of {teamA::*} are within blockVector(0, 0, 0) and blockVector(10, 10, 10):")
 @Since("2.11")
 public class ExprAnyOf extends WrapperExpression<Object> {
 

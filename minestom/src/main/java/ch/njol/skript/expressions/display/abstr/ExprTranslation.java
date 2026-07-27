@@ -15,7 +15,7 @@ import org.bukkit.event.Event;
 
 @Name("Display Translation")
 @Description("The translation offset of a display entity.")
-@Examples("set display translation of targeted entity to location(0, 1, 0)")
+@Examples("set display translation of {_entity} to vector(0, 1, 0)")
 public class ExprTranslation extends SimplePropertyExpression<Entity, Point> {
 
 	static {
@@ -35,7 +35,6 @@ public class ExprTranslation extends SimplePropertyExpression<Entity, Point> {
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @org.jspecify.annotations.Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Point translation = delta == null ? null : (Point) delta[0];

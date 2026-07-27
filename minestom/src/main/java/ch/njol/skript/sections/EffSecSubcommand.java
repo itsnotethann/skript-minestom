@@ -18,22 +18,7 @@ import org.skriptlang.skript.lang.entry.EntryContainer;
 import java.util.List;
 
 @Name("Subcommand")
-@Description({
-	"Defines a subcommand within a command structure.",
-	"The subcommand name and argument syntax are parsed from the section key.",
-	"Supports the same entries as a command: aliases, condition, trigger, arguments, and nested subcommands."
-})
-@Examples({
-	"command /admin:",
-	"    trigger:",
-	"        send \"Usage: /admin <subcommand>\"",
-	"    subcommand reload:",
-	"        trigger:",
-	"            reload script \"admin.sk\"",
-	"    subcommand kick <target: player>:",
-	"        trigger:",
-	"            kick {target}"
-})
+@Description("Allows you to define a subcommand within a command. Works exactly like a command.")
 public class EffSecSubcommand extends EffectSection {
 
 	static {
@@ -42,7 +27,6 @@ public class EffSecSubcommand extends EffectSection {
 
 	private StructCommand command;
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult,
 						SectionNode sectionNode, List<TriggerItem> triggerItems) {

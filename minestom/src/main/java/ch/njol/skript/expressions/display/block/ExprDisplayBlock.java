@@ -13,7 +13,7 @@ import org.bukkit.event.Event;
 
 @Name("Display Block")
 @Description("The block displayed by a block display entity.")
-@Examples("set display block of targeted entity to stone")
+@Examples("set display block of {_entity} to stone")
 public class ExprDisplayBlock extends SimplePropertyExpression<Entity, Block> {
 
 	static {

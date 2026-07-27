@@ -23,7 +23,7 @@ import ch.njol.skript.lang.simplification.SimplifiedLiteral;
 })
 @Example("set {_angle} to 90 degrees")
 @Example("{_angle} is 90 # true")
-@Example("180 degrees is pi # true")
+@Example("180 degrees is pi # false")
 @Example("pi radians is 180 degrees # true")
 @Since("2.10")
 public class ExprAngle extends SimpleExpression<Number> {

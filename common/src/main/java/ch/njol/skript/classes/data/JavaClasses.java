@@ -376,7 +376,7 @@ public class JavaClasses {
 				.name("Boolean")
 				.description("A boolean is a value that is either true or false. Other accepted names are 'on' and 'yes' for true, and 'off' and 'no' for false.")
 				.usage("true/yes/on or false/no/off")
-				.examples("set {config.%player%.use mod} to false")
+				.examples("set player's flight mode to false")
 				.since("1.0")
 				.parser(new Parser<Boolean>() {
 					private final RegexMessage truePattern = new RegexMessage("boolean.true.pattern");

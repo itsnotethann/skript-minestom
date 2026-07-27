@@ -125,7 +125,21 @@ public class MinestomFunctions {
 				ComponentWrapper tooltip = (ComponentWrapper) params[1][0];
 				return new SuggestionEntry[]{new SuggestionEntry(entry, tooltip.getComponent())};
 			}
-		}).description("Creates a command suggestion entry with an optional tooltip component.").examples("set {_entry} to suggestionEntry(\"help\", mm(\"<gray>Shows help\"))");
+		}).description("Creates a command suggestion entry with an optional tooltip component.")
+			.examples("""
+				command /home:
+					argument <home: string>:
+						suggestions:
+							loop indices of {homes::%player's uuid%::*}:
+								add suggestionEntry(loop-value, mm("<green>%{homes::%player's uuid%::%loop-value%}%")) to suggestions
+						trigger:
+							if {homes::%player's uuid%::%{_home}%} isn't set:
+								send "Home '%{_home}%' doesn't exist."
+								stop
+							send "Teleporting you to home '%{_home}%'..."
+							teleport player to {homes::%player's uuid%::%{_home}%}
+					trigger:
+						send "Usage: /home <home-name>\"""");
 		/*Functions.registerFunction(new SimpleJavaFunction<TagResolver>("tagresolver", new Parameter<>[] {
 
 		}) {
@@ -205,7 +219,7 @@ public class MinestomFunctions {
 				return CollectionUtils.array(new VibrationData(Particle.Vibration.SourceType.BLOCK, point,
 					-1, 0, (int) NumberUtils.ticksFrom(travelTime)));
 			}
-		}).description("Creates vibration data targeting a block.").examples("set {_data} to blockVibrationData(point(0, 64, 0), 5 seconds)");
+		}).description("Creates vibration data targeting a block.").examples("set {_data} to blockVibrationData(blockVector(0, 64, 0), 5 seconds)");
 		Functions.registerFunction(new SimpleJavaFunction<>("trailData", new Parameter[]{
 			new Parameter<>("target", Classes.getExactClassInfo(Point.class), true, null),
 			new Parameter<>("color", Classes.getExactClassInfo(RGBLike.class), true, null),

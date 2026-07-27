@@ -16,8 +16,8 @@ import org.jspecify.annotations.Nullable;
 // if you want the same push upwards you need to do vector(0, 20, 0), not vector(0, 1, 0)
 
 @Name("Velocity")
-@Description("The velocity of an entity.")
-@Examples("set velocity of player to vector(0, 1, 0)")
+@Description("The velocity of an entity. Velocity values on Minestom are 1/20th (20 ticks per second is why) the value of Paper's.")
+@Examples("set velocity of player to vector(0, 20, 0)")
 public class ExprVelocity extends SimplePropertyExpression<Entity, Vec> {
 
 	static {

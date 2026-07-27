@@ -12,7 +12,7 @@ import org.bukkit.event.Event;
 
 @Name("Item Display Context")
 @Description("The display context of an item display entity.")
-@Examples("set display context of targeted entity to head")
+@Examples("set display context of {_entity} to head")
 public class ExprDisplayContext extends SimplePropertyExpression<Entity, ItemDisplayMeta.DisplayContext> {
 
 	static {

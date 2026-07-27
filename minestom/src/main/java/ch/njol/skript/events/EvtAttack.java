@@ -25,14 +25,6 @@ public class EvtAttack extends SkriptEvent {
 				"on player attack:",
 				"on zombie attack on villager:",
 				"on entity attack on player:");
-		EventValues.registerEventValue(EventValue.builder(EntityAttackWrapper.class, Entity.class)
-			.patterns("attacker")
-			.getter(from -> from.getEvent().getEntity())
-			.build());
-		EventValues.registerEventValue(EventValue.builder(EntityAttackWrapper.class, Entity.class)
-			.patterns("victim")
-			.getter(from -> from.getEvent().getTarget())
-			.build());
 	}
 
 	@Nullable

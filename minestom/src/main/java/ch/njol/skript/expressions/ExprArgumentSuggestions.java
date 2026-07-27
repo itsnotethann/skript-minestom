@@ -21,7 +21,20 @@ import org.jspecify.annotations.Nullable;
 
 @Name("Argument Suggestions")
 @Description("The suggestion entries in an argument section callback.")
-@Examples("set {_suggestions::*} to argument suggestions")
+@Examples("""
+	command /home:
+		argument <home: string>:
+			suggestions:
+				loop indices of {homes::%player's uuid%::*}:
+					add suggestionEntry(loop-value, mm("<green>%{homes::%player's uuid%::%loop-value%}%")) to suggestions
+			trigger:
+				if {homes::%player's uuid%::%{_home}%} isn't set:
+					send "Home '%{_home}%' doesn't exist."
+					stop
+				send "Teleporting you to home '%{_home}%'..."
+				teleport player to {homes::%player's uuid%::%{_home}%}
+		trigger:
+			send "Usage: /home <home-name>\"""")
 public class ExprArgumentSuggestions extends SimpleExpression<SuggestionEntry> implements EventRestrictedSyntax {
 
 	static {
@@ -44,7 +57,6 @@ public class ExprArgumentSuggestions extends SimpleExpression<SuggestionEntry> i
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Suggestion suggestion = ((SecArgument.SuggestionCallbackEvent) event).getSuggestion();

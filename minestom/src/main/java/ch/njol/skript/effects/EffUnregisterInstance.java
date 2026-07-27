@@ -15,7 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 @Name("Unregister Instance")
 @Description("Unregisters one or more instances from the server.")
-@Examples("unregister all instances")
+@Examples("unregister {-worlds::lobby}")
 public class EffUnregisterInstance extends Effect {
 
 	static {

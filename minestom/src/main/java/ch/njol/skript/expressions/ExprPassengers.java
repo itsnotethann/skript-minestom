@@ -22,7 +22,7 @@ import java.util.List;
 @Description("The passengers of an entity.")
 @Examples({
 	"set {_passengers::*} to passengers of player",
-	"add targeted entity to passengers of player",
+	"add {_entity} to passengers of player",
 	"remove player from passengers of vehicle"
 })
 public class ExprPassengers extends PropertyExpression<Entity, Entity> {

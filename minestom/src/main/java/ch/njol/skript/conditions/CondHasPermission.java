@@ -23,9 +23,8 @@ import org.jetbrains.annotations.Nullable;
 @Name("Has Permission")
 @Description("Test whether a player has a certain permission.")
 @Examples("""
-	victim has the permission "admin":
-		send "You're attacking an admin!" to attacker
-	""")
+	if player has the permission "admin":
+		send "You're attacking an admin!" to player""")
 @Since("1.0")
 public class CondHasPermission extends Condition {
 

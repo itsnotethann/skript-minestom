@@ -8,7 +8,7 @@ import net.minestom.server.entity.Entity;
 
 @Name("Is Removed")
 @Description("Checks if an entity is removed from its instance.")
-@Examples("if targeted entity is removed:")
+@Examples("if {_entity} is removed:")
 public class CondIsRemoved extends PropertyCondition<Entity> {
 
 	static {

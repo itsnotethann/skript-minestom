@@ -31,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
 @Examples({
 	"spawn living zombie at player's position:",
 	"    before spawn:",
-	"        set display name of entity to \"Custom Zombie\"",
+	"        set name of entity to \"Custom Zombie\"",
 	"    after spawn:",
 	"        broadcast \"Zombie spawned!\""
 })

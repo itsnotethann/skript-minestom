@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 @Name("Join & Split")
 @Description("Joins several texts with a common delimiter (e.g. \", \"), or splits a text into multiple texts at a given delimiter.")
 @Examples({
-	"message \"Online players: %join all players with \"\" | \"\"%\" # %all players% would use the default \"x, y, and z\"",
+	"message \"Online players: %join name of all players with \"\" | \"\"%\" # %all players% would use the default \"x, y, and z\"",
 	"set {_s::*} to the string argument split at \",\""
 })
 @Since("2.1, 2.5.2 (regex support), 2.7 (case sensitivity)")

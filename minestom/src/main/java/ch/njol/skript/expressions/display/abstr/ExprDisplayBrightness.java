@@ -17,7 +17,7 @@ import org.jspecify.annotations.Nullable;
 
 @Name("Display Brightness Override")
 @Description("The block or sky brightness override of a display entity.")
-@Examples("set display block brightness override of targeted entity to 15")
+@Examples("set display block brightness override of {_entity} to 15")
 public class ExprDisplayBrightness extends SimplePropertyExpression<Entity, Integer> {
 
 	static {

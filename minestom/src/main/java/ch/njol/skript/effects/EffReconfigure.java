@@ -13,7 +13,7 @@ import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
 @Name("Reconfigure")
-@Description("Puts the given players into the configuration phase, used when changing client-side settings such as resource packs.")
+@Description("Puts the given players back into the configuration phase.")
 @Examples("reconfigure player")
 public class EffReconfigure extends Effect {
 

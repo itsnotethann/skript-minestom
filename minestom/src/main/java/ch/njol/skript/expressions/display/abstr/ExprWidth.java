@@ -15,7 +15,7 @@ import org.bukkit.event.Event;
 
 @Name("Width")
 @Description("The width of a display or interaction entity.")
-@Examples("set width of targeted entity to 1")
+@Examples("set width of {_entity} to 1")
 public class ExprWidth extends SimplePropertyExpression<Entity, Number> {
 
 	static {

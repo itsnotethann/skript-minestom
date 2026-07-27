@@ -12,7 +12,7 @@ import org.bukkit.event.Event;
 
 @Name("Text Alignment")
 @Description("The alignment of a text display entity.")
-@Examples("set alignment of targeted entity to center")
+@Examples("set alignment of {_entity} to center")
 public class ExprAlignment extends SimplePropertyExpression<Entity, TextDisplayMeta.Alignment> {
 
 	static {

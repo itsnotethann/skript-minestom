@@ -14,7 +14,7 @@ import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
 @Name("Switch Entity Type")
-@Description("Changes the entity type of the given entities without despawning them.")
+@Description("Changes the entity type of the given entities without despawning them. Slightly broken at times and may be removed.")
 @Examples("switch player's entity type to pig")
 public class EffSwitchEntityType extends Effect {
 

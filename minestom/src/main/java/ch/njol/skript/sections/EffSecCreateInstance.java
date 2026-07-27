@@ -16,6 +16,7 @@ import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.hollowcube.polar.PolarChunk;
 import net.hollowcube.polar.PolarLoader;
+import net.kyori.adventure.key.Key;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.ServerFlag;
 import net.minestom.server.event.instance.InstanceChunkLoadEvent;
@@ -38,22 +39,37 @@ import org.skriptlang.skript.lang.entry.util.LiteralEntryData;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-@Name("Create Instance")
-@Description("Creates a new instance container or a shared instance.")
-@Examples({
-	"create instance and store it in {_instance}:",
-	"    file: worlds/lobby",
-	"    loader: anvil",
-	"    generator:",
-	"        fill chunk with stone",
-	"    preload: normal"
-})
+@Name("Create Instance/World")
+@Description("""
+	Creates a new instance container or a shared instance. Instances are Minestom's lightweight world equivalent.
+	Shared instances are an ultra lightweight 'world' that share the chunk data (blocks) from its parent world. Entities are not shared.
+	
+	- Entries
+	dynamic lighting -> boolean
+	file -> string
+	file dimension -> string (only used if world was made after 26.1, example: minecraft:overworld)
+	loader -> anvil/polar (Anvil is the world format that Minecraft uses and Polar was custom in-memory format made for smaller worlds by hollowcube for Minestom)
+	dimension -> dimensiontype
+	preload biome -> biome (fills the entire world with the provided biome)
+	[async] preload option -> normal/strict (strict will not allow default generation of new chunks, even blank ones, as the player travels the world)
+	generator -> section allowing custom generation of each chunk as the world loads (complex generation not recommended as it can get laggy with Skript)""")
+@Examples("""
+	create biome under "test:lobby" stored in {_b}:
+		sky color: rgb(111, 223, 249)
+		fog color: rgb(253, 252, 198)
+		foliage color: rgb(71, 255, 0)
+		water color: rgb(111, 223, 249)
+	create instance container stored in {-worlds::lobby}:
+		loader: polar
+		file: "worlds/lobby/lobby.polar"
+		preload biome: {_b}
+		async preload option: strict""")
 public class EffSecCreateInstance extends EffectSection {
 
 	private static final EntryValidator ENTRY_VALIDATOR;
@@ -61,12 +77,13 @@ public class EffSecCreateInstance extends EffectSection {
 	// maybe a preload-super-strict option that only loads chunks w blocks in them instead of every chunk that the world provides?
 	private static final List<String> VALID_GENERATOR_PRESET_ENTRIES = List.of("strict", "normal");
 	private static final Generator BLANK_GENERATOR = unit -> unit.modifier().fill(Block.AIR);
-	public static final List<Instance> RELIGHT_INSTANCES = new ArrayList<>();
+	public static final List<Instance> RELIGHT_INSTANCES = new CopyOnWriteArrayList<>();
 
 	static {
 		ENTRY_VALIDATOR = EntryValidator.builder()
 			.addEntryData(new LiteralEntryData<>("dynamic lighting", null, true, Boolean.class))
 			.addEntryData(new ExpressionEntryData<>("file", null, true, String.class))
+			.addEntryData(new ExpressionEntryData<>("file dimension", null, true, String.class))
 			.addEntry("loader", null, true)
 			.addEntryData(new ExpressionEntryData<>("dimension", null, true, DimensionType.class))
 			.addEntryData(new ExpressionEntryData<>("preload biome", null, true, Biome.class))
@@ -86,13 +103,14 @@ public class EffSecCreateInstance extends EffectSection {
 	}
 
 	private int matchedPattern;
-	@SuppressWarnings("NotNullFieldNotInitialized")
 	private Expression<Object> storage;
 	@Nullable
 	private Expression<InstanceContainer> originalInstance;
 	private boolean dynamicLighting = false;
 	@Nullable
 	private Expression<String> worldFile;
+	@Nullable
+	private Expression<String> worldFileDimension;
 	@Nullable
 	private String loader;
 	@Nullable
@@ -105,8 +123,7 @@ public class EffSecCreateInstance extends EffectSection {
 	@Nullable
 	private Trigger generator;
 	private boolean phonyAnvilLoader = false;
-	// todo time & time rate of world
-	@SuppressWarnings({"NullableProblems", "unchecked", "ConstantValue"})
+	@SuppressWarnings({"unchecked"})
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult,
 						SectionNode sectionNode, List<TriggerItem> triggerItems) {
@@ -127,7 +144,6 @@ public class EffSecCreateInstance extends EffectSection {
 			if (dynamicLighting != null) this.dynamicLighting = dynamicLighting;
 
 			this.worldFile = container.getOptional("file", Expression.class, false);
-			//this.worldFile = worldFile == null ? null : new File(FileUtils.getServerDirectory(), worldFile);
 
 			String loader = container.getOptional("loader", String.class, false);
 			if (loader != null) {
@@ -140,6 +156,13 @@ public class EffSecCreateInstance extends EffectSection {
 					return false;
 				}
 				this.loader = loader;
+			}
+
+			this.worldFileDimension = container.getOptional("file dimension", Expression.class, false);
+			if (loader != null && !loader.equals("anvil") && worldFileDimension != null) {
+				Skript.error("Entry 'file dimension' should only be provided if the loader is 'anvil' and the world was created " +
+					"after 26.1.");
+				return false;
 			}
 
 			dimension = container.getOptional("dimension", Expression.class, false);
@@ -210,7 +233,16 @@ public class EffSecCreateInstance extends EffectSection {
 			if (loader != null) {
 				if (!trueWorldFile.exists()) return super.walk(event, false);
 				Path worldPath = trueWorldFile.toPath();
-				if (loader.equalsIgnoreCase("anvil")) container.setChunkLoader(new AnvilLoader(worldPath));
+				if (loader.equalsIgnoreCase("anvil")) {
+					String worldFileDimension = this.worldFileDimension == null ? null : this.worldFileDimension.getSingle(event);
+					Key dimensionKey = null;
+					if (!Key.parseable(worldFileDimension)) {
+						SkriptLogger.LOGGER.error("Key 'file dimension' was provided whilst trying to create an instance, but it was not in the 'key:value' format.");
+						return super.walk(event, false);
+					} else if (this.worldFileDimension != null) dimensionKey = Key.key(worldFileDimension); // they provided it, so key shouldn't be null
+
+					container.setChunkLoader(dimensionKey != null ? new AnvilLoader(worldPath, dimensionKey) : new AnvilLoader(worldPath));
+				}
 				else {
 					try {
 						PolarLoader loader = new PolarLoader(worldPath);

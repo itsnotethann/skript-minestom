@@ -13,7 +13,7 @@ import org.bukkit.event.Event;
 
 @Name("Billboard Render Constraints")
 @Description("The billboard render constraints of a display entity.")
-@Examples("set billboard render constraints of targeted entity to fixed")
+@Examples("set billboard render constraints of {_entity} to fixed")
 public class ExprBillboardConstraints extends SimplePropertyExpression<Entity, AbstractDisplayMeta.BillboardConstraints> {
 
 	static {

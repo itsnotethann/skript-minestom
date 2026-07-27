@@ -12,7 +12,7 @@ import org.bukkit.event.Event;
 
 @Name("Line Width")
 @Description("The line width of a text display entity.")
-@Examples("set line width of targeted entity to 200")
+@Examples("set line width of {_entity} to 200")
 public class ExprLineWidth extends SimplePropertyExpression<Entity, Integer> {
 
 	static {

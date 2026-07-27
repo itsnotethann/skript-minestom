@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
 
 @Name("Use Default Background")
 @Description("Whether a text display entity uses the default background color.")
-@Examples("set use default background property of targeted entity to true")
+@Examples("set use default background property of {_entity} to true")
 public class ExprUseDefaultBackground extends SimplePropertyExpression<Entity, Boolean> {
 
 	static {

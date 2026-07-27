@@ -70,6 +70,7 @@ import net.minestom.server.world.attribute.AmbientSounds;
 import net.minestom.server.world.attribute.BackgroundMusic;
 import net.minestom.server.world.attribute.BedRule;
 import net.minestom.server.world.biome.Biome;
+import net.minestom.server.world.biome.BiomeEffects;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
@@ -135,7 +136,12 @@ public class MinestomClasses {
 			.user("senders?")
 			.name("Command Sender")
 			.description("Something that can execute a command and receive messages (players/console).")
-			.examples("send \"Hello\" to player")
+			.examples("""
+				command /test:
+					condition:
+						return whether sender is a player # command can only be executed by players
+					trigger:
+						give player 5 diamond""")
 			.defaultExpression(new EventValueExpression<>(CommandSender.class)));
 		Classes.registerClass(new ClassInfo<>(ConsoleSender.class, "consolesender")
 			.user("console ?senders?")
@@ -215,7 +221,7 @@ public class MinestomClasses {
 			.user("entit(y|ies)")
 			.name("Entity")
 			.description("A mob/player/physical non-block object in an instance.")
-			.examples("kill targeted entity")
+			.examples("kill {_entity}")
 			.defaultExpression(new EventValueExpression<>(Entity.class))
 			.parser(new Parser<>() {
 				@Override
@@ -237,13 +243,13 @@ public class MinestomClasses {
 			.user("living ?entit(y|ies)")
 			.name("Living Entity")
 			.description("An entity that has health, armor, and a main/offhand.")
-			.examples("set health of targeted entity to 20")
+			.examples("set health of {_entity} to 20")
 			.defaultExpression(new EventValueExpression<>(LivingEntity.class)));
 		Classes.registerClass(new ClassInfo<>(EntityCreature.class, "entitycreature")
 			.user("entity ?creatures?")
 			.name("Entity Creature")
 			.description("An entity that has health, armor, main/offhand, and is able to pathfind.")
-			.examples("set navigation target of targeted entity to player")
+			.examples("set navigation target of {_entity} to player")
 			.defaultExpression(new EventValueExpression<>(EntityCreature.class)));
 		Classes.registerClass(new ClassInfo<>(EquipmentHandler.class, "equipmenthandler")
 			.user("equipment ?handlers?")
@@ -528,7 +534,12 @@ public class MinestomClasses {
 			.user("biomes?")
 			.name("Biome")
 			.description("A biome with several values.")
-			.examples("set biome at player's position in player's instance to plains")
+			.examples("""
+				create biome under "minecraft:lobby" stored in {_b}:
+					sky color: rgb(111, 223, 249)
+					fog color: rgb(253, 252, 198)
+					foliage color: rgb(71, 255, 0)
+					water color: rgb(111, 223, 249)""")
 			.defaultExpression(new EventValueExpression<>(Biome.class))
 			.parser(new Parser<>() {
 				@Override
@@ -684,7 +695,7 @@ public class MinestomClasses {
 			.user("click ?types?")
 			.name("Click Type")
 			.description("The type of click in an inventory click event.")
-			.examples("on inventory click:\n\tif click type is left click:")
+			.examples("on inventory click:\n\tif event-clicktype is left click:")
 			.defaultExpression(new EventValueExpression<>(ClickType.class)));
 		Classes.registerClass(new EnumClassInfo<>(FrameType.class, "frametype")
 			.user("frame ?types?")
@@ -824,10 +835,9 @@ public class MinestomClasses {
 			.user("player ?inventor(y|ies)")
 			.name("Player Inventory")
 			.description("Represents a player's inventory.")
-			.examples("open inventory of player to player")
+			.examples("clear player's inventory")
 			.defaultExpression(new EventValueExpression<>(PlayerInventory.class)));
 		Classes.registerClass(new ClassInfo<>(Inventory.class, "nonsense")
-			.user("non ?sense")
 			.name("Nonsense")
 			.description("Internal inventory class alias used by Skript.")
 			.defaultExpression(new EventValueExpression<>(Inventory.class)));
@@ -835,7 +845,7 @@ public class MinestomClasses {
 			.user("inventor(y|ies)")
 			.name("Inventory")
 			.description("Represents an inventory, such as a player's inventory or an anvil inventory.")
-			.examples("open player's inventory to player")
+			.examples("open {_inventory} to player")
 			.defaultExpression(new EventValueExpression<>(AbstractInventory.class))
 			.parser(new Parser<>() {
 				@Override
@@ -1073,7 +1083,7 @@ public class MinestomClasses {
 			.user("enchantments?")
 			.name("Enchantment")
 			.description("An enchantment for an item, including its level.")
-			.examples("enchant player's tool with sharpness 5")
+			.examples("add sharpness 5 to enchants of player's tool")
 			.usage("<enchantment namespace> [<level>]")
 			.defaultExpression(new EventValueExpression<>(Enchantment.class))
 			.parser(new Parser<>() {
@@ -1571,7 +1581,6 @@ public class MinestomClasses {
 			.user("entity activit(y|ies)")
 			.name("Entity Activity")
 			.description("The activity state of an entity (in water, on ground, in air, etc.).")
-			.examples("on spawn:\n\tif entity activity is on ground:")
 			.defaultExpression(new EventValueExpression<>(EntityActivity.class)));
 		Classes.registerClass(new EnumClassInfo<>(MoonPhase.class, "moonphase")
 			.user("moon ?phases?")
@@ -1653,7 +1662,7 @@ public class MinestomClasses {
 			.user("bill ?board ?constraints?")
 			.name("Billboard Constraints")
 			.description("Billboard constraint e.g. FIXED")
-			.examples("set billboard render constraints of targeted entity to fixed")
+			.examples("set billboard render constraints of {_entity} to fixed")
 			.defaultExpression(new EventValueExpression<>(AbstractDisplayMeta.BillboardConstraints.class)));
 		Classes.registerClass(new ClassInfo<>(Attribute.class, "attributetype")
 			.user("attribute ?types?")
@@ -1804,7 +1813,7 @@ public class MinestomClasses {
 			.user("alpha ?colors?")
 			.name("Alpha Color")
 			.description("Alpha Color (color with an alpha (transparency) value)")
-			.examples("set the colour of a text display to rgb(10, 50, 100, 50)")
+			.examples("set background color of {-a} to rgb(255, 255, 255, 128)")
 			.parser(new Parser<>() {
 				@Override
 				public boolean canParse(@NotNull ParseContext context) {
@@ -1825,13 +1834,13 @@ public class MinestomClasses {
 			.user("display ?contexts?")
 			.name("Item Display Context")
 			.description("The context in which an item display is rendered (e.g. GUI)")
-			.examples("set display context of targeted entity to head")
+			.examples("set display context of {_entity} to head")
 			.defaultExpression(new EventValueExpression<>(ItemDisplayMeta.DisplayContext.class)));
 		Classes.registerClass(new EnumClassInfo<>(TextDisplayMeta.Alignment.class, "textalignment")
 			.user("textalignments?")
 			.name("Text Alignment")
 			.description("The text alignment of a text display (center, left, or right)")
-			.examples("set alignment of targeted entity to center")
+			.examples("set text alignment of {_entity} to center")
 			.defaultExpression(new EventValueExpression<>(TextDisplayMeta.Alignment.class)));
 		Classes.registerClass(new EnumClassInfo<>(EntityAnimationPacket.Animation.class, "animation")
 			.user("animations?")
@@ -1867,13 +1876,39 @@ public class MinestomClasses {
 			.user("parrot ?types?")
 			.name("Parrot Type")
 			.description("The type of a parrot that can sit on a player's shoulder.")
-			.examples("set left shoulder parrot type of player to red")
+			.examples("set left shoulder parrot type of player to red parrot")
 			.defaultExpression(new EventValueExpression<>(ParrotType.class)));
+		Classes.registerClass(new EnumClassInfo<>(DimensionType.Skybox.class, "skybox")
+			.user("sky ?box(es)?")
+			.name("Dimension Skybox")
+			.description("The visual skybox of a dimension type.")
+			.examples("create dimension under \"test:lobby\" stored in {_d}:\tskybox: end")
+			.defaultExpression(new EventValueExpression<>(DimensionType.Skybox.class)));
+		Classes.registerClass(new EnumClassInfo<>(DimensionType.CardinalLight.class, "cardinallight")
+			.user("cardinal ?lights?")
+			.name("Dimension Cardinal Light")
+			.description("The cardinal light of a dimension type.")
+			.examples("create dimension under \"test:lobby\" stored in {_d}:\tcardinal light: nether")
+			.defaultExpression(new EventValueExpression<>(DimensionType.CardinalLight.class)));
+		Classes.registerClass(new EnumClassInfo<>(Biome.TemperatureModifier.class, "temperaturemodifier")
+			.user("temperature ?modifiers?")
+			.name("Biome Temperature Modifier")
+			.description("The temperature modifier of a biome.")
+			.examples("create biome under \"test:lobby\" stored in {_b}:\ttemperature modifier: frozen")
+			.defaultExpression(new EventValueExpression<>(Biome.TemperatureModifier.class)));
+		Classes.registerClass(new EnumClassInfo<>(BiomeEffects.GrassColorModifier.class, "grasscolormodifier")
+			.user("grass ?color ?modifiers?")
+			.name("Biome Grass Color Modifier")
+			.description("The grass color modifier of a biome.")
+			.examples("create biome under \"test:lobby\" stored in {_b}:\tgrass color modifier: dark forest")
+			.defaultExpression(new EventValueExpression<>(BiomeEffects.GrassColorModifier.class)));
 		Classes.registerClass(new ClassInfo<>(BufferedImage.class, "bufferedimage")
 			.user("buffered ?images?")
 			.name("Buffered Image")
 			.description("A raster image loaded from a file.")
-			.examples("set {_img} to image from file \"server-icon.png\"")
+			.examples("""
+				on server list ping:
+					set motd favicon to image from file "favicon.png\"""")
 			.defaultExpression(new EventValueExpression<>(BufferedImage.class))
 			.parser(new Parser<>() {
 				@Override
@@ -2256,11 +2291,24 @@ public class MinestomClasses {
 		});
 		Converters.registerConverter(Color.class, AlphaColor.class, from -> from.withAlpha(255));
 		Converters.registerConverter(Item.class, Block.class, from -> from.getItem().material().block());
-		/*Converters.registerConverter(Block.class, Item.class, from -> {
-			Material material = from.registry().material();
-			if (from == Block.AIR) material = Material.AIR; // edge case in minestom rn
-			return material == null ? null : new Item(ItemStack.of(material));
-		});*/
+
+		// unsure if these are necessary
+		Converters.registerConverter(ItemDisplayMeta.DisplayContext.class, ItemAnimation.class, from -> {
+			if (from == ItemDisplayMeta.DisplayContext.NONE) return ItemAnimation.NONE;
+			return null;
+		});
+		Converters.registerConverter(ItemAnimation.class, DimensionType.Skybox.class, from -> {
+			if (from == ItemAnimation.NONE) return DimensionType.Skybox.NONE;
+			return null;
+		});
+		Converters.registerConverter(DimensionType.Skybox.class, Biome.TemperatureModifier.class, from -> {
+			if (from == DimensionType.Skybox.NONE) return Biome.TemperatureModifier.NONE;
+			return null;
+		});
+		Converters.registerConverter(Biome.TemperatureModifier.class, BiomeEffects.GrassColorModifier.class, from -> {
+			if (from == Biome.TemperatureModifier.NONE) return BiomeEffects.GrassColorModifier.NONE;
+			return null;
+		});
 
 		/*
 		 *	Comparators

@@ -15,7 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 @Name("Alphanumeric")
 @Description({"Checks if the given string is alphanumeric."})
-@Examples({"if the argument is not alphanumeric:",
+@Examples({"if \"Notch\" is not alphanumeric:",
 	"	send \"Invalid name!\""})
 @Since("2.4")
 public class CondAlphanumeric extends Condition {

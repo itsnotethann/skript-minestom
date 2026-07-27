@@ -23,7 +23,7 @@ import java.util.List;
 public class ExprInventory extends PropertyExpression<Object, AbstractInventory> {
 
 	static {
-		register(ExprInventory.class, AbstractInventory.class, "[open:(current|open)] inventory", "players/slots");
+		register(ExprInventory.class, AbstractInventory.class, "[open:(current|open)] [:slot] inventory", "players/slots");
 	}
 
 	private boolean open = false;
@@ -31,9 +31,10 @@ public class ExprInventory extends PropertyExpression<Object, AbstractInventory>
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
 		open = parseResult.hasTag("open");
+		boolean slot = parseResult.hasTag("slot");
 		Expression<?> expr = expressions[0];
-		if (!expr.getReturnType().equals(Player.class) && open) {
-			Skript.error("Cannot use 'open' if the expression is not of type player.");
+		if (expr.getReturnType().equals(Slot.class) && (open || !slot)) {
+			Skript.error("Inventory expression for slots must be used as 'slot inventory', not 'inventory' or 'open inventory'.");
 			return false;
 		}
 		setExpr(expr);

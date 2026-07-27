@@ -11,7 +11,8 @@ import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
 @Name("Automatic Viewability")
-@Description("The automatic viewability state of an entity.")
+@Description("The automatic viewability state of an entity. If this is false, in order to see the entity, a viewer must be " +
+	"manually added to this entity.")
 @Examples("set auto viewable state of player to true")
 public class ExprAutoViewable extends SimplePropertyExpression<Entity, Boolean> {
 
@@ -30,7 +31,6 @@ public class ExprAutoViewable extends SimplePropertyExpression<Entity, Boolean> 
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Boolean state = delta == null ? null : (Boolean) delta[0];

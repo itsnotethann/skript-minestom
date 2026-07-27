@@ -21,7 +21,8 @@ public class ExprHostName extends SimplePropertyExpression<Player, String> {
 	@Override
 	public @Nullable String convert(Player from) {
 		PlayerConnection playerConnection = from.getPlayerConnection();
-		return playerConnection.getServerAddress() + ":" + playerConnection.getServerPort();
+		int port = playerConnection.getServerPort();
+		return playerConnection.getServerAddress() + (port != 25565 ? (":" + port) : "");
 	}
 
 	@Override

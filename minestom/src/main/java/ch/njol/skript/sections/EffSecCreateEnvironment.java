@@ -33,24 +33,50 @@ import java.util.function.Consumer;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Name("Create Environment")
-@Description({
-	"Registers a custom dimension type or biome under the given namespace.",
-	"The namespace must be in the format 'prefix:value'.",
-	"Optional entries inside the section configure properties of the dimension or biome.",
-	"Environment attributes from the registry can also be set as entries using their key names.",
-	"This section cannot be delayed."
-})
-@Examples({
-	"create biome type under \"custom:meadow\" and store it in {_biome}:",
-	"    temperature: 0.7",
-	"    precipitation: true",
-	"    water color: rgb(0x3f76e4)",
-	"create dimension type under \"custom:void\" stored in {_dim}:",
-	"    ceiling: false",
-	"    sky light: true",
-	"    minimum y: -64",
-	"    maximum y: 320"
-})
+@Description("""
+	Registers a custom dimension type or biome under the provided namespace.
+	Namespace must be in 'prefix:value' format.
+	
+	Both dimensions and biomes can have environment attributes. You can find a list of them at
+	https://javadoc.minestom.net/net.minestom.server/net/minestom/server/world/attribute/EnvironmentAttribute.html.
+	Entries should be in lower case with spaces instead of underscores.
+	NOTE: Since both dimensions and biomes can have environment attributes, one may override the other, so if for example
+	you find that your sky color isn't showing up, the default biome may be overriding that, so you may need a custom biome.
+	
+	- Dimension-specific Entries
+	fixed time -> boolean
+	sky light -> boolean
+	ceiling -> boolean
+	coordinate scale -> number
+	minimum y -> integer
+	maximum y -> integer
+	logical y -> integer
+	infiniburn -> integer
+	ambient light -> number (typically between 0 and 1)
+	skybox -> skybox
+	cardinal light -> cardinal light
+	
+	- Biome-specific Entries
+	precipitation -> boolean
+	temperature -> number
+	temperature modifier -> temperature modifier
+	downfall -> number
+	water color -> color
+	foliage color -> color
+	dry foliage color -> color
+	grass color -> color
+	grass color modifier -> grass color modifier""")
+@Examples("""
+	create biome under "test:lobby" stored in {_b}:
+		sky color: rgb(111, 223, 249)
+		fog color: rgb(253, 252, 198)
+		foliage color: rgb(71, 255, 0)
+		water color: rgb(111, 223, 249)
+	create instance container stored in {-worlds::lobby}:
+		loader: polar
+		file: "worlds/lobby/lobby.polar"
+		preload biome: {_b}
+		preload option: strict""")
 public class EffSecCreateEnvironment extends EffectSection {
 
 	private static final EntryValidator DIMENSION_ENTRY_VALIDATOR;

@@ -13,7 +13,7 @@ import org.jspecify.annotations.Nullable;
 
 @Name("Shadow")
 @Description("The shadow state of a text display entity.")
-@Examples("set shadow of targeted entity to true")
+@Examples("set shadow of {_entity} to true")
 public class ExprShadow extends SimplePropertyExpression<Entity, Boolean> {
 
 	static {

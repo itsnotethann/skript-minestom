@@ -57,8 +57,8 @@ public class SimpleEvents {
 		Skript.registerEvent("Stab Attack", SimpleEvent.class, PlayerStabWrapper.class, "[player] stab[bing] [attack]")
 			.description("Called when a player attempts to use a piercing item.")
 			.examples("on stab attack:");
-		Skript.registerEvent("Spectate", SimpleEvent.class, PlayerStabWrapper.class, "[player] [start] spectat(e|ing)")
-			.description("Called when a player starts spectating an entity.")
+		Skript.registerEvent("Spectate", SimpleEvent.class, PlayerSpectateWrapper.class, "[player] [start] spectat(e|ing)")
+			.description("Called when a player attempts to start spectating an entity.")
 			.examples("""
 				on spectate:
 					broadcast "%event-target%\"""");

@@ -1,8 +1,10 @@
 package ch.njol.skript.structures.command;
 
+import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.skript.util.Item;
 import ch.njol.skript.util.NBTCompound;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.text.Component;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.arguments.*;
 import net.minestom.server.command.builder.arguments.minecraft.*;
@@ -43,13 +45,13 @@ public enum ArgumentType {
 	STRING("string", ArgumentString::new),
 	WORD("word", ArgumentWord::new),
 	STRING_ARRAY("stringarray", ArgumentStringArray::new),
-	COMMAND("command", ArgumentCommand::new),
+	//COMMAND("command", ArgumentCommand::new), // works but doesn't predict properly clientside so considered broken
 
 	// enums
 	GAME_MODE("gamemode", GameMode.class),
 
 	// minecraft specific
-	PARTICLE("particle", ArgumentParticle::new),
+	PARTICLE("particle", ArgumentParticle::new), // doesn't seem to predict properly clientside but may be useful still
 	ENTITY_TYPE("entitytype", ArgumentEntityType::new),
 	BLOCK("block", ArgumentBlockState::new),
 	ENTITY("entity", s -> new ArgumentEntity(s).map((_, entityFinder) ->
@@ -88,6 +90,7 @@ public enum ArgumentType {
 	public static Object convertToSkriptObject(Object o, CommandSender sender, Argument<?> arg) {
 		if (o instanceof UUID uuid) return uuid.toString();
 		if (o instanceof ItemStack itemStack) return new Item(itemStack);
+		if (o instanceof Component component) return new ComponentWrapper(component);
 		if (o instanceof CompoundBinaryTag compound) return new NBTCompound(compound);
 		if (o instanceof CustomEntityFinder(EntityFinder entityFinder, boolean onlyPlayers, boolean single)) {
 			Stream<Entity> entityStream = entityFinder.find(sender).stream();

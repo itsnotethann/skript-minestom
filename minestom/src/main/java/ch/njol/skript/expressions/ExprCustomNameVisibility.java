@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
 
 @Name("Custom Name Visibility")
 @Description("The custom name visibility state of an entity.")
-@Examples("set custom name visibility of player to true")
+@Examples("set custom name visibility of {_zombie} to true")
 public class ExprCustomNameVisibility extends SimplePropertyExpression<Entity, Boolean> {
 
 	static {
@@ -30,7 +30,6 @@ public class ExprCustomNameVisibility extends SimplePropertyExpression<Entity, B
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Boolean state = delta == null ? null : (Boolean) delta[0];

@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
 
 @Name("Silent")
 @Description("Whether an entity is silent.")
-@Examples("set silent property of targeted entity to true")
+@Examples("set silent property of {_entity} to true")
 public class ExprSilent extends SimplePropertyExpression<Entity, Boolean> {
 
 	static {

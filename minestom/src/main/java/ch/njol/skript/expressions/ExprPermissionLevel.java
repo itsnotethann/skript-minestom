@@ -12,7 +12,9 @@ import org.jspecify.annotations.Nullable;
 
 
 @Name("Permission Level")
-@Description("A player's permission level.")
+@Description("""
+	A player's permission level. This is only used to tell the client what "permissions" it has.
+	This is used for whether the player can use the gamemode switcher, operator creative tab, entity selector in commands (@s, @a, etc.), etc.""")
 @Examples("set permission level of player to 4")
 public class ExprPermissionLevel extends SimplePropertyExpression<Player, Integer> {
 
@@ -33,7 +35,6 @@ public class ExprPermissionLevel extends SimplePropertyExpression<Player, Intege
 		};
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) throws UnsupportedOperationException {
 		Player[] players = getExpr().getArray(event);

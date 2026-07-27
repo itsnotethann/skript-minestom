@@ -50,7 +50,7 @@ import java.util.List;
 @Name("Arithmetic")
 @Description("Arithmetic expressions, e.g. 1 + 2, (health of player - 2) / 3, etc.")
 @Examples({"set the player's health to 10 - the player's health",
-	"loop (argument + 2) / 5 times:",
+	"loop ({_arg} + 2) / 5 times:",
 	"\tmessage \"Two useless numbers: %loop-num * 2 - 5%, %2^loop-num - 1%\"",
 	"message \"You have %health of player * 2% half hearts of HP!\""})
 @Since("1.4.2")

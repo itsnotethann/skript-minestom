@@ -13,7 +13,7 @@ import org.bukkit.event.Event;
 
 @Name("Display Shadow Strength")
 @Description("The shadow strength of a display entity.")
-@Examples("set display shadow strength of targeted entity to 1")
+@Examples("set display shadow strength of {_entity} to 1")
 public class ExprShadowStrength extends SimplePropertyExpression<Entity, Number> {
 
 	static {

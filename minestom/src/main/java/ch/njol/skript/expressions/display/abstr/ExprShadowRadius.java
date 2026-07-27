@@ -13,7 +13,7 @@ import org.bukkit.event.Event;
 
 @Name("Display Shadow Radius")
 @Description("The shadow radius of a display entity.")
-@Examples("set display shadow radius of targeted entity to 0.5")
+@Examples("set display shadow radius of {_entity} to 0.5")
 public class ExprShadowRadius extends SimplePropertyExpression<Entity, Number> {
 
 	static {
@@ -32,7 +32,6 @@ public class ExprShadowRadius extends SimplePropertyExpression<Entity, Number> {
 		return null;
 	}
 
-	@SuppressWarnings("ConstantValue")
 	@Override
 	public void change(Event event, @org.jspecify.annotations.Nullable @org.eclipse.jdt.annotation.Nullable Object[] delta, Changer.ChangeMode mode) {
 		Number radius = delta == null ? null : (Number) delta[0];
