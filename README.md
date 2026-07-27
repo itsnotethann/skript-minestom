@@ -1,5 +1,5 @@
 # skript-minestom
-**skript-minestom** is a server implementation from Minestom, where users write exactly what they want the server to do
+**skript-minestom** is a server implementation using Minestom, where users write exactly what they want the server to do
 using Skript syntax. Skript is baked within the server jar, and it supports some existing Skript addons (skript-reflect 2.6.3),
 but most addons are written specifically for skript-minestom.
 
@@ -10,6 +10,20 @@ upgraded to match more recent Skript versions.
 For those wanting to use Skript for other platforms, the `common` module has been modified, but left in a state where you should
 just be able to fork and use that as a base for your Skript implementation elsewhere!
 
+> [!IMPORTANT]
+> skript-minestom is in **Alpha** and is bound to have lots of changes and new features added over time. With this, it's important
+> to be cautious when choosing to use it for a production server.
+
+## Why Minestom?
+You can view the advantages and disadvantages Minestom has [here](https://github.com/skript-minestom/skript-minestom/wiki).
+
+Skript offers an unmatched development velocity for those who know it already. Combine that with the performance benefits
+Minestom offers due to its inherent lack of vanilla features, and we've found it's a recipe for success (depending on what
+kind of server you're trying to make). With that, it's still important to keep in mind the performance drawbacks that an interpreted
+language like Skript has during use.
+
+It's not for everyone, but it's up for you to decide if it fits your use-case and workflow desires.
+
 ## Requirements
 skript-minestom requires a Java 25 runtime environment in order for it to work properly.
 
@@ -19,7 +33,7 @@ You can find the downloads for each version with their release notes in the [rel
 ## Documentation
 Documentation is available [here](https://smdocs.hapily.me/) for the latest version of skript-minestom and addons.
 
-## Need Help?
+## Getting Started
 First see [the wiki](https://github.com/skript-minestom/skript-minestom/wiki) and [documentation with examples](https://smdocs.hapily.me/),
 but if that doesn't solve your problem or you have further questions you can join and ask for help in [the discord](https://discord.gg/NAzscWaFRg)!
 
