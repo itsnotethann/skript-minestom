@@ -7,6 +7,9 @@ This GitHub fork of Skript is based on SkriptLang's fork of Mirreski's improveme
 The Skript version this was originally based on was 2.9, so there may still be remnants of that, but lots of internal systems have been
 upgraded to match more recent Skript versions.
 
+For those wanting to use Skript for other platforms, the `common` module has been modified, but left in a state where you should
+just be able to fork and use that as a base for your Skript implementation elsewhere!
+
 ## Requirements
 skript-minestom requires a Java 25 runtime environment in order for it to work properly.
 
