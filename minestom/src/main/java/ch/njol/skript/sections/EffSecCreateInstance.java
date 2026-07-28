@@ -148,7 +148,7 @@ public class EffSecCreateInstance extends EffectSection {
 			String loader = container.getOptional("loader", String.class, false);
 			if (loader != null) {
 				if (this.worldFile == null) {
-					Skript.error("If a loader is provided, a valid storage location must also be provided (file is missing).");
+					Skript.error("If a loader is provided, a valid storage location must also be provided (file location is missing).");
 					return false;
 				}
 				if (!VALID_LOADER_ENTRIES.contains(loader)) {
@@ -203,7 +203,7 @@ public class EffSecCreateInstance extends EffectSection {
 		Instance instance;
 		Biome b = this.biome == null ? null : this.biome.getSingle(event);
 		RegistryKey<Biome> biome = b != null ? MinecraftServer.getBiomeRegistry().getKey(b) : null;
-		if (matchedPattern == 0) {
+		if (matchedPattern == 0) { // creating new instance container
 			if (dimension != null) {
 				DimensionType dimension = this.dimension.getSingle(event);
 				if (dimension == null) {
@@ -216,45 +216,45 @@ public class EffSecCreateInstance extends EffectSection {
 						instance = MinecraftServer.getInstanceManager().createInstanceContainer();
 					} else instance = MinecraftServer.getInstanceManager().createInstanceContainer(dimensionKey);
 				}
-			} else {
-				phonyAnvilLoader = true;
-				instance = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader(UUID.randomUUID().toString()));
-			}
+			} else instance = MinecraftServer.getInstanceManager().createInstanceContainer();
 
 			InstanceContainer container = (InstanceContainer) instance;
 			if (dynamicLighting) {
 				instance.setChunkSupplier(LightingChunk::new);
 				RELIGHT_INSTANCES.add(container);
 			}
-			assert worldFile != null; // shouldn't be null because we throw a skript error if it's null
-			String worldFile = this.worldFile.getSingle(event);
-			if (worldFile == null) return super.walk(event, false);
-			File trueWorldFile = new File(FileUtils.getServerDirectory(), worldFile);
-			if (loader != null) {
-				Path worldPath = trueWorldFile.toPath();
-				if (loader.equalsIgnoreCase("anvil")) {
-					Key dimensionKey = null;
-					if (this.worldFileDimension != null) {
-						String worldFileDimension = this.worldFileDimension.getSingle(event);
-						if (!Key.parseable(worldFileDimension)) {
-							SkriptLogger.LOGGER.error("Key 'file dimension' was provided whilst trying to create an instance " +
-								"in {}, but it was not in the 'key:value' format.", getParser().getCurrentScript().nameAndPath());
-							return super.walk(event, false);
-						} else dimensionKey = Key.key(worldFileDimension);
+			File trueWorldFile = null;
+			if (worldFile == null) phonyAnvilLoader = true;
+			else {
+				String worldFile = this.worldFile.getSingle(event);
+				if (worldFile == null) return super.walk(event, false);
+				trueWorldFile = new File(FileUtils.getServerDirectory(), worldFile);
+				if (loader != null) {
+					Path worldPath = trueWorldFile.toPath();
+					if (loader.equalsIgnoreCase("anvil")) {
+						Key dimensionKey = null;
+						if (this.worldFileDimension != null) {
+							String worldFileDimension = this.worldFileDimension.getSingle(event);
+							if (!Key.parseable(worldFileDimension)) {
+								SkriptLogger.LOGGER.error("Key 'file dimension' was provided whilst trying to create an instance " +
+									"in {}, but it was not in the 'key:value' format.", getParser().getCurrentScript().nameAndPath());
+								return super.walk(event, false);
+							} else dimensionKey = Key.key(worldFileDimension);
 
-					}
-					container.setChunkLoader(dimensionKey != null ? new AnvilLoader(worldPath, dimensionKey) : new AnvilLoader(worldPath));
-				}
-				else {
-					try {
-						PolarLoader loader = new PolarLoader(worldPath);
-						loader.setLoadLighting(!dynamicLighting);
-						container.setChunkLoader(loader);
-					} catch (IOException e) {
-						SkriptLogger.LOGGER.error("Runtime error while trying to set chunk loader to polar: {}", e.getMessage());
+						}
+						container.setChunkLoader(dimensionKey != null ? new AnvilLoader(worldPath, dimensionKey) : new AnvilLoader(worldPath));
+					} else {
+						try {
+							PolarLoader loader = new PolarLoader(worldPath);
+							loader.setLoadLighting(!dynamicLighting);
+							container.setChunkLoader(loader);
+						} catch (IOException e) {
+							SkriptLogger.LOGGER.error("Runtime error while trying to set chunk loader to polar: {}", e.getMessage());
+						}
 					}
 				}
 			}
+
 			if (generator != null) {
 				Object variables = Variables.copyLocalVariables(event);
 				container.setGenerator(unit -> {
@@ -310,7 +310,7 @@ public class EffSecCreateInstance extends EffectSection {
 		}
 	}
 
-	private void preLoadChunks(InstanceContainer container, File file, boolean strict, RegistryKey<Biome> biome) {
+	private void preLoadChunks(InstanceContainer container, @Nullable File file, boolean strict, RegistryKey<Biome> biome) {
 		ChunkLoader loader = container.getChunkLoader();
 		boolean loadServerRenderDistance = true;
 		IntSet queuedChunks = new IntArraySet();
@@ -323,7 +323,7 @@ public class EffSecCreateInstance extends EffectSection {
 				addNearbyChunks(pack(x, z), queuedChunks);
 			}
 		} else if (loader instanceof AnvilLoader) {
-			if (!phonyAnvilLoader) {
+			if (!phonyAnvilLoader && file != null) {
 				try {
 					int loadedChunks = 0;
 					File regionFolder = new File(file, "region");
