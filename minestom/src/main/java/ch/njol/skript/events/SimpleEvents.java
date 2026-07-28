@@ -80,19 +80,22 @@ public class SimpleEvents {
 					broadcast "%event-includes-data%" # whether data should be included from the picked block (ctrl + middle click)""");
 		Skript.registerEvent("Entity Equip", SimpleEvent.class, EntityEquipWrapper.class, "[entity] equip")
 			.description("Called when an equipment slot changes on an entity.")
-			.examples("on entity equip");
+			.examples("on entity equip:");
 		Skript.registerEvent("Player Move", SimpleEvent.class, PlayerMoveWrapper.class, "[player] move")
 			.description("Called when a player attempts to move")
-			.examples("on player move");
+			.examples("on player move:");
 		Skript.registerEvent("Cancel Item Use", SimpleEvent.class, PlayerCancelItemUseWrapper.class, "[player] cancel item us(e|age)")
 			.description("Called when a player cancels their item usage before it finishes.")
-			.examples("on player cancel item use");
+			.examples("on player cancel item use:");
 		Skript.registerEvent("Begin Item Use", SimpleEvent.class, PlayerBeginItemUseWrapper.class, "[player] begin item us(e|age)")
 			.description("Called when a player begins to use (consume) their item.")
-			.examples("on player begin item use");
+			.examples("on player begin item use:");
 		Skript.registerEvent("Finish Item Use", SimpleEvent.class, PlayerFinishItemUseWrapper.class, "[player] finish item us(e|age)")
 			.description("Called when a player completes their item usage.")
-			.examples("on player finish item use");
+			.examples("on player finish item use:");
+		Skript.registerEvent("Bundle Item Select", SimpleEvent.class, InventoryBundleItemSelectWrapper.class, "bundle item select")
+			.description("Called when a player scrolls on an item to select a bundle item. Also called when the player stops hovering over the item.")
+			.examples("on bundle item select:");
 	}
 
 }
