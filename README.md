@@ -10,9 +10,8 @@ upgraded to match more recent Skript versions.
 For those wanting to use Skript for other platforms, the `common` module has been modified, but left in a state where you should
 just be able to fork and use that as a base for your Skript implementation elsewhere!
 
-> [!IMPORTANT]
-> skript-minestom is in **Alpha** and is bound to have lots of changes and new features added over time. With this, it's important
-> to be cautious when choosing to use it for a production server.
+> [!WARNING]
+> skript-minestom is **not** intended for beginner Skript users due to the complexity of Minestom.
 
 ## Why Minestom?
 You can view the advantages and disadvantages Minestom has [here](https://github.com/skript-minestom/skript-minestom/wiki).
@@ -23,6 +22,10 @@ kind of server you're trying to make). With that, it's still important to keep i
 language like Skript has during use.
 
 It's not for everyone, but it's up for you to decide if it fits your use-case and workflow desires.
+
+> [!IMPORTANT]
+> skript-minestom is in **Alpha** and is bound to have lots of changes and new features added over time. With this, it's important
+> to be cautious when choosing to use it for a production server.
 
 ## Requirements
 skript-minestom requires a Java 25 runtime environment in order for it to work properly.
