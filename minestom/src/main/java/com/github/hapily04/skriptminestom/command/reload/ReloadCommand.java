@@ -92,7 +92,6 @@ public class ReloadCommand extends Command {
 
 	public static void initSuggestions(@NotNull Suggestion suggestion, String input, boolean enable) {
 		String scriptArg = input.split(" ")[2];
-		System.out.println("scriptArg: " + scriptArg);
 		File scripts = Skript.getInstance().getScriptsFolder();
 		String scriptsPathString = scripts.toPath().toString();
 		int scriptsPathLength = scriptsPathString.length();

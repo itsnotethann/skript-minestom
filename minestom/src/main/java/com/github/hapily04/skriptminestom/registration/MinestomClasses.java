@@ -2327,9 +2327,17 @@ public class MinestomClasses {
 			return Relation.NOT_EQUAL;
 		});
 		Comparators.registerComparator(Entity.class, EntityType.class, (o1, o2) -> Relation.get(o1.getEntityType().equals(o2)));
-		Comparators.registerComparator(Item.class, Slot.class, (o1, o2) -> Relation.get(o1.getItem().isSimilar(o2.getItem())));
-		Comparators.registerComparator(Item.class, Item.class, (o1, o2) -> Relation.get(o1.getItem().isSimilar(o2.getItem())));
+		//Comparators.registerComparator(Item.class, Slot.class, (o1, o2) -> Relation.get(o1.getItem().isSimilar(o2.getItem())));
+		Comparators.registerComparator(Item.class, Item.class, (o1, o2) -> Relation.get(o1.getItem().equals(o2.getItem())));
 		Comparators.registerComparator(Block.class, Block.class, (o1, o2) -> Relation.get(o1.compare(o2)));
+		Comparators.registerComparator(Item.class, Block.class, (o1, o2) -> {
+			ItemStack item = o1.getItem();
+			Material material = item.material();
+			ItemStack basicItemVersion = material == Material.AIR ? ItemStack.AIR : ItemStack.of(material);
+			Block materialBlock = material == Material.AIR ? Block.AIR : material.block();
+			if (item.equals(basicItemVersion) && o2.equals(materialBlock)) return Relation.EQUAL;
+			return Relation.NOT_EQUAL;
+		});
 
 		/*
 		 *	Arithmetic

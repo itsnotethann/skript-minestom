@@ -30,20 +30,39 @@ import static ch.njol.skript.util.ComponentWrapper.toWrapper;
 	    send chat format to console
 	
 	    play sound "block.comparator.click" at volume 0.5 with pitch 2 to all players""")
-public class ExprChatMessage extends SimpleExpression<String> implements EventRestrictedSyntax {
+public class ExprChatMessage extends SimpleExpression<Object> implements EventRestrictedSyntax {
 
 	static {
-		Skript.registerExpression(ExprChatMessage.class, String.class, ExpressionType.SIMPLE, "[chat] message");
+		Skript.registerExpression(ExprChatMessage.class, Object.class, ExpressionType.SIMPLE, "[:raw] [chat] message");
 	}
+
+	private boolean raw;
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+		raw = parseResult.hasTag("raw");
 		return true;
 	}
 
 	@Override
-	protected @Nullable String[] get(Event event) {
-		return new String[]{((PlayerChatWrapper) event).getEvent().getRawMessage()};
+	protected @Nullable Object[] get(Event event) {
+		PlayerChatWrapper wrapper = (PlayerChatWrapper) event;
+		PlayerChatEvent e = wrapper.getEvent();
+		if (raw) return new String[]{e.getRawMessage()};
+		return new ComponentWrapper[]{wrapper.getFormattedPlayerMessage()};
+	}
+
+	@Override
+	public Class<?> @org.jetbrains.annotations.Nullable [] acceptChange(Changer.ChangeMode mode) {
+		if (raw || mode != Changer.ChangeMode.SET) return null;
+		return CollectionUtils.array(ComponentWrapper.class);
+	}
+
+	@Override
+	public void change(Event event, Object @org.jetbrains.annotations.Nullable [] delta, Changer.ChangeMode mode) {
+		ComponentWrapper wrapper = (ComponentWrapper) delta[0];
+		if (wrapper == null) return;
+		((PlayerChatWrapper) event).getFormattedPlayerMessage().modify(_ -> wrapper.getComponent());
 	}
 
 	@Override
@@ -52,13 +71,13 @@ public class ExprChatMessage extends SimpleExpression<String> implements EventRe
 	}
 
 	@Override
-	public Class<? extends String> getReturnType() {
-		return String.class;
+	public Class<?> getReturnType() {
+		return raw ? String.class : ComponentWrapper.class;
 	}
 
 	@Override
 	public String toString(@org.eclipse.jdt.annotation.Nullable Event event, boolean debug) {
-		return "chat message";
+		return (raw ? "raw " : "") + "chat message";
 	}
 
 	@Override

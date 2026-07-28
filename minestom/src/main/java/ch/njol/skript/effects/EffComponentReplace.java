@@ -58,6 +58,7 @@ public class EffComponentReplace extends Effect {
 		if (replacement == null) return;
 		for (String toReplace : this.toReplace.getArray(event)) {
 			Object capture = regex ? Pattern.compile(toReplace) : toReplace;
+			if (capture == null) continue;
 			haystack.changeInPlace(event, wrapper -> {
 				if (wrapper == null) return null;
 				wrapper.modify(component -> component.replaceText(builder -> {
