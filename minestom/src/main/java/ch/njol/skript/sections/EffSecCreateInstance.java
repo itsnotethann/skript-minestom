@@ -231,16 +231,18 @@ public class EffSecCreateInstance extends EffectSection {
 			if (worldFile == null) return super.walk(event, false);
 			File trueWorldFile = new File(FileUtils.getServerDirectory(), worldFile);
 			if (loader != null) {
-				if (!trueWorldFile.exists()) return super.walk(event, false);
 				Path worldPath = trueWorldFile.toPath();
 				if (loader.equalsIgnoreCase("anvil")) {
-					String worldFileDimension = this.worldFileDimension == null ? null : this.worldFileDimension.getSingle(event);
 					Key dimensionKey = null;
-					if (!Key.parseable(worldFileDimension)) {
-						SkriptLogger.LOGGER.error("Key 'file dimension' was provided whilst trying to create an instance, but it was not in the 'key:value' format.");
-						return super.walk(event, false);
-					} else if (this.worldFileDimension != null) dimensionKey = Key.key(worldFileDimension); // they provided it, so key shouldn't be null
+					if (this.worldFileDimension != null) {
+						String worldFileDimension = this.worldFileDimension.getSingle(event);
+						if (!Key.parseable(worldFileDimension)) {
+							SkriptLogger.LOGGER.error("Key 'file dimension' was provided whilst trying to create an instance " +
+								"in {}, but it was not in the 'key:value' format.", getParser().getCurrentScript().nameAndPath());
+							return super.walk(event, false);
+						} else dimensionKey = Key.key(worldFileDimension);
 
+					}
 					container.setChunkLoader(dimensionKey != null ? new AnvilLoader(worldPath, dimensionKey) : new AnvilLoader(worldPath));
 				}
 				else {
