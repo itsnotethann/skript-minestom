@@ -211,10 +211,10 @@ public class SkriptMinestom {
 			PluginManager pluginManager = Bukkit.getPluginManager();
 			Plugin skript = pluginManager.getPlugin("Skript");
 
-			if (skript != null) pluginManager.disablePlugin(skript);
 			for (SkriptAddon addon : Skript.getAddons()) {
 				pluginManager.disablePlugin(addon.plugin);
 			}
+			if (skript != null) pluginManager.disablePlugin(skript);
 			LuckPermsMinestom.disable();
 			MinestomTerminal.stop();
 			System.exit(0); // sometimes server hangs so manually stop

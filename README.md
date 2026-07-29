@@ -45,6 +45,16 @@ We don't offer support for addons on this repository. If there is an issue with 
 If you are an addon developer and need help developing an addon, you can take a look at the in-house addons in [this repo](https://github.com/skript-minestom/)
 or ask for help in [the discord](https://discord.gg/NAzscWaFRg).
 
+## Official Tool Roadmap
+- [x] **[ADDON]** skript-reflect (non-fork) 2.6.3 support
+- [x] **[ADDON]** skript-bdengine
+- [x] **[ADDON]** skript-gui-minestom
+- [x] **[ADDON]** SkriptHubDocsTool (for skript-minestom)
+- [x] **[ADDON]** SKNoise (fork for skript-minestom)
+- [ ] **[ADDON]** skript-blocks (vanilla placement rules, fluid/farming crop mechanics, etc.)
+- [ ] **[ADDON]** skript-tebex (Tebex integration for skript-minestom)
+- [ ] **[SNIPPET]** Minimal Discord bot integration through skript-reflect
+
 ## Contributing
 We are open to pull requests! There are a lot of features we still want to add to skript-minestom, so if there's anything
 you see is missing and want to add it, or improve existing features, feel free to [open a pull request](https://github.com/skript-minestom/skript-minestom/compare)! 
