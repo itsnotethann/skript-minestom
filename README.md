@@ -67,7 +67,7 @@ If it's a bug your reporting, make sure you post a minimal code sample to reprod
 skript-minestom is available to import into your java project [here](https://maven.hapily.me/#/snapshots/com/github/hapily04/skript-minestom).
 
 ## Developers
-You can find all contributors [here](https://github.com/skript-minestom/skript-minestom/graphs/contributors).
+You can find all contributors [here](https://github.com/skript-minestom/skript-minestom/graphs/contributors) and [here for SkriptLang/Skript contributors](https://github.com/SkriptLang/Skript/graphs/contributors).
 
 All code is owned by its writer, licensed for others under GPLv3 (see LICENSE)
 unless otherwise specified.
