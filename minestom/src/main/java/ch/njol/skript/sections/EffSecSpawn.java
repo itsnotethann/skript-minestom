@@ -124,7 +124,9 @@ public class EffSecSpawn extends EffectSection {
 															   .whenComplete((_, throwable) -> {
 							if (throwable != null || afterSpawnTrigger == null) return;
 							Event e = new EntitySpawnWrapper(new EntitySpawnEvent(entity, instance));
-							Variables.withLocalVariables(finalMostRecentLocals, e, () -> TriggerItem.walk(afterSpawnTrigger, e));
+							Variables.setLocalVariables(e, finalMostRecentLocals);
+							TriggerItem.walk(afterSpawnTrigger, e);
+							Variables.removeLocals(e);
 						});
 						if (sync) future.join();
 					}

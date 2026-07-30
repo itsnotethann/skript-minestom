@@ -76,17 +76,18 @@ public class EffSecSendPack extends EffectSection {
 		if (hash == null) return null;
 		Component prompt = ComponentWrapper.getOrElse(this.prompt, event, null);
 		Player[] players = recipients.getArray(event);
-		Object variables = Variables.copyLocalVariables(event);
+		Object variables = Variables.copyVariables(event);
 		ResourcePackRequest request = ResourcePackRequest.resourcePackRequest()
 			.packs(ResourcePackInfo.resourcePackInfo(uuid, URI.create(url), hash))
 			.prompt(prompt)
 			.required(force)
 			.replace(replace)
 			.callback((u, status, audience) -> {
-				if (callback != null) {
-					ResourcePackCallbackEvent callbackEvent = new ResourcePackCallbackEvent(u.toString(), status, (Player) audience);
-					Variables.withLocalVariables(variables, callbackEvent, () -> TriggerItem.walk(callback, callbackEvent));
-				}
+				if (callback == null) return;
+				ResourcePackCallbackEvent callbackEvent = new ResourcePackCallbackEvent(u.toString(), status, (Player) audience);
+				Variables.setLocalVariables(callbackEvent, variables);
+				TriggerItem.walk(callback, callbackEvent);
+				Variables.removeLocals(callbackEvent);
 			}).build();
 		for (Player player : players) {
 			player.sendResourcePacks(request);

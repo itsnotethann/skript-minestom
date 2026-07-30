@@ -1,21 +1,3 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.variables;
 
 import ch.njol.skript.Skript;
@@ -30,7 +12,11 @@ import ch.njol.skript.lang.Variable;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.variables.SerializedVariable.Value;
-import ch.njol.util.*;
+import ch.njol.util.Kleenean;
+import ch.njol.util.NonNullPair;
+import ch.njol.util.Pair;
+import ch.njol.util.StringUtils;
+import ch.njol.util.SynchronizedReference;
 import ch.njol.util.coll.iterator.EmptyIterator;
 import ch.njol.yggdrasil.Yggdrasil;
 import com.google.common.collect.HashMultimap;
@@ -39,14 +25,25 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 import org.skriptlang.skript.lang.converter.Converters;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -55,7 +52,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 
 /**
  * Handles all things related to variables.
@@ -103,21 +99,21 @@ public class Variables {
 
 			@Override
 			@Nullable
-			public String getID(@NonNull Class<?> c) {
+			public String getID(@NotNull Class<?> c) {
 				if (ConfigurationSerializable.class.isAssignableFrom(c)
-						&& Classes.getSuperClassInfo(c) == Classes.getExactClassInfo(Object.class))
+					&& Classes.getSuperClassInfo(c) == Classes.getExactClassInfo(Object.class))
 					return CONFIGURATION_SERIALIZABLE_PREFIX +
-							ConfigurationSerialization.getAlias(c.asSubclass(ConfigurationSerializable.class));
+						ConfigurationSerialization.getAlias(c.asSubclass(ConfigurationSerializable.class));
 
 				return null;
 			}
 
 			@Override
 			@Nullable
-			public Class<? extends ConfigurationSerializable> getClass(@NonNull String id) {
+			public Class<? extends ConfigurationSerializable> getClass(@NotNull String id) {
 				if (id.startsWith(CONFIGURATION_SERIALIZABLE_PREFIX))
 					return ConfigurationSerialization.getClassByAlias(
-							id.substring(CONFIGURATION_SERIALIZABLE_PREFIX.length()));
+						id.substring(CONFIGURATION_SERIALIZABLE_PREFIX.length()));
 
 				return null;
 			}
@@ -162,8 +158,15 @@ public class Variables {
 	static final List<VariablesStorage> STORAGES = new ArrayList<>();
 
 	/**
+	 * @return a copy of the list of variable storage handlers
+	 */
+	public static @UnmodifiableView List<VariablesStorage> getStores() {
+		return Collections.unmodifiableList(STORAGES);
+	}
+
+	/**
 	 * Register a VariableStorage class for Skript to create if the user config value matches.
-	 * 
+	 *
 	 * @param <T> A class to extend VariableStorage.
 	 * @param storage The class of the VariableStorage implementation.
 	 * @param names The names used in the config of Skript to select this VariableStorage.
@@ -243,9 +246,9 @@ public class Variables {
 					// Initiate the right VariablesStorage class
 					VariablesStorage variablesStorage;
 					Optional<?> optional = TYPES.entries().stream()
-							.filter(entry -> entry.getValue().equalsIgnoreCase(type))
-							.map(Entry::getKey)
-							.findFirst();
+						.filter(entry -> entry.getValue().equalsIgnoreCase(type))
+						.map(Entry::getKey)
+						.findFirst();
 					if (!optional.isPresent()) {
 						if (!type.equalsIgnoreCase("disabled") && !type.equalsIgnoreCase("none")) {
 							Skript.error("Invalid database type '" + type + "'");
@@ -261,7 +264,7 @@ public class Variables {
 						constructor.setAccessible(true);
 						variablesStorage = (VariablesStorage) constructor.newInstance(type);
 					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-						Skript.error("Failed to initalize database type '" + type + "'");
+						Skript.error("Failed to initialize database `" + name + "`");
 						successful = false;
 						continue;
 					}
@@ -316,8 +319,8 @@ public class Variables {
 			int notStoredVariablesCount = onStoragesLoaded();
 			if (notStoredVariablesCount != 0) {
 				Skript.warning(notStoredVariablesCount + " variables were possibly discarded due to not belonging to any database " +
-						"(SQL databases keep such variables and will continue to generate this warning, " +
-						"while CSV discards them).");
+					"(SQL databases keep such variables and will continue to generate this warning, " +
+					"while CSV discards them).");
 			}
 
 			// Interrupt the loading logger thread to make it exit earlier
@@ -329,11 +332,6 @@ public class Variables {
 	}
 
 	/**
-	 * A pattern to split variable names using {@link Variable#SEPARATOR}.
-	 */
-	private static final Pattern VARIABLE_NAME_SPLIT_PATTERN = Pattern.compile(Pattern.quote(Variable.SEPARATOR));
-
-	/**
 	 * Splits the given variable name into its parts,
 	 * separated by {@link Variable#SEPARATOR}.
 	 *
@@ -341,7 +339,28 @@ public class Variables {
 	 * @return the parts.
 	 */
 	public static String[] splitVariableName(String name) {
-		return VARIABLE_NAME_SPLIT_PATTERN.split(name);
+		String sep = Variable.SEPARATOR;
+		int sepLen = sep.length();
+		// Fast path for 0 or 1 separators — covers the vast majority of cases
+		// and avoids ArrayList allocation entirely.
+		int first = name.indexOf(sep);
+		if (first == -1)
+			return new String[]{name};
+		int second = name.indexOf(sep, first + sepLen);
+		if (second == -1)
+			return new String[]{name.substring(0, first), name.substring(first + sepLen)};
+		// 3+ parts — use a list for the remainder
+		List<String> parts = new ArrayList<>();
+		parts.add(name.substring(0, first));
+		parts.add(name.substring(first + sepLen, second));
+		int start = second + sepLen;
+		int index;
+		while ((index = name.indexOf(sep, start)) != -1) {
+			parts.add(name.substring(start, index));
+			start = index + sepLen;
+		}
+		parts.add(name.substring(start));
+		return parts.toArray(String[]::new);
 	}
 
 	/**
@@ -430,8 +449,7 @@ public class Variables {
 	 * @param event the event to copy local variables from.
 	 * @return the copy.
 	 */
-	@Nullable
-	public static Object copyLocalVariables(Event event) {
+	public static @Nullable Object copyLocalVariables(Event event) {
 		VariablesMap from = localVariables.get(event);
 		if (from == null)
 			return null;
@@ -439,15 +457,22 @@ public class Variables {
 		return from.copy();
 	}
 
+	public static @Nullable Object copyVariables(@Nullable Object variables) {
+		if (variables instanceof VariablesMap variablesMap) return variablesMap.copy();
+		return null;
+	}
+
 	/**
 	 * Copies local variables from provider to user, runs action, then copies variables back to provider.
 	 * Removes local variables from user after action is finished.
+	 * @param provider The originator of the local variables.
 	 * @param user The event to copy the variables to and back from.
 	 * @param action The code to run while the variables are copied.
 	 */
-	public static void withLocalVariables(@Nullable Object variables, Event user, Runnable action) {
-		Variables.setLocalVariables(user, variables);
+	public static void withLocalVariables(Event provider, Event user, @NotNull Runnable action) {
+		Variables.setLocalVariables(user, Variables.copyLocalVariables(provider));
 		action.run();
+		Variables.setLocalVariables(provider, Variables.copyLocalVariables(user));
 		Variables.removeLocals(user);
 	}
 
@@ -483,23 +508,23 @@ public class Variables {
 
 			return map.getVariable(n);
 		} else {
-			// Prevent race conditions from returning variables with incorrect values
-			if (!changeQueue.isEmpty()) {
-				// Gets the last VariableChange made
-				VariableChange variableChange = changeQueue.stream()
-						.filter(change -> change.name.equals(n))
-						.reduce((first, second) -> second)
-								// Gets last value, as iteration is from head to tail,
-								//  and adding occurs at the tail (and we want the most recently added)
-						.orElse(null);
-
-				if (variableChange != null) {
-					return variableChange.value;
-				}
-			}
-
 			try {
 				variablesLock.readLock().lock();
+				// Prevent race conditions from returning variables with incorrect values
+				if (!changeQueue.isEmpty()) {
+					// Gets the last VariableChange made
+					VariableChange variableChange = changeQueue.stream()
+						.filter(change -> change.name.equals(n))
+						.reduce((first, second) -> second)
+						// Gets last value, as iteration is from head to tail,
+						//  and adding occurs at the tail (and we want the most recently added)
+						.orElse(null);
+
+					if (variableChange != null) {
+						return variableChange.value;
+					}
+				}
+
 				return variables.getVariable(n);
 			} finally {
 				variablesLock.readLock().unlock();
@@ -628,15 +653,14 @@ public class Variables {
 	 * @param value the value, or {@code null} to delete the variable.
 	 */
 	static void setVariable(String name, @Nullable Object value) {
-		boolean gotLock = variablesLock.writeLock().tryLock();
-		if (gotLock) {
+		if (variablesLock.writeLock().tryLock()) {
 			try {
-				// Set the variable
+				if (!changeQueue.isEmpty()) { // Process older, queued changes if available
+					processChangeQueue();
+				}
+				// Process and save requested change
 				variables.setVariable(name, value);
-				// ..., save the variable change
 				saveVariableChange(name, value);
-				// ..., and process all previously queued changes
-				processChangeQueue();
 			} finally {
 				variablesLock.writeLock().unlock();
 			}
@@ -715,7 +739,7 @@ public class Variables {
 	 * Access must be synchronised.
 	 */
 	private static final SynchronizedReference<Map<String, NonNullPair<Object, VariablesStorage>>> TEMP_VARIABLES =
-			new SynchronizedReference<>(new HashMap<>());
+		new SynchronizedReference<>(new HashMap<>());
 
 	/**
 	 * The amount of variable conflicts between variable storages where
@@ -913,7 +937,8 @@ public class Variables {
 	 * @param value the value of the variable.
 	 */
 	private static void saveVariableChange(String name, @Nullable Object value) {
-		if (name.startsWith(Variable.EPHEMERAL_VARIABLE_TOKEN)) return;
+		if (name.startsWith(Variable.EPHEMERAL_VARIABLE_TOKEN))
+			return;
 		saveQueue.add(serialize(name, value));
 	}
 

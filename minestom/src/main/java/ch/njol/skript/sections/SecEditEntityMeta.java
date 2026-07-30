@@ -52,12 +52,11 @@ public class SecEditEntityMeta extends Section {
 
 	@Override
 	protected @Nullable TriggerItem walk(Event event) {
-		Object locals = Variables.copyLocalVariables(event);
 		for (Entity entity : entities.getArray(event)) {
 			EntityMeta meta = entity.getEntityMeta();
 			meta.setNotifyAboutChanges(false);
 			EditEntityMetaEvent e = new EditEntityMetaEvent(entity);
-			Variables.withLocalVariables(locals, e, () -> TriggerItem.walk(editTrigger, e));
+			Variables.withLocalVariables(event, e, () -> TriggerItem.walk(editTrigger, e));
 			meta.setNotifyAboutChanges(true);
 		}
 		return super.walk(event, false);

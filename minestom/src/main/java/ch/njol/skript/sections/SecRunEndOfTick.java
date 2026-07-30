@@ -28,12 +28,14 @@ import java.util.List;
 public class SecRunEndOfTick extends Section {
 
 	static {
-		Skript.registerSection(SecRunEndOfTick.class, "[schedule to] run (by|at) [the] end of [the] tick");
+		Skript.registerSection(SecRunEndOfTick.class, "[schedule to] run at [the] end of [the] tick");
 	}
+
+	private Trigger trigger;
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult, SectionNode sectionNode, List<TriggerItem> triggerItems) {
-		loadCode(sectionNode);
+		trigger = loadCode(sectionNode, "end of tick", getParser().getCurrentEvents());
 		return true;
 	}
 
@@ -42,7 +44,7 @@ public class SecRunEndOfTick extends Section {
 		Object variables = Variables.copyLocalVariables(event);
 		MinecraftServer.getSchedulerManager().scheduleEndOfTick(() -> {
 			Variables.setLocalVariables(event, variables);
-			TriggerItem.walk(this.first, event);
+			trigger.execute(event);
 		});
 		return super.walk(event, false);
 	}

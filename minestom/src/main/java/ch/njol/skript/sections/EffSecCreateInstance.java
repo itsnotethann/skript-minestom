@@ -259,7 +259,9 @@ public class EffSecCreateInstance extends EffectSection {
 				Object variables = Variables.copyLocalVariables(event);
 				container.setGenerator(unit -> {
 					TerrainGenerateEvent generateEvent = new TerrainGenerateEvent(unit);
-					Variables.withLocalVariables(variables, generateEvent, () -> TriggerItem.walk(generator, generateEvent));
+					Variables.setLocalVariables(generateEvent, Variables.copyVariables(variables));
+					TriggerItem.walk(generator, generateEvent);
+					Variables.removeLocals(generateEvent);
 				});
 			}
 			if (preloadOption != null) preLoadChunks(container, trueWorldFile, preloadOption.equals("strict"), biome);

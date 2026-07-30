@@ -1,26 +1,9 @@
-/**
- *   This file is part of Skript.
- *
- *  Skript is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Skript is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Skript.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright Peter Güttinger, SkriptLang team and contributors
- */
 package ch.njol.skript.variables;
 
 import ch.njol.skript.lang.Variable;
 import ch.njol.util.StringUtils;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.util.IndexTrackingTreeMap;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -43,16 +26,45 @@ final class VariablesMap {
 		if (s2 == null)
 			return 1;
 
+		int len1 = s1.length();
+		int len2 = s2.length();
+
+		// Fast path: assume both strings are pure positive integers without leading zeros.
+		// This is the dominant case for list indices (e.g. {list::1} through {list::1000}).
+		// For these, numeric order == length order, then lexicographic order.
+		// This does cause an extra partial loop over non-integer strings, but ints are much more common and it'll fail-fast.
+		char firstChar1 = len1 > 0 ? s1.charAt(0) : 0;
+		char firstChar2 = len2 > 0 ? s2.charAt(0) : 0;
+		if (firstChar1 >= '1' && firstChar1 <= '9' && firstChar2 >= '1' && firstChar2 <= '9') {
+			int i = 1;
+			// Check if the rest of the characters are digits as well
+			while (i < len1 && isDigit(s1.charAt(i))) {
+				i++;
+			}
+			if (i == len1) { // all of s1 are digits
+				i = 1;
+				// Check if the rest of the characters are digits as well
+				while (i < len2 && isDigit(s2.charAt(i))) {
+					i++;
+				}
+				if (i == len2) { // all of s2 are digits
+					if (len1 != len2)
+						return len1 - len2;
+					return s1.compareTo(s2);
+				}
+			}
+		}
+
 		int i = 0;
 		int j = 0;
 
 		boolean lastNumberNegative = false;
 		boolean afterDecimalPoint = false;
-		while (i < s1.length() && j < s2.length()) {
+		while (i < len1 && j < len2) {
 			char c1 = s1.charAt(i);
 			char c2 = s2.charAt(j);
 
-			if ('0' <= c1 && c1 <= '9' && '0' <= c2 && c2 <= '9') {
+			if (isDigit(c1) && isDigit(c2)) {
 				// Numbers/digits are treated differently from other characters.
 
 				// The index after the last digit
@@ -111,7 +123,9 @@ final class VariablesMap {
 					return ((i2 - i) - (j2 - j)) * isPositive;
 
 				// If the numbers are equal, but either has leading zeroes,
-				//  more leading zeroes is a lesser number (01 < 1)
+				//  more leading zeroes is a bigger number (01 > 1)
+				// The original intention was for them to be smaller, but the author wrote it wrong so they're bigger :/
+				// Best to just keep it like that than to change it and break existing variable orderings
 				if (z1 != z2)
 					return (z1 - z2) * isPositive;
 
@@ -131,12 +145,16 @@ final class VariablesMap {
 				j++;
 			}
 		}
-		if (i < s1.length())
+		if (i < len1)
 			return lastNumberNegative ? -1 : 1;
-		if (j < s2.length())
+		if (j < len2)
 			return lastNumberNegative ? 1 : -1;
 		return 0;
 	};
+
+	private static boolean isDigit(char c) {
+		return '0' <= c && c <= '9';
+	}
 
 	/**
 	 * The map that stores all non-list variables.
@@ -234,7 +252,7 @@ final class VariablesMap {
 					break;
 				} else if (value != null) {
 					// Create child node, add it to parent and continue iteration
-					childNode = new TreeMap<>(VARIABLE_NAME_COMPARATOR);
+					childNode = new IndexTrackingTreeMap<>(VARIABLE_NAME_COMPARATOR);
 
 					parent.put(childNodeName, childNode);
 					parent = (TreeMap<String, Object>) childNode;
@@ -287,7 +305,7 @@ final class VariablesMap {
 					break;
 				} else if (value != null) {
 					// Need to continue iteration, create new child node and put old value in it
-					TreeMap<String, Object> newChildNodeMap = new TreeMap<>(VARIABLE_NAME_COMPARATOR);
+					TreeMap<String, Object> newChildNodeMap = new IndexTrackingTreeMap<>(VARIABLE_NAME_COMPARATOR);
 					newChildNodeMap.put(null, childNode);
 
 					// Add new child node to parent
@@ -352,7 +370,7 @@ final class VariablesMap {
 	 */
 	@SuppressWarnings("unchecked")
 	private static TreeMap<String, Object> copyTreeMap(TreeMap<String, Object> original) {
-		TreeMap<String, Object> copy = new TreeMap<>(VARIABLE_NAME_COMPARATOR);
+		TreeMap<String, Object> copy = new IndexTrackingTreeMap<>(VARIABLE_NAME_COMPARATOR);
 
 		for (Entry<String, Object> child : original.entrySet()) {
 			String key = child.getKey();
