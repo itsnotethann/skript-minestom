@@ -96,6 +96,12 @@ public class SimpleEvents {
 		Skript.registerEvent("Bundle Item Select", SimpleEvent.class, InventoryBundleItemSelectWrapper.class, "bundle item select")
 			.description("Called when a player scrolls on an item to select a bundle item. Also called when the player stops hovering over the item.")
 			.examples("on bundle item select:");
+		Skript.registerEvent("Effect Command", SimpleEvent.class, EffectCommandEvent.class, "effect command")
+			.description("Called when a player runs an effect command.")
+			.examples("on effect command:");
+		Skript.registerEvent("Unknown Command", SimpleEvent.class, UnknownCommandEvent.class, "unknown command [execution]")
+			.description("Called when a sender executes an unknown/unregistered command.")
+			.examples("on unknown command:");
 	}
 
 }

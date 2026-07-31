@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.events.EffectCommandEvent;
+import ch.njol.skript.events.UnknownCommandEvent;
 import ch.njol.skript.events.minestom.CustomConnectEvent;
 import ch.njol.skript.events.wrapper.EventWrapper;
 import ch.njol.skript.events.wrapper.marker.MarkerRegistration;
@@ -37,6 +38,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.luckperms.api.LuckPerms;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.command.CommandManager;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.event.EventNode;
@@ -83,7 +85,9 @@ public class SkriptMinestom {
 				return player;
 			});
 
-		MinecraftServer.getCommandManager().register(new SkriptCommand(), new StopCommand());
+		CommandManager commandManager = MinecraftServer.getCommandManager();
+		commandManager.register(new SkriptCommand(), new StopCommand());
+		commandManager.setUnknownCommandCallback((sender, command) -> Bukkit.getPluginManager().callEvent(new UnknownCommandEvent(sender, command)));
 		try {
 			initSkript();
 			initEffectCommands();
