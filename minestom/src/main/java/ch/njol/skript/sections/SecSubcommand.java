@@ -4,8 +4,8 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
-import ch.njol.skript.lang.EffectSection;
 import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.Section;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.structures.command.StructCommand;
@@ -18,10 +18,10 @@ import java.util.List;
 
 @Name("Subcommand")
 @Description("Allows you to define a subcommand within a command. Works exactly like a command.")
-public class EffSecSubcommand extends EffectSection {
+public class SecSubcommand extends Section {
 
 	static {
-		Skript.registerSection(EffSecSubcommand.class, /*"subcommand from name %*string%", */"subcommand <.+>");
+		Skript.registerSection(SecSubcommand.class, /*"subcommand from name %*string%", */"subcommand <.+>");
 	}
 
 	private StructCommand command;

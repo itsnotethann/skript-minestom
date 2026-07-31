@@ -11,7 +11,7 @@ import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.lang.util.SimpleEvent;
 import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.sections.EffSecSubcommand;
+import ch.njol.skript.sections.SecSubcommand;
 import ch.njol.skript.sections.SecArgument;
 import ch.njol.skript.variables.Variables;
 import net.minestom.server.MinecraftServer;
@@ -180,7 +180,7 @@ public class StructCommand extends Structure {
 		for (Node node : container.getUnhandledNodes()) {
 			Section section = getSection(node);
 			switch (section) {
-				case EffSecSubcommand sub -> {
+				case SecSubcommand sub -> {
 					StructCommand cmd = sub.getCommand();
 					if (cmd.command == null) {
 						cmd.command = cmd.parseCommand();
