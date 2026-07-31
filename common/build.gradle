@@ -65,8 +65,6 @@ tasks.withType(ShadowJar) {
 		project.configurations.shadow
 	]
 	dependencies {
-		include(dependency('org.bstats:bstats-bukkit'))
-		include(dependency('org.bstats:bstats-base'))
 		include(dependency('net.kyori:adventure-text-serializer-bungeecord'))
 		include(dependency('org.eclipse.jdt:org'))
 		include(dependency('com.google.code.findbugs:findbugs'))
@@ -80,7 +78,6 @@ tasks.withType(ShadowJar) {
 		include(dependency("net.kyori:adventure-text-serializer-ansi"))
 	}
 //	relocate 'io.papermc.lib', 'ch.njol.skript.paperlib'
-	relocate 'org.bstats', 'ch.njol.skript.bstats'
 	manifest {
 		attributes(
 			'Name': 'ch/njol/skript',
