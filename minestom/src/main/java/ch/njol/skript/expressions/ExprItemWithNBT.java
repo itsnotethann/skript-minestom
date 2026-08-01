@@ -12,14 +12,8 @@ import ch.njol.skript.util.Item;
 import ch.njol.skript.util.NBTCompound;
 import ch.njol.util.Kleenean;
 import com.github.hapily04.skriptminestom.util.NBTUtils;
-import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.kyori.adventure.nbt.TagStringIO;
-import net.minestom.server.MinecraftServer;
-import net.minestom.server.item.ItemStack;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
-
-import java.io.IOException;
 
 @Name("Item with NBT")
 @Description("An item with a specific NBT.")
