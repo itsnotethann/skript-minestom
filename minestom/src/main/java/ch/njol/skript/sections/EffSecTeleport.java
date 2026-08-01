@@ -68,6 +68,7 @@ public class EffSecTeleport extends EffectSection {
 		Pos pos = point.asPos();
 		Instance i = instance != null ? instance.getSingle(event) : null;
 		if (providedInstance && i == null) return super.walk(event, false);
+		Object variables = Variables.copyLocalVariables(event);
 		for (Entity entity : entities.getArray(event)) {
 			CompletableFuture<Void> future;
 			Instance instance;
@@ -82,7 +83,9 @@ public class EffSecTeleport extends EffectSection {
 			future.whenComplete((_, throwable) -> {
 				if (throwable != null || callback == null) return;
 				Event e = new EntitySpawnWrapper(new EntitySpawnEvent(entity, instance));
-				Variables.withLocalVariables(event, e, () -> TriggerItem.walk(callback, e));
+				Variables.setLocalVariables(e, variables);
+				TriggerItem.walk(callback, e);
+				Variables.removeLocals(e);
 			});
 			if (sync) future.join();
 		}
