@@ -42,7 +42,7 @@ but if that doesn't solve your problem or you have further questions you can joi
 
 ## Addons
 We don't offer support for addons on this repository. If there is an issue with an addon, take it to that addon's repository.
-If you are an addon developer and need help developing an addon, you can take a look at the in-house addons in [this repo](https://github.com/skript-minestom/)
+If you are an addon developer and need help developing an addon, you can take a look at the [in-house addons in this organization](https://github.com/orgs/skript-minestom/repositories)
 or ask for help in [the discord](https://discord.gg/NAzscWaFRg).
 
 ## Official Tool Roadmap
