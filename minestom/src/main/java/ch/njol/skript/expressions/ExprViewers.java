@@ -40,7 +40,7 @@ public class ExprViewers extends PropertyExpression<Entity, Player> {
 	@Override
 	public @Nullable Class<?>[] acceptChange(Changer.ChangeMode mode) {
 		return switch (mode) {
-			case REMOVE, RESET, DELETE, ADD -> CollectionUtils.array(Player[].class);
+			case REMOVE, DELETE, ADD, SET -> CollectionUtils.array(Player[].class);
 			default -> null;
 		};
 	}
@@ -49,25 +49,29 @@ public class ExprViewers extends PropertyExpression<Entity, Player> {
 	public void change(Event event, @org.jspecify.annotations.Nullable @Nullable Object[] delta, Changer.ChangeMode mode) {
 		Player[] players = delta == null ? new Player[0] : Arrays.copyOf(delta, delta.length, Player[].class);
 		for (Entity entity : getExpr().getArray(event)) {
-			if (mode == Changer.ChangeMode.DELETE || mode == Changer.ChangeMode.RESET) {
-				Iterator<? extends Player> iterator = entity.getViewers().iterator();
-				//noinspection WhileLoopReplaceableByForEach // not safe to replace
-				while (iterator.hasNext()) {
-					entity.updateViewerRule();
-					entity.removeViewer(iterator.next());
-				}
+			if (mode == Changer.ChangeMode.DELETE) {
+				clearViewers(entity);
 				continue;
+			}
+			if (mode == Changer.ChangeMode.SET) {
+				clearViewers(entity);
 			}
 			for (Player p : players) {
 				switch (mode) {
 					case REMOVE -> entity.removeViewer(p);
-					case ADD -> {
+					case ADD, SET -> {
 						if (entity.equals(p)) continue;
 						entity.addViewer(p);
 					}
 				}
 			}
 		}
+	}
+
+	private void clearViewers(Entity entity) {
+		Iterator<? extends Player> iterator = entity.getViewers().iterator();
+		//noinspection WhileLoopReplaceableByForEach // not safe to replace
+		while (iterator.hasNext()) entity.removeViewer(iterator.next());
 	}
 
 	@Override
@@ -77,6 +81,11 @@ public class ExprViewers extends PropertyExpression<Entity, Player> {
 			viewers.addAll(entity.getViewers());
 		}
 		return viewers.toArray(new Player[0]);
+	}
+
+	@Override
+	public boolean isSingle() {
+		return false;
 	}
 
 	@Override

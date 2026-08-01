@@ -81,6 +81,11 @@ public class ExprPassengers extends PropertyExpression<Entity, Entity> {
 	}
 
 	@Override
+	public boolean isSingle() {
+		return false;
+	}
+
+	@Override
 	public Class<? extends Entity> getReturnType() {
 		return Entity.class;
 	}

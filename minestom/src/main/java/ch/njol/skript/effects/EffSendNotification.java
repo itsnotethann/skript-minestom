@@ -26,7 +26,7 @@ public class EffSendNotification extends Effect {
 
 	static {
 		Skript.registerEffect(EffSendNotification.class,
-			"send %frametype% notification (with title|titled) %component% (and|using) %item% as [the] icon to %players%");
+			"send %frametype% notification (with title|titled) %component% (and|using|with) %item% as [the] icon to %players%");
 	}
 
 	private Expression<FrameType> frameType;
