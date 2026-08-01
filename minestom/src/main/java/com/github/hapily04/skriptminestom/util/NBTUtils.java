@@ -1,10 +1,13 @@
 package com.github.hapily04.skriptminestom.util;
 
+import ch.njol.skript.util.Item;
 import ch.njol.skript.util.NBTCompound;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.nbt.*;
 import net.minestom.server.component.DataComponent;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.item.ItemStack;
+import net.minestom.server.item.component.CustomData;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.tag.Taggable;
 import org.eclipse.jdt.annotation.Nullable;
@@ -17,7 +20,7 @@ import static com.github.hapily04.skriptminestom.util.ArrayUtils.*;
 
 public class NBTUtils {
 
-	// pretty much everything outside of this method in this class is chatgpt
+	// most methods outside of this one in this class are chatgpt
 	public static CompoundBinaryTag mergeItemNBT(CompoundBinaryTag originalItem, CompoundBinaryTag incomingNBT, ItemStack stack) {
 		CompoundBinaryTag.Builder itemBuilder = CompoundBinaryTag.builder();
 		itemBuilder.put(originalItem);
@@ -172,7 +175,9 @@ public class NBTUtils {
 
 	public static boolean isItemComponentKey(String key) {
 		if (key.contains("/")) return false; // all entity data components contain a slash
-		return DataComponent.fromKey(key.startsWith("minecraft:") ? key : ("minecraft:" + key)) != null;
+		String keyString = key.startsWith("minecraft:") ? key : ("minecraft:" + key);
+		if (!Key.parseable(keyString)) return false;
+		return DataComponent.fromKey(keyString) != null;
 	}
 
 	private static ListBinaryTag subtractLists(ListBinaryTag base,
@@ -217,6 +222,19 @@ public class NBTUtils {
 		return ListBinaryTag.listBinaryTag(type, all);
 	}
 
+	public static NBTCompound getNBTCompound(Item item, boolean custom) {
+		ItemStack internalItem = item.getItem();
+		CompoundBinaryTag compoundBinaryTag;
+		if (custom) {
+			CustomData customData = internalItem.get(DataComponents.CUSTOM_DATA);
+			compoundBinaryTag = customData != null ? customData.nbt() : CompoundBinaryTag.empty();
+		} else {
+			CompoundBinaryTag itemNBT = internalItem.toItemNBT();
+			compoundBinaryTag = itemNBT.contains("components") ? itemNBT.getCompound("components") : CompoundBinaryTag.empty();
+		}
+		return new NBTCompound(compoundBinaryTag, item, custom);
+	}
+
 	public enum TagType {
 
 		BYTE(BinaryTagTypes.BYTE, Byte.class, o -> ByteBinaryTag.byteBinaryTag((Byte) o), t -> ((ByteBinaryTag) t).value()),
@@ -239,7 +257,7 @@ public class NBTUtils {
 		INT_ARRAY(BinaryTagTypes.INT_ARRAY, Integer[].class, o -> IntArrayBinaryTag.intArrayBinaryTag(toIntArray((Object[]) o)), t -> toIntegerArray(((IntArrayBinaryTag) t).value())),
 		LONG_ARRAY(BinaryTagTypes.LONG_ARRAY, Long[].class, o -> LongArrayBinaryTag.longArrayBinaryTag(toLongArray((Object[]) o)), t -> toLongArray(((LongArrayBinaryTag) t).value())),
 		STRING(BinaryTagTypes.STRING, String.class, o -> StringBinaryTag.stringBinaryTag((String) o), t -> ((StringBinaryTag) t).value()),
-		COMPOUND(BinaryTagTypes.COMPOUND, NBTCompound.class, o -> ((NBTCompound) o).getCompound(), t -> new NBTCompound((CompoundBinaryTag) t)),
+		COMPOUND(BinaryTagTypes.COMPOUND, NBTCompound.class, o -> ((NBTCompound) o).getCompound(), t -> new NBTCompound((CompoundBinaryTag) t, false)),
 		//UUID(BinaryTagTypes.INT_ARRAY, String.class, o -> IntArrayBinaryTag.intArrayBinaryTag(NumberUtils.toNBTIntArray(java.util.UUID.fromString((String) o))), t -> NumberUtils.fromNBTIntArray(((IntArrayBinaryTag) t).value()).toString()),
 		LIST(BinaryTagTypes.LIST, Object[].class, o -> {
 			ListBinaryTag.Builder<BinaryTag> builder = ListBinaryTag.heterogeneousListBinaryTag();

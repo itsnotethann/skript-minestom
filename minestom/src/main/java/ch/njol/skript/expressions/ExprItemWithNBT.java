@@ -13,13 +13,17 @@ import ch.njol.skript.util.NBTCompound;
 import ch.njol.util.Kleenean;
 import com.github.hapily04.skriptminestom.util.NBTUtils;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.nbt.TagStringIO;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.item.ItemStack;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+import java.io.IOException;
+
 @Name("Item with NBT")
 @Description("An item with a specific NBT.")
-@Examples("give player stone with nbt from \"{display:{Name:'Custom'}}\"")
+@Examples("give player stone with nbt from \"{enchantment_glint_override:1b}\"")
 public class ExprItemWithNBT extends SimpleExpression<Item> {
 
 	static {
@@ -44,11 +48,8 @@ public class ExprItemWithNBT extends SimpleExpression<Item> {
 		Item item = this.item.getSingle(event);
 		if (nbt == null || item == null) return new Item[0];
 		item = item.copy();
-		CompoundBinaryTag incomingCompound = nbt.getCompound();
-		CompoundBinaryTag itemCompound = item.getItem().toItemNBT();
-		itemCompound = NBTUtils.mergeItemNBT(itemCompound, incomingCompound, item.getItem());
-		ItemStack newItemStack = ItemStack.fromItemNBT(itemCompound);
-		item.modify(_ -> newItemStack);
+		NBTCompound itemCompoundWrapper = NBTUtils.getNBTCompound(item, nbt.isCustom());
+		itemCompoundWrapper.update(c -> NBTUtils.deepMerge(c, nbt.getCompound()));
 		return new Item[]{item};
 	}
 
@@ -64,7 +65,7 @@ public class ExprItemWithNBT extends SimpleExpression<Item> {
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return item.toString(event, debug) + " with nbt " + nbt.toString(event, debug);
+		return item.toString(event, debug) + " with " + nbt.toString(event, debug);
 	}
 
 }

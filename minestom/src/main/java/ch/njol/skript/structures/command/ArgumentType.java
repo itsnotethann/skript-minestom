@@ -91,7 +91,7 @@ public enum ArgumentType {
 		if (o instanceof UUID uuid) return uuid.toString();
 		if (o instanceof ItemStack itemStack) return new Item(itemStack);
 		if (o instanceof Component component) return new ComponentWrapper(component);
-		if (o instanceof CompoundBinaryTag compound) return new NBTCompound(compound);
+		if (o instanceof CompoundBinaryTag compound) return new NBTCompound(compound, false);
 		if (o instanceof CustomEntityFinder(EntityFinder entityFinder, boolean onlyPlayers, boolean single)) {
 			Stream<Entity> entityStream = entityFinder.find(sender).stream();
 			if (onlyPlayers) entityStream = entityStream.filter(entity -> entity instanceof Player);

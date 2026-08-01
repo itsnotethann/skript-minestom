@@ -3,6 +3,7 @@ package ch.njol.skript.util;
 import com.github.hapily04.skriptminestom.util.NBTUtils;
 import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.component.CustomData;
@@ -33,8 +34,8 @@ public class NBTCompound {
 		this.custom = custom;
 	}
 
-	public NBTCompound(CompoundBinaryTag compound) {
-		this(compound, (Taggable) null, false);
+	public NBTCompound(CompoundBinaryTag compound, boolean custom) {
+		this(compound, (Taggable) null, custom);
 	}
 
 	public CompoundBinaryTag getCompound() {
@@ -44,6 +45,10 @@ public class NBTCompound {
 	public void update(Function<CompoundBinaryTag, CompoundBinaryTag> updater) {
 		CompoundBinaryTag newCompound = compound.updateAndGet(updater::apply);
 		if (this.updater != null) this.updater.update(newCompound, custom);
+	}
+
+	public boolean isCustom() {
+		return custom;
 	}
 
 	private abstract static class Updater<T> {
@@ -89,7 +94,8 @@ public class NBTCompound {
 					if (binaryTag == null) continue;
 					componentBuilder.put(key, binaryTag);
 				}
-				return ItemStack.fromItemNBT(itemStack.toItemNBT().put("components", componentBuilder.build()));
+				return ItemStack.fromItemNBT(itemStack.toItemNBT(MinecraftServer.getRegistries()).put("components",
+					componentBuilder.build()), MinecraftServer.getRegistries());
 			}, true);
 		}
 

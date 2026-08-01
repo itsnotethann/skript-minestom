@@ -54,7 +54,7 @@ public class ExprNBTItem extends SimpleExpression<Object> {
 			ItemStack item = items[i].getItem();
 			CompoundBinaryTag customData = item.get(DataComponents.CUSTOM_DATA, new CustomData(CompoundBinaryTag.empty())).nbt();
 			customData = customData.putInt("DataVersion", MinecraftServer.DATA_VERSION);
-			compounds[i] = new NBTCompound(item.with(DataComponents.CUSTOM_DATA, new CustomData(customData)).toItemNBT());
+			compounds[i] = new NBTCompound(item.with(DataComponents.CUSTOM_DATA, new CustomData(customData)).toItemNBT(MinecraftServer.getRegistries()), false);
 		}
 		return compounds;
 	}

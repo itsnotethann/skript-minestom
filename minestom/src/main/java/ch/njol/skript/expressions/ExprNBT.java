@@ -69,20 +69,10 @@ public class ExprNBT extends SimpleExpression<NBTCompound> {
 					if (custom) compound = (CompoundBinaryTag) NBTUtils.getTagOrElse(taggable, NBT_TAG, CompoundBinaryTag.empty());
 					else compound = taggable.tagHandler().asCompound();
 					compounds[i] = new NBTCompound(compound, taggable, custom);
-				} else if (o instanceof Item item) {
-					ItemStack internalItem = item.getItem();
-					CompoundBinaryTag compoundBinaryTag;
-					if (custom) {
-						CustomData customData = internalItem.get(DataComponents.CUSTOM_DATA);
-						compoundBinaryTag = customData != null ? customData.nbt() : CompoundBinaryTag.empty();
-					} else {
-						CompoundBinaryTag itemNBT = internalItem.toItemNBT();
-						compoundBinaryTag = itemNBT.contains("components") ? itemNBT.getCompound("components") : CompoundBinaryTag.empty();
-					}
-					compounds[i] = new NBTCompound(compoundBinaryTag, item, custom);
-				} else if (o instanceof String s) {
+				} else if (o instanceof Item item) compounds[i] = NBTUtils.getNBTCompound(item, custom);
+				else if (o instanceof String s) {
 					try {
-						compounds[i] = new NBTCompound(NBTUtils.asCompound(s));
+						compounds[i] = new NBTCompound(NBTUtils.asCompound(s), custom);
 					} catch (Exception e) {
 						Skript.error("Couldn't parse '" + s + "' as an nbt compound.");
 					}
@@ -91,7 +81,7 @@ public class ExprNBT extends SimpleExpression<NBTCompound> {
 				if (o instanceof String s) {
 					File f = new File(FileUtils.getServerDirectory(), s);
 					try (FileInputStream input = new FileInputStream(f)) {
-						compounds[i] = new NBTCompound(BinaryTagIO.reader().read(input, BinaryTagIO.Compression.GZIP));
+						compounds[i] = new NBTCompound(BinaryTagIO.reader().read(input, BinaryTagIO.Compression.GZIP), false);
 					} catch (FileNotFoundException ignored) {
 						//SkriptLogger.LOGGER.error("Couldn't find file at '{}' while attempting to create an nbt compound.", s);
 					} catch (IOException ignored) {
