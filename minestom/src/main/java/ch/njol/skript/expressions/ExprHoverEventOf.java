@@ -11,7 +11,6 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.skript.util.Item;
 import ch.njol.util.Kleenean;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.minestom.server.entity.Entity;
 import org.bukkit.event.Event;

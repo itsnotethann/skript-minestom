@@ -1,12 +1,5 @@
 package ch.njol.skript.conditions;
 
-import ch.njol.skript.util.Item;
-import net.minestom.server.inventory.AbstractInventory;
-import net.minestom.server.inventory.TransactionOption;
-import net.minestom.server.inventory.TransactionType;
-import org.bukkit.event.Event;
-import org.jetbrains.annotations.Nullable;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.conditions.base.PropertyCondition.PropertyType;
@@ -17,7 +10,13 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
+import ch.njol.skript.util.Item;
 import ch.njol.util.Kleenean;
+import net.minestom.server.inventory.AbstractInventory;
+import net.minestom.server.inventory.TransactionOption;
+import net.minestom.server.inventory.TransactionType;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Peter Güttinger

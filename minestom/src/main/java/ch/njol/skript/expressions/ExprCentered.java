@@ -10,7 +10,6 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import net.minestom.server.coordinate.Point;
-import net.minestom.server.coordinate.Vec;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 

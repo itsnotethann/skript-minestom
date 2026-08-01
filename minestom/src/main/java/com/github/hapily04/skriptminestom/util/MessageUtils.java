@@ -1,7 +1,6 @@
 package com.github.hapily04.skriptminestom.util;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ObjectComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -12,8 +11,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.object.ObjectContents;
 import net.kyori.adventure.text.object.PlayerHeadObjectContents;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-
-import java.util.Base64;
 
 public class MessageUtils {
 

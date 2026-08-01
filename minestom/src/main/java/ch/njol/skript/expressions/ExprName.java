@@ -5,7 +5,6 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.skript.util.Item;
 import ch.njol.util.coll.CollectionUtils;

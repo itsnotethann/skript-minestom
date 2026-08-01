@@ -11,7 +11,6 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.simplification.SimplifiedLiteral;
 import net.minestom.server.color.AlphaColor;
-import net.minestom.server.color.Color;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 

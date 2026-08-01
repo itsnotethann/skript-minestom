@@ -1,9 +1,9 @@
 package ch.njol.skript.expressions;
 
-import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.util.Item;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;

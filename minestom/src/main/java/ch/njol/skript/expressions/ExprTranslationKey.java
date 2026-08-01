@@ -1,11 +1,10 @@
 package ch.njol.skript.expressions;
 
-import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.util.Item;
-import net.kyori.adventure.sound.Sound;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.attribute.Attribute;
 import net.minestom.server.instance.block.Block;

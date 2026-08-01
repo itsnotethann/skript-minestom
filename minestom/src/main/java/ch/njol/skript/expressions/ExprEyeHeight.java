@@ -6,10 +6,7 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
-import net.minestom.server.network.packet.server.play.SetPassengersPacket;
 import org.jspecify.annotations.Nullable;
-
-import java.util.List;
 
 @Name("Eye Height")
 @Description("The eye height of an entity/entity type.")

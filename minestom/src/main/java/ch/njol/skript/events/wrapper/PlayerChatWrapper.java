@@ -2,7 +2,6 @@ package ch.njol.skript.events.wrapper;
 
 import ch.njol.skript.events.wrapper.marker.PlayerInstanceEventMarker;
 import ch.njol.skript.util.ComponentWrapper;
-import net.kyori.adventure.text.Component;
 import net.minestom.server.event.player.PlayerChatEvent;
 import org.skriptlang.skript.lang.converter.Converters;
 

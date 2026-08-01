@@ -1,7 +1,6 @@
 package com.github.hapily04.skriptminestom.command;
 
 import ch.njol.skript.ScriptLoader;
-import ch.njol.skript.Skript;
 import ch.njol.skript.log.RedirectingLogHandler;
 import ch.njol.skript.log.TimingLogHandler;
 import ch.njol.skript.util.FileUtils;

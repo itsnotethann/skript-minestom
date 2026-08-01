@@ -9,7 +9,6 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.SyntaxStringBuilder;
 import ch.njol.skript.lang.util.SimpleExpression;
-import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.util.Item;
 import ch.njol.skript.util.NBTCompound;
 import ch.njol.util.Kleenean;

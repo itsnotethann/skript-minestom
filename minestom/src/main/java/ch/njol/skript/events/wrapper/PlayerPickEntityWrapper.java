@@ -1,6 +1,5 @@
 package ch.njol.skript.events.wrapper;
 
-import ch.njol.skript.classes.Changer;
 import ch.njol.skript.events.wrapper.marker.PlayerInstanceEventMarker;
 import ch.njol.skript.registrations.EventValues;
 import net.minestom.server.entity.Entity;

@@ -3,8 +3,6 @@ package ch.njol.skript.events;
 import ch.njol.skript.Skript;
 import ch.njol.skript.events.wrapper.*;
 import ch.njol.skript.lang.util.SimpleEvent;
-import net.minestom.server.event.player.PlayerStartFlyingEvent;
-import org.skriptlang.skript.util.event.EventRegistry;
 
 public class SimpleEvents {
 

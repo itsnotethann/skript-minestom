@@ -1,18 +1,14 @@
 package ch.njol.skript.expressions;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.util.Item;
 import ch.njol.skript.util.ItemFlag;
-import ch.njol.skript.util.NBTCompound;
 import ch.njol.util.Kleenean;
-import com.github.hapily04.skriptminestom.util.NBTUtils;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minestom.server.item.ItemStack;
 import org.bukkit.event.Event;

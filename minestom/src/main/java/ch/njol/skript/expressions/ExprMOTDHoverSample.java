@@ -14,7 +14,6 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.util.ComponentWrapper;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
-import net.kyori.adventure.text.Component;
 import net.minestom.server.event.server.ServerListPingEvent;
 import net.minestom.server.ping.Status;
 import net.minestom.server.utils.identity.NamedAndIdentified;

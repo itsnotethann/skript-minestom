@@ -2,10 +2,8 @@ package ch.njol.skript.events.wrapper;
 
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.events.wrapper.marker.EntityInstanceEventMarker;
-import ch.njol.skript.events.wrapper.marker.ItemEventMarker;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Item;
-import ch.njol.skript.util.Slot;
 import net.minestom.server.entity.EquipmentSlot;
 import net.minestom.server.event.item.EntityEquipEvent;
 import org.skriptlang.skript.bukkit.lang.eventvalue.EventValue;

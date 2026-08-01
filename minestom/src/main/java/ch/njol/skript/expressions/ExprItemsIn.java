@@ -1,17 +1,5 @@
 package ch.njol.skript.expressions;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-
-import ch.njol.skript.util.Item;
-import ch.njol.skript.util.Slot;
-import net.minestom.server.inventory.AbstractInventory;
-import net.minestom.server.item.ItemStack;
-import org.bukkit.event.Event;
-import org.jetbrains.annotations.Nullable;
-
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Example;
@@ -22,7 +10,18 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.Variable;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.util.Item;
+import ch.njol.skript.util.Slot;
 import ch.njol.util.Kleenean;
+import net.minestom.server.inventory.AbstractInventory;
+import net.minestom.server.item.ItemStack;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @Name("Items In")
 @Description({

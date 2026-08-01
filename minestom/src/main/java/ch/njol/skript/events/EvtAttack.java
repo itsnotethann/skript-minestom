@@ -5,13 +5,10 @@ import ch.njol.skript.events.wrapper.EntityAttackWrapper;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.registrations.EventValues;
-import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.event.entity.EntityAttackEvent;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
-import org.skriptlang.skript.bukkit.lang.eventvalue.EventValue;
 
 public class EvtAttack extends SkriptEvent {
 
