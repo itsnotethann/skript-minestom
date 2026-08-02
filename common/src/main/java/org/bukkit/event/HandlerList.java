@@ -39,7 +39,7 @@ public class HandlerList {
 		}
 	}
 
-	public RegisteredListener[] getBakedListeners() {
+	public List<RegisteredListener> getBakedListeners() {
 		return baked;
 	}
 
