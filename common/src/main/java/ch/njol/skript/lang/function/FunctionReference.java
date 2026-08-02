@@ -30,6 +30,7 @@ import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Contract;
 import ch.njol.skript.util.LiteralUtils;
+import ch.njol.skript.util.Utils;
 import ch.njol.util.StringUtils;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
@@ -38,11 +39,18 @@ import org.skriptlang.skript.lang.converter.Converters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * Reference to a Skript function.
  */
 public class FunctionReference<T> implements Contract {
+
+	private static final String AMBIGUOUS_ERROR =
+		"Skript cannot determine which function named '%s' to call. " +
+			"The following functions were matched: %s. " +
+			"Try clarifying the type of the arguments using the 'value within' expression.";
 	
 	/**
 	 * Name of function that is called, for logging purposes.
@@ -126,14 +134,16 @@ public class FunctionReference<T> implements Contract {
 		// Not enough parameters
 		return parameters.length >= sign.getMinParameters();
 	}
-	
+
+	private Class<?>[] parameterTypes;
+
 	/**
 	 * Validates this function reference. Prints errors if needed.
+	 *
 	 * @param first True if this is called while loading a script. False when
-	 * this is called when the function signature changes.
+	 *              this is called when the function signature changes.
 	 * @return True if validation succeeded.
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean validateFunction(boolean first) {
 		if (!first && script == null)
 			return false;
@@ -141,136 +151,212 @@ public class FunctionReference<T> implements Contract {
 		function = null;
 		SkriptLogger.setNode(node);
 		Skript.debug("Validating function " + functionName);
-		Signature<?> sign = Functions.getSignature(functionName, script);
+		Signature<?> sign = getRegisteredSignature();
+
+		StringJoiner args = new StringJoiner(", ");
+		for (Expression<?> parameterType : parameters) {
+			args.add(Classes.getSuperClassInfo(Utils.getComponentType(parameterType.getReturnType())).getCodeName());
+		}
+		String stringified = "%s(%s)".formatted(functionName, args);
 
 		// Check if the requested function exists
 		if (sign == null) {
 			if (first) {
-				Skript.error("The function '" + functionName + "' does not exist.");
+				Skript.error("The function '" + stringified + "' does not exist.");
 			} else {
-				Skript.error("The function '" + functionName + "' was deleted or renamed, but is still used in other script(s)."
+				Skript.error("The function '" + stringified + "' was deleted or renamed, but is still used in other script(s)."
 					+ " These will continue to use the old version of the function until Skript restarts.");
 				function = previousFunction;
 			}
 			return false;
 		}
-		
+
 		// Validate that return types are what caller expects they are
-		Class<? extends T>[] returnTypes = this.returnTypes;
-		if (returnTypes != null) {
-			ClassInfo<?> rt = sign.returnType;
-			if (rt == null) {
+		Class<? extends T>[] expectedReturnTypes = this.returnTypes;
+		if (expectedReturnTypes != null) {
+			ClassInfo<?> info = sign.getReturnType();
+			Class<?> candidateReturnType = info == null ? null : info.getC();
+			if (candidateReturnType == null) {
 				if (first) {
-					Skript.error("The function '" + functionName + "' doesn't return any value.");
+					Skript.error("The function '" + stringified + "' doesn't return any value.");
 				} else {
-					Skript.error("The function '" + functionName + "' was redefined with no return value, but is still used in other script(s)."
+					Skript.error("The function '" + stringified + "' was redefined with no return value, but is still used in other script(s)."
 						+ " These will continue to use the old version of the function until Skript restarts.");
 					function = previousFunction;
 				}
 				return false;
 			}
-			if (!Converters.converterExists(rt.getC(), returnTypes)) {
+
+			if (!Converters.converterExists(candidateReturnType, expectedReturnTypes)) {
 				if (first) {
-					Skript.error("The returned value of the function '" + functionName + "', " + sign.returnType + ", is " + SkriptParser.notOfType(returnTypes) + ".");
+					Skript.error("The returned value of the function '" + stringified + "', " + candidateReturnType + ", is " + SkriptParser.notOfType(expectedReturnTypes) + ".");
 				} else {
-					Skript.error("The function '" + functionName + "' was redefined with a different, incompatible return type, but is still used in other script(s)."
+					Skript.error("The function '" + stringified + "' was redefined with a different, incompatible return type, but is still used in other script(s)."
 						+ " These will continue to use the old version of the function until Skript restarts.");
 					function = previousFunction;
 				}
 				return false;
 			}
 			if (first) {
-				single = sign.single;
-			} else if (single && !sign.single) {
+				single = sign.isSingle();
+			} else if (single && !sign.isSingle()) {
 				Skript.error("The function '" + functionName + "' was redefined with a different, incompatible return type, but is still used in other script(s)."
-						+ " These will continue to use the old version of the function until Skript restarts.");
+					+ " These will continue to use the old version of the function until Skript restarts.");
 				function = previousFunction;
 				return false;
 			}
 		}
-		
+
 		// Validate parameter count
-		singleListParam = sign.getMaxParameters() == 1 && !sign.getParameter(0).single;
+		singleListParam = sign.getMaxParameters() == 1 && !sign.getParameters()[0].single;
 		if (!singleListParam) { // Check that parameter count is within allowed range
 			// Too many parameters
 			if (parameters.length > sign.getMaxParameters()) {
 				if (first) {
 					if (sign.getMaxParameters() == 0) {
-						Skript.error("The function '" + functionName + "' has no arguments, but " + parameters.length + " are given."
+						Skript.error("The function '" + stringified + "' has no arguments, but " + parameters.length + " are given."
 							+ " To call a function without parameters, just write the function name followed by '()', e.g. 'func()'.");
 					} else {
-						Skript.error("The function '" + functionName + "' has only " + sign.getMaxParameters() + " argument" + (sign.getMaxParameters() == 1 ? "" : "s") + ","
+						Skript.error("The function '" + stringified + "' has only " + sign.getMaxParameters() + " argument" + (sign.getMaxParameters() == 1 ? "" : "s") + ","
 							+ " but " + parameters.length + " are given."
 							+ " If you want to use lists in function calls, you have to use additional parentheses, e.g. 'give(player, (iron ore and gold ore))'");
 					}
 				} else {
-					Skript.error("The function '" + functionName + "' was redefined with a different, incompatible amount of arguments, but is still used in other script(s)."
+					Skript.error("The function '" + stringified + "' was redefined with a different, incompatible amount of arguments, but is still used in other script(s)."
 						+ " These will continue to use the old version of the function until Skript restarts.");
 					function = previousFunction;
 				}
 				return false;
 			}
 		}
-		
+
 		// Not enough parameters
 		if (parameters.length < sign.getMinParameters()) {
 			if (first) {
-				Skript.error("The function '" + functionName + "' requires at least " + sign.getMinParameters() + " argument" + (sign.getMinParameters() == 1 ? "" : "s") + ","
+				Skript.error("The function '" + stringified + "' requires at least " + sign.getMinParameters() + " argument" + (sign.getMinParameters() == 1 ? "" : "s") + ","
 					+ " but only " + parameters.length + " " + (parameters.length == 1 ? "is" : "are") + " given.");
 			} else {
-				Skript.error("The function '" + functionName + "' was redefined with a different, incompatible amount of arguments, but is still used in other script(s)."
+				Skript.error("The function '" + stringified + "' was redefined with a different, incompatible amount of arguments, but is still used in other script(s)."
 					+ " These will continue to use the old version of the function until Skript restarts.");
 				function = previousFunction;
 			}
 			return false;
 		}
-		
+
 		// Check parameter types
 		for (int i = 0; i < parameters.length; i++) {
-			Parameter<?> p = sign.parameters[singleListParam ? 0 : i];
+			Parameter<?> signatureParam = sign.getParameters()[singleListParam ? 0 : i];
 			RetainingLogHandler log = SkriptLogger.startRetainingLog();
 			try {
-				Expression<?> e = parameters[i].getConvertedExpression(p.type.getC());
-				if (e == null) {
+				Class<?> target = Utils.getComponentType(signatureParam.type());
+
+				//noinspection unchecked
+				Expression<?> exprParam = parameters[i].getConvertedExpression(target);
+				if (exprParam == null) {
 					if (first) {
 						if (LiteralUtils.hasUnparsedLiteral(parameters[i])) {
 							Skript.error("Can't understand this expression: " + parameters[i].toString());
 						} else {
-							Skript.error("The " + StringUtils.fancyOrderNumber(i + 1) + " argument given to the function '" + functionName + "' is not of the required type " + p.type + "."
+							String type = Classes.toString(Classes.getSuperClassInfo(target));
+
+							Skript.error("The " + StringUtils.fancyOrderNumber(i + 1) + " argument given to the function '" + stringified + "' is not of the required type " + type + "."
 								+ " Check the correct order of the arguments and put lists into parentheses if appropriate (e.g. 'give(player, (iron ore and gold ore))')."
-								+ " Please note that storing the value in a variable and then using that variable as parameter will suppress this error, but it still won't work.");
+								+ " Please note that storing the value in a variable and then using that variable as parameter may suppress this error, but it still won't work.");
 						}
 					} else {
-						Skript.error("The function '" + functionName + "' was redefined with different, incompatible arguments, but is still used in other script(s)."
+						Skript.error("The function '" + stringified + "' was redefined with different, incompatible arguments, but is still used in other script(s)."
 							+ " These will continue to use the old version of the function until Skript restarts.");
 						function = previousFunction;
 					}
 					return false;
-				} else if (p.single && !e.isSingle()) {
+				} else if (signatureParam.single && !exprParam.isSingle()) {
 					if (first) {
 						Skript.error("The " + StringUtils.fancyOrderNumber(i + 1) + " argument given to the function '" + functionName + "' is plural, "
 							+ "but a single argument was expected");
 					} else {
-						Skript.error("The function '" + functionName + "' was redefined with different, incompatible arguments, but is still used in other script(s)."
+						Skript.error("The function '" + stringified + "' was redefined with different, incompatible arguments, but is still used in other script(s)."
 							+ " These will continue to use the old version of the function until Skript restarts.");
 						function = previousFunction;
 					}
 					return false;
 				}
-				parameters[i] = e;
+
+				parameters[i] = exprParam;
 			} finally {
 				log.printLog();
 			}
 		}
-		
+
+		//noinspection unchecked
 		signature = (Signature<? extends T>) sign;
+
 		sign.calls.add(this);
 
 		Contract contract = sign.getContract();
 		if (contract != null)
 			this.contract = contract;
-		
+
 		return true;
+	}
+
+	/**
+	 * Attempts to get this function's signature.
+	 */
+	private Signature<?> getRegisteredSignature() {
+		parseParameters();
+
+		if (Skript.debug()) {
+			Skript.debug("Getting signature for '%s' with types %s",
+				functionName, Arrays.toString(Arrays.stream(parameterTypes).map(Class::getSimpleName).toArray()));
+		}
+
+		FunctionRegistry.Retrieval<Signature<?>> attempt = FunctionRegistry.getRegistry().getSignature(script, functionName, parameterTypes);
+		if (attempt.result() == FunctionRegistry.RetrievalResult.EXACT) {
+			return attempt.retrieved();
+		}
+
+		if (attempt.result() == FunctionRegistry.RetrievalResult.AMBIGUOUS) {
+			ambiguousError(attempt.conflictingArgs());
+		}
+
+		return null;
+	}
+
+	/**
+	 * Attempts to get this function's registered implementation.
+	 */
+	private Function<?> getRegisteredFunction() {
+		parseParameters();
+
+		if (Skript.debug()) {
+			Skript.debug("Getting function '%s' with types %s",
+				functionName, Arrays.toString(Arrays.stream(parameterTypes).map(Class::getSimpleName).toArray()));
+		}
+
+		FunctionRegistry.Retrieval<Function<?>> attempt = FunctionRegistry.getRegistry().getFunction(script, functionName, parameterTypes);
+
+		if (attempt.result() == FunctionRegistry.RetrievalResult.EXACT) {
+			return attempt.retrieved();
+		}
+
+		if (attempt.result() == FunctionRegistry.RetrievalResult.AMBIGUOUS) {
+			ambiguousError(attempt.conflictingArgs());
+		}
+
+		return null;
+	}
+
+	// attempt to get the types of the parameters for this function reference
+	private void parseParameters() {
+		if (parameterTypes != null) {
+			return;
+		}
+
+		parameterTypes = new Class<?>[parameters.length];
+		for (int i = 0; i < parameters.length; i++) {
+			Expression<?> parsed = LiteralUtils.defendExpression(parameters[i]);
+			parameterTypes[i] = parsed.getReturnType();
+		}
 	}
 
 	@Nullable
@@ -293,7 +379,7 @@ public class FunctionReference<T> implements Contract {
 	protected T[] execute(Event e) {
 		// If needed, acquire the function reference
 		if (function == null)
-			function = (Function<? extends T>) Functions.getFunction(functionName, script);
+			function = (Function<? extends T>) getRegisteredFunction();
 
 		if (function == null) { // It might be impossible to resolve functions in some cases!
 			Skript.error("Couldn't resolve call for '" + functionName + "'.");
@@ -370,6 +456,25 @@ public class FunctionReference<T> implements Contract {
 		}
 		b.append(")");
 		return b.toString();
+	}
+
+	private void ambiguousError(Class<?>[][] conflictingArgs) {
+		List<String> parts = new ArrayList<>();
+		for (Class<?>[] args : conflictingArgs) {
+			String argNames = Arrays.stream(args).map(arg -> {
+				String name = Classes.getExactClassName(arg);
+
+				if (name == null) {
+					return arg.getSimpleName();
+				} else {
+					return name.toLowerCase();
+				}
+			}).collect(Collectors.joining(", "));
+
+			parts.add("%s(%s)".formatted(functionName, argNames));
+		}
+
+		Skript.error(AMBIGUOUS_ERROR, functionName, StringUtils.join(parts, ", ", " and "));
 	}
 	
 }
