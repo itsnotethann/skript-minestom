@@ -48,7 +48,7 @@ public class HandlerList {
 	}
 
 	private RegisteredListener[] bake() {
-		RegisteredListener[] baked = listeners.toArray(EMPTY);
+		RegisteredListener[] baked = listeners.toArray(RegisteredListener[]::new);
 		Arrays.sort(baked, (a, b) -> {
 			int priorityA = a.getPriority().ordinal();
 			int priorityB = b.getPriority().ordinal();
