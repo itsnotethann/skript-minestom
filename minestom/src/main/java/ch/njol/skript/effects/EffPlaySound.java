@@ -29,7 +29,7 @@ public class EffPlaySound extends Effect {
 	static {
 		Skript.registerEffect(EffPlaySound.class,
 			"play %sounds% [%-directions% %-points%] (to|for) %players%",
-			"play %sounds% [%directions% %points%] [in [(world|instance)] %instances%]",
+			"play %sounds% [%directions% %points%] [in [(world|instance)[s]] %instances%]",
 			"play %sounds% (on|from) %entities% [(to|for) %-players%]");
 	}
 
