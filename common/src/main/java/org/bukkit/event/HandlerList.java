@@ -40,7 +40,7 @@ public class HandlerList {
 	}
 
 	public List<RegisteredListener> getBakedListeners() {
-		return baked;
+		return List.of(baked);
 	}
 
 	public synchronized List<RegisteredListener> getRegisteredListeners() {
