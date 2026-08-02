@@ -12,9 +12,9 @@ import net.minestom.server.tag.Tag;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
-@Name("Sidebar Scoreboard")
-@Description("The sidebar scoreboard of a player.")
-@Examples("set sidebar of player to new sidebar")
+@Name("Sidebar/Scoreboard")
+@Description("The sidebar/scoreboard of a player.")
+@Examples("set sidebar of player to new sidebar named \"bob\"")
 public class ExprPlayerScoreboard extends SimplePropertyExpression<Player, Sidebar> {
 
 	private static final Tag<Sidebar> SCOREBOARD_TAG = Tag.Transient("skript-minestom:scoreboard");

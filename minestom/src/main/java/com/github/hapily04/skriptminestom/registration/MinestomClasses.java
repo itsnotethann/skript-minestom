@@ -1059,7 +1059,7 @@ public class MinestomClasses {
 			.user("score ?boards?")
 			.name("Scoreboard")
 			.description("The scoreboard on the side of a player's screen")
-			.examples("set {_s} to a new sidebar scoreboard named \"Stats\"")
+			.examples("set {_s} to new sidebar named \"Stats\"")
 			.defaultExpression(new EventValueExpression<>(Sidebar.class))
 			.parser(new Parser<>() {
 				@Override

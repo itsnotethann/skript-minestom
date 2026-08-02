@@ -15,9 +15,9 @@ import net.minestom.server.scoreboard.Sidebar;
 import org.bukkit.event.Event;
 import org.jspecify.annotations.Nullable;
 
-@Name("New Sidebar Scoreboard")
-@Description("Creates a new sidebar scoreboard.")
-@Examples("set {_s} to a new sidebar scoreboard named \"Stats\"")
+@Name("New Sidebar/Scoreboard")
+@Description("Creates a new sidebar/scoreboard.")
+@Examples("set {_s} to new sidebar named \"Stats\"")
 public class ExprScoreboard extends SimpleExpression<Sidebar> {
 
 	static {
