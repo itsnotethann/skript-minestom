@@ -5,7 +5,6 @@ import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.events.EffectCommandEvent;
 import ch.njol.skript.events.UnknownCommandEvent;
-import ch.njol.skript.events.minestom.CustomConnectEvent;
 import ch.njol.skript.events.wrapper.EventWrapper;
 import ch.njol.skript.events.wrapper.marker.MarkerRegistration;
 import ch.njol.skript.lang.Effect;
@@ -40,7 +39,6 @@ import net.luckperms.api.LuckPerms;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.entity.Player;
-import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerChatEvent;
 import org.bukkit.Bukkit;
@@ -80,9 +78,7 @@ public class SkriptMinestom {
 		MinecraftServer.getConnectionManager().setPlayerProvider(
 			(playerConnection, gameProfile) -> {
 				Player player = new LuckPermsPlayer(luckPerms, playerConnection, gameProfile);
-				CustomConnectEvent customConnectEvent = new CustomConnectEvent(player);
-				EventDispatcher.call(customConnectEvent);
-				if (customConnectEvent.isKicked()) return null;
+				if (!SkriptMinestomBootstrap.fireConnectEvent(player)) return null;
 				return player;
 			});
 
