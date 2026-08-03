@@ -42,6 +42,8 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerChatEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
+import org.bukkit.permissions.Permissible;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
@@ -172,8 +174,8 @@ public class SkriptMinestom {
 	static void initEffectCommands(EventNode<net.minestom.server.event.Event> node) {
 		node.addListener(PlayerChatEvent.class, event -> {
 			if (!SkriptConfig.enableEffectCommands.value()) return;
-			LuckPermsPlayer player = (LuckPermsPlayer) event.getPlayer();
-			if (!player.hasPermission("skript.effectcommands")) return;
+			Player player = event.getPlayer();
+			if (!((Permissible) player).hasPermission("skript.effectcommands")) return;
 			String message = event.getRawMessage();
 			if (!message.startsWith(SkriptConfig.effectCommandToken.value())) return;
 			event.setCancelled(true);
