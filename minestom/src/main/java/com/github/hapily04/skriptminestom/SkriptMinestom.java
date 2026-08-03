@@ -42,7 +42,6 @@ import net.minestom.server.command.CommandManager;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.event.EventNode;
-import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerChatEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
@@ -89,8 +88,8 @@ public class SkriptMinestom {
 		commandManager.register(new SkriptCommand(), new StopCommand());
 		commandManager.setUnknownCommandCallback((sender, command) -> Bukkit.getPluginManager().callEvent(new UnknownCommandEvent(sender, command)));
 		try {
-			initSkript();
-			initEffectCommands();
+			initSkript(MinecraftServer.getGlobalEventHandler());
+			initEffectCommands(MinecraftServer.getGlobalEventHandler());
 			scheduleShutdownTasks();
 			server.start(properties.getProperty(ADDRESS_KEY), Integer.parseInt(properties.getProperty(PropertyUtils.PORT_KEY)));
 			MinestomTerminal.start();
@@ -131,7 +130,7 @@ public class SkriptMinestom {
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	private static void initSkript() throws URISyntaxException {
+	static void initSkript(EventNode<net.minestom.server.event.Event> node) throws URISyntaxException {
 		//Bukkit.setTicker(tick -> MinecraftServer.getSchedulerManager().scheduleTask(tick, TaskSchedule.tick(1), TaskSchedule.tick(1))); // tick on minestom's thread
 		Bukkit.setServer(new BukkitServer());
 		Bukkit.getScheduler(); // initialize scheduler
@@ -149,9 +148,8 @@ public class SkriptMinestom {
 		Skript.closeUnsafeSkript();
 
 		// init events
-		GlobalEventHandler geh = MinecraftServer.getGlobalEventHandler();
 		EventNode<net.minestom.server.event.Event> skriptEventNode = EventNode.all("skript-user-events").setPriority(50);
-		geh.addChild(skriptEventNode);
+		node.addChild(skriptEventNode);
 		for (SkriptEventInfo<?> eventInfo : Skript.getEvents()) {
 			for (Class<? extends Event> bukkitEventClazz : eventInfo.events) {
 				if (!EventWrapper.class.isAssignableFrom(bukkitEventClazz)) continue;
@@ -173,8 +171,8 @@ public class SkriptMinestom {
 		}
 	}
 
-	private static void initEffectCommands() {
-		MinecraftServer.getGlobalEventHandler().addListener(PlayerChatEvent.class, event -> {
+	static void initEffectCommands(EventNode<net.minestom.server.event.Event> node) {
+		node.addListener(PlayerChatEvent.class, event -> {
 			if (!SkriptConfig.enableEffectCommands.value()) return;
 			LuckPermsPlayer player = (LuckPermsPlayer) event.getPlayer();
 			if (!player.hasPermission("skript.effectcommands")) return;
