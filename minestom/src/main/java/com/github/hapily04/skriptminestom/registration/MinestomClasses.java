@@ -468,19 +468,28 @@ public class MinestomClasses {
 				public @NotNull String toVariableNameString(@NotNull Instance o) {
 					return "instance with uuid: " + o.getUuid();
 				}
-			}));
+			})
+			.supplier(() -> MinecraftServer.getInstanceManager().getInstances().iterator()));
 		Classes.registerClass(new ClassInfo<>(InstanceContainer.class, "instancecontainer")
 			.user("instance ?containers?")
 			.name("Instance Container")
 			.description("A world consisting of blocks and entities.")
 			.examples("set {_world} to instance of player")
-			.defaultExpression(new EventValueExpression<>(InstanceContainer.class)));
+			.defaultExpression(new EventValueExpression<>(InstanceContainer.class))
+			.supplier(() -> MinecraftServer.getInstanceManager().getInstances().stream()
+				.filter(instance -> instance instanceof InstanceContainer)
+				.map(instance -> (InstanceContainer) instance)
+				.iterator()));
 		Classes.registerClass(new ClassInfo<>(SharedInstance.class, "sharedinstance")
 			.user("shared ?instances?")
 			.name("Shared Instance")
 			.description("A world sharing the blocks from its underlying Instance Container. Entities are not shared.")
 			.examples("create shared instance from {_container} and store it in {_shared}")
-			.defaultExpression(new EventValueExpression<>(SharedInstance.class)));
+			.defaultExpression(new EventValueExpression<>(SharedInstance.class))
+			.supplier(() -> MinecraftServer.getInstanceManager().getInstances().stream()
+				.filter(instance -> instance instanceof SharedInstance)
+				.map(instance -> (SharedInstance) instance)
+				.iterator()));
 		Classes.registerClass(new ClassInfo<>(Chunk.class, "chunk")
 			.user("chunks?")
 			.name("Chunk")
