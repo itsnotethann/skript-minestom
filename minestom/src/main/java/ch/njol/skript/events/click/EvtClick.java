@@ -127,6 +127,7 @@ public class EvtClick extends SkriptEvent {
 				PlayerHandAnimationEvent e = wr.getEvent();
 				Player player = e.getPlayer();
 				PlayerHand hand = e.getHand();
+				if (hand == PlayerHand.OFF) yield false;
 				if (!INTERACT_TRACKER.checkEvent(player, e, hand)) yield false;
 				yield verifyEvent(o, null, e.getPlayer(), hand);
 			}
