@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Name("Block")
-@Description("The block at a certain location in an instance.")
+@Description("The block at a certain point in an instance.")
 @Examples("set block at player's position to stone")
 public class ExprBlock extends SimpleExpression<Block> {
 
@@ -51,13 +51,13 @@ public class ExprBlock extends SimpleExpression<Block> {
 		List<Block> blocks = new ArrayList<>();
 		for (Instance instance : instances) {
 			for (Point point : points) {
+				if (!instance.isChunkLoaded(point)) continue;
 				blocks.add(instance.getBlock(point));
 			}
 		}
 		return blocks.toArray(new Block[0]);
 	}
 
-	@SuppressWarnings("DataFlowIssue")
 	@Override
 	@Nullable
 	public Class<?>[] acceptChange(Changer.ChangeMode mode) {
