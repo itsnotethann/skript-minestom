@@ -684,13 +684,17 @@ public class MinestomClasses {
 			.user("player ?hands?")
 			.name("Player Hand")
 			.description("Represents a player's hand. Possible values: main, off.")
-			.examples("on item use:\n\tbroadcast \"%event-hand%\"")
+			.examples("""
+				on item use:
+					broadcast "%event-hand%\"""")
 			.defaultExpression(new EventValueExpression<>(PlayerHand.class)));
 		Classes.registerClass(new EnumClassInfo<>(ItemAnimation.class, "itemanimation")
 			.user("item ?animations?")
 			.name("Item Animation")
 			.description("Represents the animation an item is playing while consuming.")
-			.examples("on item use:\n\tbroadcast \"%event-animation%\"")
+			.examples("""
+				on item use:
+					broadcast "%event-animation%\"""")
 			.defaultExpression(new EventValueExpression<>(ItemAnimation.class)));
 		Classes.registerClass(new EnumClassInfo<>(InventoryType.class, "inventorytype")
 			.user("inventory ?types?")
@@ -1889,25 +1893,33 @@ public class MinestomClasses {
 			.user("sky ?box(es)?")
 			.name("Dimension Skybox")
 			.description("The visual skybox of a dimension type.")
-			.examples("create dimension under \"test:lobby\" stored in {_d}:\tskybox: end")
+			.examples("""
+				create dimension under "test:lobby" stored in {_d}:
+					skybox: end""")
 			.defaultExpression(new EventValueExpression<>(DimensionType.Skybox.class)));
 		Classes.registerClass(new EnumClassInfo<>(DimensionType.CardinalLight.class, "cardinallight")
 			.user("cardinal ?lights?")
 			.name("Dimension Cardinal Light")
 			.description("The cardinal light of a dimension type.")
-			.examples("create dimension under \"test:lobby\" stored in {_d}:\tcardinal light: nether")
+			.examples("""
+				create dimension under "test:lobby" stored in {_d}:
+					cardinal light: nether""")
 			.defaultExpression(new EventValueExpression<>(DimensionType.CardinalLight.class)));
 		Classes.registerClass(new EnumClassInfo<>(Biome.TemperatureModifier.class, "temperaturemodifier")
 			.user("temperature ?modifiers?")
 			.name("Biome Temperature Modifier")
 			.description("The temperature modifier of a biome.")
-			.examples("create biome under \"test:lobby\" stored in {_b}:\ttemperature modifier: frozen")
+			.examples("""
+				create biome under "test:lobby" stored in {_b}:
+					temperature modifier: frozen""")
 			.defaultExpression(new EventValueExpression<>(Biome.TemperatureModifier.class)));
 		Classes.registerClass(new EnumClassInfo<>(BiomeEffects.GrassColorModifier.class, "grasscolormodifier")
 			.user("grass ?color ?modifiers?")
 			.name("Biome Grass Color Modifier")
 			.description("The grass color modifier of a biome.")
-			.examples("create biome under \"test:lobby\" stored in {_b}:\tgrass color modifier: dark forest")
+			.examples("""
+				create biome under "test:lobby" stored in {_b}:
+					grass color modifier: dark forest""")
 			.defaultExpression(new EventValueExpression<>(BiomeEffects.GrassColorModifier.class)));
 		Classes.registerClass(new ClassInfo<>(BufferedImage.class, "bufferedimage")
 			.user("buffered ?images?")
