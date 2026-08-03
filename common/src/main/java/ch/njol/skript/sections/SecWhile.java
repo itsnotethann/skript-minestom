@@ -30,10 +30,13 @@ import ch.njol.skript.lang.LoopSection;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.util.Kleenean;
+import com.google.common.collect.MapMaker;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Name("While Loop")
 @Description("While Loop sections are loops that will just keep repeating as long as a condition is met.")
@@ -60,14 +63,16 @@ public class SecWhile extends LoopSection {
 		Skript.registerSection(SecWhile.class, "[(:do)] while <.+>");
 	}
 
-	@SuppressWarnings("NotNullFieldNotInitialized")
 	private Condition condition;
 
 	@Nullable
 	private TriggerItem actualNext;
 
 	private boolean doWhile;
-	private boolean ranDoWhile = false;
+	private final Set<Event> ranDoWhile = Collections.newSetFromMap(new MapMaker()
+			.concurrencyLevel(8)
+			.weakKeys()
+			.makeMap());
 
 	@Override
 	public boolean init(Expression<?>[] exprs,
@@ -91,8 +96,7 @@ public class SecWhile extends LoopSection {
 	@Nullable
 	@Override
 	protected TriggerItem walk(Event event) {
-		if ((doWhile && !ranDoWhile) || condition.check(event)) {
-			ranDoWhile = true;
+		if ((doWhile && ranDoWhile.add(event)) || condition.check(event)) {
 			currentLoopCounter.put(event, (currentLoopCounter.getOrDefault(event, 0L)) + 1);
 			return walk(event, true);
 		} else {
@@ -120,7 +124,7 @@ public class SecWhile extends LoopSection {
 
 	@Override
 	public void exit(Event event) {
-		ranDoWhile = false;
+		ranDoWhile.remove(event);
 		super.exit(event);
 	}
 
