@@ -1,5 +1,6 @@
 package com.github.hapily04.skriptminestom.luckperms;
 
+import com.github.hapily04.skriptminestom.util.PermissionUtils;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.cacheddata.CachedMetaData;
 import net.luckperms.api.model.data.DataMutateResult;
@@ -10,7 +11,6 @@ import net.luckperms.api.node.types.InheritanceNode;
 import net.luckperms.api.platform.PlayerAdapter;
 import net.luckperms.api.util.Tristate;
 import net.minestom.server.command.CommandSender;
-import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.entity.Player;
 import net.minestom.server.network.player.GameProfile;
 import net.minestom.server.network.player.PlayerConnection;
@@ -176,7 +176,7 @@ public class LuckPermsPlayer extends Player implements Permissible {
     }
 
     public static boolean hasPermission(CommandSender sender, String permissionNode) {
-        return sender instanceof ConsoleSender || (sender instanceof Permissible p && p.hasPermission(permissionNode));
+        return PermissionUtils.hasPermission(sender, permissionNode);
     }
 
 }

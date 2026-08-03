@@ -6,7 +6,7 @@ import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.log.RedirectingLogHandler;
 import ch.njol.skript.log.TimingLogHandler;
 import ch.njol.util.OpenCloseable;
-import com.github.hapily04.skriptminestom.luckperms.LuckPermsPlayer;
+import com.github.hapily04.skriptminestom.util.PermissionUtils;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
@@ -30,7 +30,7 @@ public class ReloadCommand extends Command {
 
 	public ReloadCommand() {
 		super("reload");
-		setCondition((sender, _) -> LuckPermsPlayer.hasPermission(sender, "skript.reload"));
+		setCondition((sender, _) -> PermissionUtils.hasPermission(sender, "skript.reload"));
 		setDefaultExecutor((sender, _) -> sender.sendMessage(RELOAD_USAGE));
 		Argument<String[]> folderFileArg = new ArgumentStringArray("to_reload")
 			.setSuggestionCallback((sender, ctx, suggestion) -> {
@@ -44,7 +44,7 @@ public class ReloadCommand extends Command {
 			locationProvided = locationProvided.replace('/', File.separatorChar);
 			locationProvided = locationProvided.replace('\\', File.separatorChar);
 			if (locationProvided.equalsIgnoreCase("all")) {
-				if (!LuckPermsPlayer.hasPermission(sender, "skript.reload.all")) return;
+				if (!PermissionUtils.hasPermission(sender, "skript.reload.all")) return;
 				reloadingMessage(sender, "all scripts and config");
 				try (TimingLogHandler timingLogHandler = new TimingLogHandler().start()) {
 					try (RedirectingLogHandler redirectingLogHandler = new RedirectingLogHandler(sender, null).start()) {
@@ -55,14 +55,14 @@ public class ReloadCommand extends Command {
 					}
 				}
 			} else if (locationProvided.equalsIgnoreCase("config")) {
-				if (!LuckPermsPlayer.hasPermission(sender, "skript.reload.config")) return;
+				if (!PermissionUtils.hasPermission(sender, "skript.reload.config")) return;
 				reloadingMessage(sender, "config");
 				try (TimingLogHandler timingLogHandler = new TimingLogHandler().start()) {
 					SkriptConfig.load();
 					reloadedMessage(sender, timingLogHandler, "config");
 				}
 			} else {
-				if (!LuckPermsPlayer.hasPermission(sender, "skript.reload.scripts")) return;
+				if (!PermissionUtils.hasPermission(sender, "skript.reload.scripts")) return;
 				File scriptFile = ScriptLoader.getScriptFromName(locationProvided);
 				if (scriptFile == null) {
 					fileNotFoundMessage(sender, originalProvidedLocation);
