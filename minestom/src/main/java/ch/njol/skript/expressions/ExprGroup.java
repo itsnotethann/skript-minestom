@@ -1,0 +1,74 @@
+package ch.njol.skript.expressions;
+
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Example;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
+import ch.njol.skript.expressions.base.PropertyExpression;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.util.Kleenean;
+import com.github.hapily04.skriptminestom.luckperms.LuckPermsPlayer;
+import net.minestom.server.entity.Player;
+import org.bukkit.event.Event;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Name("Group")
+@Description("The primary group or all groups of a player")
+@Example("""
+	on join:
+		broadcast "%group of player%" # this is the player's primary group
+		broadcast "%groups of player%" # this is all of the player's groups
+	""")
+@Since("2.2-dev35")
+public class ExprGroup extends SimpleExpression<String> {
+
+	static {
+		PropertyExpression.register(ExprGroup.class, String.class, "group[plural:s]", "players");
+	}
+
+	private boolean primary;
+	private Expression<Player> players;
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+		players = (Expression<Player>) exprs[0];
+		primary = !parseResult.hasTag("plural");
+		return true;
+	}
+
+	@SuppressWarnings("null")
+	@Override
+	protected String[] get(Event event) {
+		Player[] players = this.players.getArray(event);
+		List<String> groups = new ArrayList<>();
+		for (Player player : players) {
+			LuckPermsPlayer lp = (LuckPermsPlayer) player;
+			if (primary) groups.add(lp.getPrimaryGroup());
+			else groups.addAll(lp.getAllGroups());
+		}
+		return groups.toArray(new String[0]);
+	}
+
+	@SuppressWarnings("null")
+	@Override
+	public boolean isSingle() {
+		return players.isSingle() && primary;
+	}
+
+	@Override
+	public Class<? extends String> getReturnType() {
+		return String.class;
+	}
+
+	@SuppressWarnings("null")
+	@Override
+	public String toString(Event event, boolean debug) {
+		return "group" + (primary ? "" : "s") + " of " + players.toString(event, debug);
+	}
+
+}

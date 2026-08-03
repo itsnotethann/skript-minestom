@@ -225,4 +225,12 @@ public class SkriptMinestom {
 		});
 	}
 
+	public static LuckPerms getLuckPerms() {
+		return luckPerms;
+	}
+
+	public static SparkMinestom getSpark() {
+		return spark;
+	}
+
 }

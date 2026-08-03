@@ -1,6 +1,7 @@
 package ch.njol.skript.events;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.events.luckperms.*;
 import ch.njol.skript.events.wrapper.*;
 import ch.njol.skript.lang.util.SimpleEvent;
 
@@ -100,6 +101,32 @@ public class SimpleEvents {
 		Skript.registerEvent("Unknown Command", SimpleEvent.class, UnknownCommandEvent.class, "unknown command [execution]")
 			.description("Called when a sender executes an unknown/unregistered command.")
 			.examples("on unknown command:");
+
+		// LuckPerms
+		Skript.registerEvent("Group Add", SimpleEvent.class, GroupAddEvent.class, "group add")
+			.description("Called when a player receives a luckperms group.")
+			.examples("on group add:");
+		Skript.registerEvent("Permission Add", SimpleEvent.class, PermissionAddEvent.class, "permission add")
+			.description("Called when a player receives a luckperms permission.")
+			.examples("on permission add:");
+		Skript.registerEvent("Prefix Add", SimpleEvent.class, PrefixAddEvent.class, "prefix add")
+			.description("Called when a player receives a luckperms prefix.")
+			.examples("on prefix add:");
+		Skript.registerEvent("Suffix Add", SimpleEvent.class, SuffixAddEvent.class, "suffix add")
+			.description("Called when a player receives a luckperms suffix.")
+			.examples("on suffix add:");
+		Skript.registerEvent("Group Remove", SimpleEvent.class, GroupRemoveEvent.class, "group remove")
+			.description("Called when a player loses a luckperms group.")
+			.examples("on group remove:");
+		Skript.registerEvent("Permission Remove", SimpleEvent.class, PermissionRemoveEvent.class, "permission remove")
+			.description("Called when a player loses a luckperms permission.")
+			.examples("on permission remove:");
+		Skript.registerEvent("Prefix Remove", SimpleEvent.class, PrefixRemoveEvent.class, "prefix remove")
+			.description("Called when a player loses a luckperms prefix.")
+			.examples("on prefix remove:");
+		Skript.registerEvent("Suffix Remove", SimpleEvent.class, SuffixRemoveEvent.class, "suffix remove")
+			.description("Called when a player loses a luckperms suffix.")
+			.examples("on suffix remove:");
 	}
 
 }

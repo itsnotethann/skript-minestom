@@ -7,7 +7,6 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EquipmentSlot;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerHand;
-import net.minestom.server.event.player.PlayerBlockInteractEvent;
 import net.minestom.server.event.player.PlayerEntityInteractEvent;
 import org.skriptlang.skript.bukkit.lang.eventvalue.EventValue;
 

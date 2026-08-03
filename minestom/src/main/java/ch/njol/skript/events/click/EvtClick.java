@@ -5,7 +5,6 @@ import ch.njol.skript.events.wrapper.*;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Item;
 import ch.njol.util.coll.CollectionUtils;
 import net.minestom.server.entity.Player;
@@ -15,7 +14,6 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
-import org.skriptlang.skript.bukkit.lang.eventvalue.EventValue;
 
 import java.util.Map;
 
