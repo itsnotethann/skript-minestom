@@ -85,6 +85,7 @@ public class SkriptMinestom {
 			});
 
 		initCommands();
+		initStopCommand();
 		try {
 			initSkript(MinecraftServer.getGlobalEventHandler());
 			initEffectCommands(MinecraftServer.getGlobalEventHandler());
@@ -222,11 +223,19 @@ public class SkriptMinestom {
 		});
 	}
 
-	/** Registers {@code /skript} and {@code /stop}, and routes unknown commands to {@link UnknownCommandEvent}. */
+	/**
+	 * Registers {@code /skript} and routes unknown commands to {@link UnknownCommandEvent}.
+	 * The callback is a single-slot setter, so this replaces any already set.
+	 */
 	public static void initCommands() {
 		CommandManager commandManager = MinecraftServer.getCommandManager();
-		commandManager.register(new SkriptCommand(), new StopCommand());
+		commandManager.register(new SkriptCommand());
 		commandManager.setUnknownCommandCallback((sender, command) -> Bukkit.getPluginManager().callEvent(new UnknownCommandEvent(sender, command)));
+	}
+
+	/** Registers {@code /stop}. Kept out of {@link #initCommands()} as an embedding server usually has its own. */
+	public static void initStopCommand() {
+		MinecraftServer.getCommandManager().register(new StopCommand());
 	}
 
 	/**
