@@ -169,7 +169,7 @@ public class LuckPermsPlayer extends Player {
     }
 
     public static boolean hasPermission(CommandSender sender, String permissionNode) {
-        return sender instanceof ConsoleSender || (sender instanceof LuckPermsPlayer lp && lp.hasPermission(permissionNode));
+        return LuckPermsLookup.hasPermission(sender, permissionNode);
     }
 
 }
