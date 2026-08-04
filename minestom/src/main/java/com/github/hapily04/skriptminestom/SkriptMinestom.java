@@ -20,6 +20,7 @@ import com.github.hapily04.skriptminestom.command.SkriptCommand;
 import com.github.hapily04.skriptminestom.command.StopCommand;
 import com.github.hapily04.skriptminestom.luckperms.DummyContextProvider;
 import com.github.hapily04.skriptminestom.luckperms.HoconConfigurationAdapter;
+import com.github.hapily04.skriptminestom.luckperms.LuckPermsLookup;
 import com.github.hapily04.skriptminestom.luckperms.LuckPermsPlayer;
 import com.github.hapily04.skriptminestom.registration.MinestomClasses;
 import com.github.hapily04.skriptminestom.registration.MinestomFunctions;
@@ -180,8 +181,8 @@ public class SkriptMinestom {
 	public static void initEffectCommands(EventNode<net.minestom.server.event.Event> node) {
 		node.addListener(PlayerChatEvent.class, event -> {
 			if (!SkriptConfig.enableEffectCommands.value()) return;
-			LuckPermsPlayer player = (LuckPermsPlayer) event.getPlayer();
-			if (!player.hasPermission("skript.effectcommands")) return;
+			Player player = event.getPlayer();
+			if (!LuckPermsLookup.hasPermission(player, "skript.effectcommands")) return;
 			String message = event.getRawMessage();
 			if (!message.startsWith(SkriptConfig.effectCommandToken.value())) return;
 			event.setCancelled(true);
@@ -265,6 +266,10 @@ public class SkriptMinestom {
 
 	public static LuckPerms getLuckPerms() {
 		return luckPerms;
+	}
+
+	public static void setLuckPerms(LuckPerms luckPerms) {
+		SkriptMinestom.luckPerms = luckPerms;
 	}
 
 	public static SparkMinestom getSpark() {
