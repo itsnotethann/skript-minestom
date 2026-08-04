@@ -84,9 +84,7 @@ public class SkriptMinestom {
 				return player;
 			});
 
-		CommandManager commandManager = MinecraftServer.getCommandManager();
-		commandManager.register(new SkriptCommand(), new StopCommand());
-		commandManager.setUnknownCommandCallback((sender, command) -> Bukkit.getPluginManager().callEvent(new UnknownCommandEvent(sender, command)));
+		initCommands();
 		try {
 			initSkript(MinecraftServer.getGlobalEventHandler());
 			initEffectCommands(MinecraftServer.getGlobalEventHandler());
@@ -222,6 +220,13 @@ public class SkriptMinestom {
 			MinestomTerminal.stop();
 			System.exit(0); // sometimes server hangs so manually stop
 		});
+	}
+
+	/** Registers {@code /skript} and {@code /stop}, and routes unknown commands to {@link UnknownCommandEvent}. */
+	public static void initCommands() {
+		CommandManager commandManager = MinecraftServer.getCommandManager();
+		commandManager.register(new SkriptCommand(), new StopCommand());
+		commandManager.setUnknownCommandCallback((sender, command) -> Bukkit.getPluginManager().callEvent(new UnknownCommandEvent(sender, command)));
 	}
 
 	/**
