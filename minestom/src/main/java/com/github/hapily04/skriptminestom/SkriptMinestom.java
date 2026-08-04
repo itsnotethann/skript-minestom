@@ -44,6 +44,8 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerChatEvent;
+import net.minestom.server.thread.TickThread;
+import net.minestom.server.timer.TaskSchedule;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
@@ -135,7 +137,8 @@ public class SkriptMinestom {
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static void initSkript(EventNode<net.minestom.server.event.Event> node) throws URISyntaxException {
-		//Bukkit.setTicker(tick -> MinecraftServer.getSchedulerManager().scheduleTask(tick, TaskSchedule.tick(1), TaskSchedule.tick(1))); // tick on minestom's thread
+		Bukkit.setPrimaryThreadCheck(() -> Thread.currentThread() instanceof TickThread);
+		Bukkit.setTicker(tick -> MinecraftServer.getSchedulerManager().scheduleTask(tick, TaskSchedule.tick(1), TaskSchedule.tick(1))); // tick on minestom's thread
 		Bukkit.setServer(new BukkitServer());
 		Bukkit.getScheduler(); // initialize scheduler
 

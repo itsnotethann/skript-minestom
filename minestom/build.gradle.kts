@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.github.hapily04"
-version = rootProject.version
+version = "1.0.0-alpha.13-honor"
 
 afterEvaluate {
 	(components["java"] as AdhocComponentWithVariants)
@@ -26,7 +26,7 @@ repositories {
 }
 
 dependencies {
-	api("net.minestom:minestom-sm:2026.08.01d-26.2")
+	api("net.minestom:minestom-sm:2026.08.03-26.2")
 	api("net.kyori:adventure-text-minimessage:5.2.0")
 	implementation("dev.hollowcube:polar:1.16.0")
 	implementation("it.unimi.dsi:fastutil:8.5.18") // fix polar error
