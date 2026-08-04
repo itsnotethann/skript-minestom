@@ -6,7 +6,12 @@ plugins {
 }
 
 group = "com.github.hapily04"
-version = "1.0.0-alpha.9"
+version = rootProject.version
+
+afterEvaluate {
+	(components["java"] as AdhocComponentWithVariants)
+		.withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) { skip() }
+}
 
 repositories {
     mavenCentral()
