@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 @Name("TPS")
 @Description("""
 	The server's ticks per second, as measured by spark.
-	Without a window, this returns all five of spark's averages, in order: the last 5 seconds, 10 seconds, 1 minute, 5 minutes and 15 minutes.""")
+	Without a window, this returns all five of spark's averages, in order: the last 5 seconds, 10 seconds, minute, 5 minutes and 15 minutes.""")
 @Examples("""
 	broadcast "%tps from the last 1 minute%"
 	
@@ -28,7 +28,7 @@ public class ExprTPS extends SimpleExpression<Number> {
 
 	static {
 		Skript.registerExpression(ExprTPS.class, Number.class, ExpressionType.SIMPLE,
-			"tps [(from|over|in) [the] last (1:5 seconds|2:10 seconds|3:1 minute|4:5 minutes|5:15 minutes)]");
+			"tps [(from|over|in) [the] last (1:5 seconds|2:10 seconds|3:minute|4:5 minutes|5:15 minutes)]");
 	}
 
 	@Nullable
@@ -78,7 +78,7 @@ public class ExprTPS extends SimpleExpression<Number> {
 	private enum Window {
 		SEC5(TicksPerSecond.SECONDS_5, "5 seconds"),
 		SEC10(TicksPerSecond.SECONDS_10, "10 seconds"),
-		MIN1(TicksPerSecond.MINUTES_1, "1 minute"),
+		MIN1(TicksPerSecond.MINUTES_1, "minute"),
 		MIN5(TicksPerSecond.MINUTES_5, "5 minutes"),
 		MIN15(TicksPerSecond.MINUTES_15, "15 minutes");
 
