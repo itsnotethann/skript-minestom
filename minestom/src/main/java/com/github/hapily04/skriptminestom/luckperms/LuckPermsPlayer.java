@@ -122,7 +122,7 @@ public class LuckPermsPlayer extends Player {
 
     /**
      * Checks if the player has a permission. {@code false} when no LuckPerms user is
-     * available (see class javadoc).
+     * available.
      *
      * @param permissionName the name of the permission to check
      * @return true if the player has the permission
@@ -135,7 +135,7 @@ public class LuckPermsPlayer extends Player {
      * Gets the value of a permission. This passes a {@link Tristate} value
      * straight from LuckPerms, which may be a better option than using
      * boolean values in some cases. {@link Tristate#UNDEFINED} when no LuckPerms user is
-     * available (see class javadoc).
+     * available.
      *
      * @param permissionName the name of the permission to check
      * @return the value of the permission
@@ -147,8 +147,7 @@ public class LuckPermsPlayer extends Player {
     }
 
     /**
-     * Gets the prefix of the player. {@code ""} when no LuckPerms user is available (see
-     * class javadoc).
+     * Gets the prefix of the player. {@code ""} when no LuckPerms user is available.
      *
      * @return the prefix of the player
      */
@@ -159,8 +158,7 @@ public class LuckPermsPlayer extends Player {
     }
 
     /**
-     * Gets the suffix of the player. {@code ""} when no LuckPerms user is available (see
-     * class javadoc).
+     * Gets the suffix of the player. {@code ""} when no LuckPerms user is available.
      *
      * @return the suffix of the player
      */
