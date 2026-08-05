@@ -53,6 +53,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -217,12 +218,14 @@ public class SkriptMinestom {
 			}
 			spark.shutdown();
 			PluginManager pluginManager = Bukkit.getPluginManager();
-			Plugin skript = pluginManager.getPlugin("Skript");
 
-			for (SkriptAddon addon : Skript.getAddons()) {
+			Collection<SkriptAddon> addons = Skript.getAddons();
+			Plugin skript = pluginManager.getPlugin("Skript");
+			if (skript != null) pluginManager.disablePlugin(skript);
+			for (SkriptAddon addon : addons) {
 				pluginManager.disablePlugin(addon.plugin);
 			}
-			if (skript != null) pluginManager.disablePlugin(skript);
+
 			LuckPermsMinestom.disable();
 			MinestomTerminal.stop();
 			System.exit(0); // sometimes server hangs so manually stop
