@@ -40,8 +40,13 @@ public class BukkitSchedulerImpl implements BukkitScheduler {
 
 			if (task.ticksLeft > 0) continue;
 			currentTask = task;
-			if (task.async) threadPool.submit(task.runnable);
-			else task.runnable.run();
+			try {
+				if (task.async) threadPool.submit(task.runnable);
+				else task.runnable.run();
+			} catch (Throwable t) {
+				Bukkit.getLogger().log(java.util.logging.Level.SEVERE,
+					"Task " + taskID + " from " + task.getOwner().getName() + " threw an exception", t);
+			}
 
 			currentTask = null;
 			task.ticksLeft = task.isRepeating() ? task.duration : task.delay;
