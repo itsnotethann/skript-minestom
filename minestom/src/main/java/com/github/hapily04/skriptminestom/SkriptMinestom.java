@@ -38,6 +38,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.entity.Player;
@@ -268,11 +269,12 @@ public class SkriptMinestom {
 	}
 
 	public static LuckPerms getLuckPerms() {
-		return luckPerms;
-	}
-
-	public static void setLuckPerms(LuckPerms luckPerms) {
-		SkriptMinestom.luckPerms = luckPerms;
+		if (luckPerms != null) return luckPerms;
+		try {
+			return LuckPermsProvider.get();
+		} catch (IllegalStateException e) {
+			return null;
+		}
 	}
 
 	public static SparkMinestom getSpark() {
