@@ -1,6 +1,6 @@
 # skript-minestom
 **skript-minestom** is a server implementation using Minestom, where users write exactly what they want the server to do
-using Skript syntax. Skript is baked within the server jar, and it supports some existing Skript addons (skript-reflect 2.6.3),
+using Skript syntax. Skript is baked within the server jar, and it supports some existing Skript addons (skript-reflect 2.6.3 and oopsk 1.0-beta2),
 but most addons are written specifically for skript-minestom.
 
 This GitHub fork of Skript is based on SkriptLang's fork of Mirreski's improvements of Skript which was built on Njol's original Skript.
@@ -47,6 +47,7 @@ or ask for help in [the discord](https://discord.gg/NAzscWaFRg).
 
 ## Official Tool Roadmap
 - [x] **[ADDON]** skript-reflect (non-fork) 2.6.3 support
+- [x] **[ADDON]** oopsk (non-fork) 1.0-beta2 support 
 - [x] **[ADDON]** skript-bdengine
 - [x] **[ADDON]** skript-gui-minestom
 - [x] **[ADDON]** SkriptHubDocsTool (for skript-minestom)
