@@ -9,8 +9,7 @@ import java.util.Map;
 
 public class FileUtils {
 
-	private static final File SERVER_DIRECTORY = new File(FileUtils.class.getProtectionDomain().getCodeSource()
-			.getLocation().getFile()).getParentFile();
+	private static final File SERVER_DIRECTORY = new File(System.getProperty("user.dir"));
 
 	private FileUtils() {}
 
