@@ -142,8 +142,14 @@ public class SkriptMinestom {
 		Bukkit.getScheduler(); // initialize scheduler
 
 		PluginManager pluginManager = Bukkit.getPluginManager();
-		Skript skript = (Skript) pluginManager.loadPlugin(new File(Skript.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
+		File skriptFile = new File(Skript.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+		File minestomFile = new File(SkriptMinestom.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+		Skript skript = (Skript) pluginManager.loadPlugin(skriptFile);
 		Skript.onRegistration(() -> {
+			if (!minestomFile.equals(skriptFile)) {
+				org.skriptlang.skript.util.ClassLoader.loadClasses(SkriptMinestom.class, minestomFile, "ch.njol.skript",
+					"conditions", "effects", "events", "expressions", "literals", "sections", "structures");
+			}
 			MinestomClasses.register();
 			MinestomFunctions.register();
 			MarkerRegistration.register();
