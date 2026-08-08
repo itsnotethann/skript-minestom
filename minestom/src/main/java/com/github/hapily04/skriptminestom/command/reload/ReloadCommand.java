@@ -48,10 +48,7 @@ public class ReloadCommand extends Command {
 			locationProvided = locationProvided.replace('/', File.separatorChar);
 			locationProvided = locationProvided.replace('\\', File.separatorChar);
 			if (locationProvided.equalsIgnoreCase("all")) {
-				if (!LuckPermsPlayer.hasPermission(sender, "skript.reload.all")) {
-					sender.sendMessage(NO_PERMISSION);
-					return;
-				}
+				if (cantExecute(sender, "skript.reload.all")) return;
 				reloadingMessage(sender, "all scripts and config");
 				try (TimingLogHandler timingLogHandler = new TimingLogHandler().start()) {
 					try (RedirectingLogHandler redirectingLogHandler = new RedirectingLogHandler(sender, null).start()) {
@@ -62,20 +59,14 @@ public class ReloadCommand extends Command {
 					}
 				}
 			} else if (locationProvided.equalsIgnoreCase("config")) {
-				if (!LuckPermsPlayer.hasPermission(sender, "skript.reload.config")) {
-					sender.sendMessage(NO_PERMISSION);
-					return;
-				}
+				if (cantExecute(sender, "skript.reload.config")) return;
 				reloadingMessage(sender, "config");
 				try (TimingLogHandler timingLogHandler = new TimingLogHandler().start()) {
 					SkriptConfig.load();
 					reloadedMessage(sender, timingLogHandler, "config");
 				}
 			} else {
-				if (!LuckPermsPlayer.hasPermission(sender, "skript.reload.scripts")) {
-					sender.sendMessage(NO_PERMISSION);
-					return;
-				}
+				if (cantExecute(sender, "skript.reload.scripts")) return;
 				File scriptFile = ScriptLoader.getScriptFromName(locationProvided);
 				if (scriptFile == null) {
 					fileNotFoundMessage(sender, originalProvidedLocation);
@@ -158,6 +149,12 @@ public class ReloadCommand extends Command {
 	static void reloadedMessage(CommandSender sender, TimingLogHandler timingLogHandler, String whatToReload) {
 		long time = timingLogHandler.getTimeTaken();
 		sender.sendMessage(SKRIPT_MINI_MESSAGE.deserialize("<skript_minestom_tag> <success_color>Successfully reloaded <yellow>" + whatToReload + " <success_color>in " + time + "ms."));
+	}
+
+	private static boolean cantExecute(CommandSender sender, String permission) {
+		boolean hasPermission = LuckPermsPlayer.hasPermission(sender, permission);
+		if (hasPermission) sender.sendMessage(NO_PERMISSION);
+		return !hasPermission;
 	}
 
 }
